@@ -1,11 +1,11 @@
-# PreSlide — Ziel, Projektstand und Orientierung
+# Talwacht — Ziel, Projektstand und Orientierung
 
 **Stand: 14. Oktober 2026 (nach V0.5). Diese Datei zu Beginn jeder Session vollständig lesen.**
 Danach `PROJECT_STATE.md` für den technischen Arbeitsstand lesen. Bei Widersprüchen die gespeicherten Artefakte prüfen; keine Ergebnisse erfinden oder historische Experimente überschreiben.
 
-## Was ist PreSlide?
+## Was ist Talwacht?
 
-PreSlide ist ein wissenschaftlicher Machine-Learning-Forschungsprototyp für Österreich. Er untersucht:
+Talwacht ist ein wissenschaftlicher Machine-Learning-Forschungsprototyp für Österreich. Er untersucht:
 
 > Können Umweltinformationen aus der Zeit vor einem dokumentierten Hangrutschungsereignis den betroffenen Hang von nahe gelegenen, topographisch ähnlichen Kontrollhängen unterscheiden, wenn alle Hänge zum selben Zeitpunkt betrachtet werden?
 
@@ -13,7 +13,7 @@ Die entscheidende Zusatzfrage lautet: **Bringt Wetter aus der Vorgeschichte eine
 
 Das Ziel ist ein vollständiges, reproduzierbares und wissenschaftlich belastbares Experiment. Eine hohe AUC ist kein Selbstzweck. Schwache oder widersprüchliche Ergebnisse sind gültige Forschungsergebnisse und dürfen nicht verborgen werden.
 
-PreSlide ist derzeit **kein Warnsystem**, keine österreichweite Gefahrenkarte und kein Modell für die reale Wahrscheinlichkeit einer Rutschung. Die Modellwerte sind Vergleichswerte eines retrospektiven Fall-Kontroll-Experiments. Modellwichtigkeit bedeutet keine Kausalität.
+Talwacht ist derzeit **kein Warnsystem**, keine österreichweite Gefahrenkarte und kein Modell für die reale Wahrscheinlichkeit einer Rutschung. Die Modellwerte sind Vergleichswerte eines retrospektiven Fall-Kontroll-Experiments. Modellwichtigkeit bedeutet keine Kausalität.
 
 ## Was bereits funktioniert
 

@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from .common import read_json
 from .sources import ROOT
 
-app=FastAPI(title='PreSlide – lokaler Forschungsprototyp',docs_url=None,redoc_url=None)
+app=FastAPI(title='Talwacht – lokaler Forschungsprototyp',docs_url=None,redoc_url=None)
 
 @lru_cache(maxsize=1)
 def demo_directory():
