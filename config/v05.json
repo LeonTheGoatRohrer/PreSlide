@@ -1,0 +1,111 @@
+{
+  "version": "v0.5.0",
+  "registered_on": "2026-10-14",
+  "plan": "reports/weiterentwicklung_2026-10-14/V05_NACHBARHANG_PLAN.md (approved by the user for execution on 2026-10-14)",
+  "registered_before": "any V0.5 control selection, feature, model or score was computed or viewed",
+  "status": "exploratory grouped cross-validation on already seen events; no new sealed or external test",
+
+  "question": "Can information available before the conservative event time t0 rank the documented positive slope above ten area-uniform, unmatched slope locations 750 m to 10 km around it?",
+
+  "inputs": {
+    "dataset": "data/v04/run_c6d67a854ba7/dataset.parquet",
+    "dataset_sha256": "ea6950102f2e437c3aebbdfe12f91b20b81a6e41ef59120474d4351c9e1077a2",
+    "partition": "data/v04/partition/partition.json",
+    "partition_sha256": "6daa4be3c63d675d962d31ccc66c98d0e98a816c7148afa9afba5a5d94baf9e1",
+    "control_pools": "data/v04/cache/control_pools/<event_id>.parquet (6000 area-uniform ring points per event, V0.4 matching config)",
+    "positives": "exactly the 423 positives and t0 of the V0.4 dataset; no new positives, no date or position corrections",
+    "independence_unit": "V0.4 independence_unit from the partition file (30 units); old development/sealed_test labels kept as provenance only",
+    "rule": "V0.4 and baseline artifacts are read only; V0.5 writes only data/v05/, models/v05/, reports/v05/"
+  },
+
+  "controls": {
+    "per_event": 10,
+    "pool_check": "before use: SHA-256 manifest of every pool, 6000 rows, expected columns, x/y regenerated exactly from the V0.4 seed rule, lon/lat consistent with EPSG:31287 x/y, distance in [750, 10000] m",
+    "stored_flags_reuse": "inventory_clear and inside_austria are reused only if a recomputation with the unchanged inventory snapshot, V0.4 buffer configuration and GISCO boundary reproduces every stored value of every pool; otherwise recomputed with the same rule",
+    "eligibility": ["inside_austria", "inventory_clear", "finite elevation, slope and aspect", "0 <= elevation <= 4500 m", "slope >= 5 deg"],
+    "ignored_columns": ["passes_calipers", "matching_score", "slope_difference_deg", "elevation_difference_m", "aspect_difference_deg"],
+    "pool_id": "original row position (0..5999) of the hashed pool file; candidates sorted by pool_id before drawing",
+    "seed": "int(first 16 hex chars of SHA-256('<event_id>|v05' UTF-8), 16)",
+    "generator": "numpy.random.Generator(PCG64(seed)); numpy version stored",
+    "draw": "one permutation of the eligible pool_ids; walk it in order and accept a point if it is >= 400 m (EPSG:31287 metres) from every accepted point; stop at 10",
+    "separation_m": 400,
+    "failure": "fewer than 10 selectable controls: the whole event group is excluded; no second seed, no other pool, no rule change",
+    "same_t0": "every control inherits t0, event_day and time_quality of its positive",
+    "freeze": "selected controls are frozen in data/v05/controls/ before any feature is computed; later failures exclude the group, never trigger a redraw"
+  },
+
+  "features": {
+    "rule": "identical definitions, windows, boundary rules and missing-value rules as config/v04.json; positives and controls computed by the same code in the same request/window",
+    "static": ["elevation", "slope", "aspect_sin", "aspect_cos", "profile_curvature", "plan_curvature", "roughness_tri",
+               "tpi_150m", "tpi_500m", "relative_position_500m", "log10_catchment_m2", "twi",
+               "lc_forest", "lc_grass_shrub", "lc_agriculture", "lc_open_bare", "lc_artificial_water_other",
+               "geo_carbonate", "geo_clastic_rock", "geo_unconsolidated", "geo_low_grade_metamorphic", "geo_crystalline_other"],
+    "temporal": ["rain_sum_1d", "rain_max_hour_1d", "temperature_mean_1d", "rain_sum_3d", "rain_max_hour_3d", "temperature_mean_3d",
+                 "rain_sum_7d", "rain_max_hour_7d", "temperature_mean_7d", "rain_sum_14d", "rain_max_hour_14d", "temperature_mean_14d",
+                 "rain_sum_30d", "rain_max_hour_30d", "temperature_mean_30d", "rain_sum_60d", "rain_max_hour_60d", "temperature_mean_60d",
+                 "rain_since_midnight", "rain_max_hour_since_midnight", "rain_3h_before_t0", "rain_6h_before_t0",
+                 "spartacus_rr_90d", "spartacus_rr_180d", "swe_last", "snow_depth_last", "swe_melt_3d", "swe_melt_7d", "swe_melt_14d"],
+    "interactions_conditional_logit_combined": [["rain_sum_3d", "slope"], ["rain_sum_30d", "log10_catchment_m2"], ["rain_sum_3d", "profile_curvature"]],
+    "column_counts": {"static": 22, "temporal": 29, "combined_conditional_logit": 54, "combined_gradient_boosting": 51},
+    "forbidden_predictors": ["distance_to_positive_m", "x", "y", "longitude", "latitude", "matching_score", "slope_difference_deg",
+                             "elevation_difference_m", "aspect_difference_deg", "passes_calipers", "inventory_clear", "inside_austria",
+                             "sample_id", "event_group_id", "pool_id", "sample_type", "label", "state", "source_position_upper_m",
+                             "survey_method", "time_quality", "independence_unit", "v04_partition", "catchment_truncated",
+                             "clc_vintage", "clc_code", "lithology", "weather_grid_distance_m", "any *_offset_m, *_last_day, *_status, last_used_hour_utc"],
+    "inca": "hourly value at T admissible iff T + 1 h < t0 and T - 1 h >= window start; complete plausible 60-day core history required for all 11 samples, otherwise the whole group is excluded",
+    "daily": "SPARTACUS RR and SNOWGRID (admitted in V0.4); day D valid at D+1 06:00 UTC; WINFORE not used (not admitted in V0.4)",
+    "same_day": "missing (not 0 mm) unless time_quality is daypart or clock",
+    "land_cover": "CORINE CLC2018 only if t0 >= 2019-01-01, else CLC2012 (V0.4 vintage rule; real-time availability not claimed)",
+    "geology": "GeoSphere 1:500 000 lithology, five V0.4 classes; no mass-movement deposit classes",
+    "missing_values": "conditional logit: a feature missing for any sample of a group is set to the training mean for all 11 samples, then standardised with training mean/sd; gradient boosting: native missing handling. Never invented values.",
+    "excluded_new_sources": "no soil, soil moisture, finer geology or satellite features in V0.5"
+  },
+
+  "models": {
+    "references": {"random_rank": "analytic chance values", "slope_rule": "score = DEM slope (higher slope ranks higher), no fit"},
+    "conditional_logit": {"primary": true, "l2": 1.0, "standardize": "training mean/sd after group missing mask",
+                          "optimizer": "scipy L-BFGS-B, maxiter 2000",
+                          "converged": "result.success, or (line-search abnormal termination AND max|gradient| <= 1e-4 * max(1, |objective|)); otherwise the run fails and no prediction is reported"},
+    "hist_gradient_boosting": {"max_iter": 150, "max_leaf_nodes": 7, "min_samples_leaf": 10, "l2_regularization": 1.0,
+                               "class_weight": "balanced", "random_state": 42},
+    "variants": ["static", "temporal", "combined"],
+    "training_weights": "each event group weighted 1/sqrt(n), n = events of its V0.4 independence unit in the actual (purged) training set",
+    "no_tuning": "no hyperparameter, seed or feature search"
+  },
+
+  "cross_validation": {
+    "folds": 5,
+    "repetitions_seeds": [11, 23, 37, 51, 71],
+    "assignment": "sorted retained V0.4 independence units, numpy default_rng(seed).permutation, numpy.array_split into 5 folds (V0.4 rule); identical for every model and variant",
+    "spatial_purge_primary": "per outer fold remove every training independence unit that has any sample (any class) < 1000 m from any held-out sample (EPSG:31287); whole units removed; held-out groups unchanged; no control is redrawn",
+    "feasibility": "every purged training set needs >= 5 independence units, >= 20 event groups and both classes; otherwise the registered plan is reported as not fully feasible (no substitute seed, no smaller distance, no silent switch to unpurged results)",
+    "unpurged_sensitivity": "same outer folds without purge; clearly labelled sensitivity, never replaces the primary analysis",
+    "preprocessing": "fit only on the actual (purged) fold training rows"
+  },
+
+  "metrics": {
+    "primary_endpoint": "conditional logit combined: mean within-group AUC weighted equally over V0.4 independence units (events equal within a unit), purged CV; reported as median and range over the 5 repetitions",
+    "primary_comparison": "combined minus static, same conditional logit, same groups/folds/purge",
+    "local_auc": "(controls scored lower + 0.5 * ties) / 10",
+    "top_k": "a controls strictly higher, t tied: clip((k - a)/(t + 1), 0, 1), k in {1, 3}",
+    "mean_rank": "1 + a + t/2",
+    "mrr": "mean over j = 0..t of 1/(1 + a + j)",
+    "chance": {"local_auc": 0.5, "top1": 0.0909090909, "top3": 0.2727272727, "mrr": 0.2745343041, "mean_rank": 6.0, "pooled_ap_prevalence": 0.0909090909},
+    "secondary": ["top-1", "top-3", "mean rank", "MRR", "event-weighted local AUC", "per unit", "per state", "pooled AP (supplementary)"],
+    "bootstrap": {"draws": 2000, "seed": 20261014, "unit": "V0.4 independence unit", "predictions": "repetition 1 out-of-fold, models fixed"},
+    "no_accuracy": "accuracy is never a primary metric; no thresholds; no absolute landslide probabilities"
+  },
+
+  "diagnostics": {
+    "distributions": "positive vs control: slope, elevation, aspect, CORINE class, lithology class; control distance bins 0.75-2, 2-5, 5-10 km",
+    "metadata_subsets": "survey method, state, year, position category of the positives (evaluation metadata only), with event and unit counts",
+    "land_cover_ablation": "conditional logit combined without the five lc_* columns, repetition 1, same folds/cohort/purge; described, never a new primary model",
+    "road_proximity": "optional only if temporally suitable sourced data exist; not retrieved in V0.5 (would block)",
+    "stanz": "the independence unit containing the 2016 Stanz storm reported separately; weighted evaluation with and without it from the same predictions",
+    "control_variants": "common cohort of V0.5 retained groups: (a) 5 original V0.4 matched controls, (b) first 5 of the frozen unmatched sequence, (c) all 10 unmatched; conditional logit static and combined, repetition 1, same outer units; purge uses the union of all three variants' samples",
+    "border_indirect_cues": "check that window edge / nodata / truncation flags do not separate positives from controls; flags are never predictors"
+  },
+
+  "stages": "1 -> 5 -> 20 event pilot (deterministic: events sorted by SHA-256('<event_id>|v05-pilot')) -> control and proximity audit of all 423 -> CV feasibility -> environmental features -> cohort and CV mapping frozen -> one technical pilot model -> registered main analysis -> report",
+  "pilot_rule": "pilot metrics are code checks, not scientific results"
+}

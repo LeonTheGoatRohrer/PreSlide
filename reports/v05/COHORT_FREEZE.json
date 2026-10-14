@@ -1,0 +1,61 @@
+{
+  "frozen_at": "2026-10-14T20:21:12.925336+00:00",
+  "config_sha256": "5b86b6475ecbe253c1b6c55e49cb8c129b79a25336d17e26efc2a5f15e82af4b",
+  "dataset_sha256": "6eae56574f9388d4111501afa4b636350d9ab26c0a948f7f079c0e8b9d40eb26",
+  "cv_plan_sha256": "f1aefe8be415b82cec98e95ca66d6582a9060a94ae729aeff78e16e54d231c4a",
+  "cohort": {
+    "events": 418,
+    "units": 29,
+    "samples": 4598
+  },
+  "exclusions": {
+    "1201878_001": {
+      "weather": {
+        "state": "excluded",
+        "reason": "implausible_weather_values:60d_RRmin=-0.089_RRmax=11.005"
+      }
+    },
+    "1201879_001": {
+      "weather": {
+        "state": "excluded",
+        "reason": "implausible_weather_values:60d_RRmin=-0.006_RRmax=19.680"
+      }
+    },
+    "1201877_001": {
+      "weather": {
+        "state": "excluded",
+        "reason": "implausible_weather_values:60d_RRmin=-0.001_RRmax=29.303"
+      }
+    },
+    "1201876_001": {
+      "weather": {
+        "state": "excluded",
+        "reason": "implausible_weather_values:60d_RRmin=-0.006_RRmax=60.117"
+      }
+    },
+    "1214239_001": {
+      "static": {
+        "state": "excluded",
+        "reason": "static_matching_elevation_check:7.5m"
+      }
+    }
+  },
+  "cv_feasible": true,
+  "control_variant_purge_feasible": true,
+  "code_sha256": {
+    "preslide/v05/__init__.py": "8cb6c31c1393760acf6de9d39b162c094990c7ee4cdea16e1fddd64aa70dff47",
+    "preslide/v05/controls.py": "de0bcc5382c9542c5b76e568f24ea590be2763fe9266522af23132a77b98af1e",
+    "preslide/v05/environment.py": "b69267ab42cb6e0bdad1d3c4c5fe0d251cec50968634269fed938a7ef3f6923e",
+    "preslide/v05/experiment.py": "2ec8b194886c69ef09b9f85bae599ab6ce8768a8e35839b53288a7d193430500",
+    "preslide/v05/http.py": "9d5255c4e5081255a38ff5b4287dfe0bf6f055a33220584600a8fc95c974ca3c",
+    "preslide/v05/integrity.py": "55ec4e56ebe085e95ea03864b91221f5beaf90adb748e2b2e01f729bae292905",
+    "preslide/v05/metrics.py": "ac3bd14ab23b87f9ad1ac80440b81586aaf9e105166bb89c4f6f8b23e276afbc",
+    "preslide/v05/models.py": "2392356cf549cb1afd7622f35db50f5e99c77e14062153c721160e85b6267d96",
+    "preslide/v05/partition.py": "c24acaedd113358c1f2859f1602b15247e2c3ac6db6aaedad6e423e1b25cc503",
+    "preslide/v05/paths.py": "4ec2c7d414965567b4870044e498543ae5d103811dfebc5001d907f98abbe733",
+    "preslide/v05/pipeline.py": "f7da16bc0f88f00fc34bacfe0b696e2ce9755b33f655a0c9b8d19bc2cdbbfefb",
+    "preslide/v05/report.py": "4e742be2f73891a285f66bc7f3c53d432919d0999037de34d0c65952b8cfc9b4",
+    "preslide/v05/terrain.py": "77080a7046c2f0940a967c556802f01a689673fc16b80a35566c342e386f3c7f"
+  },
+  "statement": "Cohort, exclusions and outer CV/purge mappings are fixed before any V0.5 model is fit."
+}

@@ -1,0 +1,22 @@
+{
+  "note": "Technical pilot (code check), not a scientific result. Unpurged, repetition 1 only.",
+  "groups": 19,
+  "units": 7,
+  "purge_feasible_on_pilot": false,
+  "conditional_logit_static_rep1": {
+    "local_auc_units": 0.7357142857142858,
+    "top1_units": 0.4714285714285714,
+    "top3_units": 0.5857142857142857,
+    "mean_rank_units": 3.6428571428571432,
+    "mrr_units": 0.5900283446712018,
+    "local_auc_events": 0.7315789473684211,
+    "top1_events": 0.3684210526315789,
+    "top3_events": 0.5789473684210527,
+    "mean_rank_events": 3.6842105263157894,
+    "mrr_events": 0.5406223893065999,
+    "events": 19,
+    "units": 7,
+    "pooled_ap": 0.5150113413061411,
+    "repetition": 1
+  }
+}

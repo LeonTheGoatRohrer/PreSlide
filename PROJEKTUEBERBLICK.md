@@ -1,6 +1,6 @@
 # PreSlide — Ziel, Projektstand und Orientierung
 
-**Stand: 14. Oktober 2026 (nach V0.4). Diese Datei zu Beginn jeder Session vollständig lesen.**
+**Stand: 14. Oktober 2026 (nach V0.5). Diese Datei zu Beginn jeder Session vollständig lesen.**
 Danach `PROJECT_STATE.md` für den technischen Arbeitsstand lesen. Bei Widersprüchen die gespeicherten Artefakte prüfen; keine Ergebnisse erfinden oder historische Experimente überschreiben.
 
 ## Was ist PreSlide?
@@ -110,6 +110,17 @@ Vorab registriert (`config/v04.json`, Prüfsumme in `reports/v04/PREREGISTRATION
 
 Berichte: `reports/v04/summary.md`; Nachweis: `reports/v04/verification.json` (PASS). Weboberfläche: Abschnitt 07, getrennt von den alten Ergebnissen.
 
+## V0.5: Nachbarhang-Rangfolge gegen zehn ungematchte Umgebungshänge (14.10.2026, abgeschlossen, explorativ)
+
+Plan `reports/weiterentwicklung_2026-10-14/V05_NACHBARHANG_PLAN.md`, Regeln vorab in `config/v05.json` registriert, Kohorte und CV-Zuordnung vor jedem Modell eingefroren. Andere, leichtere Frage als V0.4: der gemeldete Hang gegen zehn flächengleichmäßige, **nicht gematchte** Punkte 750 m–10 km um ihn. Alle Ereignisse waren in V0.4 schon gesehen → gruppierte, räumlich bereinigte Kreuzvalidierung, **kein neuer Test**.
+
+- 418 Gruppen, 4 598 Proben, 29 Einheiten; alle neu berechneten Positiven identisch mit V0.4; V0.4 nachweislich unverändert.
+- Bedingte logistische Regression kombiniert: lokale AUC **0,851** (0,835–0,863); statisch 0,865; Wetter allein 0,719; Neigungsregel 0,572; Zufall 0,5.
+- **Kein Wetterzusatznutzen** (kombiniert − statisch −0,023 [−0,079; +0,019]). Wetter allein ist hier teils ein Stellvertreter für Höhe/Lage.
+- Mit den fünf gematchten Kontrollen auf derselben Kohorte nur 0,705: Die hohe V0.5-Trennung beruht auf Höhe/Lage und Landbedeckung — vermutlich teilweise Meldebias.
+
+Bericht: `reports/v05/summary.md`; Nachweis: `reports/v05/verification.json` (PASS).
+
 ## Genau eine nächste wissenschaftliche Priorität
 
 **Den in V0.4 gefundenen Gelände- und Landbedeckungseffekt gegen Meldebias absichern und mehr unabhängige Episoden gewinnen** (z. B. getrennt gekennzeichnete Medienereignisse, vorab registriertes Case-Crossover-Design oder Satellitenprüfung der Positionen). Jede Erweiterung ist eine neue Version; der V0.4-Test ist jetzt gesehen und darf keine Auswahl mehr steuern.
@@ -139,6 +150,7 @@ Berichte: `reports/v04/summary.md`; Nachweis: `reports/v04/verification.json` (P
 | `reports/current_state_audit.md` | Ergänzender Gesamtcheck des aktuellen Projektbestands |
 | `reports/baseline/` | Eingefrorene V0.3-Baseline: Manifest, Status, Fehleranalyse je Ereignis |
 | `archive/v0.3-baseline/` | Schreibgeschützte Kopie aller Baseline-Ausgaben mit Prüfsummen |
+| `config/v05.json`, `reports/v05/`, `preslide/v05/` | V0.5: Registrierung, Kohorten-Freeze, CV-Ergebnisse, Bericht, Verifikation |
 | `config/v04.json`, `reports/v04/` | V0.4: Präregistrierung, Änderung 1, Freeze, Test, Bericht, Verifikation |
 | `preslide/v04/` | V0.4-Code (Audit, Datumsregeln, Pipeline, Modelle, Auswertung) |
 | `config/stability_v02.json` | Vorab eingefrorener Auswertungsplan |

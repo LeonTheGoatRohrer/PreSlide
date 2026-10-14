@@ -37,3 +37,11 @@ The permutation null makes all six group members exchangeable. True positives ar
 - **Time of day.** t0 is a conservative lower bound; the triggering rain after t0 remains invisible. Same-day rain exists only for daypart/clock events (281 of 300 test events, mostly one storm).
 - **Concentration.** Steiermark dominates (Stanz); leave-one-state-out results range 0.44–0.93 (descriptive, small n). No geographic transferability claim.
 - **Not evaluated:** tier-B/C date tiers, tier-2 media events, Sentinel, ERA5-Land, case-crossover design.
+
+## V0.5
+
+- **Seen events, no new test.** All 423 positives were evaluated in V0.4; the purged CV is exploratory. Repetitions and bootstrap are not independent confirmations; 29 units only.
+- **Easier, different task.** Unmatched area-uniform controls make terrain/land-cover contrasts dominant. The high local AUC (0.85) must not be compared with V0.4 (matched: 0.705 on the same cohort) or read as landslide probability.
+- **Reporting bias.** Positives are lower and less forested than the background; inventory points cluster near valleys, settlements and roads. Physics and detection probability cannot be separated (road-distance diagnostic not retrieved).
+- **Temporal ≠ weather here.** 1 km INCA fields carry elevation and location; the weather-only score partly encodes terrain. No weather benefit over static (−0.023).
+- **Retrospective exclusion zones** use the full inventory snapshot, including later events. One group excluded because a control failed the V0.4 5 m DEM alignment check (7.5 m on a 35° slope, sub-cell); the check was not relaxed.

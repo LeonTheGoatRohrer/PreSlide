@@ -2,7 +2,7 @@
 
 Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then this file.
 
-2026-10-14: **V0.4 complete and verified** (pre-registered extension, sealed external test scored once). The **V0.3 Baseline** (V0, V0.2, V0.3 on dataset `046074ba6f12556c`) is frozen, unchanged and additionally archived write-once in `archive/v0.3-baseline/` (2 872 files, ZIP SHA-256 `da3a136e…`; `python scripts/archive_baseline.py --verify`). Local, non-commercial research; no public deployment.
+2026-10-14 (evening): **V0.5 complete and verified** (exploratory neighbour-slope ranking vs ten unmatched controls; `reports/v05/`, verification PASS). Before that, the same day: **V0.4 complete and verified** (pre-registered extension, sealed external test scored once). The **V0.3 Baseline** (V0, V0.2, V0.3 on dataset `046074ba6f12556c`) is frozen, unchanged and additionally archived write-once in `archive/v0.3-baseline/` (2 872 files, ZIP SHA-256 `da3a136e…`; `python scripts/archive_baseline.py --verify`). Local, non-commercial research; no public deployment.
 
 # Verified Working
 
@@ -13,9 +13,13 @@ Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then t
 - V0.4 reproduces the 102 baseline candidates and the stored controls of all 60 baseline groups exactly.
 - Tests: 106 pytest (incl. 32 date-parser, 21 V0.4 leakage/grouping/CRS/hydrology/model/cache tests) + 5 frontend; build passes; V0.4 web section (07) browser-checked desktop and 375 px. Launch config `preslide-api-v04` (port 8020).
 
+- V0.5 package `preslide/v05/` (writes only `data/v05/`, `models/v05/`, `reports/v05/`; V0.4 caches/tiles read through read-only layers): `pipeline pools|select|static|context|weather|assemble` → `partition proximity|freeze` → `experiment main` → `report`; `scripts/verify_v05.py` PASS (incl. hash snapshot proving V0.4 untouched). 18 tests in `tests/test_v05.py`.
+
 # Dataset Status
 
 V0.4 run `data/v04/run_c6d67a854ba7/`: 500 tier-A candidates (day confirmed by narrative + structured interval; 2016–2026) → 423 complete groups / 2 538 samples (27 missing weather, 26 too few controls, 15 slope < 5°, 9 negative rain). Development 123 events / 19 units (all 60 baseline groups); sealed test 300 events / 11 units (Stanz 2016: 243). Features: 22 static (terrain incl. curvature, TRI, TPI, relative position, catchment/TWI; CORINE class; lithology), 29 temporal (INCA 18 + same-day 4 + SPARTACUS 2 + SNOWGRID 5); WINFORE not admitted.
+
+V0.5 run `data/v05/run_5b86b6475ecb/`: 423 positives × 10 unmatched controls (all 423 pools audited; all selected) → 418 groups / 4 598 samples / 29 units (4 negative-rain, 1 DEM-check exclusion).
 
 # Important Decisions
 
@@ -25,11 +29,15 @@ V0.4 run `data/v04/run_c6d67a854ba7/`: 500 tier-A candidates (day confirmed by n
 - Amendment 1: location links only for positive-involving overlaps (registered rule left a 4-event test).
 - Primary model conditional logit (own scipy implementation, no new dependency). 10 m DGM rejected (post-dates events).
 
+- V0.5: registered in `config/v05.json` (write-once registration), cohort + CV/purge plan frozen before models; primary = purged CV (training units with any sample < 1 km from held-out samples removed). DEM 5 m alignment check failure = technical exclusion (not relaxed).
+
 # Current Results
 
 - Sealed test, primary (conditional logit combined, unit-weighted local AUC): **0.751 [0.633, 0.866]**, null 95 % 0.629, p = 0.001; static 0.702; temporal 0.604. Combined − static +0.049 [−0.003, +0.108]: **no established weather benefit**. Per event: combined 0.668, static 0.521 (Stanz storm static 0.455).
 - Development CV: static 0.770, temporal 0.554, combined 0.725 (conditional logit).
 - Main predictors: roughness, forest (−), settlement/other land cover (+), TPI (−) — possibly partly reporting bias.
+
+- V0.5 (exploratory, seen events): conditional logit combined 0.851 (0.835–0.863), static 0.865, temporal 0.719, slope rule 0.572; combined − static −0.023 [−0.079, 0.019] → no weather benefit. Matched controls on the same cohort: 0.705. Separation driven by elevation/position + land cover (reporting bias plausible).
 
 # Known Problems
 
@@ -37,10 +45,6 @@ Few independent units (11 test); Stanz dominance; reporting/placement bias in la
 
 # Next 3 Tasks
 
-Planning-only audit (2026-10-14): `reports/weiterentwicklung_2026-10-14/` contains the proposed changes and reproducible candidate counts. Adding 323 tier-2/A media records yields 823 candidates / 110 temporal episodes / 66 provisional positive-linked blocks (before matching and environmental QA); not 66 verified development units or a national maximum. Adding 79 tier-1/C records yields 64 provisional blocks because links merge. No new experiment implemented or scored.
-
-User's alternative V0.5 plan reviewed and extended in `reports/weiterentwicklung_2026-10-14/V05_NACHBARHANG_PLAN.md`: existing 423 positives, ten unmatched local controls, exploratory grouped CV (the old test is seen), fold-level spatial purge and 1:10 ranking metrics. All 423 cached pools exist; source dataset hash verified. Draft only: no V0.5 config, registration, new controls, features or models created.
-
-1. Interpret/present V0.4 honestly: terrain + land-cover signal replicated on a sealed test; weather increment unproven. Do not retune on the test.
-2. A new version (V0.5) would need more independent episodes: tier-2 media events as separately labelled data, tiers B/C, or a pre-registered case-crossover design (user decision).
-3. Optional QA: Sentinel-2 check of positive positions/controls and of the land-cover/reporting-bias question.
+1. Interpret V0.4/V0.5 together: terrain/land-cover contrast is strong, weather increment unproven in both designs. Do not tune on either.
+2. Independent confirmation needs unseen dependence units: tier-2 media events (separately labelled) and soil/antecedent-moisture pilot per `reports/weiterentwicklung_2026-10-14/KONKRETER_AENDERUNGSPLAN.md` (new version, own protocol).
+3. Reporting-bias diagnostics (road/settlement distance with dated sources; Sentinel-2 position check); optional V0.5 web section.

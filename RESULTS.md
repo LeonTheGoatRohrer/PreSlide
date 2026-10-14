@@ -128,3 +128,12 @@ Random-rank null (same weights): mean 0.50, 95 % quantile 0.629; primary p = 0.0
 Per unit (conditional logit): the Stanz storm 2016-07-25 (243 events) has static 0.455, temporal 0.574, combined 0.631; the next units (26 and 16 events) have static 0.815/0.850 and combined 0.846/0.812. The weighted result therefore rests on 11 units, several with 1–2 events, and the largest storm behaves differently. Breakdown: `reports/v04/test_by_unit_conditional_logit.json`.
 
 The final conditional logit relies most on terrain roughness (+), forest cover (−), artificial/other land cover (+), TPI 150 m (−) and grassland (+); in the combined model also on recent rain features. This is predictive reliance, not causation; land-cover contrasts may partly reflect where events get reported.
+
+## V0.5 — neighbour-slope ranking against ten unmatched controls (2026-10-14; separate version, exploratory)
+
+Different question from V0–V0.4: the documented positive versus ten area-uniform, **unmatched** slope points 750 m–10 km around it. All 423 V0.4 positives were already seen, so this is a purged grouped CV, not a new test. Details and all numbers: `reports/v05/summary.md`, `reports/v05/cv_results.json`; verification `reports/v05/verification.json` (PASS).
+
+- Cohort 418 groups / 4 598 samples / 29 V0.4 units (4 groups excluded for negative INCA values at a control, 1 technical terrain-check failure). All 418 recomputed positives equal their V0.4 features exactly.
+- Primary (conditional logit, combined, spatially purged CV, unit-weighted local AUC): **0.851** (5 repetitions 0.835–0.863; bootstrap rep. 1 [0.762, 0.897]). Static 0.865, temporal 0.719; gradient boosting 0.798 / 0.794 / 0.658. Slope rule 0.572, chance 0.5. Top-1 0.413 (chance 0.091).
+- **Combined − static: −0.023 [−0.079, +0.019]** (negative in all 5 repetitions): no weather benefit. Weather-only is above chance mainly because positives lie ~186 m lower than the background and INCA temperature/precipitation depend on elevation and location.
+- Same cohort with the 5 original matched controls: 0.705 (static). The unmatched background is much easier to separate; the separation rests on elevation/position and land cover (forest 47 % vs 76 %), i.e. a mix of susceptibility and reporting probability.

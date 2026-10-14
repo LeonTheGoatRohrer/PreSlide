@@ -141,3 +141,18 @@ Frontend development: start the API, then `npm run dev` in `frontend`. Vite prox
 ```
 
 All steps reuse verified checkpoints and cached API responses (`data/v04/cache/`). `--limit 1|5|20` runs pilots. The sealed test has been scored; `experiment test` refuses to run again. See `METHODOLOGY.md` (V0.4), `RESULTS.md`, `LIMITATIONS.md`, `reports/v04/`.
+
+## V0.5 (exploratory neighbour-slope ranking, separate outputs)
+
+```powershell
+.\.venv\Scripts\python -m preslide.v05.pipeline pools                 # audit of the V0.4 control pools
+.\.venv\Scripts\python -m preslide.v05.pipeline select --limit 0      # frozen 10 unmatched controls per event
+.\.venv\Scripts\python -m preslide.v05.partition proximity            # proximity audit + CV feasibility
+.\.venv\Scripts\python -m preslide.v05.pipeline static --limit 0      # then context, weather --resource inca|spartacus-v2-1d-1km|snowgrid_cl-v2-1d-1km, assemble --limit 0
+.\.venv\Scripts\python -m preslide.v05.partition freeze               # cohort + CV/purge plan (write-once)
+.\.venv\Scripts\python -m preslide.v05.experiment main                # registered analysis
+.\.venv\Scripts\python -m preslide.v05.report                         # reports/v05/summary.md
+.\.venv\Scripts\python scripts\verify_v05.py                          # PASS/FAIL
+```
+
+`--limit 1|5|20` runs pilots. V0.5 has no sealed test (all events seen in V0.4). See `METHODOLOGY.md` (V0.5), `reports/v05/`.

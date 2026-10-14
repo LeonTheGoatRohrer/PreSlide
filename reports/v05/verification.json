@@ -1,0 +1,17 @@
+{
+ "status": "PASS",
+ "checks": {
+  "config_matches_registration": true,
+  "config_matches_cohort_freeze": true,
+  "dataset_matches_cohort_freeze": true,
+  "cv_plan_matches_cohort_freeze": true,
+  "results_computed_on_frozen_cohort": true,
+  "registration_before_freeze": true,
+  "held_out_units_never_trained_or_purged_reused": true,
+  "one_oof_prediction_per_sample_and_repetition": true,
+  "final_models_hashes_and_allowlist": true,
+  "groups_complete_1_plus_10": true,
+  "v04_untouched": true
+ },
+ "note": "Baseline manifest (reports/baseline) is verified in the main checkout; a git worktree has normalised line endings and lacks git-ignored baseline files."
+}

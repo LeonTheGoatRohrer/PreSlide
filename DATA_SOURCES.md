@@ -96,3 +96,7 @@ Land cover, geology, soil moisture and snow are not included in this V0. Terrain
 | GeoSphere Austria, INSPIRE GeologicUnit 1:500 000 | `gis.geosphere.at/maps/rest/services/inspire/GE_GeologicUnit_500k/MapServer/0` (whole layer, 4 107 polygons) | ©GeoSphere Austria / CC BY 4.0 | 5 lithology groups | no mass-movement deposit classes (checked); 1:500 000 positional accuracy is hundreds of metres |
 | Mapzen/AWS Skadi 1″ composite (unchanged V0 source) | `elevation-tiles-prod.s3.amazonaws.com/skadi/` | see Skadi entry above | curvature, roughness, TPI, relative position, catchment, TWI | object Last-Modified (Apr 2016) must precede t0 |
 | BEV/geoland DGM Österreich 10 m | `gis.ktn.gv.at/OGD/Geographie_Planung/ogd-10m-at.zip` (1.94 GB, HTTP Last-Modified 2019-06-18) | OGD (not downloaded) | **rejected** | object date postdates about half of the events and no per-cell acquisition date was found, so it is not demonstrably pre-event |
+
+## V0.5 (2026-10-14)
+
+No new data source. V0.5 queries the same V0.4 endpoints (INCA v1, SPARTACUS v2, SNOWGRID-CL v2, CORINE 2012/2018, GeoSphere geology 1:500 000) for the ten new unmatched control points per event; new responses are cached under `data/v05/cache/http/`, existing baseline/V0.4 responses and DEM tiles are only read. Control points come from the existing V0.4 pools (`data/v04/cache/control_pools/`, audited, see `data/v05/pool_audit/`).

@@ -1,0 +1,18 @@
+{
+ "registered_at": "2026-10-14T18:29:25.967228+00:00",
+ "config_sha256": "5b86b6475ecbe253c1b6c55e49cb8c129b79a25336d17e26efc2a5f15e82af4b",
+ "files_sha256": {
+  "config/v05.json": "5b86b6475ecbe253c1b6c55e49cb8c129b79a25336d17e26efc2a5f15e82af4b",
+  "reports/weiterentwicklung_2026-10-14/V05_NACHBARHANG_PLAN.md": "97d3d32b90bdbfe0bd57673139be1a07c87f73904f33adbd83d4b0ffdf084008",
+  "data/v04/run_c6d67a854ba7/dataset.parquet": "ea6950102f2e437c3aebbdfe12f91b20b81a6e41ef59120474d4351c9e1077a2",
+  "data/v04/partition/partition.json": "6daa4be3c63d675d962d31ccc66c98d0e98a816c7148afa9afba5a5d94baf9e1",
+  "data/v04/audit/candidates.json": "3689f40ed2b3700a35bd2ac076f572cfff1822475d36b2d91d38341dbd4e97b0"
+ },
+ "v04_integrity_snapshot": {
+  "files": 11231,
+  "snapshot_sha256": "004ef50ce4cd71526edeb84c7a73dc0e43ca415b9ce1a37693e0fd66968394fb",
+  "baseline_manifest": "FAIL"
+ },
+ "known_at_registration": "V0.4 artifacts and results (V0.4 test already seen); existence of 485 V0.4 control pools. No V0.5 control selection, feature, model or score.",
+ "nature": "exploratory grouped CV; no new independent test"
+}
