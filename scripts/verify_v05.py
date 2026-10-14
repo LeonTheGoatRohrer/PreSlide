@@ -20,6 +20,16 @@ def sha(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
+def text_sha_variants(p):
+    """Same text content with LF or CRLF line endings (git checkouts normalise to LF)."""
+    lf = Path(p).read_bytes().replace(b'
+', b'
+')
+    return {hashlib.sha256(lf).hexdigest(), hashlib.sha256(lf.replace(b'
+', b'
+')).hexdigest()}
+
+
 def main():
     reg = json.loads((ROOT / 'reports/v05/PREREGISTRATION.json').read_text())
     fr = json.loads((ROOT / 'reports/v05/COHORT_FREEZE.json').read_text())
@@ -46,7 +56,7 @@ def main():
         'config_matches_cohort_freeze': sha(ROOT / 'config/v05.json') == fr['config_sha256'],
         'dataset_matches_cohort_freeze': sha(P.run_dir() / 'dataset.parquet') == fr['dataset_sha256'],
         'cv_plan_matches_cohort_freeze': sha(ROOT / 'data/v05/cv/cv_plan.json') == fr['cv_plan_sha256'],
-        'results_computed_on_frozen_cohort': res['frozen_inputs']['cohort_freeze_sha256'] == sha(ROOT / 'reports/v05/COHORT_FREEZE.json'),
+        'results_computed_on_frozen_cohort': res['frozen_inputs']['cohort_freeze_sha256'] in text_sha_variants(ROOT / 'reports/v05/COHORT_FREEZE.json'),
         'registration_before_freeze': reg['registered_at'] < fr['frozen_at'],
         'held_out_units_never_trained_or_purged_reused': leak == 0,
         'one_oof_prediction_per_sample_and_repetition': bool(once),
