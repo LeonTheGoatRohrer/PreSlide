@@ -22,12 +22,8 @@ def sha(p):
 
 def text_sha_variants(p):
     """Same text content with LF or CRLF line endings (git checkouts normalise to LF)."""
-    lf = Path(p).read_bytes().replace(b'
-', b'
-')
-    return {hashlib.sha256(lf).hexdigest(), hashlib.sha256(lf.replace(b'
-', b'
-')).hexdigest()}
+    lf = Path(p).read_bytes().replace(b'\r\n', b'\n')
+    return {hashlib.sha256(lf).hexdigest(), hashlib.sha256(lf.replace(b'\n', b'\r\n')).hexdigest()}
 
 
 def main():
