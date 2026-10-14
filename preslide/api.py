@@ -51,6 +51,13 @@ def results_v05():
     if not path.exists(): raise HTTPException(503,'V0.5-Ergebnisse fehlen: python -m preslide.v05.web')
     return read_json(path)
 
+@app.get('/api/benchmarks')
+def benchmarks():
+    # Cross-version table of stored model runs (python -m preslide.benchmarks); aggregate values only.
+    path=ROOT/'data/web/benchmarks.json'
+    if not path.exists(): raise HTTPException(503,'Benchmarks fehlen: python -m preslide.benchmarks')
+    return read_json(path)
+
 @app.get('/api/cases')
 def cases():
     return read_json(demo_directory()/'cases.json')
