@@ -1,0 +1,11 @@
+{
+  "inca_derived": "ok",
+  "terrain30": "ok",
+  "geology": "ok",
+  "tcd": "failed: RuntimeError(\"Source error {'code': 400, 'extendedCode': -2147024809, 'message': 'Invalid or missing input parameters.', 'details': ['General function failure']}\")",
+  "soilgrids": "ok",
+  "worldcover": "ok",
+  "gfc": "ok",
+  "osm": "ok",
+  "daily": "ok"
+}

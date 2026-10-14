@@ -21,3 +21,7 @@ archive/**/*.zip
 
 # Local Claude Code settings
 .claude/settings.local.json
+
+# Feature audit: record-level selections and query metadata (coordinates, event IDs) stay local
+reports/feature_audit_v04/selected_events.csv
+reports/feature_audit_v04/*_meta.json

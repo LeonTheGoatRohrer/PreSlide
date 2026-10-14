@@ -16,6 +16,8 @@ Session entry point: read `PROJEKTUEBERBLICK.md` completely, then this file; man
 - UI: `frontend/src/metricDefinitions.js` (central German texts with value-dependent, conservative readings), one `InfoTip.vue` (hover, focus, tap, Esc; bottom sheet < 600 px), "So lesen Sie die Ergebnisse", the five-controls explanation, `EventExplorer.vue` (section 05, de-identified, values from `/api/results`).
 - 53 pytest + 5 frontend (`npm test`) tests pass. Build passes; browser-checked at desktop and 375 px with no console errors. Start: `scripts/start.ps1` (port 8000) or uvicorn on any port. Note: an older server process may still hold port 8000 without `/api/results`; restart it.
 
+- 2026-10-14 feature availability audit (`reports/feature_audit_v04/README.md`, `scripts/feature_audit_v04.py`): no training, label-free statistics only, 5 dev groups. Within-group contrast is substantial only for local static data: 30 m curvature/TPI/TWI/stream distance, WorldCover/GFC forest, OSM roads, geology. It is low for SPARTACUS (≈ 0.15 variance share), INCA-derived API/max rain (≈ 0.02) and SPEI (≈ 0). HRL TCD service is down; DGM 10 m needs approval for a 1.94 GB download. The shortlist of 15 is proposed for a next version (V0.4 config already registered; unchanged).
+
 # Dataset Status
 
 102 candidates → 60 complete groups (17 missing weather, 13 insufficient controls, 9 negative precipitation, 3 slope < 5°). 360 samples, 20 dependence clusters (largest 15 events), 29 distinct dates, 2017-08-05 … 2026-06-13, 28/60 in Steiermark. Run `data/processed/046074ba6f12556c/` (frozen; do not overwrite).
