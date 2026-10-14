@@ -16,28 +16,31 @@ from .paths import SAT_DATA, SAT_REPORT, guard, config
 
 
 def score_map(model, maps, cols, margin_px):
+    """Log-odds map (probabilities saturate at 1.0 and would create plateaus of tied maxima)."""
     n = next(iter(maps.values())).shape[0]
     X = np.stack([maps[c] for c in cols], axis=-1).reshape(-1, len(cols))
-    s = model.predict_proba(np.nan_to_num(X, nan=np.nan))[:, 1].reshape(n, n) if not np.isnan(X).any() else _predict_nan(model, X, n)
+    out = np.full(X.shape[0], np.nan)
+    ok = ~np.isnan(X).any(axis=1)
+    if ok.any():
+        out[ok] = model.decision_function(X[ok])      # unbounded log-odds: no saturation ties
+    s = out.reshape(n, n)
     s[:margin_px, :] = s[-margin_px:, :] = s[:, :margin_px] = s[:, -margin_px:] = np.nan
     return s
 
 
-def _predict_nan(model, X, n):
-    out = np.full(X.shape[0], np.nan)
-    ok = ~np.isnan(X).any(axis=1)
-    if ok.any():
-        out[ok] = model.predict_proba(X[ok])[:, 1]
-    return out.reshape(n, n)
-
-
 def peaks(score, min_distance_px, threshold=0.0):
-    """Local maxima (non-maximum suppression) of the score map, ranked by score."""
-    s = np.nan_to_num(score, nan=-1.0)
-    mx = maximum_filter(s, size=2 * min_distance_px + 1, mode='constant', cval=-1.0)
-    cand = np.argwhere((s == mx) & (s > threshold))
-    out = sorted([(float(s[r, c]), int(r), int(c)) for r, c in cand], reverse=True)
-    return out
+    """Local maxima (non-maximum suppression) of the log-odds map above `threshold` (0 = p 0.5), ranked by score.
+    A plateau of tied maxima counts once (its centroid)."""
+    s = np.nan_to_num(score, nan=-np.inf)
+    mx = maximum_filter(s, size=2 * min_distance_px + 1, mode='constant', cval=-np.inf)
+    is_max = (s == mx) & (s > threshold)
+    lab, n = cc_label(is_max)
+    out = []
+    for k in range(1, n + 1):
+        rr, cc = np.nonzero(lab == k)
+        r, c = int(round(rr.mean())), int(round(cc.mean()))
+        out.append((float(s[rr[0], cc[0]]), r, c))
+    return sorted(out, reverse=True)
 
 
 def rediscover_event(event_id, model, cols, cfg):
@@ -95,7 +98,7 @@ def heuristic_type(c):
     return 'other_or_weak'
 
 
-def run(kind='logistic_regression', score_threshold=0.5):
+def run(kind='logistic_regression', score_threshold=0.0):
     cfg = config()
     frame = pd.read_parquet(SAT_DATA / 'tables/dataset.parquet')
     cols = model_feature_names(feature_columns(frame))
@@ -141,7 +144,7 @@ def candidate_inventory(candidates, known, score_threshold):
     from preslide.terrain import GEOD
     rows = []
     for c in candidates:
-        if c['is_known_event_hit'] or c['score'] < score_threshold:
+        if c['is_known_event_hit'] or c['score'] < score_threshold:   # score = log-odds
             continue
         d = [GEOD.inv(c['longitude'], c['latitude'], lon, lat)[2] for lon, lat in zip(known['longitude'], known['latitude'])]
         rows.append({'candidate_id': f"SATC_{c['source_event']}_{c['rank']:02d}", 'longitude': c['longitude'], 'latitude': c['latitude'],

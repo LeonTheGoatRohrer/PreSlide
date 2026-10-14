@@ -83,7 +83,9 @@ def write_reports():
                   f"null 95th percentile {n['null_95']:.3f}, observed {n['observed']:.3f}, upper p = {n['p_upper']:.3f}.", '',
                   '`ring_only_shortcut` uses only scene-wide change around the sample (should stay near chance if the model learns local change); '
                   '`nuisance_only_shortcut` uses acquisition timing and cloud/snow fractions, which are identical within a group except for local cloud/snow, '
-                  'so it must stay at chance for the within-group metrics.', '',
+                  'so it must stay at chance for the within-group metrics. Held-out values far below 0.5 mean the feature set carries no '
+                  'transferable positive signal; a systematic reversal with few independence units is small-sample instability and is reported, not corrected. '
+                  'The contrast-only set was not pre-registered as primary; its advantage is noted, not selected on.', '',
                   '## Logistic-regression coefficients (standardised, full data; predictive association, not causation)', '',
                   '| feature | coefficient |', '|---|---:|']
         for row in r['importance_logistic_regression'][:15]:

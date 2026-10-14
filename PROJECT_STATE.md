@@ -4,6 +4,8 @@ Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then t
 
 2026-10-14: **V0.4 complete and verified** (pre-registered extension, sealed external test scored once). The **V0.3 Baseline** (V0, V0.2, V0.3 on dataset `046074ba6f12556c`) is frozen, unchanged and additionally archived write-once in `archive/v0.3-baseline/` (2 872 files, ZIP SHA-256 `da3a136e…`; `python scripts/archive_baseline.py --verify`). Local, non-commercial research; no public deployment.
 
+2026-10-14 (later session): **Pipeline B (satellite discovery) implemented and verified through Stage 3** (20-event pilot: 14 usable groups, 79 samples, event-held-out baselines, held-out rediscovery scan). Full-inventory eligibility run started (`data/satellite/logs/eligibility_all.log`); Stage 4+ numbers are not yet produced. Pipeline B uses post-event imagery and is isolated from Pipeline A.
+
 # Verified Working
 
 - Baseline: `reports/baseline/BASELINE_MANIFEST.json` (95 hashes) PASS; archive PASS; `scripts/verify_state.py` PASS 0 errors — rechecked after V0.4.
@@ -13,9 +15,15 @@ Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then t
 - V0.4 reproduces the 102 baseline candidates and the stored controls of all 60 baseline groups exactly.
 - Tests: 106 pytest (incl. 32 date-parser, 21 V0.4 leakage/grouping/CRS/hydrology/model/cache tests) + 5 frontend; build passes; V0.4 web section (07) browser-checked desktop and 375 px. Launch config `preslide-api-v04` (port 8020).
 
+- Pipeline B `preslide/satellite/` (writes only `data/satellite/`, `models/satellite/`, `reports/satellite/`; `paths.guard` refuses everything else, junction-safe):
+  `eligibility` → `dataset` → `contact` → `baseline` → `discovery` → `report`, each cached (STAC responses, SCL quicklooks, patch GeoTIFFs with SHA-256 sidecars, per-sample feature JSON). 17 tests in `tests/test_satellite.py` (Pipeline A never imports Pipeline B; V0.4 table has no satellite columns; before strictly before / after strictly after the event day; local cloud/snow screening; group-level pair rule; NDSI snow; seasonal gap; grid snapped to the S2 lattice; phase-correlation shift; collection-dependent reflectance offset; box-filter features; unit holdout). API `/api/satellite`, web section 08 (German), contact sheets inspected visually (3 sheets, 14 events).
+- Pre-existing tests `test_baseline.py`/`test_stability.py` fail only inside the git worktree (CRLF checkout, local-only files); they pass in the main checkout.
+
 # Dataset Status
 
 V0.4 run `data/v04/run_c6d67a854ba7/`: 500 tier-A candidates (day confirmed by narrative + structured interval; 2016–2026) → 423 complete groups / 2 538 samples (27 missing weather, 26 too few controls, 15 slope < 5°, 9 negative rain). Development 123 events / 19 units (all 60 baseline groups); sealed test 300 events / 11 units (Stanz 2016: 243). Features: 22 static (terrain incl. curvature, TRI, TPI, relative position, catchment/TWI; CORINE class; lithology), 29 temporal (INCA 18 + same-day 4 + SPARTACUS 2 + SNOWGRID 5); WINFORE not admitted.
+
+Pipeline B (Stage 3, 20 fine-position events screened): 14 usable groups / 12 independence units / 79 samples (9 groups with all 5 controls, 5 with 4). Exclusions recorded: 39 position > 20 m (of the first 59 listed), 4 seasonal gap > 90 d, 1 no usable before pair, 1 too few controls. Usable pairs: median 12 d before, 12 d after the event. Pool: 137 fine-position events 2018+ (no L2A before 2017-10, so the 2016 Stanz storm is out).
 
 # Important Decisions
 
@@ -25,15 +33,21 @@ V0.4 run `data/v04/run_c6d67a854ba7/`: 500 tier-A candidates (day confirmed by n
 - Amendment 1: location links only for positive-involving overlaps (registered rule left a 4-event test).
 - Primary model conditional logit (own scipy implementation, no new dependency). 10 m DGM rejected (post-dates events).
 
+- Pipeline B: Earth Search Sentinel-2 L2A (c1 preferred); reflectance offset −0.1 only for `sentinel-2-c1-l2a`, 0 for `sentinel-2-l2a` (verified on vegetation DN; runtime plausibility check). Usability judged locally in the 320 m core and 960 m window (SCL + NDSI), never from scene cloud cover. before/after primaries must be usable at the positive and ≥ 4 controls on the same overpass; event day never used; pairs > 90 DOY apart excluded. Negatives = matched V0.4 controls on the same acquisitions. Candidates stay `satellite_detected_candidate` / `UNVERIFIED`.
+
 # Current Results
 
 - Sealed test, primary (conditional logit combined, unit-weighted local AUC): **0.751 [0.633, 0.866]**, null 95 % 0.629, p = 0.001; static 0.702; temporal 0.604. Combined − static +0.049 [−0.003, +0.108]: **no established weather benefit**. Per event: combined 0.668, static 0.521 (Stanz storm static 0.455).
 - Development CV: static 0.770, temporal 0.554, combined 0.725 (conditional logit).
 - Main predictors: roughness, forest (−), settlement/other land cover (+), TPI (−) — possibly partly reporting bias.
 
+- Pipeline B Stage 3 (14 groups, unit-held-out, 3 fold shuffles): within-group AUC change features LR 0.68 / HGB 0.69, contrast-only LR 0.74 (chance 0.5; permutation null 95 % 0.66, p = 0.06); shortcut sets ring-only 0.19–0.31 and nuisance-only 0.36–0.60 (no transferable positive signal). Held-out rediscovery in the 2.56 km patch: 7/14 hit within 160 m, 5/14 in the top 3, median localisation error 71 m, 3.0 peaks per km²; 102 UNVERIFIED candidates. Suggestive, not established: 12 units.
+
 # Known Problems
 
 Few independent units (11 test); Stanz dominance; reporting/placement bias in land-cover and terrain contrasts; coarse CORINE/geology; triggering rain after t0 invisible; INCA v1 retirement Dec 2026 (all V0.4 responses cached).
+
+Pipeline B: cloud/snow leave many events without a pair; only 2018+ events; small slides dilute in 10 m pixels; LR scores saturate (discovery uses log-odds); contrast-only advantage is post hoc; candidate types are heuristics; Sentinel-1 not integrated.
 
 # Next 3 Tasks
 
@@ -44,3 +58,5 @@ User's alternative V0.5 plan reviewed and extended in `reports/weiterentwicklung
 1. Interpret/present V0.4 honestly: terrain + land-cover signal replicated on a sealed test; weather increment unproven. Do not retune on the test.
 2. A new version (V0.5) would need more independent episodes: tier-2 media events as separately labelled data, tiers B/C, or a pre-registered case-crossover design (user decision).
 3. Optional QA: Sentinel-2 check of positive positions/controls and of the land-cover/reporting-bias question.
+
+Pipeline B next: (a) finish the full eligibility run and rebuild dataset/baseline/discovery/report on all usable groups (`python -m preslide.satellite dataset|baseline|discovery|report`); (b) manual inspection of the candidate inventory and `after_confirm` persistence check; (c) Sentinel-1 RTC change layer as extra bands, and a small unknown-region scan (Stage 6) only if Stage 5 holds on the full set.
