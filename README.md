@@ -141,3 +141,18 @@ Frontend development: start the API, then `npm run dev` in `frontend`. Vite prox
 ```
 
 All steps reuse verified checkpoints and cached API responses (`data/v04/cache/`). `--limit 1|5|20` runs pilots. The sealed test has been scored; `experiment test` refuses to run again. See `METHODOLOGY.md` (V0.4), `RESULTS.md`, `LIMITATIONS.md`, `reports/v04/`.
+
+## Pipeline B: Sentinel-2 before/after change signature and event discovery (separate outputs)
+
+Pipeline B deliberately uses post-event imagery to learn what documented events look like from above and to search for undocumented candidates. It never feeds the precursor model (Pipeline A): it reads the V0.4 positives/controls read-only and writes only `data/satellite/`, `models/satellite/`, `reports/satellite/` (`tests/test_satellite.py`).
+
+```powershell
+.\.venv\Scripts\python -m preslide.satellite eligibility --limit 5   # STAC search, local cloud/snow screening, group-level pair selection
+.\.venv\Scripts\python -m preslide.satellite dataset --limit 5       # aligned 2.56 km patches for positives + controls, change features
+.\.venv\Scripts\python -m preslide.satellite contact --limit 5       # contact sheets for mandatory visual inspection
+.\.venv\Scripts\python -m preslide.satellite baseline                # event-held-out logistic regression / gradient boosting + shortcut checks
+.\.venv\Scripts\python -m preslide.satellite discovery               # held-out rediscovery scan, UNVERIFIED candidate inventory
+.\.venv\Scripts\python -m preslide.satellite report                  # reports/satellite/*.md, data/satellite/web/results.json
+```
+
+`--limit 0` processes every eligible event. All STAC responses, scene-classification quicklooks and patches are cached with checksums. Configuration: `config/satellite.json`; sources: `DATA_SOURCES.md`.

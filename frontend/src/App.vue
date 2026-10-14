@@ -5,6 +5,7 @@ import StabilityFigures from './StabilityFigures.vue'
 import InfoTip from './InfoTip.vue'
 import EventExplorer from './EventExplorer.vue'
 import V04Results from './V04Results.vue'
+import SatelliteResults from './SatelliteResults.vue'
 import {explain} from './metricDefinitions.js'
 const summary=ref(null),bundle=ref(null),cases=ref([]),event=ref(null),selectedId=ref(''),selectedPoint=ref('Ereignishang')
 const loading=ref(true),caseLoading=ref(false),error=ref(''),weatherKind=ref('rain_mm'),model=ref('logistic_regression'),view=ref('test'),day=ref(0)
@@ -90,7 +91,7 @@ function featureLabel(f){
 <template>
   <header class="masthead">
     <a href="#" class="brand" aria-label="PreSlide Start"><svg width="36" height="30" viewBox="0 0 36 30" fill="none" aria-hidden="true"><path d="M2 26 14 5l8 13 4-6 9 14M8 26l7-12 8 12" stroke="currentColor" stroke-width="2.5"/></svg>PreSlide<span>V0.3</span></a>
-    <nav aria-label="Seitennavigation"><a href="#experiment">Experiment</a><a href="#warum">Warum</a><a href="#ergebnisse">Ergebnisse</a><a href="#einzelfaelle">Einzelfälle</a><a href="#methodik">Methodik</a></nav>
+    <nav aria-label="Seitennavigation"><a href="#experiment">Experiment</a><a href="#warum">Warum</a><a href="#ergebnisse">Ergebnisse</a><a href="#einzelfaelle">Einzelfälle</a><a href="#satellit">Satellit</a><a href="#methodik">Methodik</a></nav>
     <div class="research-tag">Lokaler Forschungsprototyp</div>
   </header>
   <main>
@@ -196,6 +197,8 @@ function featureLabel(f){
       </section>
 
       <V04Results/>
+
+      <SatelliteResults/>
 
       <section id="methodik" class="section methodology">
         <div class="section-heading"><div><p class="section-number">06 — Qualität vor Umfang</p><h2>Jeder Ausschluss bleibt sichtbar.</h2></div><span class="count-label">{{bundle?.dataset.candidates}} Kandidaten → {{summary.complete_events}} vollständige Gruppen</span></div>

@@ -37,3 +37,13 @@ The permutation null makes all six group members exchangeable. True positives ar
 - **Time of day.** t0 is a conservative lower bound; the triggering rain after t0 remains invisible. Same-day rain exists only for daypart/clock events (281 of 300 test events, mostly one storm).
 - **Concentration.** Steiermark dominates (Stanz); leave-one-state-out results range 0.44–0.93 (descriptive, small n). No geographic transferability claim.
 - **Not evaluated:** tier-B/C date tiers, tier-2 media events, Sentinel, ERA5-Land, case-crossover design.
+
+## Pipeline B (satellite)
+
+- Sentinel-2 L2A in the AWS collections starts over Austria in late 2017, so the 2016 Stanz storm (243 events) and the 2017 events have no pre-event imagery; the satellite dataset is dominated by 2018–2024 events and by Styria.
+- Cloud cover and snow leave many events without a usable pair within ±180/120 days; winter events are rarely usable, and pairs can be weeks apart, so the detected change is "between two clear dates", not "at the event date". Late-season or multi-month gaps mix harvest, mowing and forestry into the difference even after ring normalisation.
+- Small slides (tens of metres) occupy a few 10 m pixels; the 120 m window dilutes them and forest canopy can hide them. A positive without visible change is not evidence against the inventory record.
+- Controls share the acquisition pair but remain pseudo-negatives; several storm clusters put other known events inside a control's 960 m ring.
+- The two Earth Search collections store reflectance with different offsets and different Sen2Cor baselines (02.x vs 05.x); the per-collection offset was verified empirically and is checked at runtime, but residual radiometric differences between mixed-collection pairs remain (`same_collection` is recorded).
+- The held-out rediscovery scan searches only the 2.56 km patch around a known event; it is a localisation test, not evidence that the detector works on unknown regions. Candidate types in the false-positive analysis are heuristics for triage, not labels.
+- Sentinel-1 is not yet integrated; the architecture (per-sample grid, per-item patch cache, feature maps) is designed so that SAR change layers can be added as further bands.

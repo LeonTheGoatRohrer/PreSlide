@@ -21,3 +21,8 @@ archive/**/*.zip
 
 # Local Claude Code settings
 .claude/settings.local.json
+
+# Pipeline B (satellite): record-level tables with coordinates/source ids and local label mappings stay local
+reports/satellite/eligibility_report.csv
+reports/satellite/event_imagery_index.csv
+reports/satellite/candidate_inventory.csv
