@@ -204,13 +204,7 @@ Keep it concise.
 
 Do not use it as a detailed development diary.
 
-At the beginning of a new work session:
-
-1. read this `AGENTS.md`;
-2. read `PROJEKTUEBERBLICK.md` completely to understand the goal, scientific boundaries and current status;
-3. read `PROJECT_STATE.md` if it exists;
-4. inspect only the repository areas relevant to the current task;
-5. continue from the existing state.
+Session startup is defined once, in section 43.
 
 Do not redo completed work unless evidence indicates it is incorrect.
 
@@ -233,6 +227,11 @@ Static susceptibility is useful as a baseline, but the main research interest is
 # 9. Current V0 Scope
 
 Unless a task explicitly changes these decisions, treat them as settled.
+
+These are the original V0 targets. Later versions (V0.2–V0.4) deliberately extended them
+(more events, wider period, conditional logit, sealed test). The authoritative current scope
+and numbers are in `PROJECT_STATE.md` and `METHODOLOGY.md`; where they differ from the
+numbers below, those files win. Section 45 governs what may not be changed.
 
 ## Geographic scope
 
@@ -680,6 +679,22 @@ Highest-priority tests:
 
 A beautiful UI with an invalid dataset is a failed project.
 
+## Test quality rules
+
+- Every new safety test (leakage, grouping, CRS, date, cache) must be shown to **fail on a
+  deliberately injected bug** (e.g. move one control to another split, include `t0` in the
+  window, swap lat/lon) before it is trusted. A test that cannot fail protects nothing.
+- Test the boundaries: window end exactly at `t0`, a group of size 1, aspect 359°/1°,
+  antimeridian-free but UTM-zone-edge coordinates, empty/NaN weather, duplicate IDs.
+- Synthetic fixtures are allowed in unit tests only; they must be built in the test and never
+  written into `data/` or `reports/`.
+- Prefer property-style assertions (invariants over whole tables: "no group spans two
+  partitions", "all feature timestamps < t0") over spot checks of single rows.
+- A bug fix comes with a regression test that fails before and passes after the fix.
+- Skipped tests are a warning, not a pass. Report the skip count; never describe a run with
+  data-dependent skips as "all tests pass".
+- Seeds are fixed and recorded; results that change between two identical runs are a bug.
+
 ---
 
 # 27. Evaluation
@@ -944,39 +959,21 @@ Never reverse this order merely because frontend work is easier.
 
 ---
 
-# 39. Current Deadline Strategy
+# 39. Deadline Strategy
 
 The project has only a few days available.
 
-The critical objective is:
+The end-to-end pipeline (5-event pilot → 102 → 423 positives, model, sealed test) already
+exists and is verified. The "get one experiment working" phase is **finished**; do not rebuild it.
 
-> Get one complete real-data experiment working as early as possible.
-
-First establish:
-
-```text
-5 real positive events
-×
-5 real controls each
-+
-real terrain
-+
-real weather
-+
-real features
-+
-one trained model
-+
-one valid evaluation path
-```
-
-Once that works, scale toward:
+For any new version or data expansion keep the same discipline:
 
 ```text
-100–200 positives.
+pilot (1 → 5 → 20 events) → verify → full run
 ```
 
 Do not discover fundamental pipeline problems only after processing the full dataset.
+Unfinished experimental work is not allowed to endanger the frozen results (section 45).
 
 ---
 
@@ -1073,7 +1070,94 @@ Do not leave undocumented half-migrations or broken intermediate architecture.
 
 ---
 
-# 45. Final Decision Rule
+# 45. Frozen Artifacts and the Sealed Test
+
+These are write-once. Never edit, regenerate, "fix" or re-score them:
+
+- the V0.3 baseline (`reports/baseline/BASELINE_MANIFEST.json` hashes, `archive/v0.3-baseline/`);
+- `reports/v04/PREREGISTRATION.json`, `AMENDMENT_*.json`, `FREEZE.json`, the read-only `config/v04.json`;
+- the sealed V0.4 test result `reports/v04/test_results.json`. The sealed test has been scored
+  once; it is now **seen data**. Never tune, select features, filter events or choose models
+  with it. Any later analysis on those events is exploratory and must be labelled so.
+
+New work goes into a **new version namespace** (own `data/`, `models/`, `reports/` subfolder
+and config), registered *before* modelling. Changes to a registered design are amendments
+made before any model sees the data, written down with the reason, never silent edits.
+
+Do not "improve" a number by re-running with a new split, new seed or new filter after seeing
+results. If a result looks wrong, find the bug and document it; do not shop for a better run.
+
+# 46. Verification Commands (run before claiming "done")
+
+```text
+.\.venv\Scripts\python -m pytest -q                  # all Python tests; read the skip/error counts
+cd frontend; npm test; npm run build                 # UI wording tests + production build
+.\.venv\Scripts\python scripts/verify_state.py       # baseline invariants
+.\.venv\Scripts\python scripts/verify_v04.py         # V0.4 invariants
+.\.venv\Scripts\python scripts/archive_baseline.py --verify
+```
+
+- Only run what the change touches, but any change in `preslide/` that affects data, features,
+  splits or metrics requires pytest plus the matching verify script.
+- `data/`, `models/` and `.venv/` are gitignored and exist only in the main checkout. In a git
+  worktree they are missing: data-dependent tests then error or skip and the verify scripts
+  cannot run. Use the main checkout's `.venv` for a quick run, but do not report
+  data-dependent checks as passed from a worktree; say they were not run, or run them in the
+  main checkout.
+- Report failures with the actual output. Do not mark a check as passing from memory of an
+  earlier run.
+- Windows/PowerShell is the primary shell: use `.venv\Scripts\python`, forward-slash-safe
+  paths, no bash-only syntax in committed scripts.
+
+# 47. Code Quality Bar
+
+- Reuse before writing: search `preslide/` (`common.py`, `preslide/v04/*`) for an existing
+  helper (distance, CRS transform, circular distance, checkpoint IO, hashing) before adding a
+  new one. One implementation of each scientific primitive; tests cover that one.
+- Checkpoint IO goes through the existing hashed-sidecar helpers. Do not write ad-hoc
+  `to_parquet` / `json.dump` into cached pipeline directories.
+- Fail loudly on scientific preconditions (missing weather, NaN in a required feature,
+  unexpected CRS, empty control pool). Never silently fill, clip or drop; if rows are dropped,
+  count them by reason and write the counts to the report (see `admission.json`).
+- Type-hint public functions that handle time windows, CRS or splits; name units in
+  identifiers (`distance_m`, `window_days`, `t0_utc`). Use timezone-aware timestamps and say
+  which timezone.
+- Configuration lives in `config/*.json`; no magic numbers for thresholds, buffers, windows or
+  seeds inside code. A config change must change the cache/run identity hash.
+- No new dependency without need; if added, update `requirements-lock.txt` and say why.
+- Keep functions small and pure where possible (pure function + thin IO wrapper) so that
+  leakage and grouping logic is unit-testable without data.
+- Do not leave dead code, commented-out experiments or one-off probe scripts in `preslide/`
+  (put throwaway probes in `scripts/`, clearly named, or in the scratchpad).
+
+# 48. Statistical Claims
+
+- Effective sample size is the number of **independent units** (temporal episodes / blocks),
+  not the number of rows or events. Always state it next to any metric.
+- Every headline metric comes with an uncertainty interval from a resampling scheme that
+  respects those units, plus the null reference (permutation or equivalent) when one exists.
+- A difference between models (e.g. combined vs. static) is a *paired* quantity with its own
+  interval. "Better" is only claimed if that interval excludes zero; otherwise write
+  "no established benefit".
+- Count every comparison that was looked at; do not report only the best one. Exploratory
+  results are labelled exploratory.
+- Watch for single-cluster dominance (one storm, one region) and report results with that
+  cluster removed when it holds a large share of events.
+- Inventory data carries reporting and placement bias (roads, settlements, forests). Before
+  interpreting a predictor as environmental signal, state whether it may be a reporting
+  artefact.
+
+# 49. Git Workflow
+
+- Commit each verified milestone with a clear message; push as the user's standing rule says
+  (commit and push every milestone). Do not commit generated data, models, record-level
+  tables or secrets (see `.gitignore`); never use `--no-verify`.
+- Do not rewrite or force-push history that contains frozen artifacts.
+- Never commit in a state where tests that passed before now fail without saying so.
+
+---
+
+# 50. Final Decision Rule
 
 When choosing between:
 
