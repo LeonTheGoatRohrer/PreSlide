@@ -152,6 +152,7 @@ All steps reuse verified checkpoints and cached API responses (`data/v04/cache/`
 .\.venv\Scripts\python -m preslide.v05.partition freeze               # cohort + CV/purge plan (write-once)
 .\.venv\Scripts\python -m preslide.v05.experiment main                # registered analysis
 .\.venv\Scripts\python -m preslide.v05.report                         # reports/v05/summary.md
+.\.venv\Scripts\python -m preslide.v05.web                            # bundle for web section 08 (/api/results_v05)
 .\.venv\Scripts\python scripts\verify_v05.py                          # PASS/FAIL
 ```
 

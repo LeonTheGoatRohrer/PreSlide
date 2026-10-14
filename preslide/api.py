@@ -44,6 +44,13 @@ def results_v04():
     if not path.exists(): raise HTTPException(503,'V0.4-Ergebnisse fehlen: python -m preslide.v04.report')
     return read_json(path)
 
+@app.get('/api/results_v05')
+def results_v05():
+    # Separate V0.5 bundle (python -m preslide.v05.web); aggregates plus eight ID-selected example groups, local only.
+    path=ROOT/'data/v05/web/results.json'
+    if not path.exists(): raise HTTPException(503,'V0.5-Ergebnisse fehlen: python -m preslide.v05.web')
+    return read_json(path)
+
 @app.get('/api/cases')
 def cases():
     return read_json(demo_directory()/'cases.json')
