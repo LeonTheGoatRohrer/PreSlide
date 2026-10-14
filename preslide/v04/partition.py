@@ -61,14 +61,14 @@ def run(pilot=False):
     accept = p90 is not None and p90 < 0.5
     unit_col = 'st_unit' if accept else 'temporal_episode'
     index_of = {g: i for i, g in zip(cand.index, cand.event_group_id)}
-    overlap = {(index_of[a], index_of[b]) for a, b in units.sample_pairs_between_groups(data, cfg['matching']['control_separation_m'])}
+    overlap = {(index_of[a], index_of[b]) for a, b in units.sample_pairs_between_groups(data, cfg['matching']['control_separation_m'], positive_involved=True)}
     cand['independence_unit'] = units.blocks(cand, unit_col, extra_pairs=overlap)
     cand['partition'] = units.partition(cand, 'independence_unit')
     # Spatial purge: a test group with any sample < 1 km from a development sample moves to development.
     moved = []
     while True:
         side = data.event_group_id.map(cand.set_index('event_group_id').partition)
-        near = units.sample_pairs_between_groups(data, 1000)
+        near = units.sample_pairs_between_groups(data, 1000, positive_involved=True)
         cross = {a if side[data.event_group_id == a].iloc[0] == 'sealed_test' else b
                  for a, b in near if cand.set_index('event_group_id').partition[a] != cand.set_index('event_group_id').partition[b]}
         if not cross:
@@ -90,7 +90,8 @@ def run(pilot=False):
     summary = {'dependence_check': {'pairs': int(len(check)), 'finite_pairs': int(len(finite)), 'p90_pearson_r': p90,
                                     'median_pearson_r': float(finite.median()) if len(finite) else None,
                                     'threshold': 0.5, 'spatiotemporal_units_accepted': bool(accept)},
-               'independence_unit_definition': unit_col + ' + location links (positives < 2 km, samples < 400 m)',
+               'independence_unit_definition': unit_col + ' + location links (positives < 2 km; positive-involving sample pairs < 400 m, amendment 1)',
+               'amendment': 'reports/v04/AMENDMENT_1.json',
                'units': int(table.independence_unit.nunique()), 'moved_to_development_by_1km_purge': moved,
                'partition': {p: {'events': int(len(g)), 'units': int(g.independence_unit.nunique()),
                                  'temporal_episodes': int(g.temporal_episode.nunique()),

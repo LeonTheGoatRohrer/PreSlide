@@ -1,0 +1,14 @@
+{
+  "amendment": 1,
+  "date": "2026-10-14",
+  "made_before": "any V0.4 model was fit or any V0.4 score was computed (development or test)",
+  "information_used": "partition sizes and the label composition of cross-episode sample overlaps only (no feature-label association, no score)",
+  "registered_rule": "independence unit = temporal episode + positives < 2 km + ANY two samples of different groups < 400 m; dev/test purge if ANY sample of a test group is < 1 km from ANY development sample",
+  "observed_with_registered_rule": {"units": 22, "development_events": 419, "sealed_test_events": 4, "sealed_test_units": 3,
+                                    "cross_episode_sample_pairs_below_400m": {"control_control": 543, "positive_positive": 6, "positive_control": 0}},
+  "problem": "Transitive chaining through control-control overlaps merged almost all temporal episodes into one block, leaving a 4-event test. Controls overlapping controls carry the same label (pseudo-negative) and transmit no label information across partitions.",
+  "amended_rule": "location links and the 1 km dev/test purge use only sample pairs in which at least one sample is a positive (positive-positive and positive-control). Positives < 2 km on any dates remain linked. Everything else unchanged.",
+  "result_of_amended_rule": {"units": 30, "development_events": 123, "development_units": 19, "sealed_test_events": 300, "sealed_test_units": 11, "groups_moved_by_purge": 0},
+  "residual_risk": "Test controls may lie near development controls (same label). Tree models could in principle memorise such locations; linear models cannot exploit identity. Reported as a limitation.",
+  "superseded_files": "data/v04/partition/superseded_registered_rule/"
+}

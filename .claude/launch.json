@@ -4,8 +4,30 @@
     {
       "name": "preslide-api",
       "runtimeExecutable": ".venv/Scripts/python.exe",
-      "runtimeArgs": ["-m", "uvicorn", "preslide.api:app", "--host", "127.0.0.1", "--port", "8010"],
+      "runtimeArgs": [
+        "-m",
+        "uvicorn",
+        "preslide.api:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8010"
+      ],
       "port": 8010
+    },
+    {
+      "name": "preslide-api-v04",
+      "runtimeExecutable": ".venv/Scripts/python.exe",
+      "runtimeArgs": [
+        "-m",
+        "uvicorn",
+        "preslide.api:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8020"
+      ],
+      "port": 8020
     }
   ]
 }

@@ -135,9 +135,22 @@ def run():
             L += ['', f"Teilmenge mit bekannter Tageszeit (Test): {tk['events']} Ereignisse / {tk['units']} Einheiten, kombinierte bed. log. Regression lokale AUC {tk['local_auc_weighted']:.3f}."]
     else:
         L += ['## Versiegelter externer Test', '', 'Noch nicht ausgewertet.']
+    freeze = V04_REPORT / 'FREEZE.json'
+    if freeze.exists():
+        import joblib
+        L += ['', '## Worauf sich das finale Modell stützt (bedingte log. Regression, standardisierte Koeffizienten)', '',
+              'Auf allen Entwicklungsdaten gefittet; Vorzeichen = Richtung innerhalb der Gruppe. Keine Kausalaussage.', '']
+        for variant in ('static', 'combined'):
+            path = [k for k in read_json(freeze)['models'] if k.endswith(f'conditional_logit_{variant}.joblib')][0]
+            b = joblib.load(ROOT / path)
+            coef = pd.Series(b['model'].coef_, index=b['columns']).sort_values(key=abs, ascending=False).head(8)
+            L.append(f"- {variant}: " + ', '.join(f'{k} {v:+.2f}' for k, v in coef.items()))
     L += ['', '## Einordnung', '',
           'Kontrollen sind Pseudo-Negative. Werte sind Rangvergleiche innerhalb gematchter Gruppen, keine Rutschungswahrscheinlichkeiten. '
-          'Modellgewichte zeigen, worauf sich ein Modell stützt, nicht Ursachen. Ohne eigene räumliche Prüfung wird keine geografische Übertragbarkeit behauptet.', '']
+          'Modellgewichte zeigen, worauf sich ein Modell stützt, nicht Ursachen. Ohne eigene räumliche Prüfung wird keine geografische Übertragbarkeit behauptet.',
+          'Der Landbedeckungskontrast (Positive seltener im Wald, häufiger auf Grünland und Siedlungs-/Verkehrsflächen) kann physikalisch und durch Meldebias '
+          '(an Infrastruktur und Siedlungen werden Ereignisse eher dokumentiert) entstehen; beides lässt sich mit diesen Daten nicht trennen. '
+          'Gelände- und Positionsmerkmale am Positiv hängen zudem von der Verortungskonvention der Inventarpunkte ab.', '']
     (V04_REPORT / 'summary.md').write_text('\n'.join(L), encoding='utf-8')
     web = {'version': 'V0.4', 'generated_from': ['reports/v04/dev_metrics.json', 'reports/v04/test_results.json', 'reports/v04/partition_summary.json'],
            'counts': {'candidates': audit['main_candidates'], 'complete_groups': int(data.event_group_id.nunique()),
@@ -148,7 +161,7 @@ def run():
            'test': None if not test else {'primary': test['primary'], 'results': test['results'], 'n': test['test'],
                                           'null': test['random_rank_null']}}
     write_json(guard(V04_DATA / 'web') / 'results.json', web)
-    print('\n'.join(L[:60]))
+    print(f'wrote reports/v04/summary.md ({len(L)} lines)')
 
 
 if __name__ == '__main__':

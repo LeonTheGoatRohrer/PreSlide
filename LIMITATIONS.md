@@ -26,3 +26,14 @@ Five repeated grouped partitions reuse 45 events in only 16 dependency clusters;
 ## V0.3 null reference
 
 The permutation null makes all six group members exchangeable. True positives are additionally the centre of their control search, so terrain-only deviations from the null can stem from design structure. p-values are empirical (100 draws), uncorrected for the 12 delta and 27 absolute statistics examined, and computed on repeated splits of the same 45 events. A null result at this sample size does not exclude weak weather effects.
+
+## V0.4
+
+- **Few independent units.** 423 groups but only 19 development and 11 test units; the test interval (0.63–0.87) is wide and the weighted metric is driven by several 1–2-event units. Per-event results are lower (0.668 combined) because the Stanz storm (243 events) is weak under the terrain model.
+- **Weather benefit unproven.** Combined − static on the test is +0.049 with a 95 % interval touching zero; development shows the opposite sign. No claim that pre-event weather improves the spatial ranking.
+- **Reporting bias.** The strongest predictors are land cover (forest −, settlement/traffic and grassland +). Inventory events near infrastructure are more likely to be documented; physics and detection bias cannot be separated. Point placement conventions (e.g. upper scarp in orthophoto mapping) affect TPI/curvature at the positive.
+- **Protocol amendment.** Location links were changed once, before modelling, to positive-involving overlaps (AMENDMENT_1). Test controls may lie near development controls (same label).
+- **Coarse context data.** CORINE (25 ha MMU, 100 m) and 1:500 000 geology are coarse; 30 m DEM; 10 m DGM rejected because it is not demonstrably pre-event. WINFORE not admitted (pilot coverage 86 %).
+- **Time of day.** t0 is a conservative lower bound; the triggering rain after t0 remains invisible. Same-day rain exists only for daypart/clock events (281 of 300 test events, mostly one storm).
+- **Concentration.** Steiermark dominates (Stanz); leave-one-state-out results range 0.44–0.93 (descriptive, small n). No geographic transferability claim.
+- **Not evaluated:** tier-B/C date tiers, tier-2 media events, Sentinel, ERA5-Land, case-crossover design.

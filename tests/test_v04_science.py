@@ -225,3 +225,24 @@ def test_guard_refuses_baseline_and_foreign_paths():
         guard(ROOT / 'reports/experiment')
     with pytest.raises(RuntimeError):
         guard(ROOT / 'data/processed/046074ba6f12556c')
+
+
+def test_amendment_links_only_positive_involved_overlaps():
+    s = pd.DataFrame({'event_group_id': ['a', 'a', 'b', 'b', 'c', 'c'], 'label': [1, 0, 1, 0, 1, 0],
+                      'x': [0, 5000, 20000, 5100, 40000, 20100], 'y': [0] * 6})
+    assert units.sample_pairs_between_groups(s, 400) == {('a', 'b'), ('b', 'c')}
+    # a/b overlap only control-control (same label) -> not linked; b/c is positive-control -> linked
+    assert units.sample_pairs_between_groups(s, 400, positive_involved=True) == {('b', 'c')}
+
+
+def test_frozen_partition_keeps_groups_and_episodes_on_one_side():
+    import json
+    from preslide.v04.paths import V04_DATA
+    p = V04_DATA / 'partition/partition.json'
+    if not p.exists():
+        pytest.skip('partition not yet frozen')
+    t = pd.DataFrame(json.loads(p.read_text(encoding='utf-8')))
+    assert not t.event_group_id.duplicated().any()
+    assert t.groupby('independence_unit').partition.nunique().max() == 1
+    assert t.groupby('temporal_episode').partition.nunique().max() == 1
+    assert not t[(t.partition == 'sealed_test') & t.in_v03_baseline_candidates].shape[0]

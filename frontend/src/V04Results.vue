@@ -27,8 +27,9 @@ const parts=computed(()=>Object.entries(data.value?.counts.partition||{}))
         <p>Lokale AUC der kombinierten bedingten logistischen Regression, jede Einheit gleich gewichtet: <b>{{n(data.test.primary.value)}}</b> (95 %: {{n(data.test.primary.ci95[0])}}–{{n(data.test.primary.ci95[1])}}). Zufall: 0,5; 95 % der Zufallsrangfolgen liegen unter {{n(data.test.primary.random_rank_null_q95)}}. Kombiniert minus Gelände: {{n(data.test.primary.combined_minus_static.mean)}} (95 %: {{n(data.test.primary.combined_minus_static.ci95[0])}} bis {{n(data.test.primary.combined_minus_static.ci95[1])}}).</p>
       </div>
       <h3>Versiegelter Test</h3>
-      <table v-if="testRows.length"><thead><tr><th>Modell</th><th>Merkmale</th><th>lokale AUC</th><th>Top-1</th><th>lokale AP</th><th>p gegen Zufall</th></tr></thead>
-        <tbody><tr v-for="r in testRows" :key="r.key"><td>{{r.model}}</td><td>{{r.variant}}</td><td>{{n(r.local_auc_weighted)}}</td><td>{{n(r.top1_weighted)}}</td><td>{{n(r.local_ap_weighted)}}</td><td>{{n(r.p_upper_vs_random_rank)}}</td></tr></tbody></table>
+      <table v-if="testRows.length"><thead><tr><th>Modell</th><th>Merkmale</th><th>lokale AUC</th><th>Top-1</th><th>lokale AP</th><th>lokale AUC je Ereignis</th><th>p gegen Zufall</th></tr></thead>
+        <tbody><tr v-for="r in testRows" :key="r.key"><td>{{r.model}}</td><td>{{r.variant}}</td><td>{{n(r.local_auc_weighted)}}</td><td>{{n(r.top1_weighted)}}</td><td>{{n(r.local_ap_weighted)}}</td><td>{{n(r.local_auc_events)}}</td><td>{{n(r.p_upper_vs_random_rank)}}</td></tr></tbody></table>
+      <p class="section-intro">„Lokale AUC“ gewichtet jede unabhängige Einheit gleich; „je Ereignis“ gewichtet jedes Ereignis gleich und wird daher vom größten Sturm im Test dominiert. Große Unterschiede zwischen beiden Spalten zeigen, dass das Ergebnis von wenigen Episoden abhängt.</p>
       <h3>Entwicklung (gruppierte Kreuzvalidierung, Median aus 5 Wiederholungen)</h3>
       <table><thead><tr><th>Modell</th><th>Merkmale</th><th>lokale AUC</th><th>Top-1</th><th>lokale AP</th></tr></thead>
         <tbody><tr v-for="r in devRows" :key="r.key"><td>{{r.model}}</td><td>{{r.variant}}</td><td>{{n(r.local_auc_weighted)}}</td><td>{{n(r.top1_weighted)}}</td><td>{{n(r.local_ap_weighted)}}</td></tr></tbody></table>
@@ -41,5 +42,5 @@ const parts=computed(()=>Object.entries(data.value?.counts.partition||{}))
 .v04 table{width:100%;border-collapse:collapse;margin:.5rem 0 1.5rem;font-size:.92rem}
 .v04 th,.v04 td{padding:.35rem .5rem;border-bottom:1px solid var(--line,#ddd);text-align:left}
 .v04 td:nth-child(n+3),.v04 th:nth-child(n+3){text-align:right}
-@media (max-width:600px){.v04 table{font-size:.8rem}.v04 th,.v04 td{padding:.25rem}}
+@media (max-width:600px){.v04 table{font-size:.8rem;display:block;overflow-x:auto}.v04 th,.v04 td{padding:.25rem}}
 </style>

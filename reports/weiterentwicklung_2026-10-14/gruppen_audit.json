@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-14",
+  "status": "candidate_potential_only_not_new_training_or_evaluation",
+  "input_sha256": {
+    "data/v04/audit/candidates.json": "3689f40ed2b3700a35bd2ac076f572cfff1822475d36b2d91d38341dbd4e97b0",
+    "data/v04/audit/audit_exclusions.json": "3fb904e6ce49afad7236a4a424e629872e55693c75ad42d798ee778d96f5eb92",
+    "data/v04/partition/partition.json": "6daa4be3c63d675d962d31ccc66c98d0e98a816c7148afa9afba5a5d94baf9e1",
+    "preslide/v04/units.py": "58d737c83fbacea254823d975246dd231a13a4705fed079d03cf4a2d2e824660"
+  },
+  "rules": {
+    "date_selection": "existing date_tier; no new event dates inferred",
+    "media_selection": "reason=tier2_media_not_in_main_analysis AND date_tier=A_narrative_day",
+    "structured_selection": "reason=secondary_date_tier_not_in_main_analysis AND quality_tier=1 AND date_tier=C_structured_day_only",
+    "deduplication": [
+      "longitude",
+      "latitude",
+      "event_day"
+    ],
+    "temporal_episode": "existing temporal_episodes: consecutive observed days linked at gap <=3 days",
+    "provisional_block": "existing blocks: temporal episode plus positive-positive links <2000m; no new controls or sample overlap links"
+  },
+  "cohorts": {
+    "main_A": {
+      "candidate_events": 500,
+      "distinct_days": 75,
+      "temporal_episodes": 48,
+      "provisional_blocks_positive_2km": 35
+    },
+    "main_A_plus_media_A": {
+      "candidate_events": 823,
+      "distinct_days": 197,
+      "temporal_episodes": 110,
+      "provisional_blocks_positive_2km": 66
+    },
+    "main_A_plus_media_A_plus_C": {
+      "candidate_events": 902,
+      "distinct_days": 199,
+      "temporal_episodes": 111,
+      "provisional_blocks_positive_2km": 64
+    }
+  },
+  "existing_completed_partition": {
+    "development": {
+      "events": 123,
+      "units": 19,
+      "temporal_episodes": 24
+    },
+    "sealed_test": {
+      "events": 300,
+      "units": 11,
+      "temporal_episodes": 12
+    }
+  },
+  "limitations": [
+    "not a national maximum",
+    "media quality not established as equivalent to tier 1",
+    "no new matching, environmental coverage or dependence validation",
+    "groups may merge or split when cohort changes",
+    "new development/test allocation not performed",
+    "all existing V0.4 test results already seen"
+  ]
+}

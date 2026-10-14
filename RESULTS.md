@@ -99,3 +99,32 @@ All 180 planned primary fits completed on 45 development events / 16 frozen clus
 ## V0.3 null reference — separate exploratory analysis (2026-10-14)
 
 Predeclared (`config/null_v03.json`), development cohort only, frozen V0.2 folds and unchanged models; 100 within-group label permutations. No variant containing weather features is distinguishable from the null (all p_upper ≥ 0.28). The V0.2 Random Forest local-ranking gain (+0.136, p = 0.04) reflects a terrain-only baseline below the null (0.416), not above-null weather performance. Null 90 % band for development within-group AUC ≈ 0.41–0.60, so only strong effects are detectable at this size. Original-test RF values (within-group AUC 0.747) are not reproduced in development and are best treated as chance-compatible. Full table: [reports/null_v03/summary.md](reports/null_v03/summary.md). Independent re-verification of all stored metrics: `reports/verification/independent_checks.json` (PASS).
+
+## V0.4 — pre-registered extension with sealed external test (2026-10-14; separate version)
+
+Full report generated from artifacts: `reports/v04/summary.md`. Verification: `scripts/verify_v04.py` → `reports/v04/verification.json` PASS. V0–V0.3 results above are unchanged.
+
+**Data.** 500 tier-1 candidates with a narrative-confirmed day (2016–2026; no tier-A event before 2016 exists) in 48 temporal episodes → **423 complete groups (2 538 samples)**. Exclusions: 27 missing INCA values, 26 too few controls, 15 DEM slope < 5°, 9 negative precipitation. Spatio-temporal 50 km units were rejected by the pre-registered dependence check (90th percentile r = 0.64 ≥ 0.5); independence units are temporal episodes plus location links.
+
+| Partition | Events | Independence units | Temporal episodes |
+|---|---:|---:|---:|
+| Development (all 60 baseline groups + same-storm events) | 123 | 19 | 24 |
+| Sealed external test (baseline-free storms) | 300 | 11 | 12 |
+
+Protocol amendment 1 (`reports/v04/AMENDMENT_1.json`, before any model): the registered rule linked groups through control–control overlaps and left a 4-event test; links and purge now use only positive-involving overlaps.
+
+**Development (5 × 5 grouped CV, unit-weighted within-group AUC, median of repetitions):** static 0.770 (conditional logit), 0.762 (LR), 0.687 (GB); temporal 0.554 / 0.484 / 0.461; combined 0.725 / 0.725 / 0.630. Label-permutation 90 % band ≈ 0.35–0.64. Weather did not add to terrain in development (conditional logit static − combined +0.061 [−0.006, +0.150]).
+
+**Sealed test, scored once** (11 units, 300 events):
+
+| Model | Static | Temporal | Combined | Combined, per-event mean |
+|---|---:|---:|---:|---:|
+| Conditional logit (primary) | 0.702 | 0.604 | **0.751** [0.633–0.866] | 0.668 |
+| Logistic regression | 0.702 | 0.667 | 0.719 | 0.639 |
+| Gradient boosting | 0.580 | 0.622 | 0.616 | 0.627 |
+
+Random-rank null (same weights): mean 0.50, 95 % quantile 0.629; primary p = 0.001. **Combined − static: +0.049 [−0.003, +0.108] — weather benefit not established.** Top-1 (combined) 0.373 vs chance 0.167.
+
+Per unit (conditional logit): the Stanz storm 2016-07-25 (243 events) has static 0.455, temporal 0.574, combined 0.631; the next units (26 and 16 events) have static 0.815/0.850 and combined 0.846/0.812. The weighted result therefore rests on 11 units, several with 1–2 events, and the largest storm behaves differently. Breakdown: `reports/v04/test_by_unit_conditional_logit.json`.
+
+The final conditional logit relies most on terrain roughness (+), forest cover (−), artificial/other land cover (+), TPI 150 m (−) and grassland (+); in the combined model also on recent rain features. This is predictive reliance, not causation; land-cover contrasts may partly reflect where events get reported.

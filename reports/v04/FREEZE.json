@@ -1,0 +1,45 @@
+{
+  "frozen_at": "2026-10-14T15:39:31.961634+00:00",
+  "config_sha256": "c6d67a854ba78b2b46103fa9e5c0bbc1d3e3934210d1e5c22d3fb37c2ca4fcf2",
+  "partition_sha256": "6daa4be3c63d675d962d31ccc66c98d0e98a816c7148afa9afba5a5d94baf9e1",
+  "dataset_sha256": "ea6950102f2e437c3aebbdfe12f91b20b81a6e41ef59120474d4351c9e1077a2",
+  "dev_metrics_sha256": "2b1ea4a6758140fa7533ea70792db86a1d473c08eff6037f3e98d94cf3fa04e7",
+  "admission_sha256": "11acaebe1b66b2f0eab7f2aac1ef627e1514640ebea96de0fe5407b48543efb4",
+  "code_sha256": {
+    "preslide/v04/__init__.py": "2d7f64b074ba1c05aa49d5c8ebc03ad744f5cb549730bd5fb0ddadc802993ef5",
+    "preslide/v04/audit.py": "d046229912d259f87f16788185695fbea1daa7d239743d2becb7d894c8ee2214",
+    "preslide/v04/context.py": "8d41290f20d3d305ea6f7d4c6c4965dd2714d1f97dd00434fa3d3d91a5c7df71",
+    "preslide/v04/dates.py": "ff4addc397276269eb910649270fd90799dc1bd870dab183d5233ea2562f32af",
+    "preslide/v04/experiment.py": "e849171002053726a0865660308e9c15d3f3f9c0c5fc9ba2e2eacc5a464cac7f",
+    "preslide/v04/http.py": "8fe801138b6e75a2d90045450331847d945c93bdce0bdb9ec2c4c037c2165de9",
+    "preslide/v04/models.py": "b34fb174363408c314f715ece5cf92bbdb42ad136faedccdd0c0e89f8b4b6b7b",
+    "preslide/v04/partition.py": "a90638b8025c5ecbb9fcfe371bda9a23ce7d98047cebc25234e1a660627f2ea8",
+    "preslide/v04/paths.py": "0e6c1ba1ed526e8308af0089254a01cecec110d98c04a7eaf58136b5282f2c41",
+    "preslide/v04/pipeline.py": "c81992a85093b119121a927ceff430b2418ed4fee03fd38e087a247f1e4ad181",
+    "preslide/v04/report.py": "2720fe0e937448ee2801389ea3187cba933739935e1320d342e641a8bac52964",
+    "preslide/v04/terrain.py": "1adbb77bc668d8a53333d0cd963523f821a893dbdb264c1265b43394ada06cb9",
+    "preslide/v04/units.py": "58d737c83fbacea254823d975246dd231a13a4705fed079d03cf4a2d2e824660",
+    "preslide/v04/weather.py": "1b19432e7c7b1c6aa3a51d38d5bde5e87ceeb2427d1b391721c8c717649bde54"
+  },
+  "models": {
+    "models/v04/final_c6d67a854ba7/conditional_logit_static.joblib": "fbce46ad7f25e43e9ca954b177f4a5dea2e40680fa5fa035217cfcba15e753b4",
+    "models/v04/final_c6d67a854ba7/conditional_logit_temporal.joblib": "2c36b19f96ca8a73c430917dd318c00549c435f7f64e267f7a92e7b4915709c4",
+    "models/v04/final_c6d67a854ba7/conditional_logit_combined.joblib": "5b45ddf945144b15658254015e4bce6598d4b8fb6ae1ea9a26fedc5f7e48f172",
+    "models/v04/final_c6d67a854ba7/logistic_regression_static.joblib": "35f4c061d57527637bae5baefa1143984eeda0e2a1042aaa7cdecc4efb4d2651",
+    "models/v04/final_c6d67a854ba7/logistic_regression_temporal.joblib": "362915e2992c92be7e578bcd8592fbfc32734879ac7642b9f7b50c45310fcb94",
+    "models/v04/final_c6d67a854ba7/logistic_regression_combined.joblib": "5e31b75bb9e2173e95b1009707333bf4934128cb48af70cc39b6d635fac541b2",
+    "models/v04/final_c6d67a854ba7/hist_gradient_boosting_static.joblib": "1693cffff232b5c5384a70a106af4ab75c2cd1e5b819c7ed314b00b1ced94060",
+    "models/v04/final_c6d67a854ba7/hist_gradient_boosting_temporal.joblib": "51a927130471789b85d3111c2781a0bbaf6d874718462f3cb56cf075add08bef",
+    "models/v04/final_c6d67a854ba7/hist_gradient_boosting_combined.joblib": "3b6ff9dce5a5f50598c3b23b18fd0f916e9b9bbafe2a5e51d4833c2f397c8dfd"
+  },
+  "admitted_daily_features": [
+    "spartacus_rr_90d",
+    "spartacus_rr_180d",
+    "swe_last",
+    "snow_depth_last",
+    "swe_melt_3d",
+    "swe_melt_7d",
+    "swe_melt_14d"
+  ],
+  "statement": "All V0.4 data rules, features, models and code are fixed. The sealed test is scored once after this point."
+}

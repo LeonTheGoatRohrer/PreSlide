@@ -1,6 +1,6 @@
 # PreSlide — Ziel, Projektstand und Orientierung
 
-**Stand: 14. Oktober 2026. Diese Datei zu Beginn jeder Session vollständig lesen.**
+**Stand: 14. Oktober 2026 (nach V0.4). Diese Datei zu Beginn jeder Session vollständig lesen.**
 Danach `PROJECT_STATE.md` für den technischen Arbeitsstand lesen. Bei Widersprüchen die gespeicherten Artefakte prüfen; keine Ergebnisse erfinden oder historische Experimente überschreiben.
 
 ## Was ist PreSlide?
@@ -51,7 +51,7 @@ Ereignisse und ihre Kontrollen bleiben zusammen. Zusätzliche Abhängigkeitsgrup
 
 Original-Test und separater Steiermark-Test wurden bereits angesehen. **Sie dürfen nicht zur Auswahl neuer Merkmale, Modelle, Parameter, Schwellen oder günstiger Analysen genutzt werden.** Originaldatensatz, Zuordnungen, Matching, Modelle, Berichte und Testvorhersagen bleiben unverändert. Historische Resultate stehen in `reports/experiment/metrics.json` und im ursprünglichen Abschnitt von `RESULTS.md`.
 
-## V0.2: aktueller Forschungsstand
+## V0.2: Stabilitätsanalyse
 
 Der V0.1-Stabilitätsplan wurde im Chat „Build PreSlide V0 prototype“ gefunden. Seine Vorgaben sind mit den Zusatzdiagnosen in `config/stability_v02.json` eingefroren.
 
@@ -98,11 +98,21 @@ Alle bisherigen Ergebnisse auf Datensatz `046074ba6f12556c` sind als **PreSlide 
 
 Unter den bisherigen Qualitätskriterien enthält die Quelle genau die 102 bereits genutzten Kandidaten. Mehr Daten erfordern eine neue, vorab festgelegte Version (V0.4) mit geänderten Einschlusskriterien oder einer weiteren Quelle, außerdem einen versionierten Lauf, der die Baseline nicht überschreibt.
 
+## V0.4: erweitertes Experiment mit versiegeltem Test (14.10.2026, abgeschlossen)
+
+Vorab registriert (`config/v04.json`, Prüfsumme in `reports/v04/PREREGISTRATION.json`), getrennt von der Baseline gespeichert (`data/v04/`, `models/v04/`, `reports/v04/`). Die Baseline wurde vorher zusätzlich schreibgeschützt archiviert (`archive/v0.3-baseline/`) und ist nachweislich unverändert.
+
+- **Ereignisse:** alle Ereignisse ab 2011 mit gesichertem Tag (Freitext und Strukturintervall stimmen überein), ohne Obergrenze je Sturm. Tag bekannt und Uhrzeit bekannt werden getrennt geführt; t0 ist immer eine konservative Untergrenze. 500 Kandidaten → **423 vollständige Gruppen**. Medienereignisse ohne Qualitätsfelder sowie Zwei-Tages- und Nur-Strukturdaten wurden gezählt, aber nicht verwendet.
+- **Merkmale:** neu Krümmung, Rauigkeit, Hangposition, Einzugsgebiet/TWI (mit Randprüfung), CORINE-Landbedeckung (Kartenstand vor t0), Geologie 1:500 000, INCA-Regen am Ereignistag vor t0, SPARTACUS 90/180 Tage, SNOWGRID. WINFORE und das 10-m-DGM wurden nach Prüfung nicht verwendet.
+- **Aufteilung:** Stürme mit Baseline-Ereignis → Entwicklung (123 Ereignisse, 19 Einheiten); alle übrigen Stürme → versiegelter Test (300 Ereignisse, 11 Einheiten). Eine dokumentierte Protokolländerung vor der Modellierung war nötig, weil die registrierte Verknüpfungsregel den Test auf 4 Ereignisse reduziert hätte.
+- **Ergebnis (Test, genau einmal):** bedingte logistische Regression, Gelände + Wetter: gewichtete lokale AUC **0,751** [0,633–0,866], deutlich über Zufall (0,5; p = 0,001). Gelände allein 0,702, Wetter allein 0,604. **Der Zusatznutzen des Wetters (+0,049 [−0,003; +0,108]) ist nicht belegt.** Pro Ereignis gerechnet ist das Ergebnis schwächer (0,668), weil der große Stanz-Sturm (243 Ereignisse) anders reagiert.
+- **Wichtigste Einschränkung:** Das Modell stützt sich vor allem auf Landbedeckung (weniger Wald, mehr Grünland und Siedlungs-/Verkehrsflächen am betroffenen Hang) und lokale Geländeform. Ein Teil davon kann Meldebias sein. Nur 11 unabhängige Testeinheiten.
+
+Berichte: `reports/v04/summary.md`; Nachweis: `reports/v04/verification.json` (PASS). Weboberfläche: Abschnitt 07, getrennt von den alten Ergebnissen.
+
 ## Genau eine nächste wissenschaftliche Priorität
 
-**Zusätzliche unabhängige Wetter- und Ereignisepisoden mit verifizierten Ereignispositionen als vorab festgelegten externen Prüfbestand gewinnen.**
-
-Damit soll die Aussage unabhängig überprüft werden. Mehr Zeilen oder ein komplexeres Modell versprechen aufgrund der bisherigen Ergebnisse keine automatische Verbesserung. Bestehende schwierige Ereignisse werden nicht entfernt.
+**Den in V0.4 gefundenen Gelände- und Landbedeckungseffekt gegen Meldebias absichern und mehr unabhängige Episoden gewinnen** (z. B. getrennt gekennzeichnete Medienereignisse, vorab registriertes Case-Crossover-Design oder Satellitenprüfung der Positionen). Jede Erweiterung ist eine neue Version; der V0.4-Test ist jetzt gesehen und darf keine Auswahl mehr steuern.
 
 ## Feste Regeln für weitere Sessions
 
@@ -128,6 +138,9 @@ Damit soll die Aussage unabhängig überprüft werden. Mehr Zeilen oder ein komp
 | `reports/null_v03/summary.md` | Getrennte explorative Zufallsreferenz |
 | `reports/current_state_audit.md` | Ergänzender Gesamtcheck des aktuellen Projektbestands |
 | `reports/baseline/` | Eingefrorene V0.3-Baseline: Manifest, Status, Fehleranalyse je Ereignis |
+| `archive/v0.3-baseline/` | Schreibgeschützte Kopie aller Baseline-Ausgaben mit Prüfsummen |
+| `config/v04.json`, `reports/v04/` | V0.4: Präregistrierung, Änderung 1, Freeze, Test, Bericht, Verifikation |
+| `preslide/v04/` | V0.4-Code (Audit, Datumsregeln, Pipeline, Modelle, Auswertung) |
 | `config/stability_v02.json` | Vorab eingefrorener Auswertungsplan |
 | `data/analysis/stability_v02/` | Lokale Vorhersagen, Modelle, Splits, Checkpoints und Originalprüfsummen |
 | `data/processed/046074ba6f12556c/` | Eingefrorener Originalbestand; nicht überschreiben |

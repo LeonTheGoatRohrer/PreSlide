@@ -74,13 +74,17 @@ def check_partition(frame, block_column, partition_column):
         raise ValueError(f'{block_column} crosses partitions')
 
 
-def sample_pairs_between_groups(samples, distance_m):
-    """Index pairs (positive index of each group) for groups with any samples closer than distance_m."""
+def sample_pairs_between_groups(samples, distance_m, positive_involved=False):
+    """Group-id pairs with any samples of different groups closer than distance_m.
+
+    positive_involved=True (V0.4 amendment 1) keeps only pairs in which at least one of the two samples is a
+    positive: control-control overlaps carry identical labels and therefore no label leakage."""
     xy = samples[['x', 'y']].to_numpy()
     groups = samples.event_group_id.to_numpy()
+    labels = samples.label.to_numpy() if positive_involved else None
     pairs = set()
     for a, b in cKDTree(xy).query_pairs(distance_m):
-        if groups[a] != groups[b]:
+        if groups[a] != groups[b] and (not positive_involved or labels[a] == 1 or labels[b] == 1):
             pairs.add(tuple(sorted((groups[a], groups[b]))))
     return pairs
 

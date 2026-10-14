@@ -1,57 +1,46 @@
 # Current Stage
 
-Session entry point: read `PROJEKTUEBERBLICK.md` completely, then this file; mandatory in `AGENTS.md`. The German overview records the goal, completed versions, limits and next scientific priority.
+Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then this file.
 
-2026-10-14: **V0 experiment, V0.2 stability/diagnostics and V0.3 null reference are complete, re-verified and frozen as `PreSlide V0.3 Baseline`** (`reports/baseline/`: `BASELINE_MANIFEST.json` with 95 hashed artifacts, `BASELINE_STATUS.md`, event-level `error_analysis.md`). The German web demo shows all three experiments separately, with a central tooltip system and a per-event explorer. Local, non-commercial research use; no public deployment or raw-data redistribution. Full audit: `reports/current_state_audit.md`.
+2026-10-14: **V0.4 complete and verified** (pre-registered extension, sealed external test scored once). The **V0.3 Baseline** (V0, V0.2, V0.3 on dataset `046074ba6f12556c`) is frozen, unchanged and additionally archived write-once in `archive/v0.3-baseline/` (2 872 files, ZIP SHA-256 `da3a136e…`; `python scripts/archive_baseline.py --verify`). Local, non-commercial research; no public deployment.
 
 # Verified Working
 
-- Pipeline audit → filtering → terrain (30 m, EPSG:31287) → matched controls → INCA weather → 22 predictors → frozen grouped split → 9 models → Steiermark holdout. `scripts/verify_state.py` independently recomputes the dataset invariants (groups, t0, calipers, circular aspect, separation, CRS, pre-t0 windows, dependence rule). It reproduces every stored test metric from saved predictions *and* saved models, and every V0.2 metric from primary predictions. Result: PASS, 0 errors.
-- V0.2 (development only, 45 events / 16 clusters, seeds 11/23/37/51/71 × 4 folds): 180/180 primary fits, all diagnostics A–I present. A peer session's `python -m preslide.stability_verify` → `reports/stability_v02/verification.json` PASS.
-- V0.2 completion check: all 440 stored fits / 29,700 predictions reproduced; original artifacts unchanged and original test excluded. Seven scientific figures integrated into the web view; desktop/mobile layout checked. Report regeneration preserves later version sections as well as original documentation bytes.
-- V0.3 null reference (`python -m preslide.null_reference`): 100 within-group label permutations on frozen folds; the identity draw reproduces V0.2 exactly.
-- `python -m preslide.results_bundle` → `data/web/results.json`, served by `/api/results`. All UI metrics come from artifacts. The bundle sits outside the protected run directory, because the V0.2 manifest hashes every file under `data/processed/<id>/`.
-- `python -m preslide.baseline` → event diagnostics for all 60 events from saved predictions only (dev ranks equal V0.2 `event_results` exactly; test AUC/AP recomputed exactly). It verifies the manifest.
-- Overwrite guard: `assert_not_frozen()`; `python -m preslide experiment|evaluate` refuse while the baseline is frozen. Baseline readers are pinned via `baseline.pointer()`, not `latest.json`. `pipeline.py`/`evaluation.py` are deliberately unchanged, because V0.2 hash-protects their source.
-- UI: `frontend/src/metricDefinitions.js` (central German texts with value-dependent, conservative readings), one `InfoTip.vue` (hover, focus, tap, Esc; bottom sheet < 600 px), "So lesen Sie die Ergebnisse", the five-controls explanation, `EventExplorer.vue` (section 05, de-identified, values from `/api/results`).
-- 53 pytest + 5 frontend (`npm test`) tests pass. Build passes; browser-checked at desktop and 375 px with no console errors. Start: `scripts/start.ps1` (port 8000) or uvicorn on any port. Note: an older server process may still hold port 8000 without `/api/results`; restart it.
+- Baseline: `reports/baseline/BASELINE_MANIFEST.json` (95 hashes) PASS; archive PASS; `scripts/verify_state.py` PASS 0 errors — rechecked after V0.4.
+- V0.4 package `preslide/v04/` (writes only `data/v04/`, `models/v04/`, `reports/v04/`; `paths.guard` refuses baseline paths):
+  `audit` → `pipeline match|static|context|weather|assemble` → `partition` → `experiment admission|develop|freeze|test` → `report`. Checkpoints carry SHA-256 sidecars; corrupted caches raise.
+- Pre-registration `reports/v04/PREREGISTRATION.json` (config SHA `c6d67a85…`, config read-only), amendment 1 (`AMENDMENT_1.json`, before modelling), freeze `FREEZE.json`, single test `test_results.json` (script refuses a second run), `scripts/verify_v04.py` → `reports/v04/verification.json` PASS.
+- V0.4 reproduces the 102 baseline candidates and the stored controls of all 60 baseline groups exactly.
+- Tests: 106 pytest (incl. 32 date-parser, 21 V0.4 leakage/grouping/CRS/hydrology/model/cache tests) + 5 frontend; build passes; V0.4 web section (07) browser-checked desktop and 375 px. Launch config `preslide-api-v04` (port 8020).
 
 # Dataset Status
 
-102 candidates → 60 complete groups (17 missing weather, 13 insufficient controls, 9 negative precipitation, 3 slope < 5°). 360 samples, 20 dependence clusters (largest 15 events), 29 distinct dates, 2017-08-05 … 2026-06-13, 28/60 in Steiermark. Run `data/processed/046074ba6f12556c/` (frozen; do not overwrite).
+V0.4 run `data/v04/run_c6d67a854ba7/`: 500 tier-A candidates (day confirmed by narrative + structured interval; 2016–2026) → 423 complete groups / 2 538 samples (27 missing weather, 26 too few controls, 15 slope < 5°, 9 negative rain). Development 123 events / 19 units (all 60 baseline groups); sealed test 300 events / 11 units (Stanz 2016: 243). Features: 22 static (terrain incl. curvature, TRI, TPI, relative position, catchment/TWI; CORINE class; lithology), 29 temporal (INCA 18 + same-day 4 + SPARTACUS 2 + SNOWGRID 5); WINFORE not admitted.
 
-# Experiment Status
+# Important Decisions
 
-| Experiment | Status |
-| --- | --- |
-| Original frozen test (15 events / 4 clusters) | complete, reproduced; already seen, no longer blind |
-| Steiermark holdout | complete |
-| V0.2 stability + diagnostics | complete and verified |
-| V0.3 null reference | complete |
+- Main analysis = tier-1 quality + tier-A date only; tiers B/C and media tier 2 counted, not analysed.
+- t0 = conservative lower bound (daypart/clock), never after provider start; same-day rain missing (not 0) without time.
+- Temporal episodes as independence units (spatio-temporal rejected by dependence check). Baseline-linked blocks → development; all baseline-free blocks → sealed test.
+- Amendment 1: location links only for positive-involving overlaps (registered rule left a 4-event test).
+- Primary model conditional logit (own scipy implementation, no new dependency). 10 m DGM rejected (post-dates events).
 
-# Current Verified Results
+# Current Results
 
-- Original test: RF combined within-group AUC 0.747, AP 0.253; LR combined AP 0.202 (chance 0.167). This is not reproduced in development.
-- V0.2 development (median of 5): within-group AUC 0.42–0.59 and AP 0.159–0.190 across all 9 variants. Weather does not repeatedly improve over terrain (LR worse in 5/5).
-- V0.3: no variant with weather is distinguishable from the label-permutation null (all p ≥ 0.28). The nominal RF weather gain comes from a below-null terrain baseline. The null 90 % band for local AUC is ≈ 0.41–0.60, so the study is powered only for strong effects.
-- Learning curves are flat near chance. Weather inputs do differ between positive and controls (0/300 share a 1 km cell).
+- Sealed test, primary (conditional logit combined, unit-weighted local AUC): **0.751 [0.633, 0.866]**, null 95 % 0.629, p = 0.001; static 0.702; temporal 0.604. Combined − static +0.049 [−0.003, +0.108]: **no established weather benefit**. Per event: combined 0.668, static 0.521 (Stanz storm static 0.455).
+- Development CV: static 0.770, temporal 0.554, combined 0.725 (conditional logit).
+- Main predictors: roughness, forest (−), settlement/other land cover (+), TPI (−) — possibly partly reporting bias.
 
-# Known Scientific Limitations
+# Known Problems
 
-Pseudo-negatives and inventory bias; source position categories unverified (23/45 development events cross the 5° caliper under offsets); 1 km weather; few independent storm episodes; complete-case weather exclusions; no geology, land cover, soil moisture or snow. Licence of the detailed source unidentified (local use only; GeoSphere attribution kept).
+Few independent units (11 test); Stanz dominance; reporting/placement bias in land-cover and terrain contrasts; coarse CORINE/geology; triggering rain after t0 invisible; INCA v1 retirement Dec 2026 (all V0.4 responses cached).
 
-# Known Technical Issues
+# Next 3 Tasks
 
-- INCA v1 retirement announced for Dec 2026; the raw cache preserves this run.
-- Fixed: pilot `experiment --limit` previously had the baseline identity and could overwrite `status.json`, `evaluation_dataset.parquet`, models and `reports/experiment/metrics.json`. It is now refused.
-- A larger dataset needs a versioned runner writing `reports/experiments/<id>/` (not yet implemented). Network failures abort the run, which then resumes from checkpoints.
-- A concurrent peer session ("Parameterberechnung im Projekt") edited `api.py`, `App.vue`, `stability_*` and tests on 2026-10-14. The changes were compatible and the suite passes. Coordinate before parallel edits.
+Planning-only audit (2026-10-14): `reports/weiterentwicklung_2026-10-14/` contains the proposed changes and reproducible candidate counts. Adding 323 tier-2/A media records yields 823 candidates / 110 temporal episodes / 66 provisional positive-linked blocks (before matching and environmental QA); not 66 verified development units or a national maximum. Adding 79 tier-1/C records yields 64 provisional blocks because links merge. No new experiment implemented or scored.
 
-# Next 3 Priorities
+User's alternative V0.5 plan reviewed and extended in `reports/weiterentwicklung_2026-10-14/V05_NACHBARHANG_PLAN.md`: existing 423 positives, ten unmatched local controls, exploratory grouped CV (the old test is seen), fold-level spatial purge and 1:10 ranking metrics. All 423 cached pools exist; source dataset hash verified. Draft only: no V0.5 config, registration, new controls, features or models created.
 
-Detailed V0.4+ strategy (data counts, new sources, compute, satellite assessment, phases): `IMPROVEMENT_PLAN.md`. Key counts (2026-10-14): 971 otherwise-eligible events fail only the single-day narrative rule; a pre-registered daypart/clock-time date rule plus a 20-events-per-episode cap gives ≈ 414 candidates in ≈ 60 episodes (V0: 102 / 31). Awaiting user approval of the relaxed date rule.
-
-0. Under the frozen V0 criteria the source has exactly 102 candidates, and all are used. More data needs pre-registered V0.4 inclusion criteria or another source. Dry-run the audit to count events, then implement the versioned runner (1 → 5 → 20 → full). Mind the INCA v1 retirement (December 2026).
-1. Pre-register and collect an independent external evaluation set: new storm episodes with verified positions, scored once with the frozen models and protocols.
-2. Only as a new versioned experiment, add one diagnostically motivated information source: antecedent soil moisture/snowmelt (e.g. ERA5-Land) or better event positions. No tuning on existing test data.
-3. Competition narrative: present the matched same-time design and the null-calibrated negative result as the contribution, with limitations intact.
+1. Interpret/present V0.4 honestly: terrain + land-cover signal replicated on a sealed test; weather increment unproven. Do not retune on the test.
+2. A new version (V0.5) would need more independent episodes: tier-2 media events as separately labelled data, tiers B/C, or a pre-registered case-crossover design (user decision).
+3. Optional QA: Sentinel-2 check of positive positions/controls and of the land-cover/reporting-bias question.

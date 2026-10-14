@@ -1,0 +1,30 @@
+{
+  "dependence_check": {
+    "pairs": 14,
+    "finite_pairs": 14,
+    "p90_pearson_r": 0.6364932586869126,
+    "median_pearson_r": 0.4288247502780614,
+    "threshold": 0.5,
+    "spatiotemporal_units_accepted": false
+  },
+  "independence_unit_definition": "temporal_episode + location links (positives < 2 km; positive-involving sample pairs < 400 m, amendment 1)",
+  "amendment": "reports/v04/AMENDMENT_1.json",
+  "units": 30,
+  "moved_to_development_by_1km_purge": [],
+  "partition": {
+    "development": {
+      "events": 123,
+      "units": 19,
+      "temporal_episodes": 24,
+      "baseline_events": 60
+    },
+    "sealed_test": {
+      "events": 300,
+      "units": 11,
+      "temporal_episodes": 12,
+      "baseline_events": 0
+    }
+  },
+  "partition_sha256": "6daa4be3c63d675d962d31ccc66c98d0e98a816c7148afa9afba5a5d94baf9e1",
+  "dataset_sha256": "ea6950102f2e437c3aebbdfe12f91b20b81a6e41ef59120474d4351c9e1077a2"
+}

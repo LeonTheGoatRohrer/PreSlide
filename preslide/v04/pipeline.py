@@ -218,10 +218,41 @@ def stage_assemble(limit=0):
             set_status(status, gid, 'weather', 'complete')
     data = data[data.event_group_id.map(complete)].reset_index(drop=True)
     data['event_day'] = data.event_day.astype(str)
+    validation = validate(data, cfg)
+    write_json(run_dir() / 'validation.json', validation)
     write_json(status_path(), status)
     save(data, run_dir() / 'dataset.parquet', {'events': int(data.event_group_id.nunique()), 'config_sha256': hashlib.sha256(CONFIG.read_bytes()).hexdigest()})
     print(f'dataset: {data.event_group_id.nunique()} groups, {len(data)} samples', flush=True)
     return data
+
+
+def validate(data, cfg):
+    """Scientific invariants of the assembled V0.4 dataset; raises on any violation."""
+    m = cfg['matching']
+    if data.sample_id.duplicated().any():
+        raise ValueError('Duplicate sample IDs')
+    for gid, g in data.groupby('event_group_id'):
+        c = g[g.label == 0]
+        if len(g) != 6 or g.label.sum() != 1 or g.t0_utc.nunique() != 1 or g.event_day.nunique() != 1:
+            raise ValueError(f'Invalid group {gid}')
+        last = pd.to_datetime(g.last_used_hour_utc, utc=True) + pd.Timedelta(hours=1)
+        if (last >= pd.Timestamp(g.t0_utc.iloc[0])).any():
+            raise ValueError(f'Future weather in {gid}')
+        for col in ('spartacus-v2-1d-1km_last_day', 'snowgrid_cl-v2-1d-1km_last_day'):
+            d = pd.to_datetime(g[col], utc=True).dropna() + pd.Timedelta(hours=30)
+            if (d >= pd.Timestamp(g.t0_utc.iloc[0])).any():
+                raise ValueError(f'Future daily product in {gid}')
+        xy = c[['x', 'y']].to_numpy()
+        dist = np.linalg.norm(xy[:, None] - xy[None], axis=2) + np.eye(5) * 1e9
+        if dist.min() < m['control_separation_m']:
+            raise ValueError(f'Overlapping controls {gid}')
+        if (c.slope_difference_deg > m['slope_caliper_deg']).any() or (c.elevation_difference_m > m['elevation_caliper_m']).any()                 or (c.aspect_difference_deg > m['aspect_caliper_deg']).any():
+            raise ValueError(f'Caliper violation {gid}')
+        if not c.inventory_clear.all() or not c.inside_austria.all():
+            raise ValueError(f'Control exclusion violated {gid}')
+        if not ((c.distance_to_positive_m >= m['control_min_distance_m']) & (c.distance_to_positive_m <= m['control_max_distance_m'])).all():
+            raise ValueError(f'Control distance violated {gid}')
+    return {'groups': int(data.event_group_id.nunique()), 'samples': int(len(data)), 'checks': 'PASS'}
 
 
 def main():

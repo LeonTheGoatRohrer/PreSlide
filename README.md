@@ -127,3 +127,17 @@ Event and weather sources have separate license statuses. INCA is CC BY 4.0; thi
 - `METHODOLOGY.md`, `RESULTS.md`, `LIMITATIONS.md`: experiment design, outcomes and boundaries.
 
 Frontend development: start the API, then `npm run dev` in `frontend`. Vite proxies `/api` to loopback port 8000. Production preview: build frontend, then restart the local API so it mounts `frontend/dist`.
+
+## V0.4 (pre-registered extension, separate outputs)
+
+```powershell
+.\.venv\Scripts\python scripts\archive_baseline.py --verify      # baseline archive intact
+.\.venv\Scripts\python -m preslide.v04.audit                      # candidates, exclusions, episodes
+.\.venv\Scripts\python -m preslide.v04.pipeline match --limit 0   # then static, context, weather --resource inca|spartacus-v2-1d-1km|snowgrid_cl-v2-1d-1km, assemble
+.\.venv\Scripts\python -m preslide.v04.partition                  # dependence check + frozen partition
+.\.venv\Scripts\python -m preslide.v04.experiment develop         # development CV (freeze/test are one-time steps, already done)
+.\.venv\Scripts\python -m preslide.v04.report                     # reports/v04/summary.md, data/v04/web/results.json
+.\.venv\Scripts\python scripts\verify_v04.py                      # PASS/FAIL of the completed run
+```
+
+All steps reuse verified checkpoints and cached API responses (`data/v04/cache/`). `--limit 1|5|20` runs pilots. The sealed test has been scored; `experiment test` refuses to run again. See `METHODOLOGY.md` (V0.4), `RESULTS.md`, `LIMITATIONS.md`, `reports/v04/`.

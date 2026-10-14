@@ -1,0 +1,17 @@
+{
+ "status": "PASS",
+ "checks": {
+  "config_matches_registration": true,
+  "config_matches_freeze": true,
+  "partition_matches_freeze": true,
+  "dataset_matches_freeze": true,
+  "models_match_freeze": true,
+  "test_scored_after_freeze": true,
+  "test_freeze_checks_passed": true,
+  "units_on_one_side": true,
+  "episodes_on_one_side": true,
+  "no_baseline_event_in_test": true,
+  "baseline_manifest": true,
+  "baseline_archive": true
+ }
+}
