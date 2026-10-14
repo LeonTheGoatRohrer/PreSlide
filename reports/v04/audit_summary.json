@@ -1,0 +1,115 @@
+{
+  "source_sha256": "9dc1581c122b83839b45ac7cc53eec83177fe4e54c785019f7a519313eaa3d97",
+  "config_sha256": "c6d67a854ba78b2b46103fa9e5c0bbc1d3e3934210d1e5c22d3fb37c2ca4fcf2",
+  "records_in_process_groups": 13966,
+  "audit_exclusion_first_reason": {
+    "in_period": 8944,
+    "accepted_process": 2719,
+    "position_quality": 600,
+    "process_or_mass_movement_quality": 89
+  },
+  "eligible_by_quality_and_date_tier": [
+    {
+      "quality_tier": 1,
+      "date_tier": "A_narrative_day",
+      "events": 501
+    },
+    {
+      "quality_tier": 1,
+      "date_tier": "B_two_day_window",
+      "events": 222
+    },
+    {
+      "quality_tier": 1,
+      "date_tier": "C_structured_day_only",
+      "events": 79
+    },
+    {
+      "quality_tier": 1,
+      "date_tier": "excluded",
+      "events": 409
+    },
+    {
+      "quality_tier": 2,
+      "date_tier": "A_narrative_day",
+      "events": 323
+    },
+    {
+      "quality_tier": 2,
+      "date_tier": "B_two_day_window",
+      "events": 15
+    },
+    {
+      "quality_tier": 2,
+      "date_tier": "excluded",
+      "events": 65
+    }
+  ],
+  "main_candidates": 500,
+  "main_distinct_days": 75,
+  "main_temporal_episodes": 48,
+  "main_spatiotemporal_units": 71,
+  "main_time_quality": {
+    "daypart": 314,
+    "day": 129,
+    "clock": 57
+  },
+  "main_by_year": {
+    "2016": 248,
+    "2017": 13,
+    "2018": 25,
+    "2019": 1,
+    "2020": 28,
+    "2022": 20,
+    "2023": 67,
+    "2024": 75,
+    "2025": 11,
+    "2026": 12
+  },
+  "main_by_state": {
+    "Steiermark": 381,
+    "Niederoesterreich": 26,
+    "Vorarlberg": 23,
+    "Kaernten": 22,
+    "Salzburg": 18,
+    "Tirol": 18,
+    "Oberoesterreich": 6,
+    "Burgenland": 5,
+    "Wien": 1
+  },
+  "largest_temporal_episodes": {
+    "TE001_2016-07-25": 248,
+    "TE016_2023-08-04": 27,
+    "TE007_2020-08-22": 24,
+    "TE034_2024-09-14": 24,
+    "TE009_2022-08-19": 18,
+    "TE004_2018-09-14": 16,
+    "TE028_2024-06-07": 16,
+    "TE002_2017-08-05": 13
+  },
+  "baseline_candidates_reproduced": 102,
+  "provisional": {
+    "te": {
+      "blocks": 35,
+      "events": {
+        "sealed_test": 290,
+        "development": 210
+      },
+      "blocks_by_partition": {
+        "development": 23,
+        "sealed_test": 12
+      }
+    },
+    "st": {
+      "blocks": 58,
+      "events": {
+        "sealed_test": 305,
+        "development": 195
+      },
+      "blocks_by_partition": {
+        "development": 33,
+        "sealed_test": 25
+      }
+    }
+  }
+}

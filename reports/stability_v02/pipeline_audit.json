@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "recomputed_weather_samples": 270,
+  "development_events": 45,
+  "development_clusters": 16,
+  "constant_features": [],
+  "checks": [
+    "binary label orientation",
+    "one positive + five controls",
+    "same t0 and UTC envelopes",
+    "raw-cache checksums",
+    "nearest weather cell",
+    "all 18 feature recomputations",
+    "CRS round trip",
+    "circular aspect",
+    "actual inventory exclusions",
+    "local controls",
+    "original checksums"
+  ]
+}

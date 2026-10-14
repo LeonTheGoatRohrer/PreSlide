@@ -1,0 +1,63 @@
+{
+  "version": "V0.2",
+  "status": "verified_development_analysis",
+  "events": 45,
+  "controls": 225,
+  "samples": 270,
+  "clusters": 16,
+  "repetitions": 5,
+  "folds": 4,
+  "primary_fits": 180,
+  "original_test_excluded": true,
+  "conclusion": "Ein robuster zusätzlicher Wetternutzen ist nicht belegt. Baumverfahren verbessern teilweise die lokale Rangfolge, erreichen jedoch keine konsistente Verbesserung der Average Precision; die logistische Regression profitiert lokal nicht.",
+  "next_priority": "Zusätzliche unabhängige Wetter- und Ereignisepisoden mit verifizierten Ereignispositionen als vorab festgelegten externen Prüfbestand gewinnen.",
+  "models": [
+    {
+      "model": "logistic_regression",
+      "average_precision": 0.1641701264080809,
+      "roc_auc": 0.4802962962962963,
+      "within_group_auc": 0.5066666666666667,
+      "ap_delta": -0.0234710591064183,
+      "ap_improved_repetitions": 1,
+      "local_auc_delta": -0.0622222222222221,
+      "local_improved_repetitions": 0
+    },
+    {
+      "model": "random_forest",
+      "average_precision": 0.17800861040555,
+      "roc_auc": 0.5041975308641975,
+      "within_group_auc": 0.5244444444444445,
+      "ap_delta": -0.0012898632929136,
+      "ap_improved_repetitions": 2,
+      "local_auc_delta": 0.1355555555555557,
+      "local_improved_repetitions": 4
+    },
+    {
+      "model": "gradient_boosting",
+      "average_precision": 0.1641642803262824,
+      "roc_auc": 0.4933333333333334,
+      "within_group_auc": 0.4888888888888889,
+      "ap_delta": -0.0059382853976134,
+      "ap_improved_repetitions": 1,
+      "local_auc_delta": 0.0399999999999999,
+      "local_improved_repetitions": 4
+    }
+  ],
+  "weather": {
+    "events": 45,
+    "weather_features": 18,
+    "same_positive_control_cell_pairs": 0,
+    "total_pairs": 225,
+    "events_nearly_equal_at_least_16_of_18_features": 0,
+    "events_all_features_exactly_identical": 0
+  },
+  "figures": [
+    "A_performance",
+    "B_weather_delta",
+    "C_event_ranks",
+    "D_learning_curve",
+    "E_weather_differences",
+    "F_feature_stability",
+    "G_storm_sensitivity"
+  ]
+}

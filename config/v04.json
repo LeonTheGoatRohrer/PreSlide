@@ -1,0 +1,125 @@
+{
+  "version": "v0.4.0",
+  "registered_on": "2026-10-14",
+  "registered_before": "any V0.4 control, weather, land-cover, geology or model result was computed or viewed",
+  "baseline": {"name": "PreSlide V0.3 Baseline", "manifest": "reports/baseline/BASELINE_MANIFEST.json",
+               "archive": "archive/v0.3-baseline/ARCHIVE_MANIFEST.json", "dataset_identity": "046074ba6f12556c",
+               "rule": "read only; V0.4 writes only data/v04/, models/v04/, reports/v04/"},
+
+  "inclusion": {
+    "source": "GeoSphere Austria Naturgefahren (Test), local snapshot data/raw/geosphere_natural_hazards.json",
+    "period": ["2011-01-01", "2026-10-14"],
+    "process_groups": ["Gleiten/Rutschen", "Fliessen"],
+    "process_subgroups": ["Lockergesteinsrutschung", "Hangmure", "Hangmure bis Lockergesteinsrutschung",
+                          "Hangmure und Lockergesteinsrutschung", "Hangmure und Rutschung"],
+    "process_quality": ["Codierung sicher", "Codierung in geringem Mass unsicher"],
+    "mass_movement_quality": ["Objekt ist sicher eine Massenbewegung"],
+    "max_position_upper_bound_m": 100,
+    "coordinates": "Austrian bounding box at audit, GISCO Austria polygon at matching",
+    "deduplication": "identical coordinate and event day kept once",
+    "no_cap_per_episode": true,
+    "quality_tier": "tier 1 = the V0 quality fields above. Media records with QUAL_PROZ/QUAL_MB = 'keine Information' are tier 2: counted, never mixed into the main analysis."
+  },
+
+  "dates": {
+    "rules": "preslide/v04/dates.py RULES_VERSION v04-dates-1 (tests: tests/test_v04_dates.py)",
+    "primary_tier": "A_narrative_day: exactly one explicit narrative day equal to the structured day, structured interval (Date_Anfan..Date_End_a) inside that local day, no uncertainty wording",
+    "secondary_tiers_not_in_main_analysis": ["B_two_day_window", "C_structured_day_only"],
+    "excluded": "uncertain wording, conflicting or multiple days, month-level text, interval not within one day",
+    "time_quality": {
+      "day": "t0 = 00:00 local of the event day",
+      "daypart": "t0 = earliest stated daypart start: Vormittag 06, Mittag 11, Nachmittag 12, Abend 17, Frueh/Morgen 00; a daypart preceded by 'spaetestens'/'vor'/'bis' is an upper bound and ignored; 'Nacht' on a single day allows only explicit clock bounds",
+      "clock": "t0 = earliest stated event clock time minus 1 h, floored to the hour; upper bounds ('vor', 'bis', 'spaetestens') and times attached to alarm/observation/weather words are never used",
+      "always": "t0 = max(local midnight, min(text bound, provider structured start floored to the hour))"
+    }
+  },
+
+  "episodes": {
+    "temporal_episode": "single linkage over local event days with gap <= 3 days, all Austria (V0 rule)",
+    "spatiotemporal_unit": "within a temporal episode, single linkage of positives at <= 50 km (geodesic, EPSG:31287 metres)",
+    "dependence_check": "for every pair of spatio-temporal units inside the same temporal episode: Pearson correlation of 6-hourly INCA RR sums (unit mean over its positives) over the 14 days before the earlier unit t0 (56 values). Spatio-temporal units are accepted only if the 90th percentile of these correlations is < 0.5; otherwise temporal episodes are used everywhere. Uses weather inputs only, never labels or scores; run after the INCA download and before any model.",
+    "location_links": "positives < 2 km apart on any dates, and any two samples of different groups < 400 m apart, are always in the same unit (V0 rule)",
+    "independence_unit": "accepted unit (spatio-temporal or temporal) union location links; used for CV folds, training weights, evaluation weights and bootstrap"
+  },
+
+  "partition": {
+    "block": "independence unit computed on the candidate positives (location links of samples added after matching)",
+    "development": "every block containing at least one V0.3 baseline candidate (102 events): these storms were already used or seen",
+    "sealed_test": "every block without a baseline candidate. Rationale (decided from partition sizes only, before any matching, weather or model output): with temporal episodes only 13 of 35 blocks are baseline-free, and a 1/3 hash rule would leave about 6 test events; an independent external test is the stated top priority",
+    "spatial_purge": "after matching, a test group with any sample < 1 km from a development sample is moved to development",
+    "frozen_file": "data/v04/partition/partition.json with sha256, written before any model is fit",
+    "test_scored": "exactly once, after all models, features and code are frozen (reports/v04/FREEZE.json)",
+    "old_test_note": "V0 test and Steiermark holdout events are already seen. They sit in development; no V0.4 choice is made from results (everything here is fixed in advance)."
+  },
+
+  "matching": {"unchanged_from": "config/experiment.json",
+               "controls_per_event": 5, "candidate_pool_size": 6000, "control_min_distance_m": 750,
+               "control_max_distance_m": 10000, "control_separation_m": 400, "exclusion_extent_buffer_m": 250,
+               "unknown_position_buffer_m": 2000, "slope_caliper_deg": 5, "elevation_caliper_m": 150,
+               "aspect_caliper_deg": 45, "minimum_slope_deg": 5, "terrain_resolution_m": 30,
+               "terrain_crs": "EPSG:31287", "random_seed": 42, "same_t0": "controls inherit t0 of their positive"},
+
+  "features": {
+    "static_terrain": {
+      "source": "Mapzen/AWS Skadi 1 arc-second composite, object Last-Modified must precede t0 (unchanged V0 rule)",
+      "baseline": ["elevation", "slope", "aspect_sin", "aspect_cos"],
+      "new_local": ["profile_curvature", "plan_curvature", "roughness_tri", "tpi_150m", "tpi_500m", "relative_position_500m"],
+      "hydrology": ["log10_catchment_m2", "twi"],
+      "hydrology_rule": "Planchon-Darboux depression filling and D8 accumulation on a 30 m window of radius control_max + 5 km; a sample whose upslope area reaches the window edge is MISSING (truncated catchment), never imputed",
+      "rejected": "DGM Oesterreich 10 m (gis.ktn.gv.at ogd-10m-at.zip, 1.94 GB, object Last-Modified 2019-06-18, no per-cell acquisition date): postdates most events, so not demonstrably pre-event"
+    },
+    "land_cover": {"source": "Copernicus CORINE Land Cover vector via EEA discomap ArcGIS MapServer",
+                   "vintage_rule": "CLC2018 (imagery 2017-2018) only if t0 >= 2019-01-01, else CLC2012 (imagery 2011-2012)",
+                   "classes": {"lc_forest": [311, 312, 313], "lc_grass_shrub": [231, 321, 322, 323, 324],
+                               "lc_agriculture": [211, 212, 213, 221, 222, 223, 241, 242, 243, 244],
+                               "lc_open_bare": [331, 332, 333, 334, 335], "lc_artificial_water_other": "all remaining codes"}},
+    "geology": {"source": "GeoSphere Austria INSPIRE GeologicUnit 1:500 000 (CC BY 4.0)",
+                "leakage_check": "no mass-movement deposit classes in representativeLithology",
+                "classes": {"geo_carbonate": ["limestone", "carbonate sedimentary rock", "marble"],
+                            "geo_clastic_rock": ["sandstone", "siltstone", "clastic sedimentary rock"],
+                            "geo_unconsolidated": ["clastic sedimentary material", "gravel"],
+                            "geo_low_grade_metamorphic": ["phyllite", "schist", "mica schist", "chlorite actinolite epidote metamorphic rock"],
+                            "geo_crystalline_other": "all remaining lithologies"}},
+    "temporal_inca": {
+      "resource": "inca-v1-1h-1km", "parameters": ["RR", "T2M"],
+      "timestamp_rule": "an hourly value at timestamp T is used only if T + 1 h < t0 and T - 1 h >= window start (interval may end or start at T)",
+      "windows_days": [1, 3, 7, 14, 30, 60], "per_window": ["rain_sum", "rain_max_hour", "temperature_mean"],
+      "anchored_at": "t0",
+      "same_day": ["rain_since_midnight", "rain_max_hour_since_midnight", "rain_3h_before_t0", "rain_6h_before_t0"],
+      "same_day_rule": "only if time_quality is daypart or clock; otherwise MISSING (not zero). Hours between local midnight and t0 under the timestamp rule; window with no complete hour is MISSING",
+      "completeness": "every expected hour of the 60-day window finite; RR in [0, 500], T2M in [-60, 60]; otherwise the event group is excluded (V0 rule)"
+    },
+    "temporal_daily": {
+      "spartacus-v2-1d-1km": {"parameters": ["RR"], "day_end": "RR of day D ends D+1 07:00 CET (06:00 UTC)", "features": ["spartacus_rr_90d", "spartacus_rr_180d"]},
+      "snowgrid_cl-v2-1d-1km": {"parameters": ["swe_tot", "snow_depth"], "day_end": "treated as valid at D+1 06:00 UTC (conservative; exact output time not documented)",
+                                "features": ["swe_last", "snow_depth_last", "swe_melt_3d", "swe_melt_7d", "swe_melt_14d"]},
+      "winfore-v2-1d-1km": {"parameters": ["SPEI30", "SPEI90"], "day_end": "treated like RR, valid at D+1 06:00 UTC", "features": ["spei30_last", "spei90_last"]},
+      "rule": "use day D only if its end is strictly before t0; windows end at the last such day",
+      "admission": "each product enters the main run only after a 1 -> 5 -> 20 event pilot shows correct boundaries (tests), plausible values and >= 95% coverage"
+    },
+    "missing_values": "never replaced by invented values. Linear models: a feature missing for any sample of a group gives that group no within-group contrast for it (set to the training mean for all six samples); HistGradientBoosting uses native missing handling. Coverage is reported per feature.",
+    "variants": {"static": "static_terrain + land_cover + geology", "temporal": "temporal_inca + temporal_daily", "combined": "static + temporal + interactions (conditional logit only)"},
+    "interactions_conditional_logit": [["log1p_rain_sum_3d", "slope"], ["log1p_rain_sum_30d", "log10_catchment_m2"], ["log1p_rain_sum_3d", "profile_curvature"]]
+  },
+
+  "models": {
+    "conditional_logit": {"primary": true, "implementation": "own scipy L-BFGS stratified likelihood (no new dependency)", "l2": 1.0, "standardize": "training mean/sd"},
+    "logistic_regression": {"C": 1.0, "class_weight": "balanced", "standardize": true, "max_iter": 3000},
+    "hist_gradient_boosting": {"max_iter": 150, "max_leaf_nodes": 7, "min_samples_leaf": 10, "l2_regularization": 1.0, "class_weight": "balanced", "random_state": 42},
+    "training_weights": "each event group weighted 1/sqrt(events of its independence unit in the training data)",
+    "no_tuning": "no hyperparameter search, no seed search, no feature selection"
+  },
+
+  "evaluation": {
+    "primary_endpoint": "sealed test, conditional logit, combined: independence-unit-weighted mean within-group AUC (rank of the positive among its 5 controls)",
+    "primary_comparison": "combined minus static, same model and test groups; 95% unit-bootstrap interval (2000 draws)",
+    "secondary": ["temporal vs chance", "top-1 rate", "within-group average precision (1/rank)", "pooled AP", "unweighted event means", "logistic regression and gradient boosting", "time-known subset", "per state, per year"],
+    "chance": {"within_group_auc": 0.5, "top1": 0.1667, "within_group_ap": 0.4083, "null": "random ranks within each group, same unit weights, 10000 draws"},
+    "development_cv": "5 folds x 5 repetitions (seeds 11, 23, 37, 51, 71) over independence units; preprocessing fit on each training fold only",
+    "development_null": "conditional logit, 100 within-group label permutations on repetition 1 folds",
+    "spatial_check": "development leave-one-state-out (states with >= 3 units), conditional logit; descriptive only",
+    "bootstrap": {"draws": 2000, "seed": 20261014, "unit": "independence unit"}
+  },
+
+  "follow_up_not_in_v04": ["Sentinel-1/2", "ERA5-Land", "case-crossover temporal design", "tier-2 media events", "date tiers B and C"]
+}

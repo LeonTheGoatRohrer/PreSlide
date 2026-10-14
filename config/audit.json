@@ -1,0 +1,15 @@
+{
+  "primary_start_date": "2018-01-01",
+  "fallback_start_date": "2015-01-01",
+  "end_date": "2026-10-14",
+  "max_position_error_m": 100,
+  "minimum_desired_positives": 100,
+  "accepted_process_groups": ["Gleiten/Rutschen", "Fliessen"],
+  "accepted_process_subgroups": [
+    "Lockergesteinsrutschung", "Hangmure",
+    "Hangmure bis Lockergesteinsrutschung",
+    "Hangmure und Lockergesteinsrutschung", "Hangmure und Rutschung"
+  ],
+  "accepted_process_quality": ["Codierung sicher", "Codierung in geringem Mass unsicher"],
+  "source_license_status": "unconfirmed_do_not_train_or_redistribute"
+}

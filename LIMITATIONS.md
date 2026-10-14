@@ -1,0 +1,28 @@
+# Limitations
+
+- This is an exploratory retrospective matched case-control prototype, not an operational warning system. Classification scores are not annual landslide probabilities. A positive result on one split does not establish reliable precursor detection or causation.
+- The detailed event source is labelled Naturgefahren Test and its specific reuse license was not identified. The user authorized local non-commercial research; GeoSphere has not confirmed our interpretations of QUAL_LAGE, QUAL_PROZ, QUAL_MB or event timing. Raw data are not redistributed or exposed through bulk API endpoints.
+- Position categories are source-reported. A point with a category upper bound of 100 m may not mark the initiation zone; 30 m terrain matching can change within that radius. The report includes a deterministic offset diagnostic, not an independently validated accuracy distribution.
+- A compatible single-day narrative does not prove exact occurrence timing. Ambiguous and multi-day descriptions are excluded. Conservative parsing also discards some potentially usable events.
+- Controls are pseudo-negatives: no documented event is not proof of stability. Inventory completeness, road/media exposure and reporting bias remain. A full historical snapshot is used for control exclusion, including later events; this is retrospective selection, not a real-time deployment simulation.
+- Control exclusion buffers are point-based; unknown/open-ended uncertainty receives a 2 km proxy, not a guaranteed bound. Failure footprints and geology/land cover are unavailable. Generalized national borders can exclude border-adjacent sites.
+- The candidate pool is finite (6,000 per event). Failed matching is reported, not proof that no suitable control exists anywhere. Calipers and separation are unchanged across all events. Some controls may approach the 10 km search radius, weakening the same-terrain-system assumption.
+- Skadi object timestamps establish that the product predates the landslide, not the exact acquisition date of each source pixel. Terrain can already contain earlier failures or other changes. Composite DEM resolution and interpolation limit slope/aspect accuracy.
+- INCA is a 1 km retrospective analysis using stations, remote sensing, model background and terrain. It cannot resolve every slope and is not independent of topography. Historical operational product versions and calibration are not verified; observational pre-event timestamps alone do not prove operational real-time availability.
+- One-hour timestamp envelopes deliberately omit boundary hours: nominal 60-day features retain 1,438 rather than 1,440 hours; 1-day features retain 22 hours. These are guarded-window summaries, not exact calendar-day totals. Local event-day midnight avoids using unknown event-day weather.
+- Every retained weather value must be present and plausible. Entire groups with missing values or negative precipitation are excluded; no silent clipping, interpolation or future-data replacement. This strict rule reduces the cohort and can bias the retained regions and years. See RESULTS.md for actual exclusions.
+- Event/control groups are kept together, with additional transitive storm and spatial overlap clusters. These are heuristics, not known independent storms. Nearby weather fields and unobserved regional factors can still be correlated. Sample counts overstate independent information.
+- Test uncertainty is substantial when few clusters remain. Bootstrap intervals hold fitted models fixed and do not include training uncertainty. Fixed-threshold precision/recall, permutation importance and geographic stress tests can be unstable. All planned models are reported; no tuning against test scores.
+- Weather common to all six samples cannot distinguish them. Pooled AUC may reflect differences between event groups. Within-group pairwise AUC and fractional first-place ranking therefore accompany standard metrics. Static matching itself can induce selection artifacts; feature importance is not causal evidence.
+- Geology, land cover, soil moisture, snow and Sentinel imagery are not included. This is not evidence that those measurements are unimportant.
+- The local web demonstration exposes only five selected, derived example groups and aggregate metrics. It intentionally does not provide the raw inventory or a bulk export of source records. Reproducing exact results requires the locally preserved source snapshots; source endpoints can change.
+
+
+## V0.2 development diagnostics
+
+Five repeated grouped partitions reuse 45 events in only 16 dependency clusters; they are not independent validation. The largest cluster contains 15 events. Weather benefit is model/metric dependent. Learning curves are non-monotonic; more rows with the same information need not improve generalization. The RF learning curve uses development-selected model family. Correlated windows and small position/state subgroups limit interpretation. Cluster-balanced evaluation does not remove large-cluster training influence. Pooled cross-fitted scores may differ in calibration between folds. Exploratory fixed-model bootstrap intervals omit retraining uncertainty. Full diagnostics and the single next research priority are in reports/stability_v02/summary.md.
+
+
+## V0.3 null reference
+
+The permutation null makes all six group members exchangeable. True positives are additionally the centre of their control search, so terrain-only deviations from the null can stem from design structure. p-values are empirical (100 draws), uncorrected for the 12 delta and 27 absolute statistics examined, and computed on repeated splits of the same 45 events. A null result at this sample size does not exclude weak weather effects.

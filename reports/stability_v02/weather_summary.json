@@ -1,0 +1,8 @@
+{
+  "events": 45,
+  "weather_features": 18,
+  "same_positive_control_cell_pairs": 0,
+  "total_pairs": 225,
+  "events_nearly_equal_at_least_16_of_18_features": 0,
+  "events_all_features_exactly_identical": 0
+}

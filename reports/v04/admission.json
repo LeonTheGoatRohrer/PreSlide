@@ -1,0 +1,83 @@
+{
+  "pilot_groups": 16,
+  "products": {
+    "spartacus-v2-1d-1km": {
+      "coverage": {
+        "spartacus_rr_90d": 0.9895833333333334,
+        "spartacus_rr_180d": 0.9895833333333334
+      },
+      "boundary_ok": true,
+      "range": {
+        "spartacus_rr_90d": [
+          47.3,
+          672.0999999999999
+        ],
+        "spartacus_rr_180d": [
+          110.50000000000001,
+          1050.5
+        ]
+      },
+      "admitted": true
+    },
+    "snowgrid_cl-v2-1d-1km": {
+      "coverage": {
+        "swe_last": 0.9895833333333334,
+        "snow_depth_last": 0.9895833333333334,
+        "swe_melt_3d": 0.9895833333333334,
+        "swe_melt_7d": 0.9895833333333334,
+        "swe_melt_14d": 0.9895833333333334
+      },
+      "boundary_ok": true,
+      "range": {
+        "swe_last": [
+          0.0,
+          28.0
+        ],
+        "snow_depth_last": [
+          0.0,
+          0.13
+        ],
+        "swe_melt_3d": [
+          0.0,
+          11.0
+        ],
+        "swe_melt_7d": [
+          0.0,
+          14.0
+        ],
+        "swe_melt_14d": [
+          0.0,
+          18.0
+        ]
+      },
+      "admitted": true
+    },
+    "winfore-v2-1d-1km": {
+      "coverage": {
+        "spei30_last": 0.8645833333333334,
+        "spei90_last": 0.8645833333333334
+      },
+      "boundary_ok": true,
+      "range": {
+        "spei30_last": [
+          -2.1,
+          2.6
+        ],
+        "spei90_last": [
+          -2.2,
+          1.9
+        ]
+      },
+      "admitted": false
+    }
+  },
+  "admitted_features": [
+    "spartacus_rr_90d",
+    "spartacus_rr_180d",
+    "swe_last",
+    "snow_depth_last",
+    "swe_melt_3d",
+    "swe_melt_7d",
+    "swe_melt_14d"
+  ]
+}

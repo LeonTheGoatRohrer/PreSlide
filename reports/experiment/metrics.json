@@ -1,0 +1,1283 @@
+{
+  "status": "EXPLORATORY_RESEARCH",
+  "dataset_identity": "046074ba6f12556c",
+  "dataset_hash": "16abb3f03f0bc8a55d308ef4a3bf4a977bc55284563754660f8412d96b6ed543",
+  "split": {
+    "test": {
+      "events": 15,
+      "clusters": 4,
+      "samples": 90
+    },
+    "train": {
+      "events": 19,
+      "clusters": 12,
+      "samples": 114
+    },
+    "validation": {
+      "events": 26,
+      "clusters": 4,
+      "samples": 156
+    }
+  },
+  "feature_sets": {
+    "static": [
+      "elevation",
+      "slope",
+      "aspect_sin",
+      "aspect_cos"
+    ],
+    "temporal": [
+      "rain_sum_1d",
+      "rain_max_hour_1d",
+      "temperature_mean_1d",
+      "rain_sum_3d",
+      "rain_max_hour_3d",
+      "temperature_mean_3d",
+      "rain_sum_7d",
+      "rain_max_hour_7d",
+      "temperature_mean_7d",
+      "rain_sum_14d",
+      "rain_max_hour_14d",
+      "temperature_mean_14d",
+      "rain_sum_30d",
+      "rain_max_hour_30d",
+      "temperature_mean_30d",
+      "rain_sum_60d",
+      "rain_max_hour_60d",
+      "temperature_mean_60d"
+    ],
+    "combined": [
+      "elevation",
+      "slope",
+      "aspect_sin",
+      "aspect_cos",
+      "rain_sum_1d",
+      "rain_max_hour_1d",
+      "temperature_mean_1d",
+      "rain_sum_3d",
+      "rain_max_hour_3d",
+      "temperature_mean_3d",
+      "rain_sum_7d",
+      "rain_max_hour_7d",
+      "temperature_mean_7d",
+      "rain_sum_14d",
+      "rain_max_hour_14d",
+      "temperature_mean_14d",
+      "rain_sum_30d",
+      "rain_max_hour_30d",
+      "temperature_mean_30d",
+      "rain_sum_60d",
+      "rain_max_hour_60d",
+      "temperature_mean_60d"
+    ]
+  },
+  "threshold": 0.5,
+  "models": [
+    {
+      "model": "logistic_regression",
+      "features": "static",
+      "validation": {
+        "roc_auc": 0.529585798816568,
+        "average_precision": 0.206789864136238,
+        "precision": 0.16521739130434782,
+        "recall": 0.7307692307692307,
+        "f1": 0.2695035460992908,
+        "balanced_accuracy": 0.49615384615384617,
+        "brier": 0.2574931298431801,
+        "confusion_matrix": [
+          [
+            34,
+            96
+          ],
+          [
+            7,
+            19
+          ]
+        ],
+        "within_group_auc": 0.5846153846153845,
+        "top1_fractional": 0.23076923076923078,
+        "events": 26,
+        "clusters": 4
+      },
+      "test": {
+        "roc_auc": 0.5057777777777777,
+        "average_precision": 0.2018847349760812,
+        "precision": 0.15,
+        "recall": 0.4,
+        "f1": 0.21818181818181817,
+        "balanced_accuracy": 0.47333333333333333,
+        "brier": 0.24948865170657678,
+        "confusion_matrix": [
+          [
+            41,
+            34
+          ],
+          [
+            9,
+            6
+          ]
+        ],
+        "within_group_auc": 0.5066666666666667,
+        "top1_fractional": 0.0,
+        "events": 15,
+        "clusters": 4
+      },
+      "test_interval": {
+        "method": "500 cluster bootstrap resamples, fixed fitted model, descriptive 95% percentile interval",
+        "roc_auc": [
+          0.49444444444444446,
+          0.5809346938775497
+        ],
+        "average_precision": [
+          0.18416359859584155,
+          0.34710780423280296
+        ]
+      }
+    },
+    {
+      "model": "logistic_regression",
+      "features": "temporal",
+      "validation": {
+        "roc_auc": 0.5115384615384615,
+        "average_precision": 0.18567811190035555,
+        "precision": 0.14814814814814814,
+        "recall": 0.46153846153846156,
+        "f1": 0.22429906542056074,
+        "balanced_accuracy": 0.4653846153846154,
+        "brier": 0.28326001880795376,
+        "confusion_matrix": [
+          [
+            61,
+            69
+          ],
+          [
+            14,
+            12
+          ]
+        ],
+        "within_group_auc": 0.5923076923076923,
+        "top1_fractional": 0.3076923076923077,
+        "events": 26,
+        "clusters": 4
+      },
+      "test": {
+        "roc_auc": 0.5351111111111111,
+        "average_precision": 0.20138185117351784,
+        "precision": 0.16666666666666666,
+        "recall": 0.26666666666666666,
+        "f1": 0.20512820512820512,
+        "balanced_accuracy": 0.5,
+        "brier": 0.2093102464804304,
+        "confusion_matrix": [
+          [
+            55,
+            20
+          ],
+          [
+            11,
+            4
+          ]
+        ],
+        "within_group_auc": 0.5466666666666666,
+        "top1_fractional": 0.26666666666666666,
+        "events": 15,
+        "clusters": 4
+      },
+      "test_interval": {
+        "method": "500 cluster bootstrap resamples, fixed fitted model, descriptive 95% percentile interval",
+        "roc_auc": [
+          0.37530864197530867,
+          0.8612244897959184
+        ],
+        "average_precision": [
+          0.1560887022875327,
+          0.7642857142857142
+        ]
+      }
+    },
+    {
+      "model": "logistic_regression",
+      "features": "combined",
+      "validation": {
+        "roc_auc": 0.49704142011834324,
+        "average_precision": 0.19627883709087318,
+        "precision": 0.1506849315068493,
+        "recall": 0.4230769230769231,
+        "f1": 0.2222222222222222,
+        "balanced_accuracy": 0.47307692307692306,
+        "brier": 0.28205170475853986,
+        "confusion_matrix": [
+          [
+            68,
+            62
+          ],
+          [
+            15,
+            11
+          ]
+        ],
+        "within_group_auc": 0.5076923076923078,
+        "top1_fractional": 0.15384615384615385,
+        "events": 26,
+        "clusters": 4
+      },
+      "test": {
+        "roc_auc": 0.5173333333333334,
+        "average_precision": 0.2022816171221681,
+        "precision": 0.16666666666666666,
+        "recall": 0.13333333333333333,
+        "f1": 0.14814814814814814,
+        "balanced_accuracy": 0.5,
+        "brier": 0.1753445396731538,
+        "confusion_matrix": [
+          [
+            65,
+            10
+          ],
+          [
+            13,
+            2
+          ]
+        ],
+        "within_group_auc": 0.5333333333333333,
+        "top1_fractional": 0.13333333333333333,
+        "events": 15,
+        "clusters": 4
+      },
+      "test_interval": {
+        "method": "500 cluster bootstrap resamples, fixed fitted model, descriptive 95% percentile interval",
+        "roc_auc": [
+          0.33964497041420116,
+          0.8166666666666667
+        ],
+        "average_precision": [
+          0.16128835051979085,
+          0.4767056530214424
+        ]
+      },
+      "validation_permutation_importance": [
+        {
+          "feature": "elevation",
+          "mean": 0.006987906425925486,
+          "std": 0.007845925167488539
+        },
+        {
+          "feature": "slope",
+          "mean": -0.0009528683372085733,
+          "std": 0.02210242834244854
+        },
+        {
+          "feature": "aspect_sin",
+          "mean": 0.012363600793752202,
+          "std": 0.018425155297655857
+        },
+        {
+          "feature": "aspect_cos",
+          "mean": -0.012153848275486387,
+          "std": 0.01767276285805573
+        },
+        {
+          "feature": "rain_sum_1d",
+          "mean": 0.011198265898003209,
+          "std": 0.02043219780925891
+        },
+        {
+          "feature": "rain_max_hour_1d",
+          "mean": 0.003821327218021223,
+          "std": 0.010824364670007391
+        },
+        {
+          "feature": "temperature_mean_1d",
+          "mean": -0.0009533566084304057,
+          "std": 0.004323557953347816
+        },
+        {
+          "feature": "rain_sum_3d",
+          "mean": 0.015344309586377692,
+          "std": 0.021570725382580192
+        },
+        {
+          "feature": "rain_max_hour_3d",
+          "mean": -0.011134899730100064,
+          "std": 0.01855928469826958
+        },
+        {
+          "feature": "temperature_mean_3d",
+          "mean": -0.011760560803641637,
+          "std": 0.029265589671888977
+        },
+        {
+          "feature": "rain_sum_7d",
+          "mean": -0.008071820096154998,
+          "std": 0.029672647162034927
+        },
+        {
+          "feature": "rain_max_hour_7d",
+          "mean": -0.0030567238443306053,
+          "std": 0.01802689334246577
+        },
+        {
+          "feature": "temperature_mean_7d",
+          "mean": 0.001434567334280465,
+          "std": 0.002117846007829478
+        },
+        {
+          "feature": "rain_sum_14d",
+          "mean": 0.002719336525603286,
+          "std": 0.008662584315481742
+        },
+        {
+          "feature": "rain_max_hour_14d",
+          "mean": 0.0033980254893013957,
+          "std": 0.018569855016209526
+        },
+        {
+          "feature": "temperature_mean_14d",
+          "mean": 0.007019539566305124,
+          "std": 0.014650976635690068
+        },
+        {
+          "feature": "rain_sum_30d",
+          "mean": 0.0003527934851153852,
+          "std": 0.00809789440619021
+        },
+        {
+          "feature": "rain_max_hour_30d",
+          "mean": -0.002423716373367421,
+          "std": 0.005009970892642018
+        },
+        {
+          "feature": "temperature_mean_30d",
+          "mean": 0.002477206935540274,
+          "std": 0.005691819576638215
+        },
+        {
+          "feature": "rain_sum_60d",
+          "mean": 0.005288499933669813,
+          "std": 0.009355418995468733
+        },
+        {
+          "feature": "rain_max_hour_60d",
+          "mean": 0.016415079401624195,
+          "std": 0.022225405677355932
+        },
+        {
+          "feature": "temperature_mean_60d",
+          "mean": 0.001820552868406805,
+          "std": 0.010432978543769851
+        }
+      ]
+    },
+    {
+      "model": "random_forest",
+      "features": "static",
+      "validation": {
+        "roc_auc": 0.4928994082840237,
+        "average_precision": 0.16802285489654556,
+        "precision": 0.125,
+        "recall": 0.07692307692307693,
+        "f1": 0.09523809523809523,
+        "balanced_accuracy": 0.48461538461538467,
+        "brier": 0.19053085589130841,
+        "confusion_matrix": [
+          [
+            116,
+            14
+          ],
+          [
+            24,
+            2
+          ]
+        ],
+        "within_group_auc": 0.4499999999999999,
+        "top1_fractional": 0.019230769230769232,
+        "events": 26,
+        "clusters": 4
+      },
+      "test": {
+        "roc_auc": 0.4666666666666667,
+        "average_precision": 0.17697934902298476,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "balanced_accuracy": 0.5,
+        "brier": 0.17686986275857955,
+        "confusion_matrix": [
+          [
+            75,
+            0
+          ],
+          [
+            15,
+            0
+          ]
+        ],
+        "within_group_auc": 0.5066666666666667,
+        "top1_fractional": 0.13333333333333333,
+        "events": 15,
+        "clusters": 4
+      },
+      "test_interval": {
+        "method": "500 cluster bootstrap resamples, fixed fitted model, descriptive 95% percentile interval",
+        "roc_auc": [
+          0.40694444444444444,
+          0.7793183673469369
+        ],
+        "average_precision": [
+          0.14582979929749532,
+          0.5833333333333333
+        ]
+      }
+    },
+    {
+      "model": "random_forest",
+      "features": "temporal",
+      "validation": {
+        "roc_auc": 0.5352071005917161,
+        "average_precision": 0.19958213576169753,
+        "precision": 0.17777777777777778,
+        "recall": 0.3076923076923077,
+        "f1": 0.22535211267605634,
+        "balanced_accuracy": 0.5115384615384615,
+        "brier": 0.22012215261296783,
+        "confusion_matrix": [
+          [
+            93,
+            37
+          ],
+          [
+            18,
+            8
+          ]
+        ],
+        "within_group_auc": 0.6115384615384616,
+        "top1_fractional": 0.038461538461538464,
+        "events": 26,
+        "clusters": 4
+      },
+      "test": {
+        "roc_auc": 0.6008888888888889,
+        "average_precision": 0.3141413326159089,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "balanced_accuracy": 0.5,
+        "brier": 0.1704618323255359,
+        "confusion_matrix": [
+          [
+            75,
+            0
+          ],
+          [
+            15,
+            0
+          ]
+        ],
+        "within_group_auc": 0.6666666666666666,
+        "top1_fractional": 0.3333333333333333,
+        "events": 15,
+        "clusters": 4
+      },
+      "test_interval": {
+        "method": "500 cluster bootstrap resamples, fixed fitted model, descriptive 95% percentile interval",
+        "roc_auc": [
+          0.384,
+          0.73472
+        ],
+        "average_precision": [
+          0.18871794871794872,
+          0.4055790462767207
+        ]
+      }
+    },
+    {
+      "model": "random_forest",
+      "features": "combined",
+      "validation": {
+        "roc_auc": 0.5177514792899409,
+        "average_precision": 0.2063282597304824,
+        "precision": 0.2,
+        "recall": 0.19230769230769232,
+        "f1": 0.19607843137254902,
+        "balanced_accuracy": 0.5192307692307693,
+        "brier": 0.20292680945860114,
+        "confusion_matrix": [
+          [
+            110,
+            20
+          ],
+          [
+            21,
+            5
+          ]
+        ],
+        "within_group_auc": 0.5846153846153846,
+        "top1_fractional": 0.15384615384615385,
+        "events": 26,
+        "clusters": 4
+      },
+      "test": {
+        "roc_auc": 0.6151111111111112,
+        "average_precision": 0.2531675978628043,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "balanced_accuracy": 0.5,
+        "brier": 0.1683735208769212,
+        "confusion_matrix": [
+          [
+            75,
+            0
+          ],
+          [
+            15,
+            0
+          ]
+        ],
+        "within_group_auc": 0.7466666666666666,
+        "top1_fractional": 0.26666666666666666,
+        "events": 15,
+        "clusters": 4
+      },
+      "test_interval": {
+        "method": "500 cluster bootstrap resamples, fixed fitted model, descriptive 95% percentile interval",
+        "roc_auc": [
+          0.58125,
+          0.7086419753086419
+        ],
+        "average_precision": [
+          0.23624253570074005,
+          0.3333333333333333
+        ]
+      },
+      "validation_permutation_importance": [
+        {
+          "feature": "elevation",
+          "mean": -0.0008947714365502735,
+          "std": 0.005035730946374358
+        },
+        {
+          "feature": "slope",
+          "mean": -0.01123607978896297,
+          "std": 0.016162985615483506
+        },
+        {
+          "feature": "aspect_sin",
+          "mean": -0.01116359993226666,
+          "std": 0.011581522475024978
+        },
+        {
+          "feature": "aspect_cos",
+          "mean": 0.009461412886796744,
+          "std": 0.015012525741922366
+        },
+        {
+          "feature": "rain_sum_1d",
+          "mean": 0.0013473846469748336,
+          "std": 0.004868898983805345
+        },
+        {
+          "feature": "rain_max_hour_1d",
+          "mean": -0.0022048701139392056,
+          "std": 0.00470118946725105
+        },
+        {
+          "feature": "temperature_mean_1d",
+          "mean": 0.0006767245337491845,
+          "std": 0.003948801196165384
+        },
+        {
+          "feature": "rain_sum_3d",
+          "mean": -0.004834763096782421,
+          "std": 0.006065906746517255
+        },
+        {
+          "feature": "rain_max_hour_3d",
+          "mean": -0.009497183912918627,
+          "std": 0.010101525782001531
+        },
+        {
+          "feature": "temperature_mean_3d",
+          "mean": 0.008452904520867785,
+          "std": 0.013752119523153025
+        },
+        {
+          "feature": "rain_sum_7d",
+          "mean": 0.002117512974783739,
+          "std": 0.006857723461227655
+        },
+        {
+          "feature": "rain_max_hour_7d",
+          "mean": -0.010989466332180387,
+          "std": 0.01542376809251507
+        },
+        {
+          "feature": "temperature_mean_7d",
+          "mean": -0.01750294100147153,
+          "std": 0.020053704868947045
+        },
+        {
+          "feature": "rain_sum_14d",
+          "mean": -0.002516965050493522,
+          "std": 0.005155623733227225
+        },
+        {
+          "feature": "rain_max_hour_14d",
+          "mean": 0.003152372119939789,
+          "std": 0.0038268173111098993
+        },
+        {
+          "feature": "temperature_mean_14d",
+          "mean": 0.0010029718517408164,
+          "std": 0.005700643509903536
+        },
+        {
+          "feature": "rain_sum_30d",
+          "mean": 0.0044852078780476725,
+          "std": 0.003867963185203961
+        },
+        {
+          "feature": "rain_max_hour_30d",
+          "mean": -0.0022024128515558184,
+          "std": 0.004476446920289561
+        },
+        {
+          "feature": "temperature_mean_30d",
+          "mean": 0.005467394890769983,
+          "std": 0.01289467944236732
+        },
+        {
+          "feature": "rain_sum_60d",
+          "mean": 0.0041968378164046055,
+          "std": 0.016379298821237856
+        },
+        {
+          "feature": "rain_max_hour_60d",
+          "mean": 0.01652244471709785,
+          "std": 0.011723941686231077
+        },
+        {
+          "feature": "temperature_mean_60d",
+          "mean": -0.007358817736330426,
+          "std": 0.010379609789659265
+        }
+      ]
+    },
+    {
+      "model": "gradient_boosting",
+      "features": "static",
+      "validation": {
+        "roc_auc": 0.48668639053254437,
+        "average_precision": 0.16325797698001998,
+        "precision": 0.13636363636363635,
+        "recall": 0.11538461538461539,
+        "f1": 0.125,
+        "balanced_accuracy": 0.4846153846153846,
+        "brier": 0.19232206433291604,
+        "confusion_matrix": [
+          [
+            111,
+            19
+          ],
+          [
+            23,
+            3
+          ]
+        ],
+        "within_group_auc": 0.48461538461538456,
+        "top1_fractional": 0.08012820512820512,
+        "events": 26,
+        "clusters": 4
+      },
+      "test": {
+        "roc_auc": 0.388,
+        "average_precision": 0.13875445564455224,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "balanced_accuracy": 0.4666666666666667,
+        "brier": 0.20517913674582544,
+        "confusion_matrix": [
+          [
+            70,
+            5
+          ],
+          [
+            15,
+            0
+          ]
+        ],
+        "within_group_auc": 0.3266666666666667,
+        "top1_fractional": 0.0,
+        "events": 15,
+        "clusters": 4
+      },
+      "test_interval": {
+        "method": "500 cluster bootstrap resamples, fixed fitted model, descriptive 95% percentile interval",
+        "roc_auc": [
+          0.19369999999999996,
+          0.46576000000000006
+        ],
+        "average_precision": [
+          0.12895622895622896,
+          0.1730424270670266
+        ]
+      }
+    },
+    {
+      "model": "gradient_boosting",
+      "features": "temporal",
+      "validation": {
+        "roc_auc": 0.5334319526627219,
+        "average_precision": 0.1881323343876172,
+        "precision": 0.21621621621621623,
+        "recall": 0.3076923076923077,
+        "f1": 0.25396825396825395,
+        "balanced_accuracy": 0.5423076923076924,
+        "brier": 0.23495272358858335,
+        "confusion_matrix": [
+          [
+            101,
+            29
+          ],
+          [
+            18,
+            8
+          ]
+        ],
+        "within_group_auc": 0.5269230769230769,
+        "top1_fractional": 0.10705128205128205,
+        "events": 26,
+        "clusters": 4
+      },
+      "test": {
+        "roc_auc": 0.5244444444444445,
+        "average_precision": 0.2123786577984262,
+        "precision": 0.1111111111111111,
+        "recall": 0.13333333333333333,
+        "f1": 0.12121212121212122,
+        "balanced_accuracy": 0.45999999999999996,
+        "brier": 0.19792102103251513,
+        "confusion_matrix": [
+          [
+            59,
+            16
+          ],
+          [
+            13,
+            2
+          ]
+        ],
+        "within_group_auc": 0.52,
+        "top1_fractional": 0.13333333333333333,
+        "events": 15,
+        "clusters": 4
+      },
+      "test_interval": {
+        "method": "500 cluster bootstrap resamples, fixed fitted model, descriptive 95% percentile interval",
+        "roc_auc": [
+          0.304,
+          0.646875
+        ],
+        "average_precision": [
+          0.16269841269841268,
+          0.3465959328028294
+        ]
+      }
+    },
+    {
+      "model": "gradient_boosting",
+      "features": "combined",
+      "validation": {
+        "roc_auc": 0.5448224852071006,
+        "average_precision": 0.19505691173340622,
+        "precision": 0.21428571428571427,
+        "recall": 0.34615384615384615,
+        "f1": 0.2647058823529412,
+        "balanced_accuracy": 0.5461538461538462,
+        "brier": 0.22433724117891926,
+        "confusion_matrix": [
+          [
+            97,
+            33
+          ],
+          [
+            17,
+            9
+          ]
+        ],
+        "within_group_auc": 0.5923076923076923,
+        "top1_fractional": 0.2032051282051282,
+        "events": 26,
+        "clusters": 4
+      },
+      "test": {
+        "roc_auc": 0.5697777777777777,
+        "average_precision": 0.24428989378308247,
+        "precision": 0.16666666666666666,
+        "recall": 0.06666666666666667,
+        "f1": 0.09523809523809523,
+        "balanced_accuracy": 0.5,
+        "brier": 0.1545315127162768,
+        "confusion_matrix": [
+          [
+            70,
+            5
+          ],
+          [
+            14,
+            1
+          ]
+        ],
+        "within_group_auc": 0.6333333333333333,
+        "top1_fractional": 0.2,
+        "events": 15,
+        "clusters": 4
+      },
+      "test_interval": {
+        "method": "500 cluster bootstrap resamples, fixed fitted model, descriptive 95% percentile interval",
+        "roc_auc": [
+          0.4261714285714286,
+          0.7124260355029586
+        ],
+        "average_precision": [
+          0.18590589872527852,
+          0.36828448615687326
+        ]
+      },
+      "validation_permutation_importance": [
+        {
+          "feature": "elevation",
+          "mean": -0.0013092775213165292,
+          "std": 0.0015364930988079274
+        },
+        {
+          "feature": "slope",
+          "mean": -0.0002119974266526714,
+          "std": 0.0008295993841662503
+        },
+        {
+          "feature": "aspect_sin",
+          "mean": -0.002591606889815323,
+          "std": 0.002694361198756578
+        },
+        {
+          "feature": "aspect_cos",
+          "mean": -0.00013651361056653543,
+          "std": 0.003653647077227732
+        },
+        {
+          "feature": "rain_sum_1d",
+          "mean": -0.00017556651376029743,
+          "std": 0.0009850797681972181
+        },
+        {
+          "feature": "rain_max_hour_1d",
+          "mean": 0.0014914905504695292,
+          "std": 0.0045199033059262
+        },
+        {
+          "feature": "temperature_mean_1d",
+          "mean": -0.0032389108368804376,
+          "std": 0.004329998568645051
+        },
+        {
+          "feature": "rain_sum_3d",
+          "mean": -0.0010841101203907383,
+          "std": 0.00310789816261974
+        },
+        {
+          "feature": "rain_max_hour_3d",
+          "mean": -0.0021962052429547073,
+          "std": 0.0023296074986562973
+        },
+        {
+          "feature": "temperature_mean_3d",
+          "mean": -0.008459982583862324,
+          "std": 0.009623141364452302
+        },
+        {
+          "feature": "rain_sum_7d",
+          "mean": -0.00437290626855725,
+          "std": 0.004788974785505685
+        },
+        {
+          "feature": "rain_max_hour_7d",
+          "mean": -0.010442286377236659,
+          "std": 0.007235209971018809
+        },
+        {
+          "feature": "temperature_mean_7d",
+          "mean": -0.005821684665703824,
+          "std": 0.01853360525110639
+        },
+        {
+          "feature": "rain_sum_14d",
+          "mean": -0.006897160696052429,
+          "std": 0.005125299163610009
+        },
+        {
+          "feature": "rain_max_hour_14d",
+          "mean": -0.0064516451754772774,
+          "std": 0.010136262300338086
+        },
+        {
+          "feature": "temperature_mean_14d",
+          "mean": 0.006218084970951815,
+          "std": 0.010528312318799148
+        },
+        {
+          "feature": "rain_sum_30d",
+          "mean": 0.00020252529482453762,
+          "std": 0.00027772055329378917
+        },
+        {
+          "feature": "rain_max_hour_30d",
+          "mean": -0.0042427548249063946,
+          "std": 0.005692974056832062
+        },
+        {
+          "feature": "temperature_mean_30d",
+          "mean": -0.004649696775350281,
+          "std": 0.003066278488647063
+        },
+        {
+          "feature": "rain_sum_60d",
+          "mean": -0.006468511996849033,
+          "std": 0.005512259287448421
+        },
+        {
+          "feature": "rain_max_hour_60d",
+          "mean": 0.001860124864903842,
+          "std": 0.004833612423987923
+        },
+        {
+          "feature": "temperature_mean_60d",
+          "mean": -0.0007928744922504893,
+          "std": 0.0022678313427030544
+        }
+      ]
+    }
+  ],
+  "independence_rule": "event groups; dates <=3d anywhere in Austria; positives <2km; any sample overlap <400m; transitive union",
+  "limitations": [
+    "Exploratory retrospective matched case-control study, not prospective hazard probability.",
+    "102 initial candidates are not 102 independent storms.",
+    "Unknown specific Naturgefahren Test reuse license; local research authorization only."
+  ],
+  "chance_test": {
+    "roc_auc": 0.5,
+    "average_precision": 0.16666666666666666,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "balanced_accuracy": 0.5,
+    "brier": 0.1388888888888889,
+    "confusion_matrix": [
+      [
+        75,
+        0
+      ],
+      [
+        15,
+        0
+      ]
+    ],
+    "within_group_auc": 0.5,
+    "top1_fractional": 0.16666666666666663,
+    "events": 15,
+    "clusters": 4
+  },
+  "geographic_holdout": {
+    "held_out_state": "Steiermark",
+    "train_events": 24,
+    "test_events": 28,
+    "purge_m": 20000,
+    "models": [
+      {
+        "model": "logistic_regression",
+        "features": "static",
+        "test": {
+          "roc_auc": 0.5239795918367347,
+          "average_precision": 0.20705694686441925,
+          "precision": 0.17142857142857143,
+          "recall": 0.42857142857142855,
+          "f1": 0.24489795918367346,
+          "balanced_accuracy": 0.5071428571428571,
+          "brier": 0.2506938576283022,
+          "confusion_matrix": [
+            [
+              82,
+              58
+            ],
+            [
+              16,
+              12
+            ]
+          ],
+          "within_group_auc": 0.5928571428571429,
+          "top1_fractional": 0.17857142857142858,
+          "events": 28,
+          "clusters": 7
+        }
+      },
+      {
+        "model": "logistic_regression",
+        "features": "temporal",
+        "test": {
+          "roc_auc": 0.5915816326530612,
+          "average_precision": 0.2350861031824273,
+          "precision": 0.2962962962962963,
+          "recall": 0.5714285714285714,
+          "f1": 0.3902439024390244,
+          "balanced_accuracy": 0.6499999999999999,
+          "brier": 0.21330042642975708,
+          "confusion_matrix": [
+            [
+              102,
+              38
+            ],
+            [
+              12,
+              16
+            ]
+          ],
+          "within_group_auc": 0.65,
+          "top1_fractional": 0.17857142857142858,
+          "events": 28,
+          "clusters": 7
+        }
+      },
+      {
+        "model": "logistic_regression",
+        "features": "combined",
+        "test": {
+          "roc_auc": 0.5941326530612245,
+          "average_precision": 0.22988523731280736,
+          "precision": 0.26,
+          "recall": 0.4642857142857143,
+          "f1": 0.3333333333333333,
+          "balanced_accuracy": 0.6000000000000001,
+          "brier": 0.21310636352918022,
+          "confusion_matrix": [
+            [
+              103,
+              37
+            ],
+            [
+              15,
+              13
+            ]
+          ],
+          "within_group_auc": 0.6428571428571429,
+          "top1_fractional": 0.17857142857142858,
+          "events": 28,
+          "clusters": 7
+        }
+      },
+      {
+        "model": "random_forest",
+        "features": "static",
+        "test": {
+          "roc_auc": 0.4885204081632653,
+          "average_precision": 0.1813989699681683,
+          "precision": 0.17857142857142858,
+          "recall": 0.17857142857142858,
+          "f1": 0.17857142857142858,
+          "balanced_accuracy": 0.5071428571428571,
+          "brier": 0.21272141242922768,
+          "confusion_matrix": [
+            [
+              117,
+              23
+            ],
+            [
+              23,
+              5
+            ]
+          ],
+          "within_group_auc": 0.4642857142857143,
+          "top1_fractional": 0.07142857142857142,
+          "events": 28,
+          "clusters": 7
+        }
+      },
+      {
+        "model": "random_forest",
+        "features": "temporal",
+        "test": {
+          "roc_auc": 0.5262755102040816,
+          "average_precision": 0.20172667143163375,
+          "precision": 0.15789473684210525,
+          "recall": 0.10714285714285714,
+          "f1": 0.1276595744680851,
+          "balanced_accuracy": 0.4964285714285714,
+          "brier": 0.18618660483250565,
+          "confusion_matrix": [
+            [
+              124,
+              16
+            ],
+            [
+              25,
+              3
+            ]
+          ],
+          "within_group_auc": 0.4357142857142858,
+          "top1_fractional": 0.07142857142857142,
+          "events": 28,
+          "clusters": 7
+        }
+      },
+      {
+        "model": "random_forest",
+        "features": "combined",
+        "test": {
+          "roc_auc": 0.5237244897959185,
+          "average_precision": 0.17855043626635628,
+          "precision": 0.10526315789473684,
+          "recall": 0.07142857142857142,
+          "f1": 0.0851063829787234,
+          "balanced_accuracy": 0.475,
+          "brier": 0.18323495793888936,
+          "confusion_matrix": [
+            [
+              123,
+              17
+            ],
+            [
+              26,
+              2
+            ]
+          ],
+          "within_group_auc": 0.45,
+          "top1_fractional": 0.10714285714285714,
+          "events": 28,
+          "clusters": 7
+        }
+      },
+      {
+        "model": "gradient_boosting",
+        "features": "static",
+        "test": {
+          "roc_auc": 0.44272959183673466,
+          "average_precision": 0.1585778056764373,
+          "precision": 0.21052631578947367,
+          "recall": 0.14285714285714285,
+          "f1": 0.1702127659574468,
+          "balanced_accuracy": 0.5178571428571429,
+          "brier": 0.1907079823736019,
+          "confusion_matrix": [
+            [
+              125,
+              15
+            ],
+            [
+              24,
+              4
+            ]
+          ],
+          "within_group_auc": 0.3857142857142858,
+          "top1_fractional": 0.07142857142857142,
+          "events": 28,
+          "clusters": 7
+        }
+      },
+      {
+        "model": "gradient_boosting",
+        "features": "temporal",
+        "test": {
+          "roc_auc": 0.5099489795918367,
+          "average_precision": 0.21021053310715276,
+          "precision": 0.07142857142857142,
+          "recall": 0.03571428571428571,
+          "f1": 0.047619047619047616,
+          "balanced_accuracy": 0.4714285714285714,
+          "brier": 0.17361666473275794,
+          "confusion_matrix": [
+            [
+              127,
+              13
+            ],
+            [
+              27,
+              1
+            ]
+          ],
+          "within_group_auc": 0.5285714285714286,
+          "top1_fractional": 0.19047619047619047,
+          "events": 28,
+          "clusters": 7
+        }
+      },
+      {
+        "model": "gradient_boosting",
+        "features": "combined",
+        "test": {
+          "roc_auc": 0.5216836734693877,
+          "average_precision": 0.22267181433504646,
+          "precision": 0.1111111111111111,
+          "recall": 0.03571428571428571,
+          "f1": 0.05405405405405406,
+          "balanced_accuracy": 0.48928571428571427,
+          "brier": 0.16303874864438345,
+          "confusion_matrix": [
+            [
+              132,
+              8
+            ],
+            [
+              27,
+              1
+            ]
+          ],
+          "within_group_auc": 0.5178571428571429,
+          "top1_fractional": 0.125,
+          "events": 28,
+          "clusters": 7
+        }
+      }
+    ]
+  },
+  "matching": {
+    "distance_to_positive_m": {
+      "median": 6121.95427524235,
+      "max": 9957.783631182354,
+      "p95": 9590.905147396345
+    },
+    "slope_difference_deg": {
+      "median": 0.9614496231079102,
+      "max": 4.895803928375244,
+      "p95": 3.082347965240479
+    },
+    "elevation_difference_m": {
+      "median": 28.292755126953125,
+      "max": 127.13653564453125,
+      "p95": 92.28960876464846
+    },
+    "aspect_difference_deg": {
+      "median": 8.539909362792969,
+      "max": 43.285888671875,
+      "p95": 26.077526283264163
+    }
+  },
+  "weather": {
+    "groups_identical_60d_rain": 0,
+    "unique_grid_cells": 287,
+    "retained_hours": 1438
+  },
+  "position_sensitivity": {
+    "diagnostic": "32 deterministic offsets at half/full source-reported category upper radius; no accuracy distribution inferred",
+    "median_slope_range_deg": 5.709980010986328,
+    "events_with_slope_change_above_matching_caliper": 25,
+    "events_with_any_offset_slope_below_5deg": 15
+  },
+  "initial_candidates": 102,
+  "complete_events": 60,
+  "exclusions": {
+    "insufficient_controls": 13,
+    "missing_weather_values": 17,
+    "implausible_weather_values": 9,
+    "positive_dem_slope_below_minimum": 3
+  }
+}

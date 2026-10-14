@@ -1,0 +1,10 @@
+model,metric,lower_025,upper_975,draws,clusters,method
+gradient_boosting,average_precision,-0.06901639210184382,0.007210293795485548,1000,16,"paired cluster bootstrap of mean OOF scores; fixed models, exploratory"
+gradient_boosting,roc_auc,-0.04052393010036012,0.07700172071155058,1000,16,"paired cluster bootstrap of mean OOF scores; fixed models, exploratory"
+gradient_boosting,within_group_auc,-0.10006410256410257,0.0897054597701149,1000,16,"paired cluster bootstrap of mean OOF scores; fixed models, exploratory"
+logistic_regression,average_precision,-0.06140272019606493,0.03256749747749043,1000,16,"paired cluster bootstrap of mean OOF scores; fixed models, exploratory"
+logistic_regression,roc_auc,-0.10097984913429847,0.0009352277507360838,1000,16,"paired cluster bootstrap of mean OOF scores; fixed models, exploratory"
+logistic_regression,within_group_auc,-0.19999999999999996,0.05003571428571424,1000,16,"paired cluster bootstrap of mean OOF scores; fixed models, exploratory"
+random_forest,average_precision,-0.02954570921486404,0.08732187544831495,1000,16,"paired cluster bootstrap of mean OOF scores; fixed models, exploratory"
+random_forest,roc_auc,0.006745188213076424,0.16756630531229494,1000,16,"paired cluster bootstrap of mean OOF scores; fixed models, exploratory"
+random_forest,within_group_auc,-0.011773618538324418,0.23001923076923073,1000,16,"paired cluster bootstrap of mean OOF scores; fixed models, exploratory"

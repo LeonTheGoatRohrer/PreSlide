@@ -1,0 +1,296 @@
+{
+  "generated_at": "2026-10-14T10:09:07.720439+00:00",
+  "status": "AUDIT_ACCEPTED_LOCAL_RESEARCH_AUTHORIZED",
+  "config": {
+    "primary_start_date": "2018-01-01",
+    "fallback_start_date": "2015-01-01",
+    "end_date": "2026-10-14",
+    "max_position_error_m": 100,
+    "minimum_desired_positives": 100,
+    "accepted_process_groups": [
+      "Gleiten/Rutschen",
+      "Fliessen"
+    ],
+    "accepted_process_subgroups": [
+      "Lockergesteinsrutschung",
+      "Hangmure",
+      "Hangmure bis Lockergesteinsrutschung",
+      "Hangmure und Lockergesteinsrutschung",
+      "Hangmure und Rutschung"
+    ],
+    "accepted_process_quality": [
+      "Codierung sicher",
+      "Codierung in geringem Mass unsicher"
+    ],
+    "source_license_status": "unconfirmed_do_not_train_or_redistribute"
+  },
+  "config_sha256": "afa9174f28bf1426c7a49cac28dcf42186032b60b03b3a630208211ae5f7c4ac",
+  "source_sha256": {
+    "general": "e23e15a18f1ef51546b70191ec50323275a45629aa61114aebf7aca540b5504a",
+    "detail": "9dc1581c122b83839b45ac7cc53eec83177fe4e54c785019f7a519313eaa3d97",
+    "inspire": "6bb738af1b44f27232a42af419818ba4db095cfc1d464e4521dc7b701a4db61f"
+  },
+  "general_inventory": {
+    "raw_records": 9441,
+    "process_distribution": {
+      "Gleit- oder Fliessprozess": 5912,
+      "Sturzprozess": 2402,
+      "gravitative Massenbewegung (undefinierter Typ)": 1024,
+      "tiefgreifende Hangdeformation": 88,
+      "unknown": 15
+    },
+    "position_accuracy_original": {
+      "50 - 2000m": 360,
+      "50-2000m": 9081
+    },
+    "position_upper_bound_cumulative": {
+      "25": 0,
+      "50": 0,
+      "100": 0,
+      "250": 0,
+      "500": 0
+    },
+    "position_lower_bound_above_500": 0,
+    "position_upper_bound_above_500": 9441,
+    "position_unknown": 0,
+    "position_open_ended": 0,
+    "dated_2018_onwards_all_processes": 2783,
+    "missing_or_invalid_structured_day": 3312,
+    "coordinate_bounds_plausible": 9441,
+    "state_distribution": {
+      "Burgenland": 126,
+      "Kaernten": 1366,
+      "Niederoesterreich": 916,
+      "Oberoesterreich": 621,
+      "Salzburg": 897,
+      "Steiermark": 2545,
+      "Tirol": 2127,
+      "Vorarlberg": 827,
+      "Wien": 13,
+      "unknown": 3
+    },
+    "missing_fields": {
+      "positionalAccuracy": 0,
+      "processGroupWeb_DE": 15,
+      "Ereignisdatum_validFrom": 3312,
+      "Bundesland": 3
+    }
+  },
+  "general_candidate_counts_by_start_year": {
+    "2018": {
+      "accepted_group_with_structured_day": 1575,
+      "position_upper_bound_at_most_250m": 0
+    },
+    "2015": {
+      "accepted_group_with_structured_day": 2336,
+      "position_upper_bound_at_most_250m": 0
+    }
+  },
+  "detail_inventory": {
+    "raw_records": 25609,
+    "process_distribution": {
+      "Fliessen": 3953,
+      "Gleiten/Rutschen": 10013,
+      "Kriechen": 432,
+      "Massenbewegung (unklarer Typ)": 7463,
+      "Stuerzen": 3272,
+      "tiefgreifende Hangdeformation": 462,
+      "unknown": 14
+    },
+    "position_accuracy_original": {
+      "Lage genau (5-20m)": 4330,
+      "Lage relativ genau (20-100m)": 3879,
+      "Lage sehr genau / sehr sicher (0-5m)": 8259,
+      "Lage sehr ungenau (>1000m)": 2766,
+      "Lage ungenau (100-1000m)": 6373,
+      "unknown": 2
+    },
+    "position_upper_bound_cumulative": {
+      "25": 12589,
+      "50": 12589,
+      "100": 16468,
+      "250": 16468,
+      "500": 16468
+    },
+    "position_lower_bound_above_500": 2766,
+    "position_upper_bound_above_500": 6373,
+    "position_unknown": 2,
+    "position_open_ended": 2766,
+    "dated_2018_onwards_all_processes": 3217,
+    "missing_or_invalid_structured_day": 17292,
+    "coordinate_bounds_plausible": 25609,
+    "state_distribution": {
+      "Burgenland": 1512,
+      "Kaernten": 2947,
+      "Niederoesterreich": 2493,
+      "Oberoesterreich": 2198,
+      "Salzburg": 1318,
+      "Steiermark": 6115,
+      "Tirol": 4554,
+      "Vorarlberg": 4439,
+      "Wien": 33
+    },
+    "missing_fields": {
+      "QUAL_LAGE": 2,
+      "Prozessgruppe": 14,
+      "Ereignisdatum_validFrom": 17292,
+      "Bundesland": 0
+    }
+  },
+  "detail_date_quality": {
+    "ambiguous_or_unparsed_narrative": 3944,
+    "conflicting_date_fields": 199,
+    "missing_or_invalid_day": 10401,
+    "month_only": 5525,
+    "reported_single_day": 4063,
+    "structured_day_unverified": 111,
+    "year_only": 1366
+  },
+  "primary_period": {
+    "start_date": "2018-01-01",
+    "cumulative_filter_counts": {
+      "accepted_process": 11247,
+      "in_period": 1533,
+      "single_reported_day": 637,
+      "coordinates_plausible": 637,
+      "position_quality": 360,
+      "process_confidence": 95,
+      "certain_mass_movement": 89
+    },
+    "overlapping_exclusion_counts": {
+      "in_period": 22392,
+      "single_reported_day": 21546,
+      "accepted_process": 14362,
+      "certain_mass_movement": 13491,
+      "process_confidence": 11275,
+      "position_quality": 9141
+    },
+    "quality_candidates_before_exact_deduplication": 89,
+    "exact_location_date_duplicates_removed": 0,
+    "quality_candidates": 89
+  },
+  "fallback_period": {
+    "start_date": "2015-01-01",
+    "cumulative_filter_counts": {
+      "accepted_process": 11247,
+      "in_period": 2120,
+      "single_reported_day": 700,
+      "coordinates_plausible": 700,
+      "position_quality": 380,
+      "process_confidence": 108,
+      "certain_mass_movement": 102
+    },
+    "overlapping_exclusion_counts": {
+      "in_period": 20507,
+      "single_reported_day": 21546,
+      "accepted_process": 14362,
+      "certain_mass_movement": 13491,
+      "process_confidence": 11275,
+      "position_quality": 9141
+    },
+    "quality_candidates_before_exact_deduplication": 102,
+    "exact_location_date_duplicates_removed": 0,
+    "quality_candidates": 102
+  },
+  "selected_start_date": "2015-01-01",
+  "period_expanded": true,
+  "candidate_year_distribution": {
+    "2017": 13,
+    "2018": 9,
+    "2019": 1,
+    "2022": 8,
+    "2023": 37,
+    "2024": 26,
+    "2025": 4,
+    "2026": 4
+  },
+  "candidate_state_distribution": {
+    "Burgenland": 3,
+    "Kaernten": 12,
+    "Niederoesterreich": 7,
+    "Oberoesterreich": 4,
+    "Salzburg": 8,
+    "Steiermark": 48,
+    "Tirol": 12,
+    "Vorarlberg": 7,
+    "Wien": 1
+  },
+  "candidate_process_distribution": {
+    "Hangmure": 34,
+    "Hangmure bis Lockergesteinsrutschung": 9,
+    "Lockergesteinsrutschung": 59
+  },
+  "candidate_position_distribution": {
+    "100": 35,
+    "20": 40,
+    "5": 27
+  },
+  "candidate_unique_reported_dates": 45,
+  "candidate_largest_same_date_clusters": [
+    [
+      "2017-08-05",
+      13
+    ],
+    [
+      "2018-06-04",
+      8
+    ],
+    [
+      "2022-08-19",
+      6
+    ],
+    [
+      "2023-08-05",
+      6
+    ],
+    [
+      "2024-06-08",
+      5
+    ],
+    [
+      "2023-11-03",
+      4
+    ],
+    [
+      "2023-12-23",
+      4
+    ],
+    [
+      "2024-08-12",
+      4
+    ],
+    [
+      "2023-04-15",
+      3
+    ],
+    [
+      "2023-10-31",
+      3
+    ]
+  ],
+  "candidate_date_range": [
+    "2017-08-05",
+    "2026-07-01"
+  ],
+  "licensed_inspire_media": {
+    "raw_records": 8640,
+    "has_individual_accuracy_field": false,
+    "candidate_id_overlap": 58,
+    "note": "CC BY 4.0 applies to this source; not automatically to additional test-service fields."
+  },
+  "wlv": {
+    "raw_slide_records": 1742,
+    "dated_2018_onwards": 166,
+    "dated_2015_onwards": 203,
+    "individual_accuracy_field": false,
+    "date_precision_field": false,
+    "future_dated_records": 0,
+    "note": "ISO timestamps alone do not establish exact day precision; no spatial accuracy inferred."
+  },
+  "training_approved_positives": 0,
+  "controls_generated": 0,
+  "terrain_status": "see_PROJECT_STATE_and_experiment_reports",
+  "weather_status": "see_PROJECT_STATE_and_experiment_reports",
+  "model_metrics": null,
+  "source_uncertainty": "Naturgefahren Test: specific license unidentified and quality semantics not provider-confirmed. User authorized local non-commercial research on 2026-10-14. No raw redistribution. Clarification is not a prerequisite."
+}

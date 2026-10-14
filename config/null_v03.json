@@ -1,0 +1,19 @@
+{
+  "version": "null_v03.1",
+  "status": "exploratory diagnostic, predeclared before any null fit on 2026-10-14",
+  "motivation": "Independent re-verification found Random Forest terrain-only within-group AUC below 0.5 in all five V0.2 repetitions (0.37-0.43). The V0.2 RF weather gain (+0.136 local AUC) is measured against that baseline. A null reference produced by the identical matched, grouped CV pipeline is needed before interpreting any development value as signal.",
+  "dataset_identity": "046074ba6f12556c",
+  "cohort": "V0.2 development cohort only: 45 events, 270 samples, 16 dependence clusters. Original test (15 events / 4 clusters) never loaded into fits.",
+  "splits": "frozen data/analysis/stability_v02/splits.parquet (seeds 11/23/37/51/71, 4 folds)",
+  "models": ["logistic_regression", "random_forest", "gradient_boosting"],
+  "feature_sets": ["static", "temporal", "combined"],
+  "model_parameters": "unchanged preslide.evaluation.make_model",
+  "permutation": "within every event group, one uniformly random member of the six is designated pseudo-positive; one label permutation per draw shared by all 9 variants and all 5 repetitions",
+  "permutations": 100,
+  "master_seed": 20261015,
+  "identity_check": "draw 0 uses the true labels and must reproduce V0.2 stability_metrics.csv exactly",
+  "statistics": ["within_group_auc", "average_precision", "roc_auc", "delta combined-static", "delta temporal-static"],
+  "summary": "median over the 5 repetitions per variant (same as V0.2); empirical one-sided p = (1 + #null >= observed) / (1 + N); also lower-tail p for values below the null",
+  "caveat": "Within-group permutation makes group members exchangeable. True positives are additionally the centre of their control search (calipers and annulus are defined around them); this structural asymmetry is absent in the null. A difference between the observed static value and the null can therefore reflect design structure, not landslide information.",
+  "no_changes": "no feature, model, split, threshold or cohort change; no original-test or Steiermark scoring"
+}

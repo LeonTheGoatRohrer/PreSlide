@@ -1,0 +1,43 @@
+{
+ "registered_at": "2026-10-14T13:23:40.012426+00:00",
+ "config_sha256": "c6d67a854ba78b2b46103fa9e5c0bbc1d3e3934210d1e5c22d3fb37c2ca4fcf2",
+ "rule_files_sha256": {
+  "config/v04.json": "c6d67a854ba78b2b46103fa9e5c0bbc1d3e3934210d1e5c22d3fb37c2ca4fcf2",
+  "preslide/v04/dates.py": "ff4addc397276269eb910649270fd90799dc1bd870dab183d5233ea2562f32af",
+  "preslide/v04/units.py": "be5fc25429100a0f7b3237c4e1e9724deb70c0d5c910b9adc41ca9c561287c65",
+  "preslide/v04/audit.py": "d046229912d259f87f16788185695fbea1daa7d239743d2becb7d894c8ee2214",
+  "tests/test_v04_dates.py": "7a1d1ea2addfcfb1abf51575d5cf434d483abf99531e35f0d090fc95b75868d0"
+ },
+ "known_at_registration": "candidate counts, episodes and provisional partition sizes from the audit (no matching, weather, land cover, geology, features, models or scores)",
+ "audit_counts": {
+  "main_candidates": 500,
+  "main_temporal_episodes": 48,
+  "main_spatiotemporal_units": 71,
+  "provisional": {
+   "te": {
+    "blocks": 35,
+    "events": {
+     "sealed_test": 290,
+     "development": 210
+    },
+    "blocks_by_partition": {
+     "development": 23,
+     "sealed_test": 12
+    }
+   },
+   "st": {
+    "blocks": 58,
+    "events": {
+     "sealed_test": 305,
+     "development": 195
+    },
+    "blocks_by_partition": {
+     "development": 33,
+     "sealed_test": 25
+    }
+   }
+  }
+ },
+ "baseline_manifest_sha256": "4f83dfc996ca675c86096db037e8c3c92cdf0b33eb1624775d3d90a3e7568a5c",
+ "baseline_archive_manifest_sha256": "1e464e439c33136fe0015484180c6047a6029d59f7e9a3db60abbaf601875cc8"
+}

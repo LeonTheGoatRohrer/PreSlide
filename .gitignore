@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+.pytest_cache/
+node_modules/
+frontend/dist/
+data/
+models/
+*.log
+.env
+deliverables/
+# Local-only de-identified event diagnostics; never ship record-level tables.
+reports/stability_v02/event_pairwise_results.csv
+reports/stability_v02/weather_distinguishability.csv
+reports/stability_v02/weather_by_event.csv
+reports/baseline/event_diagnostics.csv
+reports/baseline/sample_scores.csv
+reports/baseline/baseline_membership.json
+
+# Large binary archive snapshot (33 MB); its manifest is tracked instead
+archive/**/*.zip
+
+# Local Claude Code settings
+.claude/settings.local.json

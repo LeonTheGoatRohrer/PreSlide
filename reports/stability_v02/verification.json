@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "primary_fits": 180,
+  "diagnostic_fits": 260,
+  "stored_predictions_reproduced": 29700,
+  "original_test_overlap": 0,
+  "original_artifacts_unchanged": true,
+  "training_only_preprocessing": true,
+  "identical_outer_splits": true,
+  "checks": [
+    "all stored model probabilities reproduced",
+    "all primary fold/repetition metrics recomputed",
+    "all ablation/learning/interaction repetition metrics recomputed",
+    "all pairwise rankings recomputed",
+    "feature stability aggregation checked",
+    "all model checkpoint hashes verified",
+    "original artifacts and reports preserved",
+    "public summary has no source/sample identifiers",
+    "all seven figures present"
+  ]
+}

@@ -1,0 +1,395 @@
+{
+  "status": "SMOKE_TEST_ONLY",
+  "dataset_identity": "046074ba6f12556c",
+  "dataset_hash": "308ed5d755130d40255fb847a6f96a10b233ea0bf7cdfa2cd150322595e1bdc7",
+  "split": {
+    "test": {
+      "events": 5,
+      "clusters": 2,
+      "samples": 30
+    },
+    "train": {
+      "events": 3,
+      "clusters": 3,
+      "samples": 18
+    },
+    "validation": {
+      "events": 1,
+      "clusters": 1,
+      "samples": 6
+    }
+  },
+  "feature_sets": {
+    "static": [
+      "elevation",
+      "slope",
+      "aspect_sin",
+      "aspect_cos"
+    ],
+    "temporal": [
+      "rain_sum_1d",
+      "rain_max_hour_1d",
+      "temperature_mean_1d",
+      "rain_sum_3d",
+      "rain_max_hour_3d",
+      "temperature_mean_3d",
+      "rain_sum_7d",
+      "rain_max_hour_7d",
+      "temperature_mean_7d",
+      "rain_sum_14d",
+      "rain_max_hour_14d",
+      "temperature_mean_14d",
+      "rain_sum_30d",
+      "rain_max_hour_30d",
+      "temperature_mean_30d",
+      "rain_sum_60d",
+      "rain_max_hour_60d",
+      "temperature_mean_60d"
+    ],
+    "combined": [
+      "elevation",
+      "slope",
+      "aspect_sin",
+      "aspect_cos",
+      "rain_sum_1d",
+      "rain_max_hour_1d",
+      "temperature_mean_1d",
+      "rain_sum_3d",
+      "rain_max_hour_3d",
+      "temperature_mean_3d",
+      "rain_sum_7d",
+      "rain_max_hour_7d",
+      "temperature_mean_7d",
+      "rain_sum_14d",
+      "rain_max_hour_14d",
+      "temperature_mean_14d",
+      "rain_sum_30d",
+      "rain_max_hour_30d",
+      "temperature_mean_30d",
+      "rain_sum_60d",
+      "rain_max_hour_60d",
+      "temperature_mean_60d"
+    ]
+  },
+  "threshold": 0.5,
+  "models": [
+    {
+      "model": "logistic_regression",
+      "features": "static",
+      "validation": {
+        "roc_auc": 0.8,
+        "average_precision": 0.5,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "balanced_accuracy": 0.4,
+        "brier": 0.21404164814197812,
+        "confusion_matrix": [
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "within_group_auc": 0.8,
+        "top1_fractional": 0.0,
+        "events": 1,
+        "clusters": 1
+      },
+      "test": {
+        "roc_auc": 0.528,
+        "average_precision": 0.2757703081232493,
+        "precision": 0.16666666666666666,
+        "recall": 0.4,
+        "f1": 0.23529411764705882,
+        "balanced_accuracy": 0.5,
+        "brier": 0.3228479146302793,
+        "confusion_matrix": [
+          [
+            15,
+            10
+          ],
+          [
+            3,
+            2
+          ]
+        ],
+        "within_group_auc": 0.5599999999999999,
+        "top1_fractional": 0.0,
+        "events": 5,
+        "clusters": 2
+      }
+    },
+    {
+      "model": "logistic_regression",
+      "features": "temporal",
+      "validation": {
+        "roc_auc": 1.0,
+        "average_precision": 1.0,
+        "precision": 0.16666666666666666,
+        "recall": 1.0,
+        "f1": 0.2857142857142857,
+        "balanced_accuracy": 0.5,
+        "brier": 0.2781593722703446,
+        "confusion_matrix": [
+          [
+            0,
+            5
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "within_group_auc": 1.0,
+        "top1_fractional": 1.0,
+        "events": 1,
+        "clusters": 1
+      },
+      "test": {
+        "roc_auc": 0.15200000000000002,
+        "average_precision": 0.13561201855212746,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "balanced_accuracy": 0.44,
+        "brier": 0.21619442365416536,
+        "confusion_matrix": [
+          [
+            22,
+            3
+          ],
+          [
+            5,
+            0
+          ]
+        ],
+        "within_group_auc": 0.08,
+        "top1_fractional": 0.0,
+        "events": 5,
+        "clusters": 2
+      }
+    },
+    {
+      "model": "logistic_regression",
+      "features": "combined",
+      "validation": {
+        "roc_auc": 0.8,
+        "average_precision": 0.5,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "balanced_accuracy": 0.4,
+        "brier": 0.1842068089365084,
+        "confusion_matrix": [
+          [
+            4,
+            1
+          ],
+          [
+            1,
+            0
+          ]
+        ],
+        "within_group_auc": 0.8,
+        "top1_fractional": 0.0,
+        "events": 1,
+        "clusters": 1
+      },
+      "test": {
+        "roc_auc": 0.33599999999999997,
+        "average_precision": 0.15245791245791246,
+        "precision": 0.16666666666666666,
+        "recall": 0.4,
+        "f1": 0.23529411764705882,
+        "balanced_accuracy": 0.5,
+        "brier": 0.337538148910512,
+        "confusion_matrix": [
+          [
+            15,
+            10
+          ],
+          [
+            3,
+            2
+          ]
+        ],
+        "within_group_auc": 0.16,
+        "top1_fractional": 0.0,
+        "events": 5,
+        "clusters": 2
+      },
+      "validation_permutation_importance": [
+        {
+          "feature": "elevation",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "slope",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "aspect_sin",
+          "mean": 0.10833333333333335,
+          "std": 0.09166666666666667
+        },
+        {
+          "feature": "aspect_cos",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "rain_sum_1d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "rain_max_hour_1d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "temperature_mean_1d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "rain_sum_3d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "rain_max_hour_3d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "temperature_mean_3d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "rain_sum_7d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "rain_max_hour_7d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "temperature_mean_7d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "rain_sum_14d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "rain_max_hour_14d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "temperature_mean_14d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "rain_sum_30d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "rain_max_hour_30d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "temperature_mean_30d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "rain_sum_60d",
+          "mean": 0.0,
+          "std": 0.0
+        },
+        {
+          "feature": "rain_max_hour_60d",
+          "mean": 0.05,
+          "std": 0.07637626158259735
+        },
+        {
+          "feature": "temperature_mean_60d",
+          "mean": 0.0,
+          "std": 0.0
+        }
+      ]
+    }
+  ],
+  "independence_rule": "event groups; dates <=3d anywhere in Austria; positives <2km; any sample overlap <400m; transitive union",
+  "limitations": [
+    "Exploratory retrospective matched case-control study, not prospective hazard probability.",
+    "102 initial candidates are not 102 independent storms.",
+    "Unknown specific Naturgefahren Test reuse license; local research authorization only."
+  ],
+  "chance_test": {
+    "roc_auc": 0.5,
+    "average_precision": 0.16666666666666666,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "balanced_accuracy": 0.5,
+    "brier": 0.1388888888888889,
+    "confusion_matrix": [
+      [
+        25,
+        0
+      ],
+      [
+        5,
+        0
+      ]
+    ],
+    "within_group_auc": 0.5,
+    "top1_fractional": 0.16666666666666666,
+    "events": 5,
+    "clusters": 2
+  },
+  "matching": {
+    "distance_to_positive_m": {
+      "median": 6350.533508526186,
+      "max": 9223.05569304157,
+      "p95": 8620.946344454365
+    },
+    "slope_difference_deg": {
+      "median": 1.0477733612060547,
+      "max": 4.163979530334473,
+      "p95": 3.0296993255615225
+    },
+    "elevation_difference_m": {
+      "median": 32.3389892578125,
+      "max": 126.4371337890625,
+      "p95": 65.67591552734375
+    },
+    "aspect_difference_deg": {
+      "median": 6.46295166015625,
+      "max": 32.97999572753906,
+      "p95": 23.334960937499986
+    }
+  },
+  "weather": {
+    "groups_identical_60d_rain": 0,
+    "unique_grid_cells": 46,
+    "retained_hours": 1438
+  }
+}
