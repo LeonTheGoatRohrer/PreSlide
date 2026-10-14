@@ -15,14 +15,26 @@ TREES = ['data/v04', 'models/v04', 'reports/v04', 'preslide/v04']
 FILES = ['config/v04.json', 'reports/baseline/BASELINE_MANIFEST.json', 'archive/v0.3-baseline/ARCHIVE_MANIFEST.json']
 
 
+TEXT = ('.py', '.json', '.md', '.csv', '.txt')
+
+
+def file_hash(rel):
+    """Byte hash; git-tracked text outside data/ and models/ is compared with LF line endings (checkouts differ)."""
+    p = ROOT / rel
+    if rel.startswith(('data/', 'models/')) or not rel.endswith(TEXT):
+        return sha(p)
+    return hashlib.sha256(p.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
+
+
 def snapshot():
     out = {}
     for tree in TREES:
         for p in sorted((ROOT / tree).rglob('*')):
             if p.is_file() and '__pycache__' not in p.parts:
-                out[p.relative_to(ROOT).as_posix()] = sha(p)
+                rel = p.relative_to(ROOT).as_posix()
+                out[rel] = file_hash(rel)
     for f in FILES:
-        out[f] = sha(ROOT / f)
+        out[f] = file_hash(f)
     return out
 
 
