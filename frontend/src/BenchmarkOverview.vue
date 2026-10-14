@@ -1,5 +1,6 @@
 <script setup>
 import {ref,computed,onMounted} from 'vue'
+import SectionGuide from './SectionGuide.vue'
 const data=ref(null),error=ref(''),metric=ref('local_auc'),family=ref('all'),showTable=ref(false),tip=ref(null)
 const VAR=[{key:'static',label:'Gelände',shape:'circle'},{key:'temporal',label:'Wetter',shape:'square'},{key:'combined',label:'Kombiniert',shape:'diamond'}]
 const ORDER=['Bedingte log. Regression','Logistische Regression','Random Forest','Gradient Boosting']
@@ -27,9 +28,10 @@ const tableRows=computed(()=>blocks.value.flatMap(b=>b.models.flatMap(m=>m.marks
 
 <template>
   <section id="benchmarks" class="section benchmarks">
-    <div class="section-heading"><div><p class="section-number">Überblick — Alle bisherigen Modellläufe</p><h2>Wie gut liefen die Modelle bisher?</h2></div></div>
+    <div class="section-heading"><div><p class="section-number">08 — Alle bisherigen Modellläufe</p><h2>Wie gut liefen die Modelle bisher?</h2></div></div>
     <p v-if="error" class="section-intro">{{error}}</p>
     <template v-if="data">
+      <SectionGuide kind="Teil B · Ergebnisse" what="Alle bisherigen Modellläufe von V0 bis V0.5 auf einer gemeinsamen Skala – nichts wurde neu gerechnet." see="Jede Zeile ist ein Lauf. Kreis = Gelände, Quadrat = Wetter, Raute = Gelände + Wetter. Der Strich zeigt die Schwankungsbreite, die gestrichelte Linie den Zufall." why="So sieht man, ob sich ein Ergebnis über Versionen hinweg wiederholt oder nur in einem einzelnen Lauf auftaucht." take="Je weiter rechts, desto besser – aber nur Läufe mit vielen unabhängigen Einheiten sind aussagekräftig. Ein belegter Zusatznutzen des Wetters (Raute weiter rechts als Kreis) zeigt sich in keiner Version."/>
       <p class="section-intro">Jede Zeile ist ein gespeicherter Modelllauf aus V0 bis V0.5, nichts wurde neu gerechnet. Die „lokale AUC“ sagt, wie oft der echte Rutschungshang höher eingestuft wurde als ein Vergleichshang derselben Gruppe (0,5 = Zufall, 1 = immer richtig). „Top-1“ ist der Anteil, in dem der echte Hang auf Platz 1 landet.</p>
       <div class="bm-controls" role="group" aria-label="Diagrammoptionen">
         <div class="segmented"><button :class="{active:metric==='local_auc'}" @click="metric='local_auc'">Lokale AUC</button><button :class="{active:metric==='top1'}" @click="metric='top1'">Top-1</button></div>

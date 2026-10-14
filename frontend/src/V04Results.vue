@@ -1,5 +1,6 @@
 <script setup>
 import {ref,computed,onMounted} from 'vue'
+import SectionGuide from './SectionGuide.vue'
 const data=ref(null),error=ref('')
 const labels={conditional_logit:'Bedingte logistische Regression',logistic_regression:'Logistische Regression',hist_gradient_boosting:'Gradient Boosting'}
 const variants={static:'Gelände',temporal:'Zeitlich (Wetter/Schnee)',combined:'Kombiniert'}
@@ -9,14 +10,21 @@ const rows=(src)=>Object.entries(src||{}).map(([k,v])=>{const [m,f]=k.split('/')
 const devRows=computed(()=>rows(data.value?.development))
 const testRows=computed(()=>rows(data.value?.test?.results))
 const parts=computed(()=>Object.entries(data.value?.counts.partition||{}))
+const takeaway=computed(()=>{
+  const p=data.value?.test?.primary;if(!p)return 'Der versiegelte Test liegt in dieser Ansicht nicht vor.'
+  const aucPart=p.ci95[0]>0.5?`Die lokale AUC von ${n(p.value)} liegt mit ihrem 95-%-Intervall (${n(p.ci95[0])}–${n(p.ci95[1])}) über dem Zufall von 0,5.`:`Die lokale AUC von ${n(p.value)} ist mit ihrem 95-%-Intervall (${n(p.ci95[0])}–${n(p.ci95[1])}) nicht klar vom Zufall (0,5) zu trennen.`
+  const d=p.combined_minus_static,wPart=d.ci95[0]>0?'Das Wetter verbessert das Ergebnis messbar.':d.ci95[1]<0?'Das Wetter verschlechtert das Ergebnis messbar.':`Ob das Wetter zusätzlich hilft, bleibt offen: Der Unterschied zu „nur Gelände“ (${n(d.mean)}) ist nicht von null zu trennen.`
+  return aucPart+' '+wPart
+})
 </script>
 
 <template>
   <section id="v04" class="section results v04">
-    <div class="section-heading"><div><p class="section-number">07 — Neue Version V0.4 (getrennt von V0–V0.3)</p><h2>Mehr Episoden, versiegelter Test.</h2></div></div>
+    <div class="section-heading"><div><p class="section-number">06 — Neue Version V0.4 (getrennt von V0–V0.3)</p><h2>Mehr Episoden, versiegelter Test.</h2></div></div>
     <p v-if="error" class="section-intro">{{error}}</p>
     <template v-if="data">
-      <p class="section-intro">Vorab registrierte Regeln: alle Ereignisse ab 2011 mit sicher bekanntem Tag (Freitext und Strukturfeld übereinstimmend), ohne Obergrenze je Sturm; jede unabhängige Episode zählt in der Auswertung gleich. Baseline-freie Episoden bilden einen versiegelten Test, der genau einmal bewertet wurde.</p>
+      <SectionGuide kind="Teil B · Ergebnisse" what="Ein zweiter, größerer Durchlauf mit Regeln, die vor der Auswertung festgeschrieben wurden, und einem Test, den bis dahin niemand gesehen hatte." see="Zuerst der Umfang, dann das Hauptergebnis, darunter die Tabelle des versiegelten Tests und die Entwicklungsergebnisse zum Vergleich." why="Der Test wurde genau einmal bewertet und danach nicht mehr verändert. Das schließt aus, dass Einstellungen so lange angepasst wurden, bis die Zahl gut aussah." :take="takeaway"/>
+        <p class="section-intro">Vorab registrierte Regeln: alle Ereignisse ab 2011 mit sicher bekanntem Tag (Freitext und Strukturfeld übereinstimmend), ohne Obergrenze je Sturm; jede unabhängige Episode zählt in der Auswertung gleich. Baseline-freie Episoden bilden einen versiegelten Test, der genau einmal bewertet wurde.</p>
       <div class="stats" aria-label="V0.4-Umfang">
         <div><b>{{data.counts.candidates}}</b><span>Kandidaten</span></div>
         <div><b>{{data.counts.complete_groups}}</b><span>vollständige Gruppen</span></div>

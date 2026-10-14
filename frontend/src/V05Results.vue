@@ -1,6 +1,7 @@
 <script setup>
 import {ref,computed,onMounted,onBeforeUnmount,watch,nextTick} from 'vue'
 import * as maplibregl from 'maplibre-gl'
+import SectionGuide from './SectionGuide.vue'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 const data=ref(null),error=ref(''),exampleId=ref(''),mode=ref('example'),selected=ref('Ereignishang')
@@ -32,6 +33,11 @@ const variantBars=computed(()=>!cv.value?[]:[
   {key:'a_matched_5',label:'5 ähnliche (gematchte) Hänge',sub:'bisherige Aufgabe V0–V0.4 · 1 aus 6'},
   {key:'b_unmatched_first_5',label:'5 zufällige Umgebungshänge',sub:'1 aus 6'},
   {key:'c_unmatched_10',label:'10 zufällige Umgebungshänge',sub:'V0.5 · 1 aus 11'}].map(v=>({...v,static:cv.value[v.key].static.local_auc_units,combined:cv.value[v.key].combined.local_auc_units,top1:cv.value[v.key].combined.top1_units,chance:cv.value[v.key].chance.top1})))
+const top1Note=computed(()=>{
+  const v=variantBars.value;if(v.length<3)return ''
+  const [a,,c]=v
+  return `Beispiel „Platz 1 getroffen“: Bei 5 ähnlichen Hängen (6 Hänge) ist Zufall ${pct(a.chance)}, bei 10 zufälligen (11 Hänge) nur ${pct(c.chance)} – es gibt fast doppelt so viele Hänge, die man schlagen muss. Gemessen an der Zufallslinie ist ein Treffer von ${pct(c.top1)} also mehr wert, als die nackte Zahl vermuten lässt. Gleichzeitig sind zufällige Hänge leichter vom Rutschhang zu unterscheiden: Die lokale AUC steigt von ${n(a.combined)} auf ${n(c.combined)}, ohne dass das Modell besser wurde.`
+})
 const dist=computed(()=>data.value?.distributions)
 const lcRows=computed(()=>!dist.value?[]:Object.keys(lc).map(k=>({label:lc[k],p:dist.value.categorical.land_cover_class.positive[k]||0,c:dist.value.categorical.land_cover_class.control[k]||0})))
 const coef=computed(()=>Object.entries(data.value?.coefficients||{}).map(([k,v])=>({k:feat[k]||k,v})))
@@ -73,9 +79,10 @@ watch([exampleId,mode,selected],draw)
 
 <template>
   <section id="v05" class="section results v05">
-    <div class="section-heading"><div><p class="section-number">08 — Neue Version V0.5 (getrennt von V0–V0.4)</p><h2>Der gemeldete Hang gegen seine Umgebung.</h2></div></div>
+    <div class="section-heading"><div><p class="section-number">07 — Neue Version V0.5 (getrennt von V0–V0.4)</p><h2>Der gemeldete Hang gegen seine Umgebung.</h2></div></div>
     <p v-if="error" class="section-intro">{{error}}</p>
     <template v-if="data">
+      <SectionGuide kind="Teil B · Ergebnisse" what="Dieselben Ereignisse, aber andere Vergleichshänge: zehn zufällige Hänge aus der Umgebung statt fünf möglichst ähnliche." see="Zuerst drei Balkenpaare mit derselben Auswertung bei verschiedenen Vergleichshängen, danach Unterschiede der Hänge, eine Karte, die Modelltabelle und die Gewichte des Modells." why="Zahlen aus verschiedenen Aufgaben lassen sich nicht direkt vergleichen. Mit mehr Vergleichshängen ändert sich der Zufallswert (Platz 1: 1 von 11 statt 1 von 6), und zufällige Hänge sind leichter zu unterscheiden als Zwillingshänge." take="Höhere AUC-Werte hier bedeuten keine bessere Vorhersage, sondern eine leichtere Aufgabe. Ein niedriger wirkender Platz-1-Wert ist bei 11 statt 6 Hängen besser, als er aussieht. Ein Zusatznutzen des Wetters ist auch hier nicht nachweisbar."/>
       <p class="section-intro">Bisher wurde jeder Rutschungshang mit fünf <b>möglichst ähnlichen</b> Nachbarhängen verglichen (gleiche Neigung, Höhe, Ausrichtung). V0.5 vergleicht ihn mit <b>zehn zufällig gezogenen</b> Hängen 0,75–10 km um ihn — ohne Ähnlichkeitsbedingung. Daten, Merkmale und Modell sind dieselben wie in V0.4; neu ist nur die Auswahl der Vergleichshänge.</p>
       <div class="v05-warn"><b>Wichtig zum Lesen:</b> Die höheren Werte bedeuten <b>keine bessere Vorhersage</b>. Zufällige Umgebungshänge sind leichter vom Rutschhang zu unterscheiden als ähnliche Zwillingshänge. Alle Ereignisse waren schon in V0.4 ausgewertet; dies ist eine erklärende Kreuzvalidierung, kein neuer unabhängiger Test.</div>
 
@@ -96,6 +103,7 @@ watch([exampleId,mode,selected],draw)
           <small>Zufall: AUC 0,5 · Platz 1 in {{pct(v.chance)}} der Fälle</small>
         </div>
       </div>
+      <div class="v05-note"><b>Zahlen richtig einordnen</b><p>{{top1Note}}</p></div>
       <p class="section-intro">„Platz 1 getroffen“: Anteil der Ereignisse, bei denen das Modell den echten Rutschhang vor alle Vergleichshänge setzt. Der Sprung von der ersten zur zweiten Zeile entsteht allein durch leichtere Vergleichshänge — nicht durch ein besseres Modell.</p>
 
       <div class="howto">
@@ -151,6 +159,7 @@ watch([exampleId,mode,selected],draw)
 <style scoped>
 .v05 h3{margin-top:2rem}
 .v05-warn{border-left:4px solid #c2410c;background:#fff7ed;padding:.8rem 1rem;margin:1rem 0;font-size:.95rem}
+.v05-note{border-left:4px solid #002fa7;background:#eef2fc;padding:.8rem 1rem;margin:1rem 0;font-size:.95rem;line-height:1.55}.v05-note b{display:block;margin-bottom:.25rem}.v05-note p{margin:0}
 .v05-variants{display:grid;gap:.8rem;margin:.6rem 0}
 .v05-variant{border:1px solid var(--line,#ddd);padding:.7rem .9rem;border-radius:6px}
 .v05-vlabel{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:.4rem}.v05-vlabel span{color:#666;font-size:.85rem}

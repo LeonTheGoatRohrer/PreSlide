@@ -1,5 +1,5 @@
 <script setup>
-import {ref,computed,onMounted} from 'vue'
+import {ref,computed,onMounted,onBeforeUnmount,nextTick} from 'vue'
 import MapPanel from './MapPanel.vue'
 import StabilityFigures from './StabilityFigures.vue'
 import InfoTip from './InfoTip.vue'
@@ -7,6 +7,7 @@ import EventExplorer from './EventExplorer.vue'
 import V04Results from './V04Results.vue'
 import V05Results from './V05Results.vue'
 import BenchmarkOverview from './BenchmarkOverview.vue'
+import SectionGuide from './SectionGuide.vue'
 import {explain} from './metricDefinitions.js'
 const summary=ref(null),bundle=ref(null),cases=ref([]),event=ref(null),selectedId=ref(''),selectedPoint=ref('Ereignishang')
 const loading=ref(true),caseLoading=ref(false),error=ref(''),weatherKind=ref('rain_mm'),model=ref('logistic_regression'),view=ref('test'),day=ref(0)
@@ -30,7 +31,15 @@ async function initialize(){
   try{[summary.value,cases.value,bundle.value]=await Promise.all([get('/api/summary'),get('/api/cases'),get('/api/results')]);selectedId.value=cases.value[0].id;await selectCase()}
   catch(e){error.value=e.message}finally{loading.value=false}
 }
-onMounted(initialize)
+const navItems=[['experiment','01','Experiment'],['warum','02','Design'],['wetter','03','Wetter'],['ergebnisse','04','Auswertung'],['einzelfaelle','05','Einzelfälle'],['v04','06','V0.4'],['v05','07','V0.5'],['benchmarks','08','Benchmarks'],['methodik','09','Methodik']]
+const activeSection=ref('')
+function updateActive(){
+  let current=''
+  for(const id of ['kurzfassung',...navItems.map(i=>i[0])]){const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=140)current=id}
+  activeSection.value=current
+}
+onMounted(async()=>{window.addEventListener('scroll',updateActive,{passive:true});await initialize();await nextTick();updateActive()})
+onBeforeUnmount(()=>window.removeEventListener('scroll',updateActive))
 async function showCase(id){selectedId.value=id;await selectCase();document.getElementById('experiment')?.scrollIntoView({behavior:'smooth'})}
 // Dynamic, conservative reading of the currently displayed values (text from metricDefinitions, numbers from the bundle).
 const reading=(term,value,ctx)=>explain(term,value,ctx).reading
@@ -92,9 +101,9 @@ function featureLabel(f){
 <template>
   <header class="masthead">
     <a href="#" class="brand" aria-label="PreSlide Start"><svg width="36" height="30" viewBox="0 0 36 30" fill="none" aria-hidden="true"><path d="M2 26 14 5l8 13 4-6 9 14M8 26l7-12 8 12" stroke="currentColor" stroke-width="2.5"/></svg>PreSlide<span>V0.3</span></a>
-    <nav aria-label="Seitennavigation"><a href="#experiment">Experiment</a><a href="#warum">Warum</a><a href="#ergebnisse">Ergebnisse</a><a href="#einzelfaelle">Einzelfälle</a><a href="#v05">V0.5</a><a href="#benchmarks">Benchmarks</a><a href="#methodik">Methodik</a></nav>
     <div class="research-tag">Lokaler Forschungsprototyp</div>
   </header>
+  <nav class="sectionnav" aria-label="Seitennavigation"><a href="#kurzfassung" :class="{current:activeSection==='kurzfassung'}"><i>★</i>Kurzfassung</a><a v-for="[id,num,label] in navItems" :key="id" :href="'#'+id" :class="{current:activeSection===id}"><i>{{num}}</i>{{label}}</a></nav>
   <main>
     <div v-if="loading" class="loading" role="status">Das reale Experiment wird geladen …</div>
     <div v-if="error" class="error" role="alert">{{error}} <button @click="initialize">Erneut laden</button></div>
@@ -110,8 +119,23 @@ function featureLabel(f){
         <div><strong>{{summary.split.test.clusters}}</strong><span><InfoTip term="dependencyGroups" :value="summary.split.test.clusters" label="unabhängig gehaltene Testgruppen"/> <small>{{summary.split.test.events}} Ereignisse im Test</small></span></div>
       </section>
 
+      <section id="kurzfassung" class="section summary-block">
+        <div class="section-heading"><div><p class="section-number">Kurzfassung — in einer Minute</p><h2>Worum es hier geht.</h2></div></div>
+        <div class="tl-grid">
+          <div><span class="tl-label">1 · Die Frage</span><p>Verraten die 60 Tage Wetter <b>vor</b> einer Rutschung, welcher Hang rutscht – wenn man ihn mit ähnlichen Nachbarhängen vergleicht?</p></div>
+          <div><span class="tl-label">2 · Der Befund</span><p>Ein <b>belegter Zusatznutzen des Wetters</b> wurde in keiner Version gefunden. Das Gelände allein erklärt bereits einen Teil der Unterschiede.</p></div>
+          <div><span class="tl-label">3 · Der Vorbehalt</span><p>Höhere Zahlen in späteren Versionen bedeuten oft nur <b>eine leichtere Aufgabe</b> (zufällige statt ähnliche Vergleichshänge), nicht ein besseres Modell.</p></div>
+        </div>
+        <div class="roadmap">
+          <div><span class="rm-tag">Teil A · Verstehen</span><p>Wie ist das Experiment aufgebaut?</p><a href="#experiment">01 Experiment</a><a href="#warum">02 Design</a><a href="#wetter">03 Wetter</a></div>
+          <div><span class="rm-tag">Teil B · Ergebnisse</span><p>Was kam heraus – und wie belastbar ist es?</p><a href="#ergebnisse">04 Auswertung</a><a href="#einzelfaelle">05 Einzelfälle</a><a href="#v04">06 V0.4 (versiegelter Test)</a><a href="#v05">07 V0.5 (leichtere Aufgabe)</a><a href="#benchmarks">08 Alle Läufe im Vergleich</a></div>
+          <div><span class="rm-tag">Teil C · Hintergrund</span><p>Woher stammen die Daten, was wurde ausgeschlossen?</p><a href="#methodik">09 Methodik &amp; Quellen</a></div>
+        </div>
+      </section>
+
       <section id="experiment" class="section experiment">
         <div class="section-heading"><div><p class="section-number">01 — Das lokale Experiment</p><h2>Ein Hang im Vergleich.</h2></div><div class="case-picker"><label for="case">Demonstrationsbeispiel</label><select id="case" v-model="selectedId" @change="selectCase" :disabled="caseLoading"><option v-for="c in cases" :value="c.id" :key="c.id">{{c.id}} · {{state(c.state)}} · {{date(c.event_date)}}</option></select></div></div>
+        <SectionGuide kind="Teil A · Verstehen" what="Ein Hang mit dokumentierter Rutschung wird mit fünf ähnlichen Nachbarhängen verglichen – alle sechs zum selben Stichtag." see="Links die Karte: P ist der Ereignishang, die Zahlen sind seine Kontrollen. Rechts Neigung, Höhe und Exposition des gewählten Punkts, darunter die Tabelle mit den Abweichungen." why="Die Kontrollen sehen dem Ereignishang topographisch ähnlich. Ein Unterschied im Modell kann also nicht einfach daher kommen, dass ein Hang steiler ist." take="Jede Gruppe ist ein kleines Experiment: ein Hang mit Rutschung gegen fünf ohne – gleiches Datum, ähnliches Gelände."/>
         <p class="section-intro">Fünf räumlich verteilte Beispiele aus dem ausgewerteten Datensatz. Wähle einen Punkt auf der Karte oder einen Hang in der Tabelle.</p>
         <div v-if="event" class="case-grid" :class="{'is-loading':caseLoading}" :aria-busy="caseLoading">
           <div class="map-column"><MapPanel :event="event" :selected="selectedPoint" @select="selectedPoint=$event"/><div class="map-caption"><span>Reales Gelände · 30-m-Raster · Nord oben</span><span>{{state(event.state)}} / {{date(event.event_date)}}</span></div></div>
@@ -128,6 +152,7 @@ function featureLabel(f){
 
       <section id="warum" class="section why">
         <div class="section-heading"><div><p class="section-number">02 — Das Versuchsdesign</p><h2>Warum fünf ähnliche Hänge, am selben Ort, zur selben Zeit?</h2></div></div>
+        <SectionGuide kind="Teil A · Verstehen" what="Die Begründung, warum die Kontrollen so gewählt werden: ähnliches Gelände, nahe Umgebung, gleicher Zeitpunkt." see="Vier Karten – drei Regeln des Versuchsdesigns und was danach noch als Unterschied übrig bleibt." why="Würde man mit zufälligen Punkten in ganz Österreich vergleichen, würde das Modell vor allem Höhe und Klima messen – nicht, was kurz vor einer Rutschung passiert." take="Das Design macht die Aufgabe absichtlich schwer. Mäßige Zahlen sind deshalb erwartbar und kein Zeichen eines Fehlers."/>
         <p class="why-lead">Zu jedem dokumentierten Rutschungshang sucht PreSlide fünf möglichst ähnliche Hänge in derselben Umgebung. Alle sechs Hänge werden für denselben Zeitraum untersucht. Dadurch soll das Modell nicht nur lernen, dass steile oder generell gefährdete Gebiete häufiger rutschen, sondern erkennen, ob zusätzliche Vorläuferinformationen – hier das Wetter der 60 Tage davor – vorhanden sind.</p>
         <div class="why-grid">
           <div><h3>Ähnliches Gelände</h3><p>Kontrollen dürfen höchstens 5° in der Neigung, 150 m in der Höhe und 45° in der Exposition abweichen. Diese Grenzen reduzieren Geländeunterschiede. Verbleibende Unterschiede und die Auswahlstruktur können dennoch die Modellleistung beeinflussen.</p></div>
@@ -138,8 +163,9 @@ function featureLabel(f){
         <p class="footnote">Die Kontrollen sind Pseudo-Negative: Für sie ist im Inventar kein Ereignis dokumentiert. Dass dort wirklich nichts geschah, ist nicht bewiesen. Dieses strenge Design macht die Aufgabe absichtlich schwer – ein einfacher Vergleich mit zufälligen Punkten in ganz Österreich würde vor allem Gelände- und Klimaunterschiede messen.</p>
       </section>
 
-      <section class="section weather" v-if="event">
+      <section id="wetter" class="section weather" v-if="event">
         <div class="section-heading"><div><p class="section-number">03 — Die Vorgeschichte</p><h2>Dasselbe Wetterfenster.</h2></div><div class="segmented" aria-label="Wettervariable"><button :class="{active:weatherKind==='rain_mm'}" @click="weatherKind='rain_mm'">Niederschlag</button><button :class="{active:weatherKind==='temperature_c'}" @click="weatherKind='temperature_c'">Temperatur</button></div></div>
+        <SectionGuide kind="Teil A · Verstehen" what="Das Wetter der 60 Tage vor dem Ereignis – für den Ereignishang und als Mittel seiner fünf Kontrollen." see="Blaue Linie = Ereignishang, graue Linie = Kontrollen. Mit dem Regler wählst du einen Tag; rechts steht der Tageswert beider." why="Das sind die Rohdaten, aus denen die Wettermerkmale des Modells entstehen (Summen über 1 bis 60 Tage). Man sieht, wie ähnlich oder verschieden die Wetterverläufe der Hänge wirklich sind." take="Liegen beide Linien dicht beieinander, steckt im Wetter wenig Unterscheidendes – genau das prüft die Auswertung im nächsten Abschnitt."/>
         <div class="weather-grid"><div class="chart-area"><div class="chart-legend"><span class="line-key blue"></span>Ereignishang <span class="line-key"></span>Mittel der fünf Kontrollen <span class="chart-unit">{{weatherKind==='rain_mm'?'mm / erfasster Tag':'°C · Tagesmittel'}}</span></div>
           <svg class="weather-chart" viewBox="0 0 770 214" role="img" :aria-label="weatherKind==='rain_mm'?'Niederschlagsverlauf vor dem Ereignis':'Temperaturverlauf vor dem Ereignis'"><g v-for="t in chart.ticks" :key="t.v"><line x1="46" x2="736" :y1="t.y" :y2="t.y" stroke="#dedee2"/><text x="36" :y="t.y+4" text-anchor="end">{{n(t.v,0)}}</text></g><polyline :points="chart.c" fill="none" stroke="#9999a1" stroke-width="2"/><polyline :points="chart.p" fill="none" stroke="#002fa7" stroke-width="2.5"/><line v-if="dayInfo" :x1="chart.x(day)" :x2="chart.x(day)" y1="25" y2="175" stroke="#002fa7" stroke-dasharray="3 4" opacity=".5"/><text x="46" y="203">{{daily[0]?.date&&date(daily[0].date)}}</text><text x="736" y="203" text-anchor="end">{{daily.at(-1)?.date&&date(daily.at(-1).date)}}</text></svg>
           <label class="sr-only" for="day">Tag in der Wetterhistorie auswählen</label><input id="day" class="day-slider" type="range" min="0" :max="daily.length-1" v-model.number="day"/>
@@ -149,6 +175,7 @@ function featureLabel(f){
 
       <section id="ergebnisse" class="section results">
         <div class="section-heading"><div><p class="section-number">04 — Die Auswertung</p><h2>Signal mit Grenzen.</h2></div><div class="case-picker"><label for="model">Modell vergleichen</label><select id="model" v-model="model"><option v-for="(label,key) in names" :value="key" :key="key">{{label}}</option></select></div></div>
+        <SectionGuide kind="Teil B · Ergebnisse" what="Wie gut ordnet ein Modell die sechs Hänge einer Gruppe, sodass der echte Rutschungshang vorne steht?" see="Je Merkmalssatz (nur Gelände, nur Wetter, Gelände + Wetter) eine Zeile, mit der Zufallsreferenz daneben. Die Reiter wechseln zwischen vier getrennten Auswertungen." why="Entscheidend ist nicht eine einzelne Zahl, sondern: Liegt sie über dem Zufall – und hilft das Wetter zusätzlich zum Gelände?" take="Ein belegter Zusatznutzen des Wetters wurde bisher nicht gefunden. Einzelne gute Werte sind bei so wenigen unabhängigen Gruppen kein Beweis."/>
         <div class="howto" aria-labelledby="howto-title"><h3 id="howto-title">So lesen Sie die Ergebnisse</h3><ol>
           <li><b>Ereignis:</b> ein dokumentierter Rutschungshang mit Datum, aus dem österreichischen Ereignisinventar.</li>
           <li><b>Kontrollen:</b> fünf ähnliche Hänge in der Nähe, ohne dokumentiertes Ereignis, untersucht für denselben Zeitraum.</li>
@@ -193,6 +220,7 @@ function featureLabel(f){
 
       <section id="einzelfaelle" class="section events" v-if="bundle?.event_explorer">
         <div class="section-heading"><div><p class="section-number">05 — Einzelne Ereignisse</p><h2>Wo das Modell richtig liegt – und wo nicht.</h2></div><div class="case-picker"><label for="model-explorer">Modell</label><select id="model-explorer" v-model="model"><option v-for="(label,key) in names" :value="key" :key="key">{{label}}</option></select></div></div>
+        <SectionGuide kind="Teil B · Ergebnisse" what="Dieselbe Auswertung, aufgeschlüsselt Ereignis für Ereignis." see="Pro Ereignis den Rang des echten Hangs unter seinen sechs Hängen und ob das Wetter diesen Rang verbessert hat." why="So erkennt man, ob gute Ergebnisse breit verteilt sind oder von wenigen Fällen oder Unwettern kommen." take="Einzelfälle veranschaulichen, beweisen aber nichts. Maßgeblich sind die gebündelten Auswertungen in Abschnitt 04."/>
         <p class="section-intro">Für jedes der {{bundle.event_explorer.events.length}} Ereignisse: Welchen Rang erhielt der echte Rutschungshang unter seinen sechs Hängen, und hat das Wetter geholfen? Nur Bewertungen von Modellen, die die jeweilige Gruppe nicht im Training hatten. Zufall: im Mittel Rang 3,5 und 2,5 geschlagene Kontrollen.</p>
         <EventExplorer :explorer="bundle.event_explorer" :model="model" :names="names" :feature-names="featureNames" @show-case="showCase"/>
       </section>
@@ -204,7 +232,8 @@ function featureLabel(f){
       <BenchmarkOverview/>
 
       <section id="methodik" class="section methodology">
-        <div class="section-heading"><div><p class="section-number">06 — Qualität vor Umfang</p><h2>Jeder Ausschluss bleibt sichtbar.</h2></div><span class="count-label">{{bundle?.dataset.candidates}} Kandidaten → {{summary.complete_events}} vollständige Gruppen</span></div>
+        <div class="section-heading"><div><p class="section-number">09 — Qualität vor Umfang</p><h2>Jeder Ausschluss bleibt sichtbar.</h2></div><span class="count-label">{{bundle?.dataset.candidates}} Kandidaten → {{summary.complete_events}} vollständige Gruppen</span></div>
+        <SectionGuide kind="Teil C · Hintergrund" what="Wie der Datensatz entstand: welche Kandidaten aussortiert wurden, nach welchen festen Regeln, und woher die Daten stammen." see="Links die Ausschlussgründe mit Anzahl, rechts die festen Regeln des Experiments, darunter Quellen und Lizenzhinweise." why="Glaubwürdigkeit: Nichts wurde erfunden, still korrigiert oder nachträglich gelockert, um bessere Zahlen zu bekommen." :take="`${bundle?.dataset.candidates} geprüfte Kandidaten ergaben ${summary.complete_events} vollständige Gruppen aus einem Ereignis und fünf Kontrollen.`"/>
         <div class="method-grid"><div><div class="exclusion" v-for="(count,reason) in summary.exclusions" :key="reason"><span>{{reasonNames[reason]||reason}}</span><b>{{count}}</b></div><p class="footnote">Keine fehlenden Messwerte erfunden. Keine negativen Niederschläge still korrigiert. Keine Auswahlgrenze gelockert.</p></div><div class="safeguards"><h3>Feste Regeln des Experiments</h3><ul><li>6.000 lokale Kandidaten je Ereignis, fünf passende Kontrollhänge.</li><li>Maximal 5° Neigungs-, 150 m Höhen- und 45° Expositionsunterschied.</li><li>Mindestens 400 m zwischen Kontrollen; Ausschlussbereiche um bekannte Rutschungen.</li><li>Ereignis und Kontrollen bleiben gemeinsam in Training, Validierung oder Test.</li><li>Zusätzliche Gruppen für nahe Ereignisdaten und räumliche Überschneidungen.</li></ul></div></div>
         <div class="source-note"><h3>Quelle, Unsicherheit und Nutzung</h3><p><strong>© GeoSphere Austria.</strong> Die detaillierte Ereignisquelle ist als „Naturgefahren Test“ bezeichnet. Ihre spezifische Weiterverwendungslizenz wurde im Audit nicht identifiziert. Die Auslegung der Qualitätsfelder und Ereigniszeitpunkte ist nicht offiziell bestätigt.</p><p>Lokaler, nicht kommerzieller Forschungsprototyp. Diese Ansicht enthält fünf abgeleitete Beispielgruppen, aggregierte Ergebnisse und anonymisierte Ranglisten je Ereignis (ohne Koordinaten und Quellkennungen). Der Rohdatenbestand wird weder veröffentlicht noch als Massenexport angeboten. Kontrollhänge sind nicht nachweislich stabil.</p><p>Geländedaten: Mapzen / Skadi, offene Daten Österreichs, EU-DEM / Copernicus und USGS. Wetter: GeoSphere Austria / INCA, CC BY 4.0. Die Wetterlizenz wird nicht auf den Ereignisbestand übertragen.</p></div>
       </section>
@@ -214,6 +243,22 @@ function featureLabel(f){
 </template>
 
 <style>
+html{scroll-padding-top:70px}
+.sectionnav{position:sticky;top:0;z-index:20;background:#ffffffee;backdrop-filter:blur(6px);border-bottom:1px solid var(--line);display:flex;gap:4px;padding:0 48px;overflow-x:auto;scrollbar-width:none;white-space:nowrap}
+.sectionnav a{display:flex;align-items:center;gap:7px;padding:15px 11px 13px;font-size:12.5px;text-decoration:none;color:var(--muted);border-bottom:2px solid transparent}
+.sectionnav a i{font-style:normal;font-size:10px;font-weight:600;color:var(--blue)}
+.sectionnav a:hover{color:#202025}.sectionnav a.current{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.summary-block{background:#fff}
+.tl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:28px;border:1px solid var(--line)}
+.tl-grid>div{padding:20px 24px;border-right:1px solid var(--line)}.tl-grid>div:last-child{border-right:0}
+.tl-label{display:block;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;color:var(--blue);margin-bottom:10px}
+.tl-grid p{margin:0;font-size:15px;line-height:1.6}
+.roadmap{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:24px;margin-top:28px}
+.roadmap>div{border-top:2px solid var(--blue);padding-top:14px;display:flex;flex-direction:column;gap:4px}
+.rm-tag{font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600}
+.roadmap p{margin:2px 0 8px;font-size:13px;color:var(--muted)}
+.roadmap a{font-size:14px;color:var(--blue);text-decoration:none;padding:3px 0}.roadmap a:hover{text-decoration:underline}
+@media(max-width:900px){.tl-grid,.roadmap{grid-template-columns:1fr}.tl-grid>div{border-right:0;border-bottom:1px solid var(--line)}.tl-grid>div:last-child{border-bottom:0}.sectionnav{padding:0 20px}}
 .why-lead{font-size:18px;line-height:1.6;max-width:900px;margin:0 0 34px;padding-left:18px;border-left:3px solid var(--blue);letter-spacing:-.2px}
 .howto{border:1px solid var(--line);padding:20px 24px;margin:6px 0 30px;background:#fafafc}.howto h3{margin:0 0 10px;font-size:15px;font-weight:600}
 .howto ol{margin:0;padding-left:20px;display:grid;grid-template-columns:1fr 1fr;gap:8px 40px;font-size:13px;line-height:1.6}.howto b{font-weight:600}
