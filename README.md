@@ -1,3 +1,5 @@
+[![CI](https://github.com/LeonTheGoatRohrer/PreSlide/actions/workflows/ci.yml/badge.svg)](https://github.com/LeonTheGoatRohrer/PreSlide/actions/workflows/ci.yml)
+
 # Talwacht (ehem. PreSlide) V0
 
 A working local scientific prototype: can pre-event weather distinguish a documented Austrian landslide slope from five nearby topographically matched pseudo-negative slopes?

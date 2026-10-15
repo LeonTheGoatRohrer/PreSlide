@@ -7,7 +7,6 @@ from shapely import STRtree, points
 from shapely.geometry import shape
 
 from .http import cached_json
-from .paths import V04_DATA, guard
 
 CLC = {'CLC2012': ('https://image.discomap.eea.europa.eu/arcgis/rest/services/Corine/CLC2012/MapServer/0/query', 'Code_12'),
        'CLC2018': ('https://image.discomap.eea.europa.eu/arcgis/rest/services/Corine/CLC2018_LAEA/MapServer/0/query', 'Code_18')}
@@ -68,7 +67,7 @@ def geology_layer():
 
 def _rings(rings):
     """Esri rings: clockwise = exterior, counter-clockwise = hole (shoelace sign)."""
-    from shapely.geometry import Polygon, MultiPolygon
+    from shapely.geometry import Polygon
     from shapely.ops import unary_union
     exteriors, holes = [], []
     for ring in rings:

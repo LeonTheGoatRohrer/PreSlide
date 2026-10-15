@@ -4,7 +4,7 @@ from scipy.spatial import cKDTree
 from shapely.geometry import shape
 from shapely import contains_xy
 from .sources import ROOT, cached_json
-from .common import read_json, write_json, digest
+from .common import read_json, digest
 from .terrain import PROJECT, INVERSE, local_terrain, sample
 from .audit import position_bounds
 
