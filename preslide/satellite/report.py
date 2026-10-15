@@ -92,29 +92,96 @@ def write_reports():
                   '| feature | coefficient |', '|---|---:|']
         for row in r['importance_logistic_regression'][:15]:
             lines.append(f"| {row['feature']} | {row['standardized_coefficient']:+.3f} |")
+        eb = SAT_REPORT / 'baseline_results_embedding.json'
+        if eb.exists():
+            e = read_json(eb)
+            lines += ['', '## Baseline C: frozen pretrained-encoder embeddings (satellite-0.2)', '']
+            if e.get('ran'):
+                m = e['metrics']
+                lines += [f"{e['config']['encoder']}; {e['config']['input']}; features: {e['config']['features']} ({e['features']} values); "
+                          f"{e['config']['model']} (C = {e['C']}); same folds and seeds as above; configuration fixed before the first run, not tuned.", '',
+                          '| feature set / model | ROC AUC | AP | within-group AUC | unit-weighted | top-1 | mean rank |', '|---|---:|---:|---:|---:|---:|---:|',
+                          f"| resnet18_embedding_diff/logistic_regression | {m['roc_auc']['mean']:.3f} | {m['average_precision']['mean']:.3f} | {m['within_group_auc']['mean']:.3f} | "
+                          f"{m['within_group_auc_unit_weighted']['mean']:.3f} | {m['top1_rate']['mean']:.3f} | {m['mean_rank']['mean']:.2f} |", '',
+                          'ImageNet features of 10 m RGB chips are a generic texture/colour description, not a landslide model; the comparison asks only whether a frozen '
+                          'encoder carries more transferable change information than the hand-made index contrasts. No sliding-window discovery was run with it.']
+            else:
+                lines += [f"Not run: {e['reason']}"]
         (out / 'baseline_results.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
     hd = SAT_REPORT / 'heldout_discovery_results.json'
     if hd.exists():
-        r = read_json(hd)
-        lines = ['# Held-out rediscovery of known events', '',
-                 f"For each independence unit a {r['model']} detector is trained on all other units, then every position of the "
-                 f"{cfg['patch']['extent_m']} m patch around each held-out event is scored (sliding windows), local maxima at least "
-                 f"{cfg['discovery']['min_peak_distance_m']} m apart are ranked, and a hit is a peak within {r['hit_radius_m']} m of the reported position.", '',
-                 '| quantity | value |', '|---|---:|',
-                 f"| held-out events | {r['events']} |", f"| independence units | {r['independence_units']} |",
-                 f"| searched area per event (km²) | {_fmt(r['searched_km2_per_event'], 2)} |",
-                 f"| rediscovered at rank 1 | {r['detected_rank1']} |", f"| rediscovered within top 3 | {r['detected_top3']} |",
-                 f"| rediscovered within top 5 | {r['detected_top5']} |", f"| rediscovered at any rank | {r['detected_any_rank']} |",
-                 f"| median hit rank | {_fmt(r['median_hit_rank'], 1)} |", f"| median localisation error (m) | {_fmt(r['median_hit_distance_m'], 0)} |",
-                 f"| false peaks ranked above the hit (mean) | {_fmt(r['false_peaks_above_hit_mean'], 2)} |",
-                 f"| peaks per km² (mean) | {_fmt(r['peaks_per_km2_mean'], 2)} |", '',
-                 f"Chance reference: {r['chance_rank1']}.", '',
-                 'The search region is centred on the known event, so this is a localisation test inside a small area, not an unknown-region scan. '
-                 'Peaks that are not the known event are candidate detections for the false-positive analysis; they are NOT labelled as landslides.']
-        (out / 'heldout_discovery_results.md').write_text('\n'.join(lines) + '\n', encoding='utf-8')
+        write_discovery_report(read_json(hd), cfg, out)
+    rl = SAT_REPORT / 'baseline_results_random_landscape.json'
+    if rl.exists():
+        write_random_landscape_report(read_json(rl), cfg, out)
     write_web_bundle(cfg, elig, data)
     print('reports written to', out)
+
+
+def _disc_rows(r):
+    return [('held-out events', r['events']), ('independence units', r['independence_units']),
+            ('searched area per event (km²)', _fmt(r['searched_km2_per_event'], 2)),
+            ('rediscovered at rank 1', r['detected_rank1']), ('rediscovered within top 3', r['detected_top3']),
+            ('rediscovered within top 5', r['detected_top5']), ('rediscovered at any rank', r['detected_any_rank']),
+            ('median hit rank', _fmt(r['median_hit_rank'], 1)), ('median localisation error (m)', _fmt(r['median_hit_distance_m'], 0)),
+            ('false peaks ranked above the hit (mean)', _fmt(r['false_peaks_above_hit_mean'], 2)),
+            ('peaks per km² (mean)', _fmt(r['peaks_per_km2_mean'], 2)),
+            ('peaks removed at other known positives (total)', r.get('peaks_suppressed_known_total', '—')),
+            ('events with another known positive inside the patch', r.get('events_with_other_known_positive_in_patch', '—'))]
+
+
+def write_discovery_report(r, cfg, out):
+    variants = [('controls only (satellite-0.2, suppression)', r)]
+    old = SAT_REPORT / 'heldout_discovery_results_stage5_no_suppression.json'
+    if old.exists():
+        variants.append(('stage 5 (no suppression, same model)', read_json(old)))
+    rlv = SAT_REPORT / 'heldout_discovery_results_random_landscape.json'
+    if rlv.exists():
+        variants.append(('controls + RANDOM_LANDSCAPE (suppression)', read_json(rlv)))
+    lines = ['# Held-out rediscovery of known events', '',
+             f"For each independence unit a {r['model']} detector is trained on all other units, then every position of the "
+             f"{cfg['patch']['extent_m']} m patch around each held-out event is scored (sliding windows), local maxima at least "
+             f"{cfg['discovery']['min_peak_distance_m']} m apart are ranked, and a hit is a peak within {r['hit_radius_m']} m of the reported position. "
+             f"Since satellite-0.2, peaks within {cfg['discovery'].get('suppress_known_positives_m', 0)} m of any OTHER known V0.4 positive (423 events) are removed "
+             'from the ranking before scoring: they are documented events, not false peaks and not candidates (the search centre keeps priority).', '',
+             '| quantity | ' + ' | '.join(v[0] for v in variants) + ' |', '|---|' + '---:|' * len(variants)]
+    rows = [_disc_rows(v[1]) for v in variants]
+    for i, (name, _) in enumerate(rows[0]):
+        lines.append(f'| {name} | ' + ' | '.join(str(rr[i][1]) for rr in rows) + ' |')
+    lines += ['', 'Chance reference (controls only): ' + r['chance_rank1'] + '.', '',
+              'The search region is centred on the known event, so this is a localisation test inside a small area, not an unknown-region scan. '
+              'Peaks that are not the known event are candidate detections for the false-positive analysis; they are NOT labelled as landslides. '
+              'Candidate validation (persistence, visual review, cloud proximity): `candidate_validation.md`.']
+    (out / 'heldout_discovery_results.md').write_text(chr(10).join(lines) + chr(10), encoding='utf-8')
+
+
+def write_random_landscape_report(r, cfg, out):
+    d, rl = r['dataset'], cfg['random_landscape']
+    lines = ['# Generic hard negatives: RANDOM_LANDSCAPE', '',
+             f"{d['random_rows']} random points for {d['events_with_random']} of {d['groups']} events ({rl['n_per_event']} per event, "
+             f"{rl['min_distance_m'] / 1000:.1f}–{rl['max_distance_m'] / 1000:.0f} km from the positive, outside the V0.4 exclusion radius of every inventory event "
+             f"floored at {rl['min_distance_to_any_known_event_m']} m, inside Austria, same before/after acquisitions as the positive, same local cloud/snow rules, no terrain matching). "
+             f"Distance to the positive: median {d['random_distance_to_positive_m']['median']:.0f} m; to the nearest inventory record: min {d['random_distance_to_nearest_inventory_event_m']['min']:.0f} m. "
+             'Random points per event: ' + ', '.join(f'{k}: {v}' for k, v in d['random_per_event'].items()) + '.', '',
+             'Same unit-held-out folds (5 folds × 3 shuffles) and the same change features as the main baseline. Metrics on the matched controls keep their definition '
+             '(within-group AUC = fraction of controls below the positive) so the two trainings are comparable; positive-vs-random AUC = fraction of the event' + "'" + 's random points '
+             'scored below its positive (chance 0.5); top-1 = positive first among controls + random points.', '',
+             '| model / training negatives | within-group AUC (controls) | unit-weighted | top-1 (controls) | positive vs random AUC | top-1 vs all | random mean p | control mean p | positive mean p | random above median positive |',
+             '|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|']
+    for key, m in r['models'].items():
+        lines.append(f"| {key} | {m['within_group_auc']['mean']:.3f} | {m['within_group_auc_unit_weighted']['mean']:.3f} | {m['top1_rate']['mean']:.3f} | "
+                     f"{m['positive_vs_random_auc']['mean']:.3f} | {m['top1_vs_controls_and_random']['mean']:.3f} | {m['random_mean_score']['mean']:.3f} | "
+                     f"{m['control_mean_score']['mean']:.3f} | {m['positive_mean_score']['mean']:.3f} | {m['random_scored_above_median_positive']['mean']:.3f} |")
+    lines += ['', f"Chance: within-group AUC 0.5, positive-vs-random AUC 0.5, top-1 vs all {r['chance']['top1_vs_controls_and_random']:.3f}.", '',
+              'Reading: `trained_controls_only` scores the random points with a model that never saw any; if ordinary landscape receives event-like scores, '
+              'the detector has learned "reported slope vs matched slope" rather than "landslide vs landscape". `trained_with_random_landscape` adds them as label 0; '
+              'a drop in the control metrics would mean the hard negatives cost discrimination among matched slopes, a rise in positive-vs-random that they help against '
+              'generic change. Held-out rediscovery with the hard-negative detector: `heldout_discovery_results.md` (third column, if run).', '',
+              '## Logistic-regression coefficients with random landscape (standardised, full data; association, not causation)', '',
+              '| feature | coefficient |', '|---|---:|']
+    lines += [f"| {row['feature']} | {row['standardized_coefficient']:+.3f} |" for row in r['importance_logistic_regression_with_random']]
+    (out / 'random_landscape_results.md').write_text(chr(10).join(lines) + chr(10), encoding='utf-8')
 
 
 def write_web_bundle(cfg, elig, data):

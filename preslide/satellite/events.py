@@ -39,3 +39,10 @@ def representative_order(pos):
         (rest if key in seen else first).append(row)
         seen.add(key)
     return pd.DataFrame(first + rest).reset_index(drop=True)
+
+
+def known_positive_positions(samples=None):
+    """All V0.4 positives (423, fine positions) with their event day: the reference set for suppressing peaks and
+    excluding candidates near documented events (not only the 129 satellite-eligible ones)."""
+    p = positives(samples)
+    return p[['event_group_id', 'longitude', 'latitude', 'event_day']].reset_index(drop=True)

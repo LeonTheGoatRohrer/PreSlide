@@ -53,8 +53,11 @@ def unit_weighted(frame, per_group):
     return float(g.groupby('independence_unit')['auc'].mean().mean())
 
 
-def cross_validated_scores(frame, cols, kind, cfg, seed=0):
+def cross_validated_scores(frame, cols, kind, cfg, seed=0, fit_mask=None):
+    """Out-of-fold scores for every row; models are fit only on rows with `fit_mask` True (default: all rows),
+    so extra negatives can be scored by a model that never saw them."""
     groups = frame['independence_unit'].to_numpy()
+    fit_mask = np.ones(len(frame), dtype=bool) if fit_mask is None else np.asarray(fit_mask, dtype=bool)
     n_units = len(np.unique(groups))
     k = min(cfg['models']['cv_folds'], n_units)
     if k < 2:
@@ -67,6 +70,7 @@ def cross_validated_scores(frame, cols, kind, cfg, seed=0):
     g = np.array([unit_ids[u] for u in groups])
     for tr, te in GroupKFold(n_splits=k).split(X, y, g):
         assert not set(groups[tr]) & set(groups[te]), 'independence unit leaked across folds'
+        tr = tr[fit_mask[tr]]
         model = make_model(kind, cfg).fit(X[tr], y[tr])
         scores[te] = model.predict_proba(X[te])[:, 1]
     return scores
@@ -146,4 +150,73 @@ def run(seeds=(0, 1, 2), null_draws=100):
     frame.assign(score_lr=oof['change_features/logistic_regression']['scores'],
                  score_hgb=oof['change_features/hist_gradient_boosting']['scores'])[['sample_id', 'event_group_id', 'label', 'score_lr', 'score_hgb']] \
         .to_parquet(SAT_DATA / 'tables/baseline_oof_scores.parquet', index=False)
+    return results
+
+
+def within_group_vs_random(frame, score):
+    """Per event: fraction of its RANDOM_LANDSCAPE points scored below the positive (chance 0.5), and whether the
+    positive ranks first among controls + random points."""
+    aucs, top1 = [], []
+    for _, g in frame.assign(score=score).groupby('event_group_id'):
+        p = g.loc[g['label'] == 1, 'score'].iloc[0]
+        rnd = g.loc[g['sample_type'] == 'RANDOM_LANDSCAPE', 'score'].to_numpy()
+        if len(rnd) == 0:
+            continue
+        aucs.append(float(((rnd < p).sum() + 0.5 * (rnd == p).sum()) / len(rnd)))
+        neg = g.loc[g['label'] == 0, 'score'].to_numpy()
+        top1.append(float((neg > p).sum() == 0))
+    return {'positive_vs_random_auc': float(np.mean(aucs)), 'top1_vs_controls_and_random': float(np.mean(top1)), 'events_with_random': len(aucs)}
+
+
+def evaluate_with_random(frame, cols, kind, cfg, seed, fit_random):
+    """`frame` = groups + RANDOM_LANDSCAPE rows. Scores are out-of-fold over independence units; the model is fit
+    with or without the random rows. Metrics on controls keep their original definition for comparability."""
+    is_random = (frame['sample_type'] == 'RANDOM_LANDSCAPE').to_numpy()
+    s = cross_validated_scores(frame, cols, kind, cfg, seed, fit_mask=None if fit_random else ~is_random)
+    y = frame['label'].to_numpy()
+    groups_only = frame[~is_random]
+    wg = within_group_metrics(groups_only, s[~is_random])
+    vr = within_group_vs_random(frame, s)
+    return {'roc_auc_controls': float(roc_auc_score(y[~is_random], s[~is_random])),
+            'roc_auc_controls_and_random': float(roc_auc_score(y, s)),
+            'average_precision_controls_and_random': float(average_precision_score(y, s)),
+            'within_group_auc': wg['within_group_auc'], 'within_group_auc_unit_weighted': unit_weighted(groups_only, wg['per_group_auc']),
+            'top1_rate': wg['top1_rate'], 'mean_rank': wg['mean_rank'],
+            'positive_vs_random_auc': vr['positive_vs_random_auc'], 'top1_vs_controls_and_random': vr['top1_vs_controls_and_random'],
+            'random_mean_score': float(np.mean(s[is_random])), 'control_mean_score': float(np.mean(s[(y == 0) & ~is_random])),
+            'positive_mean_score': float(np.mean(s[y == 1])),
+            'random_scored_above_median_positive': float(np.mean(s[is_random] > np.median(s[y == 1]))),
+            'groups': wg['groups'], 'events_with_random': vr['events_with_random']}
+
+
+def run_random_landscape(seeds=(0, 1, 2)):
+    """Baseline with and without the RANDOM_LANDSCAPE hard negatives (same folds, same feature set)."""
+    cfg = config()
+    groups = pd.read_parquet(SAT_DATA / 'tables/dataset.parquet')
+    rl = pd.read_parquet(SAT_DATA / 'tables/random_landscape.parquet')
+    rl = rl[rl['event_group_id'].isin(groups['event_group_id'])]
+    frame = pd.concat([groups, rl], ignore_index=True)
+    cols = model_feature_names(feature_columns(groups))
+    metrics = ('roc_auc_controls', 'roc_auc_controls_and_random', 'average_precision_controls_and_random', 'within_group_auc',
+               'within_group_auc_unit_weighted', 'top1_rate', 'mean_rank', 'positive_vs_random_auc', 'top1_vs_controls_and_random',
+               'random_mean_score', 'control_mean_score', 'positive_mean_score', 'random_scored_above_median_positive')
+    results = {'dataset': {'group_rows': len(groups), 'random_rows': int(len(rl)), 'groups': int(groups['event_group_id'].nunique()),
+                           'events_with_random': int(rl['event_group_id'].nunique()),
+                           'random_per_event': rl.groupby('event_group_id').size().value_counts().sort_index().to_dict(),
+                           'random_distance_to_positive_m': {'min': float(rl['distance_to_positive_m'].min()), 'median': float(rl['distance_to_positive_m'].median()), 'max': float(rl['distance_to_positive_m'].max())},
+                           'random_distance_to_nearest_inventory_event_m': {'min': float(rl['distance_to_nearest_inventory_event_m'].min()), 'median': float(rl['distance_to_nearest_inventory_event_m'].median())}},
+               'feature_set': cols, 'models': {},
+               'chance': {'within_group_auc': 0.5, 'positive_vs_random_auc': 0.5,
+                          'top1_vs_controls_and_random': float((1 / frame.groupby('event_group_id').size()).mean())}}
+    for kind in ('logistic_regression', 'hist_gradient_boosting'):
+        for fit_random in (False, True):
+            reps = [evaluate_with_random(frame, cols, kind, cfg, seed, fit_random) for seed in seeds]
+            key = f"{kind}/{'trained_with_random_landscape' if fit_random else 'trained_controls_only'}"
+            results['models'][key] = {m: {'mean': float(np.mean([r[m] for r in reps])), 'per_seed': [r[m] for r in reps]} for m in metrics}
+    lr_with = make_model('logistic_regression', cfg).fit(frame[cols].to_numpy(dtype=float), frame['label'].to_numpy())
+    coef = lr_with[-1].coef_[0]
+    order = np.argsort(-np.abs(coef))
+    results['importance_logistic_regression_with_random'] = [{'feature': cols[i], 'standardized_coefficient': float(coef[i])} for i in order[:15]]
+    guard(SAT_REPORT)
+    write_json(SAT_REPORT / 'baseline_results_random_landscape.json', results)
     return results

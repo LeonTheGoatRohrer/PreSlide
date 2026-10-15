@@ -244,3 +244,144 @@ def test_within_group_auc_definition():
     assert within_group_metrics(frame, np.array([0.9, 0.1, 0.2, 0.3, 0.4, 0.5]))['within_group_auc'] == 1.0
     assert within_group_metrics(frame, np.array([0.3, 0.1, 0.2, 0.4, 0.5, 0.6]))['top1_rate'] == 0.0
     assert within_group_metrics(frame, np.array([0.3, 0.1, 0.2, 0.4, 0.5, 0.6]))['within_group_auc'] == pytest.approx(0.4)
+
+
+# ---------- satellite-0.2: known-event suppression, hard negatives, candidate validation ----------
+
+def test_suppression_removes_peaks_at_other_known_events_but_keeps_the_search_centre():
+    from preslide.satellite import discovery
+    other_px = [(60, 60), (130, 125)]                             # one far from the centre, one 5 px (50 m) from it
+    pk = [(9.0, 60, 61), (8.0, 129, 127), (7.0, 200, 200)]
+    kept, suppressed = discovery.suppress_near_known(pk, other_px, radius_px=16, centre=(128, 128), hit_px=16)
+    assert [p[1:] for p in suppressed] == [(60, 61)]              # the peak at the other documented event is removed
+    assert [p[1:] for p in kept] == [(129, 127), (200, 200)]      # the centre hit survives although a neighbour is within 160 m
+    # Injected bug check: without centre priority the hit would be lost.
+    kept2, _ = discovery.suppress_near_known(pk, other_px, radius_px=16)
+    assert (129, 127) not in [p[1:] for p in kept2]
+    # No known events -> nothing changes.
+    assert discovery.suppress_near_known(pk, [], 16, (128, 128), 16) == (pk, [])
+
+
+def test_known_pixels_excludes_the_search_event_and_points_outside_the_grid():
+    from preslide.satellite import discovery
+    g = imagery.event_grid(15.9357607, 47.4795272)
+    known = pd.DataFrame({'event_group_id': ['self', 'near', 'far'], 'longitude': [15.9357607, 15.9370, 16.5],
+                          'latitude': [47.4795272, 47.4800, 47.0]})
+    px = discovery.known_pixels(g, known, exclude_event='self')
+    assert len(px) == 1 and all(0 <= v < g.n for v in px[0])
+    assert len(discovery.known_pixels(g, known)) == 2
+
+
+def test_random_landscape_geometry_rules():
+    from preslide.satellite import landscape
+    rl = {'min_distance_m': 1500, 'max_distance_m': 8000}
+    rng = np.random.default_rng(3)
+    pts = landscape.draw_points(500000.0, 300000.0, rng, 400, rl)
+    assert pts['distance_to_positive_m'].between(1500, 8000).all()
+    # exclusion: everything east of the positive is 'near a known event'; country: everything north of y=300000
+    allowed = lambda xy: np.asarray(xy)[:, 0] <= 500000.0
+    out = landscape.geometric_filter(pts, allowed, lambda lon, lat: pts['y'].to_numpy() >= 300000.0, separation_m=400)
+    kept = out[out['geometry_reason'] == '']
+    assert (kept['x'] <= 500000.0).all() and (kept['y'] >= 300000.0).all()
+    assert set(out['geometry_reason']) <= {'', 'within_exclusion_radius_of_known_event', 'outside_austria', 'too_close_to_other_random_point'}
+    from scipy.spatial.distance import pdist
+    assert len(kept) < 2 or pdist(kept[['x', 'y']].to_numpy()).min() >= 400
+    assert (out['geometry_reason'] == 'within_exclusion_radius_of_known_event').sum() > 0
+
+
+def test_random_landscape_table_check_fails_on_injected_violations():
+    from preslide.satellite import landscape
+    cfg = {'random_landscape': {'min_distance_m': 1500, 'max_distance_m': 8000, 'min_distance_to_any_known_event_m': 400}}
+    frame = pd.DataFrame({'event_group_id': ['E1'], 'label': [1], 'before_datetime': ['2023-08-03T10:00:00Z'], 'after_datetime': ['2023-08-06T10:00:00Z']})
+    good = pd.DataFrame({'event_group_id': ['E1', 'E1'], 'label': [0, 0], 'sample_type': ['RANDOM_LANDSCAPE'] * 2,
+                         'distance_to_positive_m': [2000.0, 7000.0], 'distance_to_nearest_inventory_event_m': [900.0, 450.0],
+                         'before_datetime': ['2023-08-03T10:00:00Z'] * 2, 'after_datetime': ['2023-08-06T10:00:00Z'] * 2})
+    assert landscape.check_random_landscape_table(good, frame, cfg)
+    for col, val in [('distance_to_positive_m', 900.0), ('distance_to_nearest_inventory_event_m', 100.0),
+                     ('after_datetime', '2023-09-01T10:00:00Z'), ('label', 1), ('sample_type', 'CONTROL_PSEUDO_NEGATIVE')]:
+        bad = good.copy(); bad.loc[0, col] = val
+        with pytest.raises(RuntimeError):
+            landscape.check_random_landscape_table(bad, frame, cfg)
+
+
+def test_cross_validated_scores_fit_mask_excludes_rows_from_training_only():
+    rng = np.random.default_rng(0)
+    rows = []
+    for u in range(6):
+        for g in range(2):
+            for k in range(8):
+                rows.append({'event_group_id': f'U{u}G{g}', 'independence_unit': f'U{u}', 'label': int(k == 0),
+                             'sample_type': 'RANDOM_LANDSCAPE' if k >= 6 else 'x', 'f1': rng.normal() + (k == 0) + 5 * (k >= 6), 'f2': rng.normal()})
+    frame = pd.DataFrame(rows)
+    mask = (frame['sample_type'] != 'RANDOM_LANDSCAPE').to_numpy()
+    s_without = cross_validated_scores(frame, ['f1', 'f2'], 'logistic_regression', CFG, fit_mask=mask)
+    s_with = cross_validated_scores(frame, ['f1', 'f2'], 'logistic_regression', CFG)
+    assert np.isfinite(s_without).all() and np.isfinite(s_with).all()
+    # The random rows have a huge f1: a model that never saw them scores them high; one trained on them does not.
+    assert s_without[~mask].mean() > s_with[~mask].mean()
+
+
+def test_persistence_rule_and_status_assignment():
+    from preslide.satellite import validation
+    vcfg = {'min_retained_contrast': 0.5, 'min_valid_core_frac': 0.9, 'min_valid_ring_frac': 0.8}
+    primary = {'d_ndwi_contrast': 0.0, 'd_ndvi_small_contrast': -0.3, 'd_bsi_small_contrast': 0.2, 'd_brightness_contrast': 0.01}
+    confirm_ok = {'valid_core_frac': 1.0, 'valid_ring_frac': 1.0, 'd_ndvi_small_contrast': -0.2, **{k: 0 for k in ('d_ndwi_contrast', 'd_bsi_small_contrast', 'd_brightness_contrast')}}
+    assessable, persists, main, retained = validation.persistence_rule(primary, confirm_ok, score_confirm=2.0, vcfg=vcfg)
+    assert assessable and persists and main == 'd_ndvi_small_contrast' and retained == pytest.approx(2 / 3)
+    # regrowth: contrast mostly gone -> not persistent even with positive log-odds
+    confirm_gone = dict(confirm_ok, d_ndvi_small_contrast=-0.1)
+    assert validation.persistence_rule(primary, confirm_gone, 2.0, vcfg)[1] is False
+    # negative log-odds -> not persistent
+    assert validation.persistence_rule(primary, confirm_ok, -0.5, vcfg)[1] is False
+    # cloud at the candidate -> not assessable, never persistent
+    cloudy = dict(confirm_ok, valid_core_frac=0.5)
+    assert validation.persistence_rule(primary, cloudy, 5.0, vcfg)[:2] == (False, False)
+    # water signature takes precedence as the main feature
+    assert validation.main_contrast_feature(dict(primary, d_ndwi_contrast=0.2)) == 'd_ndwi_contrast'
+    # statuses
+    assert validation.assign_status(True, True, 'slide_like', 'fresh scar on slope') == 'LIKELY'
+    assert validation.assign_status(True, True, 'slide_like', '') == 'UNVERIFIED'           # no note, no status
+    assert validation.assign_status(True, False, 'slide_like', 'scar') == 'UNVERIFIED'      # not persistent -> not LIKELY
+    assert validation.assign_status(False, False, 'slide_like', 'scar') == 'UNVERIFIED'     # not assessable -> not LIKELY
+    assert validation.assign_status(True, False, 'transient_artifact', 'mown meadow') == 'REJECTED'
+    assert validation.assign_status(True, True, 'transient_artifact', 'mown meadow') == 'UNVERIFIED'   # persisted: contradiction
+    assert validation.assign_status(False, False, 'non_slide_land_use', 'clear-cut') == 'REJECTED'
+    assert validation.assign_status(True, True, 'water_change', 'river bank') == 'REJECTED'
+    assert validation.assign_status(True, True, 'ambiguous', 'unclear') == 'UNVERIFIED'
+    assert validation.assign_status(True, True, 'made_up_verdict', 'x') == 'UNVERIFIED'
+
+
+def test_physical_candidates_dedup_and_known_exclusion():
+    from preslide.satellite import validation
+    inv = pd.DataFrame({'candidate_id': ['A', 'B', 'C', 'D'], 'model_score': [10.0, 9.0, 8.0, 7.0],
+                        'longitude': [15.0, 15.0005, 15.1, 15.2], 'latitude': [47.0, 47.0, 47.0, 47.0]})     # A and B ~38 m apart
+    known = pd.DataFrame({'event_group_id': ['K'], 'longitude': [15.1001], 'latitude': [47.0]})               # ~8 m from C
+    out = validation.physical_candidates(inv, known, min_sep_m=160, exclude_within_known_m=160)
+    assert list(out['candidate_id']) == ['A', 'D']
+    assert list(out['aliases'].iloc[0]) == ['B'] and out['n_detections'].iloc[0] == 2
+    assert out['excluded_near_known_positive'].iloc[0] == 1
+    assert (out['nearest_v04_positive_m'] > 160).all()
+
+
+def test_candidate_statuses_are_from_the_configured_list_and_pipeline_a_tables_untouched():
+    path = ROOT / 'data/satellite/tables/candidate_inventory.parquet'
+    if not path.exists():
+        pytest.skip('local candidate inventory required')
+    inv = pd.read_parquet(path)
+    assert set(inv['validation_status']) <= set(CFG['candidate_status'])
+    assert (inv['label'] == 'satellite_detected_candidate').all()
+    v04 = ROOT / 'data/v04/run_c6d67a854ba7/dataset.parquet'
+    if v04.exists():
+        d = pd.read_parquet(v04)
+        assert not d['sample_type'].isin(['RANDOM_LANDSCAPE', 'satellite_detected_candidate']).any()
+        assert int(d['label'].sum()) == 423
+
+
+def test_embedding_chip_is_normalised_and_nan_free():
+    from preslide.satellite import embeddings
+    g = imagery.Grid(32633, 0, 2560, 10, 256, 1280, 1280)
+    refl = np.full((6, 256, 256), 0.1, dtype=np.float32); refl[:, 0, 0] = np.nan; refl[0, 100, 100] = 5.0
+    chip = embeddings.rgb_chip(refl, g)
+    assert chip.shape == (3, 96, 96) and np.isfinite(chip).all()
+    assert chip[2, 30, 30] == pytest.approx((0.1 / 0.3 - 0.406) / 0.225)      # blue channel is index 2
+    assert chip[2, 20, 20] == pytest.approx((1.0 - 0.406) / 0.225)               # clipped bright pixel at (100, 100)

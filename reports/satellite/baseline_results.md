@@ -36,3 +36,13 @@ Within-group label permutation null (100 draws, logistic regression, change feat
 | before_bsi_contrast | -0.599 |
 | d_bsi_small_contrast | -0.563 |
 | d_nbr_ring_mean | -0.539 |
+
+## Baseline C: frozen pretrained-encoder embeddings (satellite-0.2)
+
+torchvision resnet18, ImageNet weights (IMAGENET1K_V1), CPU, no fine-tuning; RGB (red, green, blue reflectance clipped to [0, 0.3] and scaled to [0, 1], ImageNet normalisation) of the 960 m window (96 px) upsampled x2 to 192 px, before and after separately; features: after embedding minus before embedding (512) and the absolute difference (512) (1024 values); logistic regression C=0.05, class_weight balanced, StandardScaler, same unit-held-out GroupKFold as the other baselines (C = 0.05); same folds and seeds as above; configuration fixed before the first run, not tuned.
+
+| feature set / model | ROC AUC | AP | within-group AUC | unit-weighted | top-1 | mean rank |
+|---|---:|---:|---:|---:|---:|---:|
+| resnet18_embedding_diff/logistic_regression | 0.537 | 0.216 | 0.529 | 0.543 | 0.230 | 3.16 |
+
+ImageNet features of 10 m RGB chips are a generic texture/colour description, not a landslide model; the comparison asks only whether a frozen encoder carries more transferable change information than the hand-made index contrasts. No sliding-window discovery was run with it.

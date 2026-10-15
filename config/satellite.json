@@ -1,5 +1,5 @@
 {
-  "version": "satellite-0.1",
+  "version": "satellite-0.2",
   "created_on": "2026-10-14",
   "purpose": "Pipeline B: before/after Sentinel-2 change signature of documented events, event discovery and label QA. Strictly separate from the precursor model (Pipeline A); post-event imagery never enters Pipeline A features.",
   "source": {
@@ -128,12 +128,48 @@
   "discovery": {
     "stride_px": 4,
     "min_peak_distance_m": 320,
-    "hit_radius_m": 160
+    "hit_radius_m": 160,
+    "suppress_known_positives_m": 160,
+    "suppress_note": "peaks within this distance of any OTHER known V0.4 positive (423 fine-position events) are removed from the ranking and counted separately: they are documented events, not false peaks and not candidates. The search centre itself stays and defines the hit."
   },
   "candidate_status": [
     "UNVERIFIED",
     "LIKELY",
     "REJECTED",
     "CONFIRMED_FROM_INDEPENDENT_SOURCE"
-  ]
+  ],
+  "version_history": {
+    "satellite-0.1": "created 2026-10-14: eligibility, dataset, baselines, discovery, candidate inventory",
+    "satellite-0.2": "added 2026-10-15 before any result of the new stages was seen: validation (top-candidate persistence rule), discovery.suppress_known_positives, random_landscape hard negatives, embedding baseline C; earlier stages unchanged"
+  },
+  "validation": {
+    "top_n": 30,
+    "exclude_within_known_m": 160,
+    "dedup_m": 160,
+    "min_retained_contrast": 0.5,
+    "min_valid_core_frac": 0.9,
+    "min_valid_ring_frac": 0.8,
+    "rule": "declared before any after_confirm patch was fetched: a candidate persists if the same change features recomputed on (before_primary, after_confirm) still give log-odds > 0 at the candidate pixel and the main contrast feature keeps its sign with >= min_retained_contrast of its primary magnitude; a confirm pair with cloud/snow/nodata at the candidate (valid fractions below the minima) is not assessable. Statuses: LIKELY only if persists AND the visual review notes a slide-like scar; REJECTED only with a named non-slide cause (land use, water) or a transient artefact that did not persist; otherwise UNVERIFIED.",
+    "known_positives": "all 423 V0.4 positives (data/v04 dataset, read only); the candidate inventory distance column used only the 129 satellite positives",
+    "dedup_note": "overlapping 2.56 km patches of neighbouring events detect the same location several times; detections within dedup_m are one physical candidate (highest score kept, others listed as aliases)"
+  },
+  "random_landscape": {
+    "n_per_event": 3,
+    "min_distance_m": 1500,
+    "max_distance_m": 8000,
+    "min_distance_to_any_known_event_m": 400,
+    "exclusion_rule": "preslide.matching.Exclusions with the V0.4 matching config (full GeoSphere inventory, radius = 250 m + position uncertainty, 2 250 m for unknown positions), floored at min_distance_to_any_known_event_m; inside Austria",
+    "max_draws": 60,
+    "seed": 7,
+    "label": "RANDOM_LANDSCAPE",
+    "note": "generic hard negatives: random points on the same before/after acquisitions as the positive (sibling tile allowed), locally usable by the same cloud/snow/validity rules, no terrain matching (fields, forest, water, settlements all allowed). They answer whether the detector separates the reported slope from the ordinary changing landscape, not only from matched slopes. Never part of any Pipeline A table."
+  },
+  "embedding_baseline": {
+    "encoder": "torchvision resnet18, ImageNet weights (IMAGENET1K_V1), CPU, no fine-tuning",
+    "input": "RGB (red, green, blue reflectance clipped to [0, 0.3] and scaled to [0, 1], ImageNet normalisation) of the 960 m window (96 px) upsampled x2 to 192 px, before and after separately",
+    "features": "after embedding minus before embedding (512) and the absolute difference (512)",
+    "model": "logistic regression C=0.05, class_weight balanced, StandardScaler, same unit-held-out GroupKFold as the other baselines",
+    "declared": "single configuration fixed before the first run; not tuned",
+    "dependency": "optional: requirements-satellite-optional.txt (torch CPU wheels); the stage is skipped with a recorded reason when torch is missing"
+  }
 }

@@ -65,14 +65,18 @@ def _doy_gap(d1, d2):
     return min(g, 365 - g)
 
 
-def build_sample(sample_row, event_row, sel, epsg):
-    """Features for one sample (positive or control) on the event's selected before/after acquisitions."""
+def build_sample(sample_row, event_row, sel, epsg, items=None, sample_type=None, label_provenance=None):
+    """Features for one sample (positive, control or random landscape point) on the event's selected before/after
+    acquisitions. `items` overrides the acquisition lookup (role -> STAC item) for samples that are not group members."""
     sid = sample_row['sample_id']
     lon, lat = sample_row['longitude'], sample_row['latitude']
     grid = event_grid(lon, lat, epsg=epsg)
     patches = {}
     for role in PAIR_ROLES:
-        item = sel['items'][role] if sample_row['label'] == 1 else sel['control_items'].get(role, {}).get(sid)
+        if items is not None:
+            item = items.get(role)
+        else:
+            item = sel['items'][role] if sample_row['label'] == 1 else sel['control_items'].get(role, {}).get(sid)
         if item is None:
             return None, f'{role}_control_not_usable_on_group_acquisition'
         patches[role] = fetch_patch(sid, item, grid)
@@ -84,11 +88,12 @@ def build_sample(sample_row, event_row, sel, epsg):
     dx, dy, ratio = coregistration_shift(rb[3], ra[3], valid)
     qb, qa = mb['quality'], ma['quality']
     rec = {'sample_id': sid, 'event_group_id': sample_row['event_group_id'], 'label': int(sample_row['label']),
-           'sample_type': 'POSITIVE' if sample_row['label'] == 1 else 'CONTROL_PSEUDO_NEGATIVE',
-           'label_provenance': 'OFFICIAL_INVENTORY' if sample_row['label'] == 1 else 'MATCHED_CONTROL_NO_DOCUMENTED_EVENT',
+           'sample_type': sample_type or ('POSITIVE' if sample_row['label'] == 1 else 'CONTROL_PSEUDO_NEGATIVE'),
+           'label_provenance': label_provenance or ('OFFICIAL_INVENTORY' if sample_row['label'] == 1 else 'MATCHED_CONTROL_NO_DOCUMENTED_EVENT'),
            'independence_unit': event_row['independence_unit'], 'v04_partition': event_row['partition'],
            'state': event_row['state'], 'event_day': event_row['event_day'], 'process_type': event_row['process_type'],
-           'position_upper_m': int(event_row['source_position_upper_m']), 'slope': float(sample_row['slope']),
+           'position_upper_m': int(event_row['source_position_upper_m']),
+           'slope': float(sample_row['slope']) if sample_row.get('slope') is not None and np.isfinite(sample_row['slope']) else None,
            'land_cover_class': sample_row.get('land_cover_class'), 'distance_to_positive_m': float(sample_row['distance_to_positive_m']),
            'longitude': lon, 'latitude': lat, 'grid_epsg': epsg,
            'before_item': mb['item_id'], 'after_item': ma['item_id'], 'before_datetime': mb['datetime'], 'after_datetime': ma['datetime'],
