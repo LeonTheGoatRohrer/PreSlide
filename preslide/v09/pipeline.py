@@ -24,7 +24,7 @@ from ..pipeline import representative_events
 from ..v04.pipeline import save, load, validate
 from .audit import decisions
 from .bind import bind, V09Exclusions
-from .cohort import KTN_RAW, WLV_SLIDES, ktn_process_ok, parse_ktn_day
+from .cohort import KTN_RAW, WLV_SLIDES, ktn_process_ok
 from ..sources import ROOT
 from .paths import CONFIG, V09_DATA, config as load_config, guard, sha
 

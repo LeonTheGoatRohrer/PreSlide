@@ -2,7 +2,6 @@
 
   python -m preslide.v09.report
 """
-import json
 from collections import Counter
 
 from ..common import read_json

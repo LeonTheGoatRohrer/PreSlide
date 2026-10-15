@@ -10,7 +10,6 @@ import sys
 from datetime import datetime, timezone
 
 import joblib
-import numpy as np
 import pandas as pd
 
 from ..common import read_json, write_json

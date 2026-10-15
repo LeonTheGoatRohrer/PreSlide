@@ -59,3 +59,10 @@ The permutation null makes all six group members exchangeable. True positives ar
 - Known-event suppression uses the 423 V0.4 positives with fine positions; coarse-position inventory records (upper bound > 20 m) are not suppressed, so some candidates may still be documented events.
 - Baseline C uses ImageNet features of 10 m RGB chips; a within-group AUC near 0.5 says that these generic features do not transfer, not that learned encoders cannot work (no fine-tuning, no multispectral pretrained model tried).
 - RANDOM_LANDSCAPE points are generic negatives on the same dates; they contain whatever the landscape does (fields, water, settlements, forestry) and are not matched to the positive's terrain, so a model trained on them answers a different question (landslide vs landscape) than the matched-control baseline (reported slope vs similar slope).
+
+## V0.9 additions
+
+- GeoSphere media events carry no process or mass-movement quality; checked against public reports, 7 of 15 verifiable cases were floods or torrent processes and 24 of 40 had no findable report. Unverified media events stay in the main V0.9 set by registration, so some positives may not be slides.
+- The Kärnten cadastre has no positional accuracy and no verified day precision; its cohort therefore uses t0 three days before the reported day and cannot test trigger rain.
+- The strict unseen rule (Austria-wide day chaining plus 2 km location links) removes most new events; only 30 unseen units remain in total. Results are exploratory and the intervals are wide.
+- The process audit relied on web searches by an assistant; regional newspaper archives (e.g. Kleine Zeitung) were partly unreachable, so "not found" does not mean "no report exists".

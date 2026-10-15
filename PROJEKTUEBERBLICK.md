@@ -1,6 +1,6 @@
 # Talwacht — Ziel, Projektstand und Orientierung
 
-**Stand: 15. Oktober 2026 (nach V0.5 und UI-Neugestaltung). Diese Datei zu Beginn jeder Session vollständig lesen.**
+**Stand: 15. Oktober 2026 (nach V0.9; V0.6–V0.8 und Pipeline B eingemergt). Diese Datei zu Beginn jeder Session vollständig lesen.**
 Danach `PROJECT_STATE.md` für den technischen Arbeitsstand lesen. Bei Widersprüchen die gespeicherten Artefakte prüfen; keine Ergebnisse erfinden oder historische Experimente überschreiben.
 
 ## Was ist Talwacht?
@@ -133,6 +133,15 @@ Abstand jeder Probe zum nächsten Gebäude und zur nächsten öffentlichen Stra�
 
 Ereigniszeit gegen vier Referenzzeiten (±28/±56 Tage, gleiche Uhrzeit) am identischen Hang; Gelände, Landbedeckung und Infrastrukturabstand kürzen sich heraus. 376 Hänge, 23 Einheiten. Bedingte logistische Regression mit INCA-Fenstern: lokale AUC **0,818** (Intervall [0,759; 0,912]); Hydrologie-Merkmale verschlechtern sie (−0,172 [−0,293; −0,065]). Das ist ein „Wann“-Ergebnis: Ereigniszeiten sind nasser als gewöhnliche Zeiten, auch weil das Inventar Starkregenepisoden dokumentiert; es ist keine Vorhersage. Bericht `reports/v08/summary.md`.
 
+## V0.9: ungesehene Episoden aus Medienereignissen und dem Kärntner Ereigniskataster (15.10.2026, abgeschlossen, explorativ)
+
+Vorab registriert (`config/v09.json`), bevor eine V0.9-Auswahl, Prüfung, Datenabfrage oder Modellanpassung lief. Zwei neue Quellen von Ereignissen, die noch kein Talwacht-Modell gesehen hat: GeoSphere-Medienereignisse (bisher nur gezählt) und der Kärntner Ereigniskataster (CC BY 4.0, ohne Positionsgenauigkeit, Tagesdatum nicht verlässlich; deshalb t0 drei Tage vor dem gemeldeten Tag, nur Vorbedingungen). Ungesehen heißt: kein gemeinsamer Abhängigkeitsblock mit einem V0.4-Ereignis. Das V0.4-Rezept wurde einmal auf allen 423 V0.4-Gruppen trainiert und dann genau einmal bewertet.
+
+- **Prozessprüfung der 40 ungesehenen Medienereignisse an öffentlichen Meldungen:** 8 Rutschungen bestätigt, 7 andere Prozesse (meist Hochwasser), 1 unklar, 24 nicht auffindbar. Das registrierte Qualitätskriterium ist verfehlt; die Medienkennzeichnung ist für sich nicht verlässlich.
+- **Bestand:** Medien 24 Gruppen / 14 Einheiten, Kärnten 21 / 16, zusammen 45 / 30. Viele Kandidaten fallen weg, weil sie über Tagesketten mit gesehenen V0.4-Stürmen verbunden sind.
+- **Ergebnis (explorativ):** Medien: Gelände allein **0,770** (deutlich über Zufall), Gelände + Wetter 0,752, **Wetterzusatznutzen −0,019 [−0,121; +0,082]**. Kärnten und gemeinsam ebenfalls kein Nutzen. Von 72 Vergleichen zeigt nur Gradient Boosting bei den Medien einen positiven Zusatznutzen mit Intervall über null; bei so vielen Vergleichen ist das kein Beleg.
+- Bericht `reports/v09/summary.md`, Nachweis `reports/v09/verification.json` (PASS). Rohdaten, Meldungs-URLs und Probenvorhersagen bleiben lokal.
+
 ## Webdemonstration: drei Seiten (15.10.2026)
 
 Die lokale Oberfläche führt über **Projekt → Vorgehen → Ergebnisse**. Direkte Routen: `/#/projekt`, `/#/vorgehen`, `/#/ergebnisse`; alte Abschnittslinks werden weiter zugeordnet. Der Einstieg erklärt den retrospektiven Prototyp, die Vorgehensseite zeigt die Schrittfolge und das reale Baseline-Beispiel, die Ergebnisse trennen V0.4-Test und explorative V0.5. Karten, Wetterkurven, Modellvergleiche und historische Analysen bleiben in aufklappbaren Bereichen erreichbar.
@@ -156,7 +165,7 @@ Ein **getrenntes System** (`preslide/satellite/`, Ausgaben nur unter `data/satel
 
 ## Genau eine nächste wissenschaftliche Priorität
 
-**Den in V0.4 gefundenen Gelände- und Landbedeckungseffekt gegen Meldebias absichern und mehr unabhängige Episoden gewinnen** (z. B. getrennt gekennzeichnete Medienereignisse, vorab registriertes Case-Crossover-Design oder Satellitenprüfung der Positionen). Jede Erweiterung ist eine neue Version; der V0.4-Test ist jetzt gesehen und darf keine Auswahl mehr steuern.
+**Die Wetterfrage ist für dieses Design und die 1-km-Auflösung beantwortet: Ein Wetterzusatznutzen ist in keiner Variante belegt (V0.4-Test, V0.5/V0.6, V0.9 auf ungesehenen Episoden), der Gelände- und Landbedeckungseffekt wiederholt sich.** Mehr saubere unabhängige Einheiten liefert nur noch ein vorwärts gerichteter Test mit Ereignissen nach dem 15.10.2026 (jetzt registrieren, bewerten ab 15 neuen Einheiten; INCA v1 endet im Dezember 2026, der Übergang auf INCA v2 muss vorher festgelegt werden). Anfragen an Datenhalter (WLV-Kataster, Kärnten, Südtirol) nur nach Freigabe des Nutzers.
 
 ## Feste Regeln für weitere Sessions
 
@@ -183,6 +192,7 @@ Ein **getrenntes System** (`preslide/satellite/`, Ausgaben nur unter `data/satel
 | `reports/current_state_audit.md` | Ergänzender Gesamtcheck des aktuellen Projektbestands |
 | `reports/baseline/` | Eingefrorene V0.3-Baseline: Manifest, Status, Fehleranalyse je Ereignis |
 | `archive/v0.3-baseline/` | Schreibgeschützte Kopie aller Baseline-Ausgaben mit Prüfsummen |
+| `config/v09.json`, `reports/v09/`, `preslide/v09/` | V0.9: Registrierung, Prozessprüfung, ungesehene Episoden, einmalige Bewertung, Verifikation |
 | `config/v05.json`, `reports/v05/`, `preslide/v05/` | V0.5: Registrierung, Kohorten-Freeze, CV-Ergebnisse, Bericht, Verifikation |
 | `config/v04.json`, `reports/v04/` | V0.4: Präregistrierung, Änderung 1, Freeze, Test, Bericht, Verifikation |
 | `preslide/v04/` | V0.4-Code (Audit, Datumsregeln, Pipeline, Modelle, Auswertung) |

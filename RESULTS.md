@@ -137,3 +137,15 @@ Different question from V0–V0.4: the documented positive versus ten area-unifo
 - Primary (conditional logit, combined, spatially purged CV, unit-weighted local AUC): **0.851** (5 repetitions 0.835–0.863; bootstrap rep. 1 [0.762, 0.897]). Static 0.865, temporal 0.719; gradient boosting 0.798 / 0.794 / 0.658. Slope rule 0.572, chance 0.5. Top-1 0.413 (chance 0.091).
 - **Combined − static: −0.023 [−0.079, +0.019]** (negative in all 5 repetitions): no weather benefit. Weather-only is above chance mainly because positives lie ~186 m lower than the background and INCA temperature/precipitation depend on elevation and location.
 - Same cohort with the 5 original matched controls: 0.705 (static). The unmatched background is much easier to separate; the separation rests on elevation/position and land cover (forest 47 % vs 76 %), i.e. a mix of susceptibility and reporting probability.
+
+## V0.9 — unseen media and Kärnten episodes (2026-10-15; registered, scored once, exploratory)
+
+Registered before selection, audit, retrieval and fitting (`config/v09.json`); the V0.4 recipe was refit once on all 423 V0.4 groups and scored once on events in blocks without any V0.4 event (`reports/v09/test_results.json`, full table in `reports/v09/summary.md`). The media process audit failed its registered gate (15 verifiable reports < 20; 7 of them describe other processes) and the media cohort has 14 < 15 units, so no confirmatory claim is made.
+
+| Cohort (units) | Static | Temporal | Combined | Combined − static [95 %] |
+|---|---:|---:|---:|---|
+| Media, primary model (14) | 0.770 | 0.460 | 0.752 | −0.019 [−0.121, +0.082] |
+| Kärnten, antecedent only (16) | 0.627 | 0.400 | 0.552 | −0.076 [−0.156, −0.000] |
+| Pooled (30) | 0.694 | 0.428 | 0.645 | −0.048 [−0.112, +0.014] |
+
+Conditional logit, unit-weighted within-group AUC, chance 0.5. Static terrain and land cover discriminate on unseen events (media p = 0.0001 against the random-rank null); weather adds nothing in the primary model. Among all 72 registered values the only positive increment with an interval above zero is gradient boosting on media (+0.124 [+0.037, +0.214], static only 0.608) — one exploratory hit among many comparisons, not evidence.
