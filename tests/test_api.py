@@ -62,3 +62,14 @@ def test_event_explorer_is_deidentified_complete_and_consistent():
     for e in (x for x in events if x['demo_case']):
         for entry in data['cases'][e['demo_case']]['rankings']:
             assert entry['controls_beaten']==e['variants'][entry['model']][entry['features']]['controls_beaten']
+
+def test_satellite_bundle_is_aggregate_only():
+    r=client.get('/api/satellite')
+    if r.status_code==503: pytest.skip('satellite bundle not generated')
+    import re
+    data=r.json()
+    assert {'config','eligibility','contact_sheets'}<=set(data)
+    assert not re.search(r'\d{7}_\d{3}',r.text), 'source event identifiers must not be exposed'
+    assert 'longitude' not in r.text and 'latitude' not in r.text
+    assert client.get('/api/satellite/contact_sheets/..%2F..%2Fx.png').status_code==404
+    assert client.get('/api/satellite/contact_sheets/contact_sheet_1.png').status_code==404

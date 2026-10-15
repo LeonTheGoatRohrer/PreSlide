@@ -1,0 +1,16 @@
+{
+  "model": "logistic_regression",
+  "events": 129,
+  "independence_units": 15,
+  "hit_radius_m": 160,
+  "searched_km2_per_event": 2.5600000000000005,
+  "detected_any_rank": 61,
+  "detected_rank1": 8,
+  "detected_top3": 27,
+  "detected_top5": 37,
+  "median_hit_rank": 4.0,
+  "median_hit_distance_m": 70.0,
+  "false_peaks_above_hit_mean": 8.093023255813954,
+  "peaks_per_km2_mean": 4.702640503875968,
+  "chance_rank1": "a random peak order gives P(rank 1) = 1/peaks per event; mean 1/peaks = 0.106"
+}

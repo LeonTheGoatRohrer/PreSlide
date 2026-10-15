@@ -161,3 +161,23 @@ All steps reuse verified checkpoints and cached API responses (`data/v04/cache/`
 ```
 
 `--limit 1|5|20` runs pilots. V0.5 has no sealed test (all events seen in V0.4). See `METHODOLOGY.md` (V0.5), `reports/v05/`.
+## Pipeline B: Sentinel-2 before/after change signature and event discovery (separate outputs)
+
+Pipeline B deliberately uses post-event imagery to learn what documented events look like from above and to search for undocumented candidates. It never feeds the precursor model (Pipeline A): it reads the V0.4 positives/controls read-only and writes only `data/satellite/`, `models/satellite/`, `reports/satellite/` (`tests/test_satellite.py`).
+
+```powershell
+.\.venv\Scripts\python -m preslide.satellite eligibility --limit 5   # STAC search, local cloud/snow screening, group-level pair selection
+.\.venv\Scripts\python -m preslide.satellite dataset --limit 5       # aligned 2.56 km patches for positives + controls, change features
+.\.venv\Scripts\python -m preslide.satellite contact --limit 5       # contact sheets for mandatory visual inspection
+.\.venv\Scripts\python -m preslide.satellite baseline                # event-held-out logistic regression / gradient boosting + shortcut checks
+.\.venv\Scripts\python -m preslide.satellite discovery               # held-out rediscovery scan, UNVERIFIED candidate inventory
+.\.venv\Scripts\python -m preslide.satellite report                  # reports/satellite/*.md, data/satellite/web/results.json
+.\.venv\Scripts\python -m preslide.satellite validation              # satellite-0.2: top-30 candidates, after_confirm persistence, candidate contact sheets
+.\.venv\Scripts\python -m preslide.satellite review                  # apply reports/satellite/candidate_review.json -> statuses, candidate_validation.md
+.\.venv\Scripts\python -m preslide.satellite landscape --workers 2   # RANDOM_LANDSCAPE hard negatives (1.5-8 km, outside exclusion radii, same acquisitions)
+.\.venv\Scripts\python -m preslide.satellite baseline-random         # baselines with and without the hard negatives
+.\.venv\Scripts\python -m preslide.satellite discovery --negatives controls_plus_random_landscape   # rediscovery with the hard-negative detector
+.\.venv\Scripts\python -m preslide.satellite embeddings              # Baseline C (optional: requirements-satellite-optional.txt, CPU torch)
+```
+
+`--limit 0` processes every eligible event. All STAC responses, scene-classification quicklooks and patches are cached with checksums. Configuration: `config/satellite.json`; sources: `DATA_SOURCES.md`.

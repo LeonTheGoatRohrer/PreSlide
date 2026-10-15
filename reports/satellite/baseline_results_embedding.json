@@ -1,0 +1,68 @@
+{
+  "ran": true,
+  "environment": "torch 2.14.1+cpu, torchvision 0.29.1+cpu",
+  "config": {
+    "encoder": "torchvision resnet18, ImageNet weights (IMAGENET1K_V1), CPU, no fine-tuning",
+    "input": "RGB (red, green, blue reflectance clipped to [0, 0.3] and scaled to [0, 1], ImageNet normalisation) of the 960 m window (96 px) upsampled x2 to 192 px, before and after separately",
+    "features": "after embedding minus before embedding (512) and the absolute difference (512)",
+    "model": "logistic regression C=0.05, class_weight balanced, StandardScaler, same unit-held-out GroupKFold as the other baselines",
+    "declared": "single configuration fixed before the first run; not tuned",
+    "dependency": "optional: requirements-satellite-optional.txt (torch CPU wheels); the stage is skipped with a recorded reason when torch is missing"
+  },
+  "C": 0.05,
+  "rgb_clip": 0.3,
+  "window_m": 960,
+  "upsample": 2,
+  "rows": 724,
+  "features": 1024,
+  "metrics": {
+    "roc_auc": {
+      "mean": 0.5370594749527718,
+      "per_seed": [
+        0.5373461012311901,
+        0.5301283304019282,
+        0.543703993225197
+      ]
+    },
+    "average_precision": {
+      "mean": 0.21624653917307488,
+      "per_seed": [
+        0.21548065437131295,
+        0.20971296671916925,
+        0.2235459964287424
+      ]
+    },
+    "within_group_auc": {
+      "mean": 0.5289405684754522,
+      "per_seed": [
+        0.534108527131783,
+        0.5213178294573644,
+        0.5313953488372094
+      ]
+    },
+    "within_group_auc_unit_weighted": {
+      "mean": 0.5434354226020891,
+      "per_seed": [
+        0.5512891737891737,
+        0.5347222222222221,
+        0.5442948717948718
+      ]
+    },
+    "top1_rate": {
+      "mean": 0.22997416020671835,
+      "per_seed": [
+        0.23255813953488372,
+        0.2248062015503876,
+        0.23255813953488372
+      ]
+    },
+    "mean_rank": {
+      "mean": 3.1550387596899223,
+      "per_seed": [
+        3.131782945736434,
+        3.186046511627907,
+        3.147286821705426
+      ]
+    }
+  }
+}
