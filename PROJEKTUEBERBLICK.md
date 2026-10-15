@@ -123,7 +123,15 @@ Bericht: `reports/v05/summary.md`; Nachweis: `reports/v05/verification.json` (PA
 
 ## V0.6: hydrologische Regenmerkmale (15.10.2026, abgeschlossen, explorativ)
 
-Aus den bereits zwischengespeicherten stündlichen INCA-Reihen wurden 23 Merkmale berechnet (Vorregen-Index mit Halbwertszeit 3 und 14 Tagen, stärkste 3/6/12/24/72-Stunden-Regensummen samt Zeitpunkt, Nasstage, Trockenperioden, Regen plus Schneeschmelze); registriert in `config/v06.json` vor der Berechnung, gleiche 418 Gruppen, gleiche gesperrte CV-Aufteilung wie V0.5. **Kein belegter Zusatznutzen**: bedingte logistische Regression kombiniert 0,851 → 0,838 (Differenz −0,013, Intervall [−0,029; +0,016]); Gradient Boosting +0,010 [−0,005; +0,071]. Bericht `reports/v06/summary.md`. Weitere Plan-Teile (Meldebias-Kovariaten, Case-Crossover) brauchen neue Downloads und stehen noch aus. Infrastruktur: GitHub-CI, Registrierungsskript.
+Aus den bereits zwischengespeicherten stündlichen INCA-Reihen wurden 23 Merkmale berechnet (Vorregen-Index mit Halbwertszeit 3 und 14 Tagen, stärkste 3/6/12/24/72-Stunden-Regensummen samt Zeitpunkt, Nasstage, Trockenperioden, Regen plus Schneeschmelze); registriert in `config/v06.json` vor der Berechnung, gleiche 418 Gruppen, gleiche gesperrte CV-Aufteilung wie V0.5. **Kein belegter Zusatznutzen**: bedingte logistische Regression kombiniert 0,851 → 0,838 (Differenz −0,013, Intervall [−0,029; +0,016]); Gradient Boosting +0,010 [−0,005; +0,071]. Bericht `reports/v06/summary.md`. Infrastruktur: GitHub-CI, Registrierungsskript.
+
+## V0.7: Meldebias-Kontrolle mit OpenStreetMap (15.10.2026, abgeschlossen, explorativ)
+
+Abstand jeder Probe zum nächsten Gebäude und zur nächsten öffentlichen Straße (OSM-Auszug Österreich, Geofabrik, ODbL, Stand 14.10.2026; `config/v07.json`, vorab registriert). Der Abstand allein trennt den gemeldeten Hang von den zehn Umgebungspunkten mit lokaler AUC **0,928** (Gelände allein 0,865): ein großer Teil der V0.5-Trennung ist Sichtbarkeit/Platzierung, zum Teil auch durch das Design (Kontrollen liegen 0,75–10 km entfernt). Werden nur Kontrollen mit ähnlichem Infrastrukturabstand (Faktor 2) behalten (173 von 418 Gruppen, 10 Einheiten), behält das infrastrukturunkundige Geländemodell 0,783 (−0,013, Intervall [−0,068; +0,031]). Bericht `reports/v07/summary.md`.
+
+## V0.8: Case-Crossover am selben Hang (15.10.2026, abgeschlossen, explorativ)
+
+Ereigniszeit gegen vier Referenzzeiten (±28/±56 Tage, gleiche Uhrzeit) am identischen Hang; Gelände, Landbedeckung und Infrastrukturabstand kürzen sich heraus. 376 Hänge, 23 Einheiten. Bedingte logistische Regression mit INCA-Fenstern: lokale AUC **0,818** (Intervall [0,759; 0,912]); Hydrologie-Merkmale verschlechtern sie (−0,172 [−0,293; −0,065]). Das ist ein „Wann“-Ergebnis: Ereigniszeiten sind nasser als gewöhnliche Zeiten, auch weil das Inventar Starkregenepisoden dokumentiert; es ist keine Vorhersage. Bericht `reports/v08/summary.md`.
 
 ## Webdemonstration: drei Seiten (15.10.2026)
 

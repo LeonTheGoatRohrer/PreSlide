@@ -1,0 +1,211 @@
+{
+  "cohort": {
+    "events": 376,
+    "units": 23,
+    "rows": 1842,
+    "referents_per_group": {
+      "3": 38,
+      "4": 338
+    }
+  },
+  "chance_local_auc": 0.5,
+  "variants": {
+    "conditional_logit/temporal": {
+      "median_local_auc_units": 0.8182171164758204,
+      "range": [
+        0.8023668967892835,
+        0.8863366987928699
+      ],
+      "top1_units": 0.5659551974851867,
+      "mrr_units": 0.7653261680476844,
+      "events": 376,
+      "units": 23,
+      "ci95_rep1": [
+        0.7593534882553552,
+        0.912405498055751
+      ]
+    },
+    "conditional_logit/temporal_hydro": {
+      "median_local_auc_units": 0.7551403776168647,
+      "range": [
+        0.6674637332996276,
+        0.784121122960998
+      ],
+      "top1_units": 0.41477235947782926,
+      "mrr_units": 0.6321113666364161,
+      "events": 376,
+      "units": 23,
+      "ci95_rep1": [
+        0.5243728772515137,
+        0.7932801227667318
+      ]
+    },
+    "conditional_logit/hydro_only": {
+      "median_local_auc_units": 0.58701228954199,
+      "range": [
+        0.5671848215677108,
+        0.6395496827043832
+      ],
+      "top1_units": 0.298560614233826,
+      "mrr_units": 0.5476980312299695,
+      "events": 376,
+      "units": 23,
+      "ci95_rep1": [
+        0.4333096587904231,
+        0.7116205860074907
+      ]
+    },
+    "hist_gradient_boosting/temporal": {
+      "median_local_auc_units": 0.7437626594763486,
+      "range": [
+        0.6859628817542769,
+        0.7653920722458796
+      ],
+      "top1_units": 0.40137645197252486,
+      "mrr_units": 0.641153738619913,
+      "events": 376,
+      "units": 23,
+      "ci95_rep1": [
+        0.5931541253895019,
+        0.8180877037393426
+      ]
+    },
+    "hist_gradient_boosting/temporal_hydro": {
+      "median_local_auc_units": 0.7079625638240337,
+      "range": [
+        0.6886078859745429,
+        0.7401022242248214
+      ],
+      "top1_units": 0.36879472794620055,
+      "mrr_units": 0.6352116294246687,
+      "events": 376,
+      "units": 23,
+      "ci95_rep1": [
+        0.5715971305539513,
+        0.8259110107343546
+      ]
+    },
+    "hist_gradient_boosting/hydro_only": {
+      "median_local_auc_units": 0.6553625079063883,
+      "range": [
+        0.6019190311791995,
+        0.6792311914336706
+      ],
+      "top1_units": 0.3113361743445895,
+      "mrr_units": 0.5822110977486978,
+      "events": 376,
+      "units": 23,
+      "ci95_rep1": [
+        0.5298872347503661,
+        0.7710946537367687
+      ]
+    }
+  },
+  "paired": {
+    "conditional_logit: temporal_hydro - temporal": {
+      "mean": -0.1721243117376549,
+      "ci95": [
+        -0.2925426103760903,
+        -0.06513247662723534
+      ],
+      "share_above_zero": 0.0
+    },
+    "hist_gradient_boosting: temporal_hydro - temporal": {
+      "mean": -0.0031574423596082814,
+      "ci95": [
+        -0.1158718647468158,
+        0.10568949534942151
+      ],
+      "share_above_zero": 0.4855
+    }
+  },
+  "diagnostics": {
+    "largest_unit": "B_2016-07-25_1200667_001",
+    "events_in_largest_unit": 221,
+    "by_time_quality": {
+      "clock": {
+        "median_local_auc_units": 0.7708333333333334,
+        "range": [
+          0.699404761904762,
+          0.7886904761904763
+        ],
+        "top1_units": 0.5833333333333334,
+        "mrr_units": 0.75,
+        "events": 35,
+        "units": 14
+      },
+      "day": {
+        "median_local_auc_units": 0.8749198717948717,
+        "range": [
+          0.8144602793040293,
+          0.9094007554945055
+        ],
+        "top1_units": 0.5701923076923077,
+        "mrr_units": 0.7842948717948718,
+        "events": 67,
+        "units": 16
+      },
+      "daypart": {
+        "median_local_auc_units": 0.8939434863557295,
+        "range": [
+          0.8800234705754449,
+          0.9767952272233096
+        ],
+        "top1_units": 0.6880252100840337,
+        "mrr_units": 0.8366596638655464,
+        "events": 274,
+        "units": 8
+      }
+    },
+    "by_referent_side": {
+      "before": {
+        "median_local_auc_units": 0.8235335103941241,
+        "range": [
+          0.7707554593743852,
+          0.9400645520912
+        ],
+        "top1_units": 0.7779207097662671,
+        "mrr_units": 0.8845939483428139,
+        "events": 376,
+        "units": 23
+      },
+      "after": {
+        "median_local_auc_units": 0.8215534757435179,
+        "range": [
+          0.7909777002828319,
+          0.8357675225662603
+        ],
+        "top1_units": 0.7445562268493545,
+        "mrr_units": 0.8650317366130831,
+        "events": 376,
+        "units": 23
+      }
+    },
+    "without_largest_unit": {
+      "median_local_auc_units": 0.8194153852419981,
+      "range": [
+        0.798319814146427,
+        0.8829184368498882
+      ],
+      "top1_units": 0.5912690803819836,
+      "mrr_units": 0.7771807717372234,
+      "events": 155,
+      "units": 22
+    }
+  },
+  "neighbour_slope_reference_same_groups": {
+    "v05_temporal": {
+      "median_local_auc_units": 0.7572029762924697,
+      "events": 376
+    },
+    "v06_temporal_hydro": {
+      "median_local_auc_units": 0.7362026304210323,
+      "events": 376
+    }
+  },
+  "inputs": {
+    "config_sha256": "9b08ec5252de8695586496c689fec70e21fd5e7e6cdee9992efef6e241b8d5ce",
+    "dataset_sha256": "21f97015ba2ab6ea63b4b5491ae205af771ad865baf03de812b192bfb036bea6",
+    "oof_sha256": "f01af9820da9244ab8771aa470df11e32902476fad9abcf702db3c1968f8ea78"
+  }
+}

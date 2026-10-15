@@ -100,3 +100,8 @@ Land cover, geology, soil moisture and snow are not included in this V0. Terrain
 ## V0.5 (2026-10-14)
 
 No new data source. V0.5 queries the same V0.4 endpoints (INCA v1, SPARTACUS v2, SNOWGRID-CL v2, CORINE 2012/2018, GeoSphere geology 1:500 000) for the ten new unmatched control points per event; new responses are cached under `data/v05/cache/http/`, existing baseline/V0.4 responses and DEM tiles are only read. Control points come from the existing V0.4 pools (`data/v04/cache/control_pools/`, audited, see `data/v05/pool_audit/`).
+
+## V0.7 / V0.8 (2026-10-15)
+
+- **OpenStreetMap, Austria extract** — provider OpenStreetMap contributors via Geofabrik GmbH; `https://download.geofabrik.de/europe/austria-261014.osm.pbf` (812,633,484 bytes, snapshot 2026-10-14, retrieved 2026-10-15; SHA-256 in `data/v07/source.json`). Licence ODbL 1.0, attribution "(c) OpenStreetMap contributors"; used only for local non-commercial research, the PBF and per-sample distance table stay in the ignored `data/`. Used for the nearest building-outline and public-road vertex distance (cap 5 km) of the V0.5 cohort samples (V0.7). Limits: 2026 snapshot for events since 2016, OSM completeness varies, nearest-vertex distances, multipolygon buildings ignored. New dependency `osmium` (pyosmium 4.3.1) only for reading the PBF.
+- **INCA v1 hourly** (V0.8): the same endpoint as V0.4, requested for case-crossover referent times (event time ± 28 / 56 days); responses cached in `data/v08/cache/http/`. The GeoSphere inventory `geosphere_natural_hazards.json` (already in `data/raw/`) is used again only to block referent times near dated inventory landslides.
