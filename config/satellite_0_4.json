@@ -1,0 +1,83 @@
+{
+  "version": "satellite-0.4",
+  "registered_on": "2026-10-15",
+  "registered_before": "any normalised, persistence or terrain-filtered result was computed or viewed; the whole-patch cloud mask (satellite-0.3 item) is folded into this version",
+  "status": "exploratory method development on the 129 Pipeline B events; unknown-region scan only if the registered threshold is met",
+  "plan": "reports/weiterentwicklung_2026-10-15/UMSETZUNGSPLAN.md, package P2 (P2.1-P2.5)",
+  "question": "Do (a) change features normalised by the pre-event variability of the same pixels, (b) persistence of the change in a second post-event image, and (c) a terrain / water / cloud-buffer filter improve the held-out rediscovery of documented landslides and reduce false candidates per km2 compared with satellite-0.2?",
+  "primary_endpoint": "held-out rediscovery with logistic regression (unit-held-out): number of events whose documented position is found within 160 m among the first three candidates, and candidates per km2; satellite-0.2 reference: 28 of 129 events, 4.49 candidates per km2 (reports/satellite/heldout_discovery_results.json)",
+  "secondary_endpoint": "unit-weighted within-group AUC of the event-held-out baseline (change_features vs change_norm), with a paired unit bootstrap for the difference",
+  "decision_rule": "A variant is called better only if the paired unit-bootstrap interval of the within-group AUC difference excludes zero; the discovery counts are reported as counts with the number of independence units (15) and no significance claim. All variants and filters are reported, none is selected after the fact.",
+  "comparisons_counted": 6,
+  "must_not_change": ["Pipeline A (V0.4-V0.8) artifacts", "baseline V0.3", "config/satellite.json and its satellite-0.2 results", "the 129-event cohort and its folds"],
+
+  "inputs": {
+    "dataset": "data/satellite/tables/dataset.parquet",
+    "dataset_sha256": "ea69bf54d6e0526c27ec2d6041fe32e615f0e629b7f5c3f894118e3f9976509b",
+    "base_config": "config/satellite.json",
+    "base_config_sha256": "f4ec6628aee1813dc852d7dd136286784a7d0fa92439e94acab777a4c635ef39"
+  },
+
+  "normalisation": {
+    "pre_delta": "idx(before_primary) - idx(before_reference) for idx in ndvi, nbr, bsi, brightness, on valid pixels of both scenes",
+    "sigma_floor": 0.02,
+    "sigma_core": "std of pre_delta inside the 320 m core box, floored",
+    "sigma_ring": "std of pre_delta inside the ring (960 m box minus core), floored",
+    "sigma_scene": "1.4826 * MAD of pre_delta over the whole patch, floored",
+    "features": {
+      "z_small_<idx>": "d_<idx>_small_contrast / sigma_ring",
+      "z_core_<idx>": "(core mean of delta - ring mean of delta) / sigma_core",
+      "frac_z_below_<idx>": "share of core pixels with (delta - median(delta)) / sigma_scene < -2 (box filter), sign flipped for bsi and brightness so that 'below' always means a change away from the before state in the loss direction"
+    },
+    "missing_reference": "no before_reference for the sample (or insufficient valid pixels): the normalised features are missing (NaN), counted and reported; no fallback value is invented"
+  },
+  "persistence": {
+    "confirm_pair": "before_primary -> after_confirm (d_confirm) and after_primary -> after_confirm (d_regrow)",
+    "persistence_<idx>": "a1 = small_contrast(after_primary - before_primary), c1 = small_contrast(after_confirm - before_primary); sign(a1)*min(|a1|,|c1|) if sign(a1) == sign(c1) else 0",
+    "regrowth_<idx>": "small_contrast(after_confirm - after_primary)",
+    "indices": ["ndvi", "nbr", "bsi", "brightness"],
+    "missing_confirm": "after_confirm missing or not usable for the sample: persistence and regrowth features are NaN, counted and reported (gradient boosting handles NaN, logistic regression imputes the training median)",
+    "controls": "for a control the reference / confirm acquisition is the positive's acquisition on the tile covering the control (same minute and collection, usable by the local quality rules); otherwise missing"
+  },
+  "feature_sets": {
+    "change_features": "satellite-0.2 set (unchanged)",
+    "change_norm": "satellite-0.2 set + 12 normalised + 8 persistence/regrowth features",
+    "norm_only": "the 12 normalised features",
+    "persistence_only": "the 8 persistence / regrowth features"
+  },
+
+  "filters": {
+    "terrain_source": "V0.4 30 m Skadi window of the event (read only, pre-event verified), slope sampled at the candidate pixel",
+    "min_slope_deg": 8,
+    "max_water_core_share": 0.10,
+    "water_scl_class": 6,
+    "cloud_buffer_m": 100,
+    "cloud_classes": [2, 3, 7, 8, 9, 10, 11],
+    "cloud_source": "union of cloud-like / snow / invalid pixels (SCL classes above and the NDSI snow rule) of before_primary and after_primary over the whole 2.56 km patch",
+    "rule": "a peak is removed if slope < min_slope_deg, or water share in its 320 m core >= max_water_core_share, or it lies within cloud_buffer_m of the cloud mask; removed peaks are counted by reason; the search centre keeps its priority for the hit definition only through the same filters (a documented event on a gentle slope is then a miss, not an exception)",
+    "reported_variants": ["no filter", "cloud buffer only", "terrain + water only", "all filters"]
+  },
+
+  "discovery": {
+    "models": ["logistic_regression"],
+    "feature_sets": ["change_features", "change_norm"],
+    "unchanged": "stride, peak distance, hit radius 160 m, suppression of other known positives 160 m (config/satellite.json)",
+    "threshold_log_odds": 0.0
+  },
+
+  "position_refinement": {
+    "purpose": "the only allowed feedback to Pipeline A: a coordinate proposal with provenance, never a feature",
+    "event_selection": "rediscovered events (hit within 160 m) whose change persists (persistence_ndvi < 0 or persistence_bsi > 0 at the hit pixel)",
+    "scar_mask": "contiguous region of pixels with d_ndvi < -0.15 or d_bsi > 0.1 or d_brightness > 0.05 (satellite.json thresholds) that contains or is nearest to the hit pixel within 160 m, clipped to a 640 m window",
+    "output": "old position, new position (mask centroid), distance, area, source = satellite_scar_centroid, source position class",
+    "check": "distribution of the shifts by source position class; any event with a shift > 50 m in a class with an upper bound <= 5 m is listed for questioning the source or the centroid, never overwritten automatically"
+  },
+
+  "stage6_unknown_region": {
+    "condition": "executed only if satellite-0.4 reaches, with the all-filters variant, >= 50 % of the 129 events found within 160 m among the first three candidates AND <= 2 candidates per km2; otherwise not executed and reported as not reached",
+    "region": "one Styrian storm footprint (2023-08) without the known events; status of every candidate UNVERIFIED"
+  },
+
+  "staging": "1 event -> 5 events -> 20 events -> all; cache every patch; GDAL crashes are handled by re-running the cached stage",
+  "interpretation_limits": "15 independence units; Sentinel-2 revisit and cloud cover limit the pairs; the documented position is itself uncertain (<= 20 m class); candidates are not landslide labels; harvest, construction and forestry mimic scars"
+}

@@ -1,0 +1,9 @@
+{
+ "registered_at_utc": "2026-10-15T10:24:10.520644+00:00",
+ "config": "config/satellite_0_4.json",
+ "config_sha256": "89565f5cfddcd98e0f664d38bb2fdf5f83fa84df7a4e5bad299099f9c64b0cd7",
+ "input_sha256": {
+  "data/satellite/tables/dataset.parquet": "ea69bf54d6e0526c27ec2d6041fe32e615f0e629b7f5c3f894118e3f9976509b",
+  "config/satellite.json": "f4ec6628aee1813dc852d7dd136286784a7d0fa92439e94acab777a4c635ef39"
+ }
+}

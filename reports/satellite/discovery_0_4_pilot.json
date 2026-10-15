@@ -1,0 +1,85 @@
+{
+  "summary": {
+    "change_features/all_filters": {
+      "events": 3,
+      "units": 1,
+      "found_any_rank": 1,
+      "found_top1": 0,
+      "found_top3": 0,
+      "found_top5": 0,
+      "peaks_per_km2_mean": 5.338541666666665,
+      "share_top3": 0.0
+    },
+    "change_features/cloud_buffer_only": {
+      "events": 3,
+      "units": 1,
+      "found_any_rank": 1,
+      "found_top1": 0,
+      "found_top3": 0,
+      "found_top5": 0,
+      "peaks_per_km2_mean": 5.729166666666665,
+      "share_top3": 0.0
+    },
+    "change_features/no_filter": {
+      "events": 3,
+      "units": 1,
+      "found_any_rank": 1,
+      "found_top1": 0,
+      "found_top3": 0,
+      "found_top5": 0,
+      "peaks_per_km2_mean": 5.729166666666665,
+      "share_top3": 0.0
+    },
+    "change_features/terrain_water_only": {
+      "events": 3,
+      "units": 1,
+      "found_any_rank": 1,
+      "found_top1": 0,
+      "found_top3": 0,
+      "found_top5": 0,
+      "peaks_per_km2_mean": 5.338541666666665,
+      "share_top3": 0.0
+    },
+    "change_norm/all_filters": {
+      "events": 3,
+      "units": 1,
+      "found_any_rank": 1,
+      "found_top1": 0,
+      "found_top3": 0,
+      "found_top5": 0,
+      "peaks_per_km2_mean": 5.338541666666665,
+      "share_top3": 0.0
+    },
+    "change_norm/cloud_buffer_only": {
+      "events": 3,
+      "units": 1,
+      "found_any_rank": 1,
+      "found_top1": 0,
+      "found_top3": 0,
+      "found_top5": 0,
+      "peaks_per_km2_mean": 5.859374999999999,
+      "share_top3": 0.0
+    },
+    "change_norm/no_filter": {
+      "events": 3,
+      "units": 1,
+      "found_any_rank": 1,
+      "found_top1": 0,
+      "found_top3": 0,
+      "found_top5": 0,
+      "peaks_per_km2_mean": 5.859374999999999,
+      "share_top3": 0.0
+    },
+    "change_norm/terrain_water_only": {
+      "events": 3,
+      "units": 1,
+      "found_any_rank": 1,
+      "found_top1": 0,
+      "found_top3": 0,
+      "found_top5": 0,
+      "peaks_per_km2_mean": 5.338541666666665,
+      "share_top3": 0.0
+    }
+  },
+  "refinements": 0
+}

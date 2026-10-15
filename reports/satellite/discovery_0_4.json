@@ -1,0 +1,85 @@
+{
+  "summary": {
+    "change_features/all_filters": {
+      "events": 129,
+      "units": 15,
+      "found_any_rank": 47,
+      "found_top1": 12,
+      "found_top3": 36,
+      "found_top5": 44,
+      "peaks_per_km2_mean": 2.6919815891472862,
+      "share_top3": 0.27906976744186046
+    },
+    "change_features/cloud_buffer_only": {
+      "events": 129,
+      "units": 15,
+      "found_any_rank": 49,
+      "found_top1": 7,
+      "found_top3": 28,
+      "found_top5": 37,
+      "peaks_per_km2_mean": 3.709423449612402,
+      "share_top3": 0.21705426356589147
+    },
+    "change_features/no_filter": {
+      "events": 129,
+      "units": 15,
+      "found_any_rank": 61,
+      "found_top1": 11,
+      "found_top3": 28,
+      "found_top5": 38,
+      "peaks_per_km2_mean": 4.490673449612403,
+      "share_top3": 0.21705426356589147
+    },
+    "change_features/terrain_water_only": {
+      "events": 129,
+      "units": 15,
+      "found_any_rank": 58,
+      "found_top1": 16,
+      "found_top3": 36,
+      "found_top5": 50,
+      "peaks_per_km2_mean": 3.258236434108526,
+      "share_top3": 0.27906976744186046
+    },
+    "change_norm/all_filters": {
+      "events": 129,
+      "units": 15,
+      "found_any_rank": 41,
+      "found_top1": 11,
+      "found_top3": 26,
+      "found_top5": 33,
+      "peaks_per_km2_mean": 2.752543604651162,
+      "share_top3": 0.20155038759689922
+    },
+    "change_norm/cloud_buffer_only": {
+      "events": 129,
+      "units": 15,
+      "found_any_rank": 43,
+      "found_top1": 7,
+      "found_top3": 22,
+      "found_top5": 31,
+      "peaks_per_km2_mean": 3.7911821705426347,
+      "share_top3": 0.17054263565891473
+    },
+    "change_norm/no_filter": {
+      "events": 129,
+      "units": 15,
+      "found_any_rank": 56,
+      "found_top1": 9,
+      "found_top3": 20,
+      "found_top5": 32,
+      "peaks_per_km2_mean": 4.645106589147286,
+      "share_top3": 0.15503875968992248
+    },
+    "change_norm/terrain_water_only": {
+      "events": 129,
+      "units": 15,
+      "found_any_rank": 52,
+      "found_top1": 13,
+      "found_top3": 29,
+      "found_top5": 35,
+      "peaks_per_km2_mean": 3.3733042635658905,
+      "share_top3": 0.2248062015503876
+    }
+  },
+  "refinements": 20
+}

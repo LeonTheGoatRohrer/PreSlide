@@ -1,0 +1,105 @@
+{
+  "dataset": {
+    "rows": 724,
+    "groups": 129,
+    "units": 15
+  },
+  "coverage": {
+    "z_small_ndvi": 0.8176795580110497,
+    "persistence_ndvi": 0.8729281767955801
+  },
+  "models": {
+    "change_features/logistic_regression": {
+      "within_group_auc": 0.7881136950904392,
+      "within_group_auc_unit_weighted": 0.8582507716049382,
+      "top1_rate": 0.5633074935400516,
+      "roc_auc": 0.7566195470436238
+    },
+    "change_features/hist_gradient_boosting": {
+      "within_group_auc": 0.7990956072351422,
+      "within_group_auc_unit_weighted": 0.866264423076923,
+      "top1_rate": 0.5917312661498708,
+      "roc_auc": 0.780392156862745
+    },
+    "change_norm/logistic_regression": {
+      "within_group_auc": 0.7935400516795865,
+      "within_group_auc_unit_weighted": 0.8598005698005698,
+      "top1_rate": 0.5529715762273901,
+      "roc_auc": 0.7594380387814041
+    },
+    "change_norm/hist_gradient_boosting": {
+      "within_group_auc": 0.860077519379845,
+      "within_group_auc_unit_weighted": 0.9234947768281102,
+      "top1_rate": 0.6640826873385013,
+      "roc_auc": 0.8648470240809502
+    },
+    "norm_only/logistic_regression": {
+      "within_group_auc": 0.7391472868217054,
+      "within_group_auc_unit_weighted": 0.7516010802469136,
+      "top1_rate": 0.49870801033591733,
+      "roc_auc": 0.7256682517968428
+    },
+    "norm_only/hist_gradient_boosting": {
+      "within_group_auc": 0.7904392764857882,
+      "within_group_auc_unit_weighted": 0.8326863722697057,
+      "top1_rate": 0.516795865633075,
+      "roc_auc": 0.7665298677610579
+    },
+    "persistence_only/logistic_regression": {
+      "within_group_auc": 0.49916020671834627,
+      "within_group_auc_unit_weighted": 0.6101279677113012,
+      "top1_rate": 0.29457364341085274,
+      "roc_auc": 0.512843897248822
+    },
+    "persistence_only/hist_gradient_boosting": {
+      "within_group_auc": 0.6481912144702843,
+      "within_group_auc_unit_weighted": 0.6337034069325737,
+      "top1_rate": 0.2971576227390181,
+      "roc_auc": 0.642577030812325
+    }
+  },
+  "paired": {
+    "change_norm - change_features / logistic_regression": {
+      "mean_unit_weighted": 0.0015497981956315344,
+      "ci95": [
+        -0.01823264779202279,
+        0.0183833912037037
+      ]
+    },
+    "norm_only - change_features / logistic_regression": {
+      "mean_unit_weighted": -0.10664969135802468,
+      "ci95": [
+        -0.2662506944444445,
+        0.017223958333333362
+      ]
+    },
+    "persistence_only - change_features / logistic_regression": {
+      "mean_unit_weighted": -0.24812280389363722,
+      "ci95": [
+        -0.4152938553537512,
+        -0.11116996527777792
+      ]
+    },
+    "change_norm - change_features / hist_gradient_boosting": {
+      "mean_unit_weighted": 0.0572303537511871,
+      "ci95": [
+        0.0005322145061728709,
+        0.11668921682098765
+      ]
+    },
+    "norm_only - change_features / hist_gradient_boosting": {
+      "mean_unit_weighted": -0.03357805080721745,
+      "ci95": [
+        -0.11123794960826208,
+        0.04181984953703702
+      ]
+    },
+    "persistence_only - change_features / hist_gradient_boosting": {
+      "mean_unit_weighted": -0.23256101614434938,
+      "ci95": [
+        -0.3461671296296296,
+        -0.13058888888888898
+      ]
+    }
+  }
+}
