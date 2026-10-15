@@ -12,7 +12,7 @@ function fit(){
   if(!map||!props.event)return
   const bounds=new maplibregl.LngLatBounds()
   props.event.samples.forEach(p=>bounds.extend([p.longitude,p.latitude]))
-  map.fitBounds(bounds,{padding:70,duration:550,maxZoom:13})
+  map.fitBounds(bounds,{padding:70,duration:window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:550,maxZoom:13})
 }
 function draw(){
   if(!ready||!props.event)return
@@ -38,7 +38,7 @@ function draw(){
 }
 function highlight(){markers.forEach((m,i)=>m.getElement().classList.toggle('selected',props.event.samples[i].name===props.selected))}
 onMounted(()=>{
-  map=new maplibregl.Map({container:container.value,style:{version:8,sources:{},layers:[{id:'background',type:'background',paint:{'background-color':'#f7f7f8'}}]},center:[13.5,47.5],zoom:6,attributionControl:false})
+  map=new maplibregl.Map({container:container.value,style:{version:8,sources:{},layers:[{id:'background',type:'background',paint:{'background-color':'#f7f7f8'}}]},center:[13.5,47.5],zoom:6,locale:{'Map.Title':'Karte','NavigationControl.ZoomIn':'Vergrößern','NavigationControl.ZoomOut':'Verkleinern'},attributionControl:false})
   map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-right')
   map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left')
   map.on('load',()=>{ready=true;draw()})

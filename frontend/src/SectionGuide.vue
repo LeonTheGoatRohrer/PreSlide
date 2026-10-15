@@ -9,7 +9,7 @@ defineProps({
 </script>
 
 <template>
-  <div class="guide" role="note">
+  <details class="guide"><summary>Lesehilfe zu dieser Darstellung</summary>
     <p v-if="kind" class="guide-kind"><span>{{kind}}</span></p>
     <div class="guide-grid">
       <div v-if="what"><h4>Worum geht es?</h4><p>{{what}}</p></div>
@@ -17,10 +17,11 @@ defineProps({
       <div v-if="why"><h4>Warum ist das interessant?</h4><p>{{why}}</p></div>
       <div v-if="take" class="guide-take"><h4>Kernaussage</h4><p>{{take}}</p></div>
     </div>
-  </div>
+  </details>
 </template>
 
 <style scoped>
+.guide summary{padding:16px 20px;cursor:pointer;font-size:14px;color:var(--blue);min-height:48px}
 .guide{margin:26px 0 30px;border:1px solid var(--line);background:#fafafc}
 .guide-kind{margin:0;padding:10px 20px 0}
 .guide-kind span{display:inline-block;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:600;color:var(--blue);border:1px solid var(--blue);padding:2px 8px}

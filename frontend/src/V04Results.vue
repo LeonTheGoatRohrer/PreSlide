@@ -20,8 +20,8 @@ const takeaway=computed(()=>{
 
 <template>
   <section id="v04" class="section results v04">
-    <div class="section-heading"><div><p class="section-number">06 — Neue Version V0.4 (getrennt von V0–V0.3)</p><h2>Mehr Episoden, versiegelter Test.</h2></div></div>
-    <p v-if="error" class="section-intro">{{error}}</p>
+    <div class="section-heading"><div><p class="section-number">V0.4 · gespeicherter versiegelter Test</p><h2>Test und Entwicklung im Detail.</h2></div></div>
+    <p v-if="error" class="section-intro" role="alert">{{error}}</p><p v-else-if="!data" role="status">V0.4-Details werden geladen …</p>
     <template v-if="data">
       <SectionGuide kind="Teil B · Ergebnisse" what="Ein zweiter, größerer Durchlauf mit Regeln, die vor der Auswertung festgeschrieben wurden, und einem Test, den bis dahin niemand gesehen hatte." see="Zuerst der Umfang, dann das Hauptergebnis, darunter die Tabelle des versiegelten Tests und die Entwicklungsergebnisse zum Vergleich." why="Der Test wurde genau einmal bewertet und danach nicht mehr verändert. Das schließt aus, dass Einstellungen so lange angepasst wurden, bis die Zahl gut aussah." :take="takeaway"/>
         <p class="section-intro">Vorab registrierte Regeln: alle Ereignisse ab 2011 mit sicher bekanntem Tag (Freitext und Strukturfeld übereinstimmend), ohne Obergrenze je Sturm; jede unabhängige Episode zählt in der Auswertung gleich. Baseline-freie Episoden bilden einen versiegelten Test, der genau einmal bewertet wurde.</p>

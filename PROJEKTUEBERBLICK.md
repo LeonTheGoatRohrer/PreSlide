@@ -1,6 +1,6 @@
 # PreSlide — Ziel, Projektstand und Orientierung
 
-**Stand: 14. Oktober 2026 (nach V0.5). Diese Datei zu Beginn jeder Session vollständig lesen.**
+**Stand: 15. Oktober 2026 (nach V0.5 und UI-Neugestaltung). Diese Datei zu Beginn jeder Session vollständig lesen.**
 Danach `PROJECT_STATE.md` für den technischen Arbeitsstand lesen. Bei Widersprüchen die gespeicherten Artefakte prüfen; keine Ergebnisse erfinden oder historische Experimente überschreiben.
 
 ## Was ist PreSlide?
@@ -121,6 +121,12 @@ Plan `reports/weiterentwicklung_2026-10-14/V05_NACHBARHANG_PLAN.md`, Regeln vora
 
 Bericht: `reports/v05/summary.md`; Nachweis: `reports/v05/verification.json` (PASS).
 
+## Webdemonstration: drei Seiten (15.10.2026)
+
+Die lokale Oberfläche führt über **Projekt → Vorgehen → Ergebnisse**. Direkte Routen: `/#/projekt`, `/#/vorgehen`, `/#/ergebnisse`; alte Abschnittslinks werden weiter zugeordnet. Der Einstieg erklärt den retrospektiven Prototyp, die Vorgehensseite zeigt die Schrittfolge und das reale Baseline-Beispiel, die Ergebnisse trennen V0.4-Test und explorative V0.5. Karten, Wetterkurven, Modellvergleiche und historische Analysen bleiben in aufklappbaren Bereichen erreichbar.
+
+Kennzahlen und Intervalle kommen aus den vorhandenen API-Bündeln. V0.5-Wiederholungsspannen sind ausdrücklich keine Konfidenzintervalle; das Bootstrap-Intervall der ersten Wiederholung wird separat gezeigt. Keine wissenschaftlichen Artefakte oder Modelle wurden verändert.
+
 ## Genau eine nächste wissenschaftliche Priorität
 
 **Den in V0.4 gefundenen Gelände- und Landbedeckungseffekt gegen Meldebias absichern und mehr unabhängige Episoden gewinnen** (z. B. getrennt gekennzeichnete Medienereignisse, vorab registriertes Case-Crossover-Design oder Satellitenprüfung der Positionen). Jede Erweiterung ist eine neue Version; der V0.4-Test ist jetzt gesehen und darf keine Auswahl mehr steuern.
@@ -133,7 +139,7 @@ Bericht: `reports/v05/summary.md`; Nachweis: `reports/v05/verification.json` (PA
 - Keine Auswahl nach beobachteten Testresultaten, keine Seed-Suche, kein Nachjustieren der Kontrollen.
 - Neue Experimente getrennt versionieren; bei nachgewiesenem Fehler Original erhalten, Fehler dokumentieren und neuen Stand erzeugen.
 - Caches und gültige Checkpoints verwenden. Wetter, Gelände und fertige Modellläufe nicht unnötig neu berechnen.
-- Keine Umgestaltung der gesamten Oberfläche und keine unnötige Architekturänderung.
+- Die ausdrücklich beauftragte UI-Neugestaltung ist abgeschlossen. Die drei Hauptseiten beibehalten; weitere grundlegende Umgestaltungen nur auf Auftrag.
 - Rohdaten und Probenvorhersagen bleiben lokal. Die GeoSphere-Testquelle hat keine geklärte spezifische Weiterverwendungslizenz; lokale nicht kommerzielle Forschung ist vom Nutzer autorisiert, keine Anbieterbestätigung wird behauptet.
 - Passende vorhandene Skills dürfen gemäß aktueller ausdrücklicher Nutzeranweisung ohne erneute Nachfrage verwendet werden. Das ist keine pauschale Erlaubnis für Veröffentlichung oder externe Kommunikation.
 

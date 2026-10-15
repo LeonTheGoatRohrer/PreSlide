@@ -1,12 +1,15 @@
 <script setup>
 import {ref,computed,onMounted,onBeforeUnmount,watch,nextTick} from 'vue'
 import * as maplibregl from 'maplibre-gl'
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
+maplibregl.setWorkerUrl(workerUrl)
 import SectionGuide from './SectionGuide.vue'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 const data=ref(null),error=ref(''),exampleId=ref(''),mode=ref('example'),selected=ref('Ereignishang')
 const container=ref(null)
-let map,markers=[],ready=false
+let map,markers=[],ready=false,disposed=false
+const mapWarning=ref('')
 
 const n=(v,d=3)=>v==null?'–':Number(v).toLocaleString('de-AT',{minimumFractionDigits:d,maximumFractionDigits:d})
 const pct=v=>v==null?'–':Math.round(v*100)+' %'
@@ -17,13 +20,13 @@ const models={conditional_logit:'Bedingte logistische Regression',hist_gradient_
 const variants={static:'Gelände, Landbedeckung, Geologie',temporal:'nur Wetter',combined:'Gelände + Wetter'}
 const lc={lc_forest:'Wald',lc_grass_shrub:'Grünland/Strauch',lc_agriculture:'Landwirtschaft',lc_open_bare:'Fels/offen',lc_artificial_water_other:'Siedlung/Wasser/Sonstiges'}
 const geo={geo_carbonate:'Karbonat',geo_clastic_rock:'Klastisches Gestein',geo_unconsolidated:'Lockermaterial',geo_low_grade_metamorphic:'Niedriggradig metamorph',geo_crystalline_other:'Kristallin/Sonstiges'}
-const feat={elevation:'Höhe',rain_max_hour_3d:'max. Stundenregen 3 T.',rain_sum_30d:'Regen 30 T.',twi:'Feuchteindex (TWI)',log1p_rain_sum_3d_x_slope:'Regen 3 T. × Neigung',rain_sum_7d:'Regen 7 T.',temperature_mean_1d:'Temperatur 1 T.',rain_sum_14d:'Regen 14 T.',slope:'Neigung',roughness_tri:'Rauigkeit',lc_forest:'Wald',tpi_150m:'Hanglage 150 m',tpi_500m:'Hanglage 500 m',temperature_mean_7d:'Temperatur 7 T.',rain_sum_60d:'Regen 60 T.',temperature_mean_60d:'Temperatur 60 T.',rain_sum_3d:'Regen 3 T.',rain_sum_1d:'Regen 1 T.'}
+const feat={elevation:'Höhe',rain_max_hour_3d:'max. Stundenregen 3 T.',rain_sum_30d:'Regen 30 T.',twi:'Feuchteindex (TWI)',log1p_rain_sum_3d_x_slope:'Regen 3 T. × Neigung',rain_sum_7d:'Regen 7 T.',temperature_mean_1d:'Temperatur 1 T.',rain_sum_14d:'Regen 14 T.',slope:'Neigung',roughness_tri:'Rauigkeit',lc_forest:'Wald',tpi_150m:'Hanglage 150 m',tpi_500m:'Hanglage 500 m',temperature_mean_7d:'Temperatur 7 T.',rain_sum_60d:'Regen 60 T.',temperature_mean_60d:'Temperatur 60 T.',rain_sum_3d:'Regen 3 T.',rain_sum_1d:'Regen 1 T.',rain_max_hour_60d:'Max. Stundenregen 60 T.',spartacus_rr_180d:'Niederschlag 180 T. (SPARTACUS)'}
 
 onMounted(async()=>{
-  try{const r=await fetch('/api/results_v05');if(!r.ok)throw Error('V0.5-Ergebnisse nicht verfügbar ('+r.status+').');data.value=await r.json();exampleId.value=data.value.examples[0].id;await nextTick();initMap()}
+  try{const r=await fetch('/api/results_v05');if(!r.ok)throw Error('V0.5-Ergebnisse nicht verfügbar ('+r.status+').');const result=await r.json();if(disposed)return;data.value=result;exampleId.value=data.value.examples[0]?.id||'';await nextTick();if(!disposed&&container.value)initMap()}
   catch(e){error.value=e.message}
 })
-onBeforeUnmount(()=>{markers.forEach(m=>m.remove());map?.remove()})
+onBeforeUnmount(()=>{disposed=true;markers.forEach(m=>m.remove());map?.remove()})
 
 const example=computed(()=>data.value?.examples.find(e=>e.id===exampleId.value))
 const sortedSamples=computed(()=>example.value?[...example.value.samples].sort((a,b)=>a.rank_combined-b.rank_combined):[])
@@ -45,12 +48,13 @@ const maxCoef=computed(()=>Math.max(...coef.value.map(c=>Math.abs(c.v)),1))
 const rankColor=r=>r<=1.5?'#c2410c':r<=3?'#ea8a3c':r<=6?'#9ca3af':'#4b5563'
 
 function initMap(){
-  map=new maplibregl.Map({container:container.value,attributionControl:false,center:[13.5,47.5],zoom:6.3,
+  map=new maplibregl.Map({container:container.value,attributionControl:false,center:[13.5,47.5],zoom:6.3,locale:{'Map.Title':'Karte','NavigationControl.ZoomIn':'Vergrößern','NavigationControl.ZoomOut':'Verkleinern'},
     style:{version:8,sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,maxzoom:17}},
       layers:[{id:'bg',type:'background',paint:{'background-color':'#f2f1ee'}},{id:'osm',type:'raster',source:'osm',paint:{'raster-saturation':-0.6,'raster-opacity':0.85}}]}})
   map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-right')
   map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left')
   map.on('load',()=>{ready=true;draw()})
+  map.on('error',()=>{mapWarning.value='Die Hintergrundkarte ist nicht vollständig verfügbar. Die realen Hänge und Messwerte bleiben in der Tabelle zugänglich.'})
 }
 function circle(lon,lat,km){const pts=[];for(let i=0;i<=72;i++){const a=i/72*2*Math.PI;pts.push([lon+km/(111.32*Math.cos(lat*Math.PI/180))*Math.cos(a),lat+km/110.57*Math.sin(a)])}return pts}
 function clear(){markers.forEach(m=>m.remove());markers=[];for(const id of ['ring','ringline'])if(map.getLayer(id))map.removeLayer(id);if(map.getSource('ring'))map.removeSource('ring')}
@@ -62,9 +66,9 @@ function draw(){
       b.title=`${e.id} · ${state(e.state)} · ${date(e.date)} · Rang ${n(e.rank_combined,1)} von 11`;b.setAttribute('aria-label',b.title)
       b.onclick=()=>{if(data.value.examples.some(x=>x.id===e.id)){exampleId.value=e.id;mode.value='example'}}
       markers.push(new maplibregl.Marker({element:b}).setLngLat([e.longitude,e.latitude]).addTo(map))})
-    map.fitBounds([[9.4,46.3],[17.2,49.1]],{padding:20,duration:500});return
+    map.fitBounds([[9.4,46.3],[17.2,49.1]],{padding:20,duration:window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:500});return
   }
-  const e=example.value,p=e.samples[0]
+  const e=example.value;if(!e)return;const p=e.samples[0]
   map.addSource('ring',{type:'geojson',data:{type:'FeatureCollection',features:[0.75,10].map(km=>({type:'Feature',properties:{},geometry:{type:'LineString',coordinates:circle(p.longitude,p.latitude,km)}}))}})
   map.addLayer({id:'ringline',type:'line',source:'ring',paint:{'line-color':'#002fa7','line-width':1.2,'line-dasharray':[3,3],'line-opacity':.7}})
   e.samples.forEach(s=>{const b=document.createElement('button');b.className='v05-pt'+(s.positive?' pos':'')+(s.name===selected.value?' sel':'')
@@ -72,18 +76,19 @@ function draw(){
     b.title=`${s.name}: Modellrang ${n(s.rank_combined,1)} · ${n(s.elevation,0)} m · ${n(s.slope,1)}° · ${lc[s.land_cover_class]||'–'}`;b.setAttribute('aria-label',b.title)
     b.onclick=()=>{selected.value=s.name}
     markers.push(new maplibregl.Marker({element:b}).setLngLat([s.longitude,s.latitude]).addTo(map))})
-  const r=circle(p.longitude,p.latitude,10.3),bb=new maplibregl.LngLatBounds();r.forEach(x=>bb.extend(x));map.fitBounds(bb,{padding:20,duration:500})
+  const r=circle(p.longitude,p.latitude,10.3),bb=new maplibregl.LngLatBounds();r.forEach(x=>bb.extend(x));map.fitBounds(bb,{padding:20,duration:window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:500})
 }
-watch([exampleId,mode,selected],draw)
+watch([exampleId,mode],()=>{selected.value='Ereignishang';draw()})
+watch(selected,()=>markers.forEach((m,i)=>m.getElement().classList.toggle('sel',example.value?.samples[i]?.name===selected.value)))
 </script>
 
 <template>
   <section id="v05" class="section results v05">
-    <div class="section-heading"><div><p class="section-number">07 — Neue Version V0.5 (getrennt von V0–V0.4)</p><h2>Der gemeldete Hang gegen seine Umgebung.</h2></div></div>
-    <p v-if="error" class="section-intro">{{error}}</p>
+    <div class="section-heading"><div><p class="section-number">V0.5 · abgeschlossene explorative Untersuchung</p><h2>Der gemeldete Hang gegen seine Umgebung.</h2></div></div>
+    <p v-if="error" class="section-intro" role="alert">{{error}}</p><p v-else-if="!data" role="status">V0.5-Details werden geladen …</p>
     <template v-if="data">
       <SectionGuide kind="Teil B · Ergebnisse" what="Dieselben Ereignisse, aber andere Vergleichshänge: zehn zufällige Hänge aus der Umgebung statt fünf möglichst ähnliche." see="Zuerst drei Balkenpaare mit derselben Auswertung bei verschiedenen Vergleichshängen, danach Unterschiede der Hänge, eine Karte, die Modelltabelle und die Gewichte des Modells." why="Zahlen aus verschiedenen Aufgaben lassen sich nicht direkt vergleichen. Mit mehr Vergleichshängen ändert sich der Zufallswert (Platz 1: 1 von 11 statt 1 von 6), und zufällige Hänge sind leichter zu unterscheiden als Zwillingshänge." take="Höhere AUC-Werte hier bedeuten keine bessere Vorhersage, sondern eine leichtere Aufgabe. Ein niedriger wirkender Platz-1-Wert ist bei 11 statt 6 Hängen besser, als er aussieht. Ein Zusatznutzen des Wetters ist auch hier nicht nachweisbar."/>
-      <p class="section-intro">Bisher wurde jeder Rutschungshang mit fünf <b>möglichst ähnlichen</b> Nachbarhängen verglichen (gleiche Neigung, Höhe, Ausrichtung). V0.5 vergleicht ihn mit <b>zehn zufällig gezogenen</b> Hängen 0,75–10 km um ihn — ohne Ähnlichkeitsbedingung. Daten, Merkmale und Modell sind dieselben wie in V0.4; neu ist nur die Auswahl der Vergleichshänge.</p>
+      <p class="section-intro">Bisher wurde jeder Rutschungshang mit fünf <b>möglichst ähnlichen</b> Nachbarhängen verglichen (gleiche Neigung, Höhe, Ausrichtung). V0.5 vergleicht ihn mit <b>zehn zufällig gezogenen</b> Hängen 0,75–10 km um ihn — ohne Ähnlichkeitsbedingung. Die Ereignisse stammen aus V0.4; Merkmalsarten und Modellklasse bleiben vergleichbar. Kontrollauswahl, Kohorte und Auswertungsdesign unterscheiden sich.</p>
       <div class="v05-warn"><b>Wichtig zum Lesen:</b> Die höheren Werte bedeuten <b>keine bessere Vorhersage</b>. Zufällige Umgebungshänge sind leichter vom Rutschhang zu unterscheiden als ähnliche Zwillingshänge. Alle Ereignisse waren schon in V0.4 ausgewertet; dies ist eine erklärende Kreuzvalidierung, kein neuer unabhängiger Test.</div>
 
       <div class="stats" aria-label="V0.5-Umfang">
@@ -94,7 +99,7 @@ watch([exampleId,mode,selected],draw)
       </div>
 
       <h3>Die eigentliche Erklärung: dieselben Ereignisse, andere Vergleichshänge</h3>
-      <p class="section-intro">Gleiches Modell (Gelände + Wetter), gleiche 418 Ereignisse, gleiche räumlich bereinigte Kreuzvalidierung. Nur die Vergleichshänge unterscheiden sich.</p>
+      <p class="section-intro">Gleiche Modellklasse (Gelände + Wetter), gleiche {{data.cohort.events}} Ereignisse, gleiche räumlich bereinigte Kreuzvalidierung. Nur die Vergleichshänge unterscheiden sich.</p>
       <div class="v05-variants">
         <div v-for="v in variantBars" :key="v.key" class="v05-variant">
           <div class="v05-vlabel"><b>{{v.label}}</b><span>{{v.sub}}</span></div>
@@ -129,6 +134,7 @@ watch([exampleId,mode,selected],draw)
         <div v-if="mode==='example'" class="case-picker"><label for="v05ex">Beispiel</label><select id="v05ex" v-model="exampleId"><option v-for="e in data.examples" :key="e.id" :value="e.id">{{e.id}} · {{state(e.state)}} · {{date(e.date)}}</option></select></div>
       </div>
       <div class="v05-mapwrap">
+        <p v-if="mapWarning" class="map-warning" role="alert">{{mapWarning}}</p>
         <div ref="container" class="v05-map" aria-label="Karte der V0.5-Ereignisse und Vergleichshänge"></div>
         <div class="map-key v05-key"><template v-if="mode==='example'"><span class="sw" style="background:#002fa7"></span>Rutschhang (P) · Vergleichshänge nach Modellrang: <span class="sw" style="background:#c2410c"></span>1 <span class="sw" style="background:#ea8a3c"></span>2–3 <span class="sw" style="background:#9ca3af"></span>4–6 <span class="sw" style="background:#4b5563"></span>7–11 · gestrichelt: 0,75- und 10-km-Ring</template>
           <template v-else>Farbe = Rang des echten Rutschhangs unter seinen 11 Hängen: <span class="sw" style="background:#c2410c"></span>1 <span class="sw" style="background:#ea8a3c"></span>2–3 <span class="sw" style="background:#9ca3af"></span>4–6 <span class="sw" style="background:#4b5563"></span>7–11</template></div>
@@ -139,7 +145,7 @@ watch([exampleId,mode,selected],draw)
         <p class="section-intro">Ereignis {{example.id}} ({{state(example.state)}}, {{date(example.date)}}): Das Modell setzt den echten Rutschhang auf <b>Rang {{n(example.rank_combined,1)}} von 11</b> (nur Gelände: Rang {{n(example.rank_static,1)}}). Beispiele sind nach Bundesland aus den Ereignis-IDs gewählt, nicht nach gutem Ergebnis.</p>
         <table class="v05-table"><thead><tr><th>Modellrang</th><th>Hang</th><th>Entfernung</th><th>Höhe</th><th>Neigung</th><th>Landbedeckung</th><th>Geologie</th><th>Regen 7 T.</th><th>Regen 30 T.</th></tr></thead>
           <tbody><tr v-for="s in sortedSamples" :key="s.name" :class="{pos:s.positive,sel:s.name===selected}" @click="selected=s.name">
-            <td>{{n(s.rank_combined,1)}}</td><td>{{s.name}}</td><td>{{s.positive?'–':n(s.distance_to_positive_m/1000,1)+' km'}}</td><td>{{n(s.elevation,0)}} m</td><td>{{n(s.slope,1)}}°</td><td>{{lc[s.land_cover_class]||'–'}}</td><td>{{geo[s.geology_class]||'–'}}</td><td>{{n(s.rain_sum_7d,1)}} mm</td><td>{{n(s.rain_sum_30d,1)}} mm</td></tr></tbody></table>
+            <td>{{n(s.rank_combined,1)}}</td><td><button @click="selected=s.name" :aria-pressed="selected===s.name">{{s.name}}</button></td><td>{{s.positive?'–':n(s.distance_to_positive_m/1000,1)+' km'}}</td><td>{{n(s.elevation,0)}} m</td><td>{{n(s.slope,1)}}°</td><td>{{lc[s.land_cover_class]||'–'}}</td><td>{{geo[s.geology_class]||'–'}}</td><td>{{n(s.rain_sum_7d,1)}} mm</td><td>{{n(s.rain_sum_30d,1)}} mm</td></tr></tbody></table>
       </template>
 
       <h3>Alle Modelle</h3>

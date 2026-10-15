@@ -23,12 +23,12 @@ const blocks=computed(()=>(data.value?.runs||[]).map(run=>{
 }).filter(b=>b.models.length))
 function show(e,m,run){const box=e.currentTarget.closest('.bm-chart').getBoundingClientRect(),t=e.currentTarget.getBoundingClientRect()
   tip.value={x:t.left-box.left+t.width/2,y:t.top-box.top,m,run}}
-const tableRows=computed(()=>blocks.value.flatMap(b=>b.models.flatMap(m=>m.marks.map(k=>({run:b.label,controls:b.controls,units:b.units,events:b.events,model:m.model,variant:k.label,auc:k.local_auc,range:k.local_auc_range,top1:k.top1,chance:k.top1_chance})))))
+const tableRows=computed(()=>blocks.value.flatMap(b=>b.models.flatMap(m=>m.marks.map(k=>({run:b.label,controls:b.controls,units:b.units,events:b.events,model:m.model,variant:k.label,auc:k.local_auc,range:k.local_auc_range,interval:b.interval,top1:k.top1,chance:k.top1_chance})))))
 </script>
 
 <template>
   <section id="benchmarks" class="section benchmarks">
-    <div class="section-heading"><div><p class="section-number">08 — Alle bisherigen Modellläufe</p><h2>Wie gut liefen die Modelle bisher?</h2></div></div>
+    <div class="section-heading"><div><p class="section-number">Archiv · Alle bisherigen Modellläufe</p><h2>Wie gut liefen die Modelle bisher?</h2></div></div>
     <p v-if="error" class="section-intro">{{error}}</p>
     <template v-if="data">
       <SectionGuide kind="Teil B · Ergebnisse" what="Alle bisherigen Modellläufe von V0 bis V0.5 auf einer gemeinsamen Skala – nichts wurde neu gerechnet." see="Jede Zeile ist ein Lauf. Kreis = Gelände, Quadrat = Wetter, Raute = Gelände + Wetter. Der Strich zeigt die Schwankungsbreite, die gestrichelte Linie den Zufall." why="So sieht man, ob sich ein Ergebnis über Versionen hinweg wiederholt oder nur in einem einzelnen Lauf auftaucht." take="Je weiter rechts, desto besser – aber nur Läufe mit vielen unabhängigen Einheiten sind aussagekräftig. Ein belegter Zusatznutzen des Wetters (Raute weiter rechts als Kreis) zeigt sich in keiner Version."/>
@@ -59,7 +59,7 @@ const tableRows=computed(()=>blocks.value.flatMap(b=>b.models.flatMap(m=>m.marks
               <template v-for="k in m.marks" :key="k.key">
                 <i v-if="k.range" :class="['bm-range',k.key]" :style="{left:pct(k.range[0]),width:`calc(${pct(k.range[1])} - ${pct(k.range[0])})`,top:(8+k.lane*9)+'px'}"></i>
                 <button :class="['bm-mark',k.shape,k.key]" :style="{left:pct(k.value),top:(8+k.lane*9)+'px'}"
-                  :aria-label="`${b.label}, ${m.model}, ${k.label}: ${n(k.value)}`" @mouseenter="show($event,k,b)" @focus="show($event,k,b)" @blur="tip=null"></button>
+                  :aria-label="`${b.label}, ${m.model}, ${k.label}: ${n(k.value)}`" @click="show($event,k,b)" @keydown.esc="tip=null" @mouseenter="show($event,k,b)" @focus="show($event,k,b)" @blur="tip=null"></button>
               </template>
             </div>
           </div>
@@ -79,7 +79,7 @@ const tableRows=computed(()=>blocks.value.flatMap(b=>b.models.flatMap(m=>m.marks
 
       <table v-else class="bm-table">
         <thead><tr><th>Lauf</th><th>Kontrollen</th><th>Ereignisse / Einheiten</th><th>Modell</th><th>Merkmale</th><th>lokale AUC</th><th>Intervall</th><th>Top-1</th><th>Zufall Top-1</th></tr></thead>
-        <tbody><tr v-for="(r,i) in tableRows" :key="i"><td>{{r.run}}</td><td>{{r.controls}}</td><td>{{r.events}} / {{r.units??'–'}}</td><td>{{r.model}}</td><td>{{r.variant}}</td><td>{{n(r.auc)}}</td><td>{{r.range?n(r.range[0])+'–'+n(r.range[1]):'–'}}</td><td>{{n(r.top1)}}</td><td>{{n(r.chance)}}</td></tr></tbody>
+        <tbody><tr v-for="(r,i) in tableRows" :key="i"><td>{{r.run}}</td><td>{{r.controls}}</td><td>{{r.events}} / {{r.units??'–'}}</td><td>{{r.model}}</td><td>{{r.variant}}</td><td>{{n(r.auc)}}</td><td>{{r.range?n(r.range[0])+'–'+n(r.range[1]):'–'}}<small v-if="r.range"> · {{r.interval}}</small></td><td>{{n(r.top1)}}</td><td>{{n(r.chance)}}</td></tr></tbody>
       </table>
 
       <div class="bm-notes">

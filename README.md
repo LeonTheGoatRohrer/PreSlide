@@ -14,7 +14,7 @@ After setup, from the repository root:
 .\scripts\start.ps1
 ```
 
-Open http://127.0.0.1:8000. The server binds to loopback only. Stop it with Ctrl+C. The app uses locally generated terrain imagery and needs no external basemap tiles. It exposes five derived example groups and aggregate results; there is no raw inventory download or bulk source-record endpoint.
+Open http://127.0.0.1:8000. The server binds to loopback only. Stop it with Ctrl+C. The baseline example and title image use locally generated terrain imagery; the V0.5 map additionally loads OpenStreetMap tiles and shows a fallback message if they are unavailable. It exposes allowlisted baseline and V0.5 example groups and aggregate results; there is no raw inventory download or bulk source-record endpoint.
 
 ## Setup
 
@@ -125,6 +125,8 @@ Event and weather sources have separate license statuses. INCA is CC BY 4.0; thi
 - `reports/current_state_audit.md`: verified current state of every pipeline stage.
 - `PROJECT_STATE.md`: current verified milestone.
 - `METHODOLOGY.md`, `RESULTS.md`, `LIMITATIONS.md`: experiment design, outcomes and boundaries.
+
+The German demo has three direct, browser-history-safe routes: `/#/projekt`, `/#/vorgehen`, and `/#/ergebnisse`. Scientific examples and historical analyses remain accessible in expandable panels. The overview reads existing aggregate API bundles; it does not trigger modelling.
 
 Frontend development: start the API, then `npm run dev` in `frontend`. Vite proxies `/api` to loopback port 8000. Production preview: build frontend, then restart the local API so it mounts `frontend/dist`.
 

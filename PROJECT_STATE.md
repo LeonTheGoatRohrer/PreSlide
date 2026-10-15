@@ -2,6 +2,8 @@
 
 Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then this file.
 
+2026-10-15: **UI redesign implemented**: three German pages (Projekt / Vorgehen / Ergebnisse), hash routes including legacy bookmarks, progressive disclosure, real terrain hero, separate V0.4/V0.5 comparisons and correctly labelled intervals. No model runs or scientific artifact edits. Local production app verified on port 8000.
+
 2026-10-14 (evening): **V0.5 complete and verified** (exploratory neighbour-slope ranking vs ten unmatched controls; `reports/v05/`, verification PASS). Before that, the same day: **V0.4 complete and verified** (pre-registered extension, sealed external test scored once). The **V0.3 Baseline** (V0, V0.2, V0.3 on dataset `046074ba6f12556c`) is frozen, unchanged and additionally archived write-once in `archive/v0.3-baseline/` (2 872 files, ZIP SHA-256 `da3a136e…`; `python scripts/archive_baseline.py --verify`). Local, non-commercial research; no public deployment.
 
 # Verified Working
@@ -14,6 +16,8 @@ Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then t
 - Tests: 106 pytest (incl. 32 date-parser, 21 V0.4 leakage/grouping/CRS/hydrology/model/cache tests) + 5 frontend; build passes; V0.4 web section (07) browser-checked desktop and 375 px. Launch config `preslide-api-v04` (port 8020).
 
 - V0.5 package `preslide/v05/` (writes only `data/v05/`, `models/v05/`, `reports/v05/`; V0.4 caches/tiles read through read-only layers): `pipeline pools|select|static|context|weather|assemble` → `partition proximity|freeze` → `experiment main` → `report`; `scripts/verify_v05.py` PASS (incl. hash snapshot proving V0.4 untouched). 18 tests in `tests/test_v05.py`. Web section 08 (German, map with example groups and all 418 events; `/api/results_v05`, bundle `python -m preslide.v05.web`) browser-checked desktop and 375 px.
+
+- UI verification (2026-10-15): 11 frontend tests, 0 failures/skips; production build PASS. New interval-source test rejected an intentionally wrong model mapping before passing on restored code. Browser checks: desktop 1440 px, mobile 375 px and landscape 812 × 375; navigation/direct links/back/forward, disclosures/keyboard, maps/case selection, weather controls, historical figures/explorer/model table, tooltips/Escape. Isolated local proxy confirmed loading, HTTP 503, and independent retry recovery with real API data. Baseline 95 artifact hashes unchanged; archive verification PASS (2,872 members). No backend changes, so Python pipeline tests were not rerun.
 
 # Dataset Status
 
@@ -47,4 +51,4 @@ Few independent units (11 test); Stanz dominance; reporting/placement bias in la
 
 1. Interpret V0.4/V0.5 together: terrain/land-cover contrast is strong, weather increment unproven in both designs. Do not tune on either.
 2. Independent confirmation needs unseen dependence units: tier-2 media events (separately labelled) and soil/antecedent-moisture pilot per `reports/weiterentwicklung_2026-10-14/KONKRETER_AENDERUNGSPLAN.md` (new version, own protocol).
-3. Reporting-bias diagnostics (road/settlement distance with dated sources; Sentinel-2 position check); optional V0.5 web section.
+3. Reporting-bias diagnostics (road/settlement distance with dated sources; Sentinel-2 position check); the V0.5 web section is complete.
