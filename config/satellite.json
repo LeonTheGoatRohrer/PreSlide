@@ -1,5 +1,5 @@
 {
-  "version": "satellite-0.2",
+  "version": "satellite-0.3",
   "created_on": "2026-10-14",
   "purpose": "Pipeline B: before/after Sentinel-2 change signature of documented events, event discovery and label QA. Strictly separate from the precursor model (Pipeline A); post-event imagery never enters Pipeline A features.",
   "source": {
@@ -130,7 +130,13 @@
     "min_peak_distance_m": 320,
     "hit_radius_m": 160,
     "suppress_known_positives_m": 160,
-    "suppress_note": "peaks within this distance of any OTHER known V0.4 positive (423 fine-position events) are removed from the ranking and counted separately: they are documented events, not false peaks and not candidates. The search centre itself stays and defines the hit."
+    "suppress_note": "peaks within this distance of any OTHER known V0.4 positive (423 fine-position events) are removed from the ranking and counted separately: they are documented events, not false peaks and not candidates. The search centre itself stays and defines the hit.",
+    "cloud_buffer_m": 100,
+    "cloud_buffer_scl_classes": [2, 3, 7, 8, 9, 10, 11],
+    "cloud_buffer_ndsi_snow": true,
+    "scorable_min_valid_core_frac": 0.9,
+    "scorable_min_valid_ring_frac": 0.8,
+    "cloud_buffer_note": "satellite-0.3, declared before the re-run: in discovery and validation mode every pixel within cloud_buffer_m (Euclidean, on the 10 m grid) of a cloud-like SCL pixel (2 dark area, 3 cloud shadow, 7 unclassified, 8/9 cloud, 10 cirrus, 11 snow) or of an NDSI-snow pixel in EITHER image of a pair is removed from the valid mask before the change features are computed, so that no peak can sit on a cloud, haze or shadow edge that Sen2Cor only partly classifies. A position is scorable only if, after buffering, its 320 m core keeps >= scorable_min_valid_core_frac and its ring >= scorable_min_valid_ring_frac of valid pixels (the local usability a training sample had to meet); all other positions get no score and cannot form a peak. The fraction of patch pixels removed by the buffer is recorded per event. The training table (dataset.parquet, centre pixel of locally screened windows) is NOT recomputed with the buffer; the detector therefore scores buffered maps with unbuffered training features, and the effect of the buffer on the training windows is reported as a diagnostic (training_buffer_diagnostic.json), not corrected."
   },
   "candidate_status": [
     "UNVERIFIED",
@@ -140,7 +146,8 @@
   ],
   "version_history": {
     "satellite-0.1": "created 2026-10-14: eligibility, dataset, baselines, discovery, candidate inventory",
-    "satellite-0.2": "added 2026-10-15 before any result of the new stages was seen: validation (top-candidate persistence rule), discovery.suppress_known_positives, random_landscape hard negatives, embedding baseline C; earlier stages unchanged"
+    "satellite-0.2": "added 2026-10-15 before any result of the new stages was seen: validation (top-candidate persistence rule), discovery.suppress_known_positives, random_landscape hard negatives, embedding baseline C; earlier stages unchanged",
+    "satellite-0.3": "added 2026-10-15 after the satellite-0.2 top-30 validation (0 LIKELY, 20 of 30 cloud/haze/shadow edges) and before the re-run: discovery.cloud_buffer_* (whole-patch buffered cloud/snow mask and position gating in discovery and validation mode), validation.cloud_proximity_radii_m, validation.confirm_screened_at_candidate; training table, baselines, suppression and the persistence rule unchanged. satellite-0.2 outputs kept as *_satellite02.*"
   },
   "validation": {
     "top_n": 30,
@@ -151,7 +158,9 @@
     "min_valid_ring_frac": 0.8,
     "rule": "declared before any after_confirm patch was fetched: a candidate persists if the same change features recomputed on (before_primary, after_confirm) still give log-odds > 0 at the candidate pixel and the main contrast feature keeps its sign with >= min_retained_contrast of its primary magnitude; a confirm pair with cloud/snow/nodata at the candidate (valid fractions below the minima) is not assessable. Statuses: LIKELY only if persists AND the visual review notes a slide-like scar; REJECTED only with a named non-slide cause (land use, water) or a transient artefact that did not persist; otherwise UNVERIFIED.",
     "known_positives": "all 423 V0.4 positives (data/v04 dataset, read only); the candidate inventory distance column used only the 129 satellite positives",
-    "dedup_note": "overlapping 2.56 km patches of neighbouring events detect the same location several times; detections within dedup_m are one physical candidate (highest score kept, others listed as aliases)"
+    "dedup_note": "overlapping 2.56 km patches of neighbouring events detect the same location several times; detections within dedup_m are one physical candidate (highest score kept, others listed as aliases)",
+    "cloud_proximity_radii_m": [100, 200, 300],
+    "confirm_screened_at_candidate": "satellite-0.3: the (before_primary, after_confirm) pair is recomputed with the same buffered mask; a candidate is assessable only if its own core/ring keep the validation minima after buffering, and the distance from the candidate pixel to the nearest cloud-like pixel in after_confirm is recorded"
   },
   "random_landscape": {
     "n_per_event": 3,
