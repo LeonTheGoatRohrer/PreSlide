@@ -12,6 +12,6 @@ try {
             if ($LASTEXITCODE -ne 0) { throw 'Frontend build failed.' }
         } finally { Pop-Location }
     }
-    Write-Host "PreSlide: http://127.0.0.1:$Port (Ctrl+C to stop)"
+    Write-Host "Talwacht: http://127.0.0.1:$Port (Ctrl+C to stop)"
     & ./.venv/Scripts/python.exe -m uvicorn preslide.api:app --host 127.0.0.1 --port $Port
 } finally { Pop-Location }

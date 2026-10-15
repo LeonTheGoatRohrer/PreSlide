@@ -24,7 +24,7 @@ const studies=computed(()=>[
 ])
 </script>
 <template>
-  <section class="page-intro results-intro"><p class="eyebrow">03 / Ergebnisse</p><h1>Das Gelände liefert Signal.<br><span>Der Wetternutzen bleibt offen.</span></h1><p>PreSlide kann betroffene Hänge in diesen Vergleichen teilweise unterscheiden. Ein belastbarer Zusatznutzen des Wetters gegenüber dem Gelände allein ist bisher nicht belegt.</p></section>
+  <section class="page-intro results-intro"><p class="eyebrow">03 / Ergebnisse</p><h1>Das Gelände liefert Signal.<br><span>Der Wetternutzen bleibt offen.</span></h1><p>Talwacht kann betroffene Hänge in diesen Vergleichen teilweise unterscheiden. Ein belastbarer Zusatznutzen des Wetters gegenüber dem Gelände allein ist bisher nicht belegt.</p></section>
   <aside class="context-strip"><span class="context-label">Zwei unterschiedliche Fragen</span><p>V0.5 zeigt höhere Kennzahlen bei <strong>leichteren Vergleichshängen</strong>. Das ist kein direkter Leistungsfortschritt gegenüber dem V0.4-Test. Beide Untersuchungen sind abgeschlossen.</p></aside>
   <section class="metric-explanation"><h2>Wie liest man die lokale AUC?</h2><p>Sie misst, wie oft der betroffene Hang höher eingeordnet wird als ein Vergleichshang seiner Gruppe. <strong>0,5 entspricht Zufall, 1 einer perfekten Rangfolge.</strong> Jede Abhängigkeitseinheit erhält das gleiche Gewicht. Der Wert ist keine Rutschungswahrscheinlichkeit.</p><p class="muted">„Gelände“ umfasst hier auch Landbedeckung und Geologie; „Wetter“ schließt Schnee ein. Gezeigt wird jeweils die bedingte logistische Regression, das vorab festgelegte Hauptmodell. Es vergleicht Hänge innerhalb ihrer jeweiligen Gruppe.</p></section>
   <section v-for="s in studies" :key="s.id" class="study-result" :aria-label="s.tag">
