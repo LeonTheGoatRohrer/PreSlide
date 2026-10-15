@@ -1,0 +1,9 @@
+{
+ "registered_at_utc": "2026-10-15T08:49:18.073080+00:00",
+ "config": "config/v06.json",
+ "config_sha256": "355cc10369a38f56b05a93a1a052b1174d9d26c3e10b3d4efd1c701c37879ecb",
+ "input_sha256": {
+  "data/v05/run_5b86b6475ecb/dataset.parquet": "6eae56574f9388d4111501afa4b636350d9ab26c0a948f7f079c0e8b9d40eb26",
+  "data/v05/cv/cv_plan.json": "f1aefe8be415b82cec98e95ca66d6582a9060a94ae729aeff78e16e54d231c4a"
+ }
+}

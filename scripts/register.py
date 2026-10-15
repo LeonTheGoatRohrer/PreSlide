@@ -36,7 +36,7 @@ def register(config_path: Path, out_dir: Path) -> dict:
             if actual != expected:
                 raise SystemExit(f'{path} does not match {key} in the config')
             input_hashes[cfg['inputs'][file_key]] = actual
-    record = {'registered_at_utc': datetime.now(timezone.utc).isoformat(), 'config': config_path.as_posix(),
+    record = {'registered_at_utc': datetime.now(timezone.utc).isoformat(), 'config': (config_path.relative_to(ROOT) if config_path.is_relative_to(ROOT) else config_path).as_posix(),
               'config_sha256': sha256_file(config_path), 'input_sha256': input_hashes}
     out_dir.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(record, indent=1), encoding='utf-8')

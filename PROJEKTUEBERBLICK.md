@@ -121,6 +121,10 @@ Plan `reports/weiterentwicklung_2026-10-14/V05_NACHBARHANG_PLAN.md`, Regeln vora
 
 Bericht: `reports/v05/summary.md`; Nachweis: `reports/v05/verification.json` (PASS).
 
+## V0.6: hydrologische Regenmerkmale (15.10.2026, abgeschlossen, explorativ)
+
+Aus den bereits zwischengespeicherten stündlichen INCA-Reihen wurden 23 Merkmale berechnet (Vorregen-Index mit Halbwertszeit 3 und 14 Tagen, stärkste 3/6/12/24/72-Stunden-Regensummen samt Zeitpunkt, Nasstage, Trockenperioden, Regen plus Schneeschmelze); registriert in `config/v06.json` vor der Berechnung, gleiche 418 Gruppen, gleiche gesperrte CV-Aufteilung wie V0.5. **Kein belegter Zusatznutzen**: bedingte logistische Regression kombiniert 0,851 → 0,838 (Differenz −0,013, Intervall [−0,029; +0,016]); Gradient Boosting +0,010 [−0,005; +0,071]. Bericht `reports/v06/summary.md`. Weitere Plan-Teile (Meldebias-Kovariaten, Case-Crossover) brauchen neue Downloads und stehen noch aus. Infrastruktur: GitHub-CI, Registrierungsskript.
+
 ## Webdemonstration: drei Seiten (15.10.2026)
 
 Die lokale Oberfläche führt über **Projekt → Vorgehen → Ergebnisse**. Direkte Routen: `/#/projekt`, `/#/vorgehen`, `/#/ergebnisse`; alte Abschnittslinks werden weiter zugeordnet. Der Einstieg erklärt den retrospektiven Prototyp, die Vorgehensseite zeigt die Schrittfolge und das reale Baseline-Beispiel, die Ergebnisse trennen V0.4-Test und explorative V0.5. Karten, Wetterkurven, Modellvergleiche und historische Analysen bleiben in aufklappbaren Bereichen erreichbar.

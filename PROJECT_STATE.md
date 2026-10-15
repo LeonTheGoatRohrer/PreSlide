@@ -2,6 +2,8 @@
 
 Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then this file.
 
+2026-10-15 (Umsetzungsplan, main-compatible parts): **P1 infrastructure done** (GitHub Actions CI `.github/workflows/ci.yml`, `local_data` pytest marker, ruff errors-only in `pyproject.toml`, `scripts/register.py` write-once registration + `config/REGISTRATION_TEMPLATE.json`, `scripts/check_json_reports.py`). **V0.6 done** (plan package P3.1, renamed because V0.5 was taken): 23 hydrological rain features (antecedent precipitation index, intensity-duration maxima, wet days, dry spells, rain + snowmelt) on the frozen V0.5 cohort, registered in `config/v06.json` before computing; primary combined_hydro − combined (conditional logit) = −0.013, repetition-1 unit-bootstrap interval [−0.029, +0.016] → **no established benefit**; all four paired comparisons are in `reports/v06/summary.md`. Not done: plan P2 (Pipeline B satellite work lives on branch `claude/preslide-satellite-discovery-cfa1d5`, not merged here), P3.2 reporting-bias covariates (needs an OSM/BEV download, licence + user go-ahead), P4 case-crossover (needs new hourly INCA downloads, ~14 h rate-limited).
+
 2026-10-15: **UI redesign implemented**: three German pages (Projekt / Vorgehen / Ergebnisse), hash routes including legacy bookmarks, progressive disclosure, real terrain hero, separate V0.4/V0.5 comparisons and correctly labelled intervals. No model runs or scientific artifact edits. Local production app verified on port 8000. Concurrent remote branding commit `75ca8b1` merged: visible product name is now **Talwacht**, internal package and frozen artifact names stay `preslide`/PreSlide.
 
 2026-10-14 (evening): **V0.5 complete and verified** (exploratory neighbour-slope ranking vs ten unmatched controls; `reports/v05/`, verification PASS). Before that, the same day: **V0.4 complete and verified** (pre-registered extension, sealed external test scored once). The **V0.3 Baseline** (V0, V0.2, V0.3 on dataset `046074ba6f12556c`) is frozen, unchanged and additionally archived write-once in `archive/v0.3-baseline/` (2 872 files, ZIP SHA-256 `da3a136e…`; `python scripts/archive_baseline.py --verify`). Local, non-commercial research; no public deployment.
@@ -18,6 +20,8 @@ Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then t
 - V0.5 package `preslide/v05/` (writes only `data/v05/`, `models/v05/`, `reports/v05/`; V0.4 caches/tiles read through read-only layers): `pipeline pools|select|static|context|weather|assemble` → `partition proximity|freeze` → `experiment main` → `report`; `scripts/verify_v05.py` PASS (incl. hash snapshot proving V0.4 untouched). 18 tests in `tests/test_v05.py`. Web section 08 (German, map with example groups and all 418 events; `/api/results_v05`, bundle `python -m preslide.v05.web`) browser-checked desktop and 375 px.
 
 - UI verification (2026-10-15): 11 frontend tests, 0 failures/skips; production build PASS. New interval-source test rejected an intentionally wrong model mapping before passing on restored code. Browser checks: desktop 1440 px, mobile 375 px and landscape 812 × 375; navigation/direct links/back/forward, disclosures/keyboard, maps/case selection, weather controls, historical figures/explorer/model table, tooltips/Escape. Isolated local proxy confirmed loading, HTTP 503, and independent retry recovery with real API data. Baseline 95 artifact hashes unchanged; archive verification PASS (2,872 members). No pipeline changes; the merged remote API change only renames its title. Python pipeline tests were not rerun.
+
+- V0.6 package `preslide/v06/` (`pipeline hydro` reads hourly INCA only from the V0.4/V0.5 response caches, no network; `experiment main`; `report`); `scripts/verify_v06.py`; 9 tests in `tests/test_v06.py` (injected bugs in the t0 boundary and block anchoring were caught). In a worktree with `core.autocrlf=true` the baseline-manifest check of `verify_v06.py` fails (CRLF); it passes in the main checkout, so run the final verification there.
 
 # Dataset Status
 
@@ -42,6 +46,8 @@ V0.5 run `data/v05/run_5b86b6475ecb/`: 423 positives × 10 unmatched controls (a
 - Main predictors: roughness, forest (−), settlement/other land cover (+), TPI (−) — possibly partly reporting bias.
 
 - V0.5 (exploratory, seen events): conditional logit combined 0.851 (0.835–0.863), static 0.865, temporal 0.719, slope rule 0.572; combined − static −0.023 [−0.079, 0.019] → no weather benefit. Matched controls on the same cohort: 0.705. Separation driven by elevation/position + land cover (reporting bias plausible).
+
+- V0.6 (exploratory, seen events, 29 units): conditional logit combined 0.851 → combined+hydro 0.838; boosting 0.798 → 0.807; temporal-only boosting +0.041 [−0.025, +0.097]. None of the four paired intervals excludes zero. Several hydrological features correlate up to |ρ| = 1.00 with V0.5 temporal features (redundant by construction).
 
 # Known Problems
 
