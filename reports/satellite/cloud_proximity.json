@@ -1,0 +1,46 @@
+{
+  "version": "satellite-0.3",
+  "radii_m": [
+    100,
+    200,
+    300
+  ],
+  "cloud_buffer_m": 100,
+  "classes": "SCL 2 dark area, 3 cloud shadow, 7 unclassified, 8/9 cloud, 10 cirrus, 11 snow in before_primary or after_primary",
+  "note": "discovery scan with a 100 m buffer around every cloud-like SCL / NDSI-snow pixel of either image (whole patch) and position gating by valid core/ring fraction",
+  "candidate": {
+    "n": 1039,
+    "median_cloud_m": 562.9387178015028,
+    "within_100_m": 0.0,
+    "within_200_m": 0.014436958614051972,
+    "within_300_m": 0.1530317613089509
+  },
+  "known_event_hit": {
+    "n": 40,
+    "median_cloud_m": 645.1735467318285,
+    "within_100_m": 0.0,
+    "within_200_m": 0.025,
+    "within_300_m": 0.175
+  },
+  "top_30_candidates": {
+    "within_100_m": 0.0,
+    "within_200_m": 0.0,
+    "within_300_m": 0.13333333333333333
+  },
+  "top_100_candidates": {
+    "within_100_m": 0.0,
+    "within_200_m": 0.0,
+    "within_300_m": 0.16
+  },
+  "top_300_candidates": {
+    "within_100_m": 0.0,
+    "within_200_m": 0.006666666666666667,
+    "within_300_m": 0.15333333333333332
+  },
+  "rank1_candidates": {
+    "n": 117,
+    "within_100_m": 0.0,
+    "within_200_m": 0.0,
+    "within_300_m": 0.15384615384615385
+  }
+}

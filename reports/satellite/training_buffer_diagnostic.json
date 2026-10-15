@@ -1,0 +1,17 @@
+{
+  "cloud_buffer_m": 100,
+  "samples": 724,
+  "note": "training features were computed without the buffer; this records what the buffered mask would have removed from the training windows",
+  "valid_core_frac_buffered": {
+    "median": 1.0,
+    "min": 0.0
+  },
+  "valid_ring_frac_buffered": {
+    "median": 0.9653320312499994,
+    "min": 0.09252929687500006
+  },
+  "samples_not_scorable_under_discovery_rule": 191,
+  "positives_not_scorable": 45,
+  "samples_with_any_pixel_removed_in_window": 459,
+  "buffer_masked_frac_patch_mean": 0.10364009793950708
+}

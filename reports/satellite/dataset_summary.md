@@ -1,6 +1,6 @@
 # Satellite dataset summary (Pipeline B)
 
-Configuration `config/satellite.json` version satellite-0.2. Source positives: V0.4 run (read only). Pipeline B uses post-event imagery and is isolated from the precursor model (Pipeline A); see tests/test_satellite.py.
+Configuration `config/satellite.json` version satellite-0.3. Source positives: V0.4 run (read only). Pipeline B uses post-event imagery and is isolated from the precursor model (Pipeline A); see tests/test_satellite.py.
 
 ## Eligibility
 

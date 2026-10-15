@@ -196,6 +196,7 @@ def summarise(res, kind, cfg, negatives):
             'detected_rank1_centre_scorable': int(((res['hit_rank'] == 1) & res['centre_scorable']).sum()),
             'events_centre_scorable': int(res['centre_scorable'].sum()),
             'searched_km2_scorable_mean': float((res['searched_km2'] * res['scored_positions_frac']).mean()),
+            'peaks_per_scorable_km2_pooled': float(res['peaks'].sum() / max((res['searched_km2'] * res['scored_positions_frac']).sum(), 1e-9)),
             'chance_rank1': 'a random peak order gives P(rank 1) = 1/peaks per event; mean 1/peaks = ' + f"{float((1 / res['peaks'].clip(lower=1)).mean()):.3f}",
             'per_event': res.drop(columns=['peaks_list']).astype(object).where(res.drop(columns=['peaks_list']).notna(), None).to_dict(orient='records')}
 

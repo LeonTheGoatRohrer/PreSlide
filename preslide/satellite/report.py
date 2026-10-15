@@ -134,11 +134,13 @@ def _disc_rows(r):
 def _buffer_rows(r):
     if not r.get('cloud_buffer_m'):
         return [('cloud buffer (m)', 0), ('patch fraction removed by the buffer (mean)', '—'), ('scorable positions inside the margin (mean)', '—'),
-                ('events whose centre is not scorable', '—'), ('rediscovered at any rank, centre scorable only (conditional)', '—'),
+                ('scorable area per event (km², mean)', '—'), ('peaks per scorable km² (pooled over events)', '—'), ('events whose centre is not scorable', '—'), ('rediscovered at any rank, centre scorable only (conditional)', '—'),
                 ('rediscovered at rank 1, centre scorable only (conditional)', '—')]
     n = r['events_centre_scorable']
     return [('cloud buffer (m)', r['cloud_buffer_m']), ('patch fraction removed by the buffer (mean)', _fmt(r['buffer_masked_frac_mean'], 3)),
             ('scorable positions inside the margin (mean)', _fmt(r['scored_positions_frac_mean'], 3)),
+            ('scorable area per event (km², mean)', _fmt(r['searched_km2_scorable_mean'], 2)),
+            ('peaks per scorable km² (pooled over events)', _fmt(r.get('peaks_per_scorable_km2_pooled'), 2)),
             ('events whose centre is not scorable', r['events_centre_not_scorable']),
             ('rediscovered at any rank, centre scorable only (conditional)', f"{r['detected_any_rank_centre_scorable']} of {n}"),
             ('rediscovered at rank 1, centre scorable only (conditional)', f"{r['detected_rank1_centre_scorable']} of {n}")]

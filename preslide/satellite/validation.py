@@ -326,8 +326,11 @@ def write_report(top):
              '## Status', '',
              'LIKELY needs persistence AND a slide-like scar in the visual review; REJECTED needs a named non-slide cause (land use, water) '
              'or a transient artefact that did not persist; everything else stays UNVERIFIED. No candidate is added to any inventory or to Pipeline A.', '',
-             '| status | count |', '|---|---:|'] + [f'| {k} | {v} |' for k, v in sorted(counts.items())] + ['',
-             '## Candidates', '',
+             '| status | count |', '|---|---:|'] + [f'| {k} | {v} |' for k, v in sorted(counts.items())]
+    review = read_json(review_template_path()) if review_template_path().exists() else {}
+    if review.get('general_observation'):
+        lines += ['', 'Reviewer summary: ' + review['general_observation']]
+    lines += ['', '## Candidates', '',
              'Columns: heuristic type from the change signature (triage only); d(known) = distance to the nearest known V0.4 positive; n = detections of this location '
              'from overlapping patches; score = held-out log-odds on the primary pair / on the confirm pair; retained = confirm/primary ratio of the main contrast feature; '
              'confirm peak = rank of a confirm-pair peak within 160 m (— none).', '',
