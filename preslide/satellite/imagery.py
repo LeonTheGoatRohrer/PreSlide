@@ -122,7 +122,7 @@ def read_reflectance(item, grid):
                 return _read_on_grid(item['assets']['scl']['href'], grid, Resampling.nearest).astype(np.uint8)
             return read_band_on_grid(item, band, grid)
 
-    with ThreadPoolExecutor(max_workers=7) as ex:     # independent HTTP range reads; each thread opens its own dataset
+    with ThreadPoolExecutor(max_workers=2) as ex:     # independent HTTP range reads; each thread opens its own dataset (more threads x workers segfaulted GDAL)
         results = list(ex.map(read_band, list(REFLECTANCE_BANDS) + ['scl']))
     for i in range(len(REFLECTANCE_BANDS)):
         out[i] = results[i]

@@ -128,7 +128,7 @@ def run(kind='logistic_regression', score_threshold=0.0):
                'false_peaks_above_hit_mean': float(res['false_peaks_above_hit'].mean()),
                'peaks_per_km2_mean': float((res['peaks'] / res['searched_km2']).mean()),
                'chance_rank1': 'a random peak order gives P(rank 1) = 1/peaks per event; mean 1/peaks = ' + f"{float((1 / res['peaks'].clip(lower=1)).mean()):.3f}",
-               'per_event': res.drop(columns=['peaks_list']).to_dict(orient='records')}
+               'per_event': res.drop(columns=['peaks_list']).astype(object).where(res.drop(columns=['peaks_list']).notna(), None).to_dict(orient='records')}
     guard(SAT_REPORT)
     write_json(SAT_REPORT / 'heldout_discovery_results.json', {k: v for k, v in summary.items() if k != 'per_event'})
     inv = candidate_inventory(candidates, known, score_threshold)

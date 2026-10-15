@@ -83,8 +83,10 @@ def write_reports():
                   f"null 95th percentile {n['null_95']:.3f}, observed {n['observed']:.3f}, upper p = {n['p_upper']:.3f}.", '',
                   '`ring_only_shortcut` uses only scene-wide change around the sample (should stay near chance if the model learns local change); '
                   '`nuisance_only_shortcut` uses acquisition timing and cloud/snow fractions, which are identical within a group except for local cloud/snow, '
-                  'so it must stay at chance for the within-group metrics. Held-out values far below 0.5 mean the feature set carries no '
-                  'transferable positive signal; a systematic reversal with few independence units is small-sample instability and is reported, not corrected. '
+                  'so it must stay at chance for the within-group metrics. Held-out values away from 0.5 mean the feature set carries structure that '
+                  'transfers between independence units: above 0.5 for ring-only means the surroundings of positives change differently from the surroundings of '
+                  'controls (storm clusters put neighbouring slides into the ring; land cover around reported slopes differs), which the detector may exploit; '
+                  'below 0.5 with few units is small-sample reversal. Both are reported, not corrected. '
                   'The contrast-only set was not pre-registered as primary; its advantage is noted, not selected on.', '',
                   '## Logistic-regression coefficients (standardised, full data; predictive association, not causation)', '',
                   '| feature | coefficient |', '|---|---:|']

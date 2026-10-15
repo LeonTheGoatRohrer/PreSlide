@@ -110,16 +110,17 @@ Vorab registriert (`config/v04.json`, Prüfsumme in `reports/v04/PREREGISTRATION
 
 Berichte: `reports/v04/summary.md`; Nachweis: `reports/v04/verification.json` (PASS). Weboberfläche: Abschnitt 07, getrennt von den alten Ergebnissen.
 
-## Pipeline B: Satellitenbilder vor und nach bekannten Ereignissen (14.10.2026, Stufe 3 verifiziert)
+## Pipeline B: Satellitenbilder vor und nach bekannten Ereignissen (15.10.2026, Stufe 5 auf allen geeigneten Ereignissen)
 
 Ein **getrenntes System** (`preslide/satellite/`, Ausgaben nur unter `data/satellite/`, `reports/satellite/`), das Sentinel-2-Aufnahmen vor und nach dokumentierten Ereignissen vergleicht, um die sichtbare Veränderungssignatur zu lernen und später undokumentierte Kandidaten zu finden. Es verwendet absichtlich Nachher-Bilder und darf **niemals** in das Vorhersagemodell (Abschnitte oben, „Pipeline A“) einfließen; Tests sichern die Trennung.
 
 - Aufnahmen werden nicht „zur Mittagszeit“ abgefragt, sondern aus allen Überflügen (180 Tage vorher, 120 Tage nachher) die zeitlich nächsten gewählt, die **lokal** im Ausschnitt wolken-, schatten- und schneefrei sind (Szenenklassifikation plus NDSI-Schneetest, weil eine komplett verschneite Szene nur 2 % Schnee meldete). Ereignis und mindestens vier seiner fünf Kontrollhänge müssen auf demselben Überflug brauchbar sein; der Ereignistag wird nie verwendet; Paare mit mehr als 90 Tagen Jahreszeitabstand sind ausgeschlossen.
 - Radiometrie: Die beiden Earth-Search-Sammlungen speichern den Reflexionsoffset unterschiedlich (c1 mit, alt ohne), obwohl die Metadaten dasselbe behaupten; empirisch geprüft, Laufzeitkontrolle eingebaut.
-- Stufe 3 (20 geprüfte Ereignisse ab 2018 mit Position ≤ 20 m): **14 brauchbare Gruppen, 12 unabhängige Einheiten, 79 Proben**. Kontaktbögen wurden gesichtet: Vorher/Nachher decken sich, bei mehreren Ereignissen ist der Vegetationsverlust genau an der gemeldeten Position sichtbar.
-- Erste Basislinie (Ereignis gegen seine Kontrollen, Einheiten nie im Training): lokale AUC 0,68–0,74 (Zufall 0,5; Permutations-p ≈ 0,06). Wiederentdeckung im 2,56-km-Ausschnitt: 7 von 14 innerhalb 160 m gefunden, 5 davon unter den ersten drei, Ortsfehler median 71 m, 3 Kandidaten je km². **Hinweis, kein Nachweis**: nur 12 Einheiten, kleines Suchgebiet um das bekannte Ereignis.
-- 102 Treffer außerhalb bekannter Positionen sind **satellitengestützte Kandidaten, nicht unabhängig bestätigt** (`validation_status = UNVERIFIED`); keiner wird automatisch zum Ereignis. Berichte: `reports/satellite/`.
-- Offen: Lauf über alle 137 Ereignisse ab 2018 (gestartet), Sichtung der Kandidaten, Sentinel-1, kleine Suche in unbekanntem Gebiet.
+- Alle 137 Ereignisse ab 2018 mit Position ≤ 20 m geprüft: **129 brauchbare Gruppen, 15 unabhängige Einheiten, 724 Proben** (Median 9 Tage vor und 9 Tage nach dem Ereignis). Kontaktbögen (22) stichprobenartig gesichtet: Vorher/Nachher decken sich, bei vielen Ereignissen ist der Vegetationsverlust genau an der gemeldeten Position sichtbar, bei kleinen Rutschungen nicht.
+- Basislinie (Ereignis gegen seine Kontrollen, Einheiten nie im Training): lokale AUC **0,79–0,80** (Zufall 0,5; Permutationsnull 95 % 0,56, p = 0,01; Top-1 0,56–0,59 gegen 0,18). Abkürzungstest „nur Umgebung“ liegt bei 0,56–0,63: Die Umgebung gemeldeter Hänge verändert sich anders als die von Kontrollen (Sturmcluster, Landbedeckung); das kann das Modell mitnutzen.
+- Wiederentdeckung im 2,56-km-Ausschnitt (Modell hat die Episode nie gesehen): 61 von 129 innerhalb 160 m gefunden, 8 auf Rang 1, 27 unter den ersten drei, Ortsfehler median 70 m, 4,7 Kandidaten je km². Zufällige Reihenfolge der Kandidaten ergäbe Rang 1 bei etwa 11 % der gefundenen Ereignisse. **Die Unterscheidung Ereignis gegen Kontrolle ist deutlich; die Ortung im offenen Ausschnitt ist nur mäßig besser als Zufall.**
+- 1 484 Treffer außerhalb der Suchposition sind **satellitengestützte Kandidaten, nicht unabhängig bestätigt** (`validation_status = UNVERIFIED`), 578 davon nahe anderer bekannter Ereignisse; keiner wird automatisch zum Ereignis. Berichte: `reports/satellite/`, Weboberfläche Abschnitt 08.
+- Offen: Validierung der Kandidaten (Persistenz im späteren Bild, Sichtung, spätere Inventare), bessere Ortung (vortrainierte Bildmerkmale, zusätzliche harte Negative), Sentinel-1 (kein terrainkorrigiertes Produkt auf Earth Search), kleine Suche in unbekanntem Gebiet.
 
 ## Genau eine nächste wissenschaftliche Priorität
 

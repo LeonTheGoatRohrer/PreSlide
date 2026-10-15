@@ -4,7 +4,7 @@ Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then t
 
 2026-10-14: **V0.4 complete and verified** (pre-registered extension, sealed external test scored once). The **V0.3 Baseline** (V0, V0.2, V0.3 on dataset `046074ba6f12556c`) is frozen, unchanged and additionally archived write-once in `archive/v0.3-baseline/` (2 872 files, ZIP SHA-256 `da3a136e…`; `python scripts/archive_baseline.py --verify`). Local, non-commercial research; no public deployment.
 
-2026-10-14 (later session): **Pipeline B (satellite discovery) implemented and verified through Stage 3** (20-event pilot: 14 usable groups, 79 samples, event-held-out baselines, held-out rediscovery scan). Full-inventory eligibility run started (`data/satellite/logs/eligibility_all.log`); Stage 4+ numbers are not yet produced. Pipeline B uses post-event imagery and is isolated from Pipeline A.
+2026-10-15: **Pipeline B (satellite discovery) implemented and run through Stage 5 on all eligible events**: 137 fine-position events 2018+ screened, 129 usable groups / 724 samples / 15 independence units, event-held-out baselines, held-out rediscovery scan, UNVERIFIED candidate inventory. Pipeline B uses post-event imagery and is isolated from Pipeline A. Stage 6 (unknown-region scan) and candidate validation not started.
 
 # Verified Working
 
@@ -23,7 +23,7 @@ Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then t
 
 V0.4 run `data/v04/run_c6d67a854ba7/`: 500 tier-A candidates (day confirmed by narrative + structured interval; 2016–2026) → 423 complete groups / 2 538 samples (27 missing weather, 26 too few controls, 15 slope < 5°, 9 negative rain). Development 123 events / 19 units (all 60 baseline groups); sealed test 300 events / 11 units (Stanz 2016: 243). Features: 22 static (terrain incl. curvature, TRI, TPI, relative position, catchment/TWI; CORINE class; lithology), 29 temporal (INCA 18 + same-day 4 + SPARTACUS 2 + SNOWGRID 5); WINFORE not admitted.
 
-Pipeline B (Stage 3, 20 fine-position events screened): 14 usable groups / 12 independence units / 79 samples (9 groups with all 5 controls, 5 with 4). Exclusions recorded: 39 position > 20 m (of the first 59 listed), 4 seasonal gap > 90 d, 1 no usable before pair, 1 too few controls. Usable pairs: median 12 d before, 12 d after the event. Pool: 137 fine-position events 2018+ (no L2A before 2017-10, so the 2016 Stanz storm is out).
+Pipeline B (`data/satellite/tables/`): 176 positives 2018+ listed, 129 usable groups / 15 independence units / 724 samples (79 groups with all 5 controls, 50 with 4). Exclusions recorded: 39 position > 20 m, 5 seasonal gap > 90 d, 2 too few controls on both acquisitions, 1 no usable before pair. Usable pairs: median 9 d before / 9 d after the event (max 40 / 61). No L2A before 2017-10, so the 2016 Stanz storm and 2017 events are out. Patches: ~1 500 cached 2.56 km GeoTIFF pairs under `data/satellite/samples/`.
 
 # Important Decisions
 
@@ -41,13 +41,13 @@ Pipeline B (Stage 3, 20 fine-position events screened): 14 usable groups / 12 in
 - Development CV: static 0.770, temporal 0.554, combined 0.725 (conditional logit).
 - Main predictors: roughness, forest (−), settlement/other land cover (+), TPI (−) — possibly partly reporting bias.
 
-- Pipeline B Stage 3 (14 groups, unit-held-out, 3 fold shuffles): within-group AUC change features LR 0.68 / HGB 0.69, contrast-only LR 0.74 (chance 0.5; permutation null 95 % 0.66, p = 0.06); shortcut sets ring-only 0.19–0.31 and nuisance-only 0.36–0.60 (no transferable positive signal). Held-out rediscovery in the 2.56 km patch: 7/14 hit within 160 m, 5/14 in the top 3, median localisation error 71 m, 3.0 peaks per km²; 102 UNVERIFIED candidates. Suggestive, not established: 12 units.
+- Pipeline B, all eligible events (129 groups, 15 units, unit-held-out GroupKFold, 3 fold shuffles): within-group AUC change features LR **0.79** / HGB **0.80** (unit-weighted 0.86; top-1 0.56–0.59 vs chance 0.18; permutation null 95 % 0.56, p = 0.01); contrast-only 0.67 / 0.76; shortcut sets ring-only 0.56–0.63 (surroundings of positives change differently: storm clusters, land cover) and nuisance-only 0.49–0.59. Held-out rediscovery inside the 2.56 km patch (LR, log-odds peaks ≥ 320 m apart, hit = within 160 m): 61/129 found at any rank, 8 at rank 1, 27 in the top 3, 37 in the top 5, median localisation error 70 m, 4.7 peaks/km², 8 false peaks above the hit on average; random peak order would give rank 1 for ≈ 0.11 of detected events. Patch-level discrimination is clear; open-area localisation is only modestly better than random ranking. 1 484 UNVERIFIED candidates (`reports/satellite/candidate_inventory.csv`, local), 578 within 500 m of another known event. Stage 3 pilot (14 groups) gave 0.68–0.74 / 7 of 14 rediscovered.
 
 # Known Problems
 
 Few independent units (11 test); Stanz dominance; reporting/placement bias in land-cover and terrain contrasts; coarse CORINE/geology; triggering rain after t0 invisible; INCA v1 retirement Dec 2026 (all V0.4 responses cached).
 
-Pipeline B: cloud/snow leave many events without a pair; only 2018+ events; small slides dilute in 10 m pixels; LR scores saturate (discovery uses log-odds); contrast-only advantage is post hoc; candidate types are heuristics; Sentinel-1 not integrated.
+Pipeline B: only 2018+ events and few independence units (15, Styria-dominated); storm clusters put neighbouring slides into rings and candidate lists; small slides dilute in 10 m pixels; many weak peaks in the open scan (4.7/km²); candidate types are heuristics, no candidate validated; GDAL segfaults under heavy threading (dataset stage runs with 2 workers and restarts from cache); Sentinel-1 not integrated (no RTC on Earth Search).
 
 # Next 3 Tasks
 
@@ -59,4 +59,4 @@ User's alternative V0.5 plan reviewed and extended in `reports/weiterentwicklung
 2. A new version (V0.5) would need more independent episodes: tier-2 media events as separately labelled data, tiers B/C, or a pre-registered case-crossover design (user decision).
 3. Optional QA: Sentinel-2 check of positive positions/controls and of the land-cover/reporting-bias question.
 
-Pipeline B next: (a) finish the full eligibility run and rebuild dataset/baseline/discovery/report on all usable groups (`python -m preslide.satellite dataset|baseline|discovery|report`); (b) manual inspection of the candidate inventory and `after_confirm` persistence check; (c) Sentinel-1 RTC change layer as extra bands, and a small unknown-region scan (Stage 6) only if Stage 5 holds on the full set.
+Pipeline B next: (a) candidate validation: persistence in `after_confirm` imagery, manual review of the top-ranked candidates per heuristic type, cross-check with later inventory updates (none promoted without independent evidence); (b) better localisation: pretrained-encoder embeddings or a small change-detection model, generic hard negatives (clear-cuts, fields, construction) sampled away from known events, buffer discovery peaks against all known positives; (c) Stage 6 unknown-region scan on one Styrian storm footprint, Sentinel-1 RTC as extra bands.
