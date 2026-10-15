@@ -54,3 +54,8 @@ Few independent units (11 test); Stanz dominance; reporting/placement bias in la
 1. Interpret V0.4/V0.5 together: terrain/land-cover contrast is strong, weather increment unproven in both designs. Do not tune on either.
 2. Independent confirmation needs unseen dependence units: tier-2 media events (separately labelled) and soil/antecedent-moisture pilot per `reports/weiterentwicklung_2026-10-14/KONKRETER_AENDERUNGSPLAN.md` (new version, own protocol).
 3. Reporting-bias diagnostics (road/settlement distance with dated sources; Sentinel-2 position check); the V0.5 web section is complete.
+
+# Pipeline B satellite-0.4 (Stage 6, 2026-10-15)
+
+Geführte Suche: `python -m preslide.satellite scan --name N --bbox lon0 lat0 lon1 lat1 --before S E --after S E [--limit tiles]` erzeugt `data/satellite/scan/N/review.html` (gemischt, Rang/Score verborgen, Top-N + Zufallsstratum); `scan-labels --name N --labels labels.json` wertet Precision (Wilson) aus nach `reports/satellite/scan_N_results.json`. Plan: `reports/satellite/SCAN_REVIEW_PLAN.md`. Code `preslide/satellite/scan.py`, 6 neue Tests (35 grün; Bug-Injektion für Paarwahl, Dedup, Verblindung bestätigt).
+Pilot `pilot_stmk2020` (Steiermark, Unwetter 2020-08-22, 2 Kacheln): 8 Kandidaten, 4 von 9 dokumentierten Ereignissen wiedergefunden (Einheit herausgehalten), noch **nicht manuell geprüft**. Der Satelliten-Code wurde aus `origin/claude/preslide-satellite-discovery-cfa1d5` (satellite-0.3) in diesen Branch übernommen; Docs/Frontend nicht gemerged (Konflikte mit dem Talwacht-Redesign).

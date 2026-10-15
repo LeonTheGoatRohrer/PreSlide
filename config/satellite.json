@@ -1,0 +1,213 @@
+{
+  "version": "satellite-0.4",
+  "created_on": "2026-10-14",
+  "purpose": "Pipeline B: before/after Sentinel-2 change signature of documented events, event discovery and label QA. Strictly separate from the precursor model (Pipeline A); post-event imagery never enters Pipeline A features.",
+  "source": {
+    "events": "data/v04/run_c6d67a854ba7/dataset.parquet (V0.4 positives and their 5 matched controls; read only)",
+    "partition": "data/v04/partition/partition.json (independence units for event-level holdout; read only)"
+  },
+  "stac": {
+    "endpoint": "https://earth-search.aws.element84.com/v1/search",
+    "collections": [
+      "sentinel-2-c1-l2a",
+      "sentinel-2-l2a"
+    ],
+    "collection_preference": "sentinel-2-c1-l2a first (Collection-1 reprocessing, uniform processing baseline 05.xx); sentinel-2-l2a only where c1 has no item for that acquisition",
+    "assets": [
+      "blue",
+      "green",
+      "red",
+      "nir",
+      "swir16",
+      "swir22",
+      "scl"
+    ],
+    "reflectance": "reflectance = DN * 1e-4 + offset, DN 0 = nodata. offset = -0.1 for sentinel-2-c1-l2a (COGs store the BOA_ADD_OFFSET, vegetation green DN ~1400) and 0.0 for sentinel-2-l2a (Earth Search COGs are stored WITHOUT the offset for every processing baseline, vegetation green DN ~250-750, although raster:bands advertises -0.1). Verified empirically on 2026-10-14 (SCL-vegetation green medians of 15 pilot acquisitions); a runtime check refuses an acquisition whose vegetation green reflectance median falls outside [0.01, 0.2].",
+    "point_bbox_half_deg": 0.0005,
+    "page_limit": 200,
+    "page_note": "limit 500 returned HTTP 502 for 300-day ranges on 2026-10-14; ranges with more matches than one page are split by date",
+    "offset_by_collection": {
+      "sentinel-2-c1-l2a": -0.1,
+      "sentinel-2-l2a": 0.0
+    }
+  },
+  "eligibility": {
+    "min_event_year": 2018,
+    "min_event_year_reason": "Earth Search Sentinel-2 L2A over Austria starts 2017-10; 2016/2017 events have no L2A pre-event imagery",
+    "max_position_upper_m": 20,
+    "position_reason": "the 320 m core window must contain the source area; 100 m upper bounds are marked position_coarse and excluded from training",
+    "before_search_days": 180,
+    "after_search_days": 120,
+    "same_day_rule": "an acquisition on the event day is never used (order relative to the event is ambiguous)",
+    "core_cloud_max": 0.02,
+    "core_snow_max": 0.02,
+    "core_valid_min": 0.98,
+    "reference_min_gap_days": 30,
+    "confirm_min_gap_days": 20,
+    "scl_cloud_classes": [
+      3,
+      8,
+      9,
+      10
+    ],
+    "scl_snow_classes": [
+      11
+    ],
+    "scl_invalid_classes": [
+      0,
+      1
+    ],
+    "scl_note": "Sen2Cor scene classification: 3 cloud shadow, 8 medium-probability cloud, 9 high-probability cloud, 10 thin cirrus, 11 snow/ice, 0 nodata, 1 saturated/defective",
+    "window_cloud_max": 0.1,
+    "window_snow_max": 0.1,
+    "window_valid_min": 0.9,
+    "window_note": "thresholds apply to the 320 m core and to the 960 m analysis window (core + ring); the outer 2.56 km patch is only used by discovery mode and is recorded, not required",
+    "min_controls_usable": 4,
+    "group_rule": "before_primary/after_primary must be locally usable at the positive and at >= min_controls_usable of its 5 matched controls on the same acquisition (sibling tile of the same overpass allowed); controls usable on both acquisitions form the group",
+    "ndsi_snow": {
+      "ndsi_min": 0.4,
+      "nir_min": 0.11,
+      "note": "pixel is snow if (green - swir16)/(green + swir16) > ndsi_min and NIR > nir_min; checked in addition to SCL because the pilot showed a fully snow-covered scene with SCL snow 2 %"
+    },
+    "max_doy_gap_days": 90,
+    "max_doy_gap_note": "before/after pair spanning more than this many days of the seasonal cycle (circular day-of-year distance) is excluded from training: phenology dominates the difference (pilot: November vs March)"
+  },
+  "patch": {
+    "resolution_m": 10,
+    "extent_m": 2560,
+    "core_m": 320,
+    "medium_m": 960,
+    "grid": "UTM zone of the event (EPSG:32632 west of 12 E, else 32633), origin snapped to 10 m so that same-zone Sentinel-2 pixels map 1:1; other-zone items are warped onto the grid (bilinear reflectance, nearest SCL)",
+    "max_coregistration_shift_px": 1.0,
+    "small_m": 120
+  },
+  "features": {
+    "indices": [
+      "ndvi",
+      "nbr",
+      "bsi",
+      "ndwi",
+      "brightness"
+    ],
+    "change_thresholds": {
+      "ndvi": -0.15,
+      "nbr": -0.15,
+      "bsi": 0.1,
+      "brightness": 0.05
+    },
+    "windows": "small = 120 m box, core = 320 m box, ring = 960 m box minus core; contrast = window - ring controls for scene-wide seasonal, illumination and atmospheric differences",
+    "before_state": [
+      "ndvi",
+      "bsi"
+    ]
+  },
+  "dataset": {
+    "negatives": "the 5 V0.4 matched controls of each eligible event, evaluated on the same before/after acquisitions (same date, same season, same snow and illumination state); label CONTROL_PSEUDO_NEGATIVE",
+    "holdout": "V0.4 independence unit; no unit appears in both training and test folds"
+  },
+  "models": {
+    "logistic_regression": {
+      "C": 1.0,
+      "class_weight": "balanced",
+      "max_iter": 3000
+    },
+    "hist_gradient_boosting": {
+      "max_iter": 150,
+      "max_leaf_nodes": 7,
+      "min_samples_leaf": 10,
+      "l2_regularization": 1.0,
+      "class_weight": "balanced",
+      "random_state": 42
+    },
+    "cv_folds": 5,
+    "shortcut_checks": [
+      "ring_only (scene-wide change only)",
+      "nuisance_only (days, day-of-year gap, cloud/snow fractions)"
+    ]
+  },
+  "discovery": {
+    "stride_px": 4,
+    "min_peak_distance_m": 320,
+    "hit_radius_m": 160,
+    "suppress_known_positives_m": 160,
+    "suppress_note": "peaks within this distance of any OTHER known V0.4 positive (423 fine-position events) are removed from the ranking and counted separately: they are documented events, not false peaks and not candidates. The search centre itself stays and defines the hit.",
+    "cloud_buffer_m": 100,
+    "cloud_buffer_scl_classes": [
+      2,
+      3,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "cloud_buffer_ndsi_snow": true,
+    "scorable_min_valid_core_frac": 0.9,
+    "scorable_min_valid_ring_frac": 0.8,
+    "cloud_buffer_note": "satellite-0.3, declared before the re-run: in discovery and validation mode every pixel within cloud_buffer_m (Euclidean, on the 10 m grid) of a cloud-like SCL pixel (2 dark area, 3 cloud shadow, 7 unclassified, 8/9 cloud, 10 cirrus, 11 snow) or of an NDSI-snow pixel in EITHER image of a pair is removed from the valid mask before the change features are computed, so that no peak can sit on a cloud, haze or shadow edge that Sen2Cor only partly classifies. A position is scorable only if, after buffering, its 320 m core keeps >= scorable_min_valid_core_frac and its ring >= scorable_min_valid_ring_frac of valid pixels (the local usability a training sample had to meet); all other positions get no score and cannot form a peak. The fraction of patch pixels removed by the buffer is recorded per event. The training table (dataset.parquet, centre pixel of locally screened windows) is NOT recomputed with the buffer; the detector therefore scores buffered maps with unbuffered training features, and the effect of the buffer on the training windows is reported as a diagnostic (training_buffer_diagnostic.json), not corrected."
+  },
+  "candidate_status": [
+    "UNVERIFIED",
+    "LIKELY",
+    "REJECTED",
+    "CONFIRMED_FROM_INDEPENDENT_SOURCE"
+  ],
+  "version_history": {
+    "satellite-0.1": "created 2026-10-14: eligibility, dataset, baselines, discovery, candidate inventory",
+    "satellite-0.2": "added 2026-10-15 before any result of the new stages was seen: validation (top-candidate persistence rule), discovery.suppress_known_positives, random_landscape hard negatives, embedding baseline C; earlier stages unchanged",
+    "satellite-0.3": "added 2026-10-15 after the satellite-0.2 top-30 validation (0 LIKELY, 20 of 30 cloud/haze/shadow edges) and before the re-run: discovery.cloud_buffer_* (whole-patch buffered cloud/snow mask and position gating in discovery and validation mode), validation.cloud_proximity_radii_m, validation.confirm_screened_at_candidate; training table, baselines, suppression and the persistence rule unchanged. satellite-0.2 outputs kept as *_satellite02.*",
+    "satellite-0.4": "added 2026-10-15 before any scan was run: scan.* (guided region/time-window scan with manual review sheet, Stage 6). Detector, buffer, training table, persistence rule unchanged."
+  },
+  "validation": {
+    "top_n": 30,
+    "exclude_within_known_m": 160,
+    "dedup_m": 160,
+    "min_retained_contrast": 0.5,
+    "min_valid_core_frac": 0.9,
+    "min_valid_ring_frac": 0.8,
+    "rule": "declared before any after_confirm patch was fetched: a candidate persists if the same change features recomputed on (before_primary, after_confirm) still give log-odds > 0 at the candidate pixel and the main contrast feature keeps its sign with >= min_retained_contrast of its primary magnitude; a confirm pair with cloud/snow/nodata at the candidate (valid fractions below the minima) is not assessable. Statuses: LIKELY only if persists AND the visual review notes a slide-like scar; REJECTED only with a named non-slide cause (land use, water) or a transient artefact that did not persist; otherwise UNVERIFIED.",
+    "known_positives": "all 423 V0.4 positives (data/v04 dataset, read only); the candidate inventory distance column used only the 129 satellite positives",
+    "dedup_note": "overlapping 2.56 km patches of neighbouring events detect the same location several times; detections within dedup_m are one physical candidate (highest score kept, others listed as aliases)",
+    "cloud_proximity_radii_m": [
+      100,
+      200,
+      300
+    ],
+    "confirm_screened_at_candidate": "satellite-0.3: the (before_primary, after_confirm) pair is recomputed with the same buffered mask; a candidate is assessable only if its own core/ring keep the validation minima after buffering, and the distance from the candidate pixel to the nearest cloud-like pixel in after_confirm is recorded"
+  },
+  "random_landscape": {
+    "n_per_event": 3,
+    "min_distance_m": 1500,
+    "max_distance_m": 8000,
+    "min_distance_to_any_known_event_m": 400,
+    "exclusion_rule": "preslide.matching.Exclusions with the V0.4 matching config (full GeoSphere inventory, radius = 250 m + position uncertainty, 2 250 m for unknown positions), floored at min_distance_to_any_known_event_m; inside Austria",
+    "max_draws": 60,
+    "seed": 7,
+    "label": "RANDOM_LANDSCAPE",
+    "note": "generic hard negatives: random points on the same before/after acquisitions as the positive (sibling tile allowed), locally usable by the same cloud/snow/validity rules, no terrain matching (fields, forest, water, settlements all allowed). They answer whether the detector separates the reported slope from the ordinary changing landscape, not only from matched slopes. Never part of any Pipeline A table."
+  },
+  "embedding_baseline": {
+    "encoder": "torchvision resnet18, ImageNet weights (IMAGENET1K_V1), CPU, no fine-tuning",
+    "input": "RGB (red, green, blue reflectance clipped to [0, 0.3] and scaled to [0, 1], ImageNet normalisation) of the 960 m window (96 px) upsampled x2 to 192 px, before and after separately",
+    "features": "after embedding minus before embedding (512) and the absolute difference (512)",
+    "model": "logistic regression C=0.05, class_weight balanced, StandardScaler, same unit-held-out GroupKFold as the other baselines",
+    "declared": "single configuration fixed before the first run; not tuned",
+    "dependency": "optional: requirements-satellite-optional.txt (torch CPU wheels); the stage is skipped with a recorded reason when torch is missing"
+  },
+  "scan": {
+    "tile_extent_m": 2560,
+    "tile_step_m": 1600,
+    "max_patch_bad_frac": 0.35,
+    "bad_frac_note": "a before/after acquisition is only considered if cloud+snow+invalid over the whole 2.56 km tile is <= this; the buffered mask and scorable gating still apply afterwards",
+    "confirm_min_gap_days": 10,
+    "dedup_m": 160,
+    "review_top_n": 30,
+    "review_random_n": 10,
+    "review_chip_m": 640,
+    "review_seed": 11,
+    "wilson_z": 1.96,
+    "workers": 2,
+    "note": "Stage 6 (declared before the first scan): Precision is measured on manually reviewed candidates; recall is not measurable. Detector trained without the independence units of known events inside the scanned bbox.",
+    "confirm_extra_days": 60
+  }
+}

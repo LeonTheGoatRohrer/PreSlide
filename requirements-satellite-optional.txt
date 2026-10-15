@@ -1,0 +1,4 @@
+# Optional dependency of Pipeline B Baseline C (pretrained-encoder embeddings). CPU wheels only; no other stage needs it.
+# Install: .venv\Scripts\python -m pip install --cert data/runtime/windows-ca.pem --index-url https://download.pytorch.org/whl/cpu -r requirements-satellite-optional.txt
+torch==2.14.1+cpu
+torchvision==0.29.1+cpu
