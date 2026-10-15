@@ -6,8 +6,8 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 from .common import read_json, write_json
-from .stability import LOCAL, REPORT, ROOT, sha
-from .stability_analysis import table, METRICS
+from .stability import LOCAL, REPORT, ROOT
+from .stability_analysis import table
 
 NAMES={'logistic_regression':'Logistische Regression','random_forest':'Random Forest','gradient_boosting':'Gradient Boosting'}
 FEATURES={'static':'Gelände','temporal':'Wetter','combined':'Gelände + Wetter'}

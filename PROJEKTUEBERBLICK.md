@@ -121,11 +121,38 @@ Plan `reports/weiterentwicklung_2026-10-14/V05_NACHBARHANG_PLAN.md`, Regeln vora
 
 Bericht: `reports/v05/summary.md`; Nachweis: `reports/v05/verification.json` (PASS).
 
+## V0.6: hydrologische Regenmerkmale (15.10.2026, abgeschlossen, explorativ)
+
+Aus den bereits zwischengespeicherten stündlichen INCA-Reihen wurden 23 Merkmale berechnet (Vorregen-Index mit Halbwertszeit 3 und 14 Tagen, stärkste 3/6/12/24/72-Stunden-Regensummen samt Zeitpunkt, Nasstage, Trockenperioden, Regen plus Schneeschmelze); registriert in `config/v06.json` vor der Berechnung, gleiche 418 Gruppen, gleiche gesperrte CV-Aufteilung wie V0.5. **Kein belegter Zusatznutzen**: bedingte logistische Regression kombiniert 0,851 → 0,838 (Differenz −0,013, Intervall [−0,029; +0,016]); Gradient Boosting +0,010 [−0,005; +0,071]. Bericht `reports/v06/summary.md`. Infrastruktur: GitHub-CI, Registrierungsskript.
+
+## V0.7: Meldebias-Kontrolle mit OpenStreetMap (15.10.2026, abgeschlossen, explorativ)
+
+Abstand jeder Probe zum nächsten Gebäude und zur nächsten öffentlichen Straße (OSM-Auszug Österreich, Geofabrik, ODbL, Stand 14.10.2026; `config/v07.json`, vorab registriert). Der Abstand allein trennt den gemeldeten Hang von den zehn Umgebungspunkten mit lokaler AUC **0,928** (Gelände allein 0,865): ein großer Teil der V0.5-Trennung ist Sichtbarkeit/Platzierung, zum Teil auch durch das Design (Kontrollen liegen 0,75–10 km entfernt). Werden nur Kontrollen mit ähnlichem Infrastrukturabstand (Faktor 2) behalten (173 von 418 Gruppen, 10 Einheiten), behält das infrastrukturunkundige Geländemodell 0,783 (−0,013, Intervall [−0,068; +0,031]). Bericht `reports/v07/summary.md`.
+
+## V0.8: Case-Crossover am selben Hang (15.10.2026, abgeschlossen, explorativ)
+
+Ereigniszeit gegen vier Referenzzeiten (±28/±56 Tage, gleiche Uhrzeit) am identischen Hang; Gelände, Landbedeckung und Infrastrukturabstand kürzen sich heraus. 376 Hänge, 23 Einheiten. Bedingte logistische Regression mit INCA-Fenstern: lokale AUC **0,818** (Intervall [0,759; 0,912]); Hydrologie-Merkmale verschlechtern sie (−0,172 [−0,293; −0,065]). Das ist ein „Wann“-Ergebnis: Ereigniszeiten sind nasser als gewöhnliche Zeiten, auch weil das Inventar Starkregenepisoden dokumentiert; es ist keine Vorhersage. Bericht `reports/v08/summary.md`.
+
 ## Webdemonstration: drei Seiten (15.10.2026)
 
 Die lokale Oberfläche führt über **Projekt → Vorgehen → Ergebnisse**. Direkte Routen: `/#/projekt`, `/#/vorgehen`, `/#/ergebnisse`; alte Abschnittslinks werden weiter zugeordnet. Der Einstieg erklärt den retrospektiven Prototyp, die Vorgehensseite zeigt die Schrittfolge und das reale Baseline-Beispiel, die Ergebnisse trennen V0.4-Test und explorative V0.5. Karten, Wetterkurven, Modellvergleiche und historische Analysen bleiben in aufklappbaren Bereichen erreichbar.
 
 Kennzahlen und Intervalle kommen aus den vorhandenen API-Bündeln. V0.5-Wiederholungsspannen sind ausdrücklich keine Konfidenzintervalle; das Bootstrap-Intervall der ersten Wiederholung wird separat gezeigt. Keine wissenschaftlichen Artefakte oder Modelle wurden verändert.
+## Pipeline B: Satellitenbilder vor und nach bekannten Ereignissen (15.10.2026, Stufe 5 auf allen geeigneten Ereignissen; satellite-0.2 Kandidatenprüfung)
+
+Ein **getrenntes System** (`preslide/satellite/`, Ausgaben nur unter `data/satellite/`, `reports/satellite/`), das Sentinel-2-Aufnahmen vor und nach dokumentierten Ereignissen vergleicht, um die sichtbare Veränderungssignatur zu lernen und später undokumentierte Kandidaten zu finden. Es verwendet absichtlich Nachher-Bilder und darf **niemals** in das Vorhersagemodell (Abschnitte oben, „Pipeline A“) einfließen; Tests sichern die Trennung.
+
+- Aufnahmen werden nicht „zur Mittagszeit“ abgefragt, sondern aus allen Überflügen (180 Tage vorher, 120 Tage nachher) die zeitlich nächsten gewählt, die **lokal** im Ausschnitt wolken-, schatten- und schneefrei sind (Szenenklassifikation plus NDSI-Schneetest, weil eine komplett verschneite Szene nur 2 % Schnee meldete). Ereignis und mindestens vier seiner fünf Kontrollhänge müssen auf demselben Überflug brauchbar sein; der Ereignistag wird nie verwendet; Paare mit mehr als 90 Tagen Jahreszeitabstand sind ausgeschlossen.
+- Radiometrie: Die beiden Earth-Search-Sammlungen speichern den Reflexionsoffset unterschiedlich (c1 mit, alt ohne), obwohl die Metadaten dasselbe behaupten; empirisch geprüft, Laufzeitkontrolle eingebaut.
+- Alle 137 Ereignisse ab 2018 mit Position ≤ 20 m geprüft: **129 brauchbare Gruppen, 15 unabhängige Einheiten, 724 Proben** (Median 9 Tage vor und 9 Tage nach dem Ereignis). Kontaktbögen (22) stichprobenartig gesichtet: Vorher/Nachher decken sich, bei vielen Ereignissen ist der Vegetationsverlust genau an der gemeldeten Position sichtbar, bei kleinen Rutschungen nicht.
+- Basislinie (Ereignis gegen seine Kontrollen, Einheiten nie im Training): lokale AUC **0,79–0,80** (Zufall 0,5; Permutationsnull 95 % 0,56, p = 0,01; Top-1 0,56–0,59 gegen 0,18). Abkürzungstest „nur Umgebung“ liegt bei 0,56–0,63: Die Umgebung gemeldeter Hänge verändert sich anders als die von Kontrollen (Sturmcluster, Landbedeckung); das kann das Modell mitnutzen.
+- Wiederentdeckung im 2,56-km-Ausschnitt (Modell hat die Episode nie gesehen): 61 von 129 innerhalb 160 m gefunden, 8 auf Rang 1, 27 unter den ersten drei, Ortsfehler median 70 m, 4,7 Kandidaten je km². Zufällige Reihenfolge der Kandidaten ergäbe Rang 1 bei etwa 11 % der gefundenen Ereignisse. **Die Unterscheidung Ereignis gegen Kontrolle ist deutlich; die Ortung im offenen Ausschnitt ist nur mäßig besser als Zufall.**
+- 1 484 Treffer außerhalb der Suchposition sind **satellitengestützte Kandidaten, nicht unabhängig bestätigt** (`validation_status = UNVERIFIED`), 578 davon nahe anderer bekannter Ereignisse; keiner wird automatisch zum Ereignis. Berichte: `reports/satellite/`, Weboberfläche Abschnitt 08.
+- **satellite-0.2 (15.10.2026):** Treffer im Umkreis von 160 m um ein *anderes* bekanntes V0.4-Ereignis werden aus der Rangliste entfernt (dokumentierte Ereignisse, keine Fehlalarme); Rang-1-Wiederentdeckung steigt von 8 auf 11 von 129, 70 solche Treffer entfernt.
+- **Kandidatenprüfung:** Die 30 höchstbewerteten Kandidaten (mehr als 160 m von allen 423 V0.4-Ereignissen entfernt, Mehrfachtreffer derselben Stelle zusammengefasst) wurden auf Persistenz in einer späteren Aufnahme (`after_confirm`, Regel vorab festgelegt) geprüft und auf Kontaktbögen gesichtet: **kein Kandidat LIKELY, 21 REJECTED, 9 UNVERIFIED.** 20 von 30 sind Wolken-, Dunst- oder Schattenränder in einem der beiden Bilder (die Paare werden nur im 960-m-Fenster um das Quellereignis auf Wolken geprüft, Sen2Cor erkennt dünne Wolkenränder nicht), dazu 2 abgeerntete Felder, 2 Seeflächen, 1 linearer Hochwasser-/Baustreifen. 87% der Top 30 liegen innerhalb von 100 m eines wolkenartigen SCL-Pixels, bei den wiederentdeckten bekannten Ereignissen sind es 16%. **Die Rangfolge nach Rohscore ist derzeit nicht brauchbar;** die nächste Version muss den gesamten Ausschnitt auf Wolken prüfen.
+- **Harte Zufallsnegative (RANDOM_LANDSCAPE):** 386 Zufallspunkte 1,5–8 km um die Ereignisse, außerhalb der V0.4-Ausschlussradien (mindestens 400 m), auf denselben Aufnahmen, ohne Geländematching. Der nur mit Kontrollen trainierte Detektor bewertet sie im Mittel mit p = 0.43 (Kontrollen 0.35, Ereignisse 0.60); Ereignis gegen Zufallspunkt AUC 0.66. Mit ihnen trainiert: 0.69 (lokale AUC gegen Kontrollen 0.78 → 0.74); Wiederentdeckung damit 63/129, Rang 1 8, 4.8 Kandidaten je km².
+- **Baseline C** (eingefrorener ResNet-18 mit ImageNet-Gewichten, CPU, optionales torch): lokale AUC 0.53 – generische Bildmerkmale übertragen sich nicht; die handgemachten Indexkontraste (0,79–0,80) bleiben.
+- Offen: Wolkenprüfung über den gesamten Ausschnitt (erste Änderung für satellite-0.3), erneute Kandidatenprüfung, Sentinel-1 (kein terrainkorrigiertes Produkt auf Earth Search), kleine Suche in unbekanntem Gebiet.
 
 ## Genau eine nächste wissenschaftliche Priorität
 
@@ -159,6 +186,7 @@ Kennzahlen und Intervalle kommen aus den vorhandenen API-Bündeln. V0.5-Wiederho
 | `config/v05.json`, `reports/v05/`, `preslide/v05/` | V0.5: Registrierung, Kohorten-Freeze, CV-Ergebnisse, Bericht, Verifikation |
 | `config/v04.json`, `reports/v04/` | V0.4: Präregistrierung, Änderung 1, Freeze, Test, Bericht, Verifikation |
 | `preslide/v04/` | V0.4-Code (Audit, Datumsregeln, Pipeline, Modelle, Auswertung) |
+| `config/satellite.json`, `preslide/satellite/`, `reports/satellite/` | Pipeline B: Satelliten-Vorher/Nachher, Kandidatensuche (getrennt von Pipeline A) |
 | `config/stability_v02.json` | Vorab eingefrorener Auswertungsplan |
 | `data/analysis/stability_v02/` | Lokale Vorhersagen, Modelle, Splits, Checkpoints und Originalprüfsummen |
 | `data/processed/046074ba6f12556c/` | Eingefrorener Originalbestand; nicht überschreiben |

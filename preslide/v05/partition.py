@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 from scipy.spatial import cKDTree
 
-from ..common import read_json, write_json
+from ..common import write_json
 from ..sources import ROOT
 from .paths import V05_DATA, V05_REPORT, V04_PARTITION, CONFIG, config as load_config, guard, sha
 from . import pipeline as P

@@ -1,0 +1,33 @@
+{
+  "classes": "SCL 2 dark area, 3 cloud shadow, 7 unclassified, 8/9 cloud, 10 cirrus, 11 snow in before_primary or after_primary",
+  "note": "pairs are screened for cloud/snow only within the 960 m window around the source event; the outer patch is recorded, not required",
+  "candidate": {
+    "n": 1416,
+    "median_cloud_m": 390.3203339289779,
+    "within_100_m": 0.17937853107344634,
+    "within_300_m": 0.3940677966101695
+  },
+  "known_event_hit": {
+    "n": 61,
+    "median_cloud_m": 435.6604182158393,
+    "within_100_m": 0.16393442622950818,
+    "within_300_m": 0.39344262295081966
+  },
+  "top_30_candidates": {
+    "within_100_m": 0.8666666666666667,
+    "within_300_m": 0.8666666666666667
+  },
+  "top_100_candidates": {
+    "within_100_m": 0.76,
+    "within_300_m": 0.82
+  },
+  "top_300_candidates": {
+    "within_100_m": 0.48333333333333334,
+    "within_300_m": 0.6266666666666667
+  },
+  "rank1_candidates": {
+    "n": 118,
+    "within_100_m": 0.3813559322033898,
+    "within_300_m": 0.5254237288135594
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "version": "v0.8.0",
+  "registered_on": "2026-10-15",
+  "registered_before": "any referent-time weather was requested, computed or viewed, and any case-crossover model was fitted",
+  "status": "exploratory grouped cross-validation on already seen events (V0.5 cohort slopes); no new independent test",
+  "plan": "reports/weiterentwicklung_2026-10-15/UMSETZUNGSPLAN.md, package P4 (case-crossover; renumbered V0.8 because V0.5-V0.7 are taken)",
+  "question": "Can the weather history before the documented event time distinguish the event time from other times at the SAME slope (time-stratified case-crossover)? Because the slope is identical, terrain, land cover, elevation, infrastructure visibility and reporting placement cancel.",
+  "primary_endpoint": "conditional logit, variant temporal (INCA windows + same-day rain): unit-weighted local AUC of the event time against its referent times, median over the 5 registered repetitions, with the repetition-1 unit-bootstrap 95 % interval; chance 0.5",
+  "decision_rule": "Weather is called informative about WHEN a reported slope fails only if the primary interval excludes 0.5; hydrological features count as an added benefit only if the paired interval temporal_hydro - temporal excludes zero. Otherwise: no established signal.",
+  "must_not_change": ["baseline V0.3", "V0.4 artifacts and sealed test", "V0.5 dataset, freeze, CV plan and results", "V0.6 and V0.7 registrations and results"],
+  "comparisons_counted": 4,
+
+  "inputs": {
+    "dataset": "data/v05/run_5b86b6475ecb/dataset.parquet",
+    "dataset_sha256": "6eae56574f9388d4111501afa4b636350d9ab26c0a948f7f079c0e8b9d40eb26",
+    "cv_plan": "data/v05/cv/cv_plan.json",
+    "cv_plan_sha256": "f1aefe8be415b82cec98e95ca66d6582a9060a94ae729aeff78e16e54d231c4a",
+    "positives": "the 418 positives of the frozen V0.5 cohort (coordinates, t0, time_quality, independence unit); their event-time features are taken unchanged from that dataset (INCA windows, same-day rain, hydrology from V0.6 hydro.parquet)"
+  },
+
+  "design": {
+    "stratum": "one event group = the positive slope: 1 event time (label 1) + up to 4 referent times (label 0) at the identical coordinate",
+    "referent_offsets_days": [-56, -28, 28, 56],
+    "referent_time": "t0 + offset days, identical UTC clock time; time_quality and local-midnight rule inherited from the event",
+    "referent_availability": "a referent after the last INCA timestamp or lacking a complete admissible 60-day history is dropped and counted; no replacement",
+    "seasonality_note": "referents up to 8 weeks away can fall in another season; temperature windows therefore partly encode season. The same-stratum design cancels any season effect that is common to the slope only if it is monotone over the 8 weeks; this limitation is reported, not corrected",
+    "future_referents": "referents after the event are allowed (bidirectional case-crossover); they use only weather before the referent time, so no information after the referent time enters its features; the event-time features never use post-event data",
+    "inventory_exclusion": {
+      "rule": "a referent is dropped if any inventory landslide record (process groups Gleiten/Rutschen, Fliessen, Massenbewegung unklarer Typ) within 1000 m of the slope has a date interval overlapping [referent day - 1 day, referent day + 1 day] (Europe/Vienna days)",
+      "date_interval": "structured Date_Anfan..Date_End_a if present, else the day/month/year given by EREIGNIS_T/M/J (widest consistent interval); records with no usable date are counted as unchecked",
+      "radius_m": 1000
+    },
+    "min_referents_per_group": 3
+  },
+
+  "features": {
+    "temporal": "the 18 INCA window features and the 4 same-day features of V0.4/V0.5 (computed with the unchanged V0.4 functions); SPARTACUS and SNOWGRID daily products are not requested for referents (would triple the requests) and are therefore not used in V0.8",
+    "hydro": ["api_hl3d", "api_hl14d",
+              "max_sum_3h", "max_sum_6h", "max_sum_12h", "max_sum_24h", "max_sum_72h",
+              "max_sum_3h_hours_before_t0", "max_sum_6h_hours_before_t0", "max_sum_12h_hours_before_t0", "max_sum_24h_hours_before_t0", "max_sum_72h_hours_before_t0",
+              "wet_days_ge1mm_14d", "wet_days_ge1mm_30d", "wet_days_ge1mm_60d", "wet_days_ge10mm_14d", "wet_days_ge10mm_30d", "wet_days_ge10mm_60d",
+              "longest_dry_spell_h_60d", "current_dry_spell_h"],
+    "hydro_note": "the three available_water features of V0.6 need SNOWGRID and are not used; hydrological parameters are those of config/v06.json",
+    "static": "none - identical within a stratum, constant terms cancel in the conditional likelihood"
+  },
+
+  "variants": {"temporal": "22 INCA features", "temporal_hydro": "22 INCA + 20 hydrological", "hydro_only": "20 hydrological", "rain_only_3d_to_60d": "not used"},
+  "models": "conditional_logit (primary) and hist_gradient_boosting with the unchanged V0.5 hyperparameters; no tuning",
+  "cross_validation": "the frozen V0.5 plan (folds by independence unit, 5 repetitions); the spatial purge of that plan is kept unchanged (conservative)",
+  "metrics": "local AUC per group over its k referents (k varies 3-4), unit-weighted; chance 0.5; top-1 and MRR as secondary",
+  "bootstrap": {"draws": 2000, "seed": 20261017, "unit": "V0.4 independence unit", "predictions": "repetition 1 out-of-fold"},
+  "reference": "V0.5 neighbour-slope out-of-fold local AUC of the same variants on the same groups (spatial contrast, different question)",
+  "diagnostics": ["referents dropped by reason", "unchecked inventory records", "local AUC by time_quality", "local AUC without the largest unit", "local AUC by referent side (before / after the event)"],
+  "interpretation_limits": "a case-crossover answers 'when', not 'where'; event times are conservative lower bounds, so the true failure may be later and the pre-t0 rain of the same day is missing for unknown time of day; inventory entries are not a complete record of failures at the referent times (referents are pseudo-negative times); INCA is 1 km"
+}

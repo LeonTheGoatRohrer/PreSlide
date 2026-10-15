@@ -20,7 +20,7 @@ from ..sources import ROOT
 from .paths import CONFIG, V04_DATA, V04_MODELS, V04_REPORT, config as load_config, guard
 from .pipeline import run_dir, load
 from . import models as M
-from .weather import DAILY_FEATURES, RESOURCE_FEATURES
+from .weather import RESOURCE_FEATURES
 
 ANALYSIS = V04_DATA / 'analysis'
 PARTITION = V04_DATA / 'partition/partition.json'

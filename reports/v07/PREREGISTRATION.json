@@ -1,0 +1,10 @@
+{
+ "registered_at_utc": "2026-10-15T09:11:45.422648+00:00",
+ "config": "config/v07.json",
+ "config_sha256": "7e321379b1b88fd4100ae2c3c4035c353fc3437242b5ffa749ba2d6b9c9841e2",
+ "input_sha256": {
+  "data/v05/run_5b86b6475ecb/dataset.parquet": "6eae56574f9388d4111501afa4b636350d9ab26c0a948f7f079c0e8b9d40eb26",
+  "data/v05/cv/cv_plan.json": "f1aefe8be415b82cec98e95ca66d6582a9060a94ae729aeff78e16e54d231c4a",
+  "data/v05/analysis/oof_purged.parquet": "c0c0046e708488a754e7b0a68b4984b74217f7b47b1a3c0a28637427709458d5"
+ }
+}

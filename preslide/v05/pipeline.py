@@ -20,7 +20,7 @@ from ..matching import Exclusions, austria_boundary
 from ..sources import ROOT
 from . import terrain as T
 from ..v04 import weather as W
-from .paths import CONFIG, V05_DATA, V04_DATASET, V04_CANDIDATES, config as load_config, guard, sha
+from .paths import CONFIG, V05_DATA, V04_DATASET, config as load_config, guard, sha
 from . import controls as K
 from . import environment as E
 

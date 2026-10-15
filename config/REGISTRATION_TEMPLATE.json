@@ -1,0 +1,12 @@
+{
+  "version": "vX.Y.Z",
+  "registered_on": "YYYY-MM-DD",
+  "registered_before": "which computation (control selection, feature, model, score) had not yet been run or viewed",
+  "status": "exploratory | confirmatory",
+  "question": "one sentence",
+  "primary_endpoint": "one metric, one aggregation, one unit of independence",
+  "decision_rule": "when is an effect called established (paired interval excludes zero), when is it not",
+  "inputs": {"dataset": "path", "dataset_sha256": "hash", "partition": "path", "partition_sha256": "hash"},
+  "must_not_change": ["list of frozen artifacts and results that stay read-only"],
+  "comparisons_counted": "number of variants/comparisons that will be looked at; all are reported"
+}

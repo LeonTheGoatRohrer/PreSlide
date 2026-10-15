@@ -1,0 +1,63 @@
+{
+  "version": "v0.7.0",
+  "registered_on": "2026-10-15",
+  "registered_before": "any distance to buildings or roads was computed or viewed for any sample",
+  "status": "exploratory grouped cross-validation on already seen events (V0.5 cohort); no new independent test",
+  "plan": "reports/weiterentwicklung_2026-10-15/UMSETZUNGSPLAN.md, package P3.2 (reporting-bias control)",
+  "question": "How much of the V0.5 separation between the reported slope and ten unmatched surrounding slopes can be reproduced by the visibility of a slope alone (distance to the nearest building or road), and how much of the terrain / land-cover skill remains when controls are equally close to infrastructure as the reported slope?",
+  "primary_endpoint": "(b) conditional-logit static local AUC (unit-weighted, V0.5 out-of-fold repetition-wise median) on the caliper-restricted groups compared with the same model on all groups (paired on the same groups; 95 % interval from the unit bootstrap of repetition 1)",
+  "decision_rule": "The terrain / land-cover skill is called infrastructure-independent only if the restricted-group AUC stays above chance with an interval excluding 0.5 AND the drop relative to all groups has an interval including zero; otherwise it is reported as (partly) explained by infrastructure visibility. Nothing here is a causal statement.",
+  "must_not_change": ["baseline V0.3", "V0.4 artifacts and sealed test", "V0.5 dataset, freeze, CV plan, oof predictions and results", "V0.6 registration and results"],
+  "comparisons_counted": 7,
+
+  "inputs": {
+    "dataset": "data/v05/run_5b86b6475ecb/dataset.parquet",
+    "dataset_sha256": "6eae56574f9388d4111501afa4b636350d9ab26c0a948f7f079c0e8b9d40eb26",
+    "cv_plan": "data/v05/cv/cv_plan.json",
+    "cv_plan_sha256": "f1aefe8be415b82cec98e95ca66d6582a9060a94ae729aeff78e16e54d231c4a",
+    "v05_oof": "data/v05/analysis/oof_purged.parquet",
+    "v05_oof_sha256": "c0c0046e708488a754e7b0a68b4984b74217f7b47b1a3c0a28637427709458d5"
+  },
+
+  "source": {
+    "provider": "OpenStreetMap contributors via Geofabrik GmbH",
+    "file": "austria-261014.osm.pbf",
+    "url": "https://download.geofabrik.de/europe/austria-261014.osm.pbf",
+    "size_bytes": 812633484,
+    "licence": "ODbL 1.0, attribution '(c) OpenStreetMap contributors'; local non-commercial research use only",
+    "temporal_caveat": "snapshot of 2026-10-14; events date from 2016 onwards. Buildings and public roads are largely persistent but new construction after an event can make the distance too short; this bias is shared by positives and controls and is stated, not corrected",
+    "retrieval": "sha256 and retrieval time are written to data/v07/source.json before use"
+  },
+
+  "infrastructure": {
+    "crs": "EPSG:31287 (the dataset x, y), metres",
+    "building": "closed or open way with a 'building' tag (any value except 'no'); the distance uses the outline vertices; multipolygon relations are ignored",
+    "road": "way with highway in [motorway, trunk, primary, secondary, tertiary, unclassified, residential, living_street, service] and the *_link variants; footways, paths and forest tracks excluded; segments densified to <= 25 m vertices",
+    "distance_cap_m": 5000,
+    "distance_note": "nearest-vertex distance, error <= about 13 m for roads and the building extent; values above the cap are set to the cap and flagged",
+    "features": ["dist_building_m", "dist_road_m", "dist_infrastructure_m"],
+    "dist_infrastructure_m": "min(dist_building_m, dist_road_m)",
+    "model_transform": "log10(1 + distance_m)"
+  },
+
+  "analyses": {
+    "a_in_model": {
+      "variants": {"infra_only": ["log10_dist_building", "log10_dist_road"],
+                   "static_infra": "V0.5 static + infra", "combined_infra": "V0.5 combined + infra (same V0.5 interactions, none new)"},
+      "reference_variants": ["static", "combined"],
+      "models": ["conditional_logit", "hist_gradient_boosting"],
+      "cv": "the frozen V0.5 plan (5x5, purged), unchanged; V0.5 hyperparameters; no tuning"
+    },
+    "b_equal_visibility": {
+      "caliper": "a control is kept iff 0.5 <= (1 + d_inf_control) / (1 + d_inf_positive) <= 2 with d_inf = dist_infrastructure_m",
+      "min_controls_per_group": 3,
+      "scoring": "the stored V0.5 out-of-fold scores of static, temporal, combined (no infrastructure features in these models) are re-ranked within the retained controls; groups with fewer retained controls are dropped and counted",
+      "ablation": "conditional logit combined without the five lc_* columns, same folds, evaluated on all groups and on caliper-restricted groups",
+      "paired": "restricted minus all groups for static and combined, conditional logit, same groups where both exist"
+    }
+  },
+  "metrics": "V0.5 definitions; local AUC computed per group with k = number of retained controls (any fixed k per group); unit-weighted",
+  "bootstrap": {"draws": 2000, "seed": 20261016, "unit": "V0.4 independence unit", "predictions": "repetition 1 out-of-fold"},
+  "diagnostics": ["distance distributions by class", "share of capped values by class", "Spearman correlation of dist_infrastructure_m with elevation and with the lc_* shares", "number of groups kept by the caliper"],
+  "interpretation_limits": "OSM completeness varies and improves over time; remote sites may be mapped later than their neighbours; absence of nearby infrastructure is not absence of reports; no causal reading"
+}

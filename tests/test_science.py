@@ -2,7 +2,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from preslide.weather import cutoff,expected_times,features_from_series,TEMPORAL
+from preslide.weather import cutoff,expected_times,features_from_series
 from preslide.terrain import derivatives,PROJECT,GEOD
 from preslide.matching import angular_distance,Exclusions
 from preslide.evaluation import dependent_clusters,grouped_split,FEATURE_SETS,metrics
