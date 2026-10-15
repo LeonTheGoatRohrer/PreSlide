@@ -1,0 +1,15 @@
+{
+ "registered_at_utc": "2026-10-15T12:06:03.178834+00:00",
+ "config": "config/v09.json",
+ "config_sha256": "befb8880818e11d59205d988d27ab7eccccf84284fa3d183caae72f7a053f81d",
+ "input_sha256": {
+  "data/v04/audit/candidates.json": "3689f40ed2b3700a35bd2ac076f572cfff1822475d36b2d91d38341dbd4e97b0",
+  "data/v04/audit/audit_exclusions.json": "3fb904e6ce49afad7236a4a424e629872e55693c75ad42d798ee778d96f5eb92",
+  "data/raw/geosphere_natural_hazards.json": "9dc1581c122b83839b45ac7cc53eec83177fe4e54c785019f7a519313eaa3d97",
+  "data/raw/wlv_slides.json": "526f4e850cabbbf1d8d12b31761278a4b25bbaac851529dcc363cd90712e6302",
+  "data/v09/raw/kaernten_events.json": "1e26cd886d9bcb8a1a11f7efa5cc92120cda8685ffeee4e04c24ee3a693f023b",
+  "data/v09/raw/wlv_non_slide.json": "bb32f17c1ba0851f3875b8e4286b5e8d0feac9ded9bc8cd628ddbfcc2e41ddc5",
+  "data/v04/run_c6d67a854ba7/dataset.parquet": "ea6950102f2e437c3aebbdfe12f91b20b81a6e41ef59120474d4351c9e1077a2",
+  "data/v04/partition/partition.json": "6daa4be3c63d675d962d31ccc66c98d0e98a816c7148afa9afba5a5d94baf9e1"
+ }
+}

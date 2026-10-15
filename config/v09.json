@@ -1,0 +1,163 @@
+{
+ "version": "V0.9",
+ "registered_on": "2026-10-15",
+ "registered_before": "Before the V0.9 cohort selection was run, before the media process audit, before any V0.9 control selection, terrain, land-cover, geology or weather retrieval, and before any model was fit or scored for V0.9. Known at registration: source record counts and the inventory comparison of 2026-10-15 (323 media day-tier-A events, about 38 media-only blocks under the V0.4 linkage rule; Kärnten 1,038 slide-type records 2011+, 669 without a GeoSphere counterpart). No feature or score of any V0.9 event has been computed or seen.",
+ "status": "confirmatory for the primary endpoint (media cohort, refit V0.4 recipe, combined minus static); every other comparison is secondary and labelled exploratory",
+ "question": "Does pre-event weather add discrimination beyond terrain and land cover between a documented slide slope and its five matched control slopes on independence units that no Talwacht model or analysis has seen?",
+ "primary_endpoint": "Media cohort after the process audit: conditional logit, V0.4 recipe refit on all 423 V0.4 groups; paired difference of the independence-unit-weighted mean within-group AUC, combined minus static, with a 95 % unit bootstrap interval (2000 draws, seed 20261015).",
+ "decision_rule": "A weather benefit is called established only if (a) the lower bound of the primary paired interval is > 0, (b) the media process-audit quality gate passes and (c) the primary cohort has at least 15 independence units. If (a) fails: 'no established weather benefit'. If (b) or (c) fails: the result is reported as exploratory and no confirmatory claim is made in either direction.",
+ "comparisons_counted": "3 model families x 3 variants (static, temporal, combined) x 2 model sets (refit_all, frozen_v04_dev) x 4 cohort definitions (media, media_slide_confirmed, kaernten, pooled) = 72 within-group AUC values and 72 paired differences (3 per model, model set and cohort). All are reported; only the primary one carries the decision rule.",
+ "inputs": {
+  "v04_candidates": "data/v04/audit/candidates.json",
+  "v04_candidates_sha256": "3689f40ed2b3700a35bd2ac076f572cfff1822475d36b2d91d38341dbd4e97b0",
+  "v04_audit_exclusions": "data/v04/audit/audit_exclusions.json",
+  "v04_audit_exclusions_sha256": "3fb904e6ce49afad7236a4a424e629872e55693c75ad42d798ee778d96f5eb92",
+  "geosphere_natural_hazards": "data/raw/geosphere_natural_hazards.json",
+  "geosphere_natural_hazards_sha256": "9dc1581c122b83839b45ac7cc53eec83177fe4e54c785019f7a519313eaa3d97",
+  "wlv_slides": "data/raw/wlv_slides.json",
+  "wlv_slides_sha256": "526f4e850cabbbf1d8d12b31761278a4b25bbaac851529dcc363cd90712e6302",
+  "kaernten_events": "data/v09/raw/kaernten_events.json",
+  "kaernten_events_sha256": "1e26cd886d9bcb8a1a11f7efa5cc92120cda8685ffeee4e04c24ee3a693f023b",
+  "wlv_non_slide": "data/v09/raw/wlv_non_slide.json",
+  "wlv_non_slide_sha256": "bb32f17c1ba0851f3875b8e4286b5e8d0feac9ded9bc8cd628ddbfcc2e41ddc5",
+  "v04_dataset": "data/v04/run_c6d67a854ba7/dataset.parquet",
+  "v04_dataset_sha256": "ea6950102f2e437c3aebbdfe12f91b20b81a6e41ef59120474d4351c9e1077a2",
+  "v04_partition": "data/v04/partition/partition.json",
+  "v04_partition_sha256": "6daa4be3c63d675d962d31ccc66c98d0e98a816c7148afa9afba5a5d94baf9e1",
+  "note": "Git-tracked V0.4 files (config/v04.json, reports/v04/*.json) differ in line endings between checkouts, so they are not hashed here; the V0.4 values used are copied below and the frozen V0.4 model files are verified by their own SHA-256."
+ },
+ "frozen_v04_models": {
+  "models/v04/final_c6d67a854ba7/conditional_logit_static.joblib": "fbce46ad7f25e43e9ca954b177f4a5dea2e40680fa5fa035217cfcba15e753b4",
+  "models/v04/final_c6d67a854ba7/conditional_logit_temporal.joblib": "2c36b19f96ca8a73c430917dd318c00549c435f7f64e267f7a92e7b4915709c4",
+  "models/v04/final_c6d67a854ba7/conditional_logit_combined.joblib": "5b45ddf945144b15658254015e4bce6598d4b8fb6ae1ea9a26fedc5f7e48f172",
+  "models/v04/final_c6d67a854ba7/logistic_regression_static.joblib": "35f4c061d57527637bae5baefa1143984eeda0e2a1042aaa7cdecc4efb4d2651",
+  "models/v04/final_c6d67a854ba7/logistic_regression_temporal.joblib": "362915e2992c92be7e578bcd8592fbfc32734879ac7642b9f7b50c45310fcb94",
+  "models/v04/final_c6d67a854ba7/logistic_regression_combined.joblib": "5e31b75bb9e2173e95b1009707333bf4934128cb48af70cc39b6d635fac541b2",
+  "models/v04/final_c6d67a854ba7/hist_gradient_boosting_static.joblib": "1693cffff232b5c5384a70a106af4ab75c2cd1e5b819c7ed314b00b1ced94060",
+  "models/v04/final_c6d67a854ba7/hist_gradient_boosting_temporal.joblib": "51a927130471789b85d3111c2781a0bbaf6d874718462f3cb56cf075add08bef",
+  "models/v04/final_c6d67a854ba7/hist_gradient_boosting_combined.joblib": "3b6ff9dce5a5f50598c3b23b18fd0f916e9b9bbafe2a5e51d4833c2f397c8dfd"
+ },
+ "must_not_change": [
+  "V0.3 baseline (reports/baseline/BASELINE_MANIFEST.json, archive/v0.3-baseline/)",
+  "reports/v04/PREREGISTRATION.json, AMENDMENT_1.json, FREEZE.json, test_results.json, config/v04.json and all data/v04, models/v04 artifacts",
+  "V0.5 to V0.8 registrations, data, models and reports",
+  "data/raw/* and the two V0.9 source snapshots listed under inputs"
+ ],
+ "cohorts": {
+  "media": {
+   "role": "primary",
+   "source": "GeoSphere Austria Naturgefahren (Test), local snapshot; records the V0.4 audit classified as quality tier 2 (QUAL_PROZ and QUAL_MB 'keine Information')",
+   "v04_reason": "tier2_media_not_in_main_analysis",
+   "date_tier": "A_narrative_day",
+   "date_rules": "unchanged V0.4 parser (preslide/v04/dates.py, RULES_VERSION v04-dates-1); event_day, t0 and time quality are taken from the V0.4 audit record, never re-derived",
+   "max_position_upper_bound_m": 100,
+   "deduplication": "identical coordinate and event day kept once"
+  },
+  "kaernten": {
+   "role": "secondary, exploratory: antecedent conditions only",
+   "source": "Land Kärnten, Natur- und Umweltereignisse (INSPIRE ObservedEvent), snapshot data/v09/raw/kaernten_events.json (CC BY 4.0 AT); nameOfEvent dropped at ingestion because it contains personal names",
+   "hazard_category": "landslide",
+   "process_tokens": ["Rutschung (klein|mittel|gross) \\(.*\\)", "Erdstrom", "Schuttstrom"],
+   "process_rule": "every ';'-separated token of qualitativeValue must fully match one registered token; records with any other token (Steinschlag, Blocksturz, Felssturz, Bergsturz, Erdfall, 'Mure' (ambiguous: hillslope or torrent), empty, 'keine Angabe') are excluded",
+   "two_digit_year_pivot": 26,
+   "period": ["2011-01-01", "2026-10-14"],
+   "t0_shift_days": 3,
+   "t0_rule": "The cadastre has no verified day precision: against GeoSphere records with a verified narrative day, 34 of 49 nearby Kärnten records agreed on the day and 15 differed by 1 to 3 days. t0 = local midnight three days before the reported day, so a record reported up to three days late contributes no post-event hour. The trigger rain of the last three days is therefore never used; this cohort tests antecedent conditions only. time_quality = 'day' (same-day rain features missing by construction).",
+   "position": "no positional-accuracy field: reported as unknown; never imputed",
+   "dedup_radius_m": 1000,
+   "dedup_days": 3,
+   "dedup_rule": "a Kärnten record is dropped as already documented if any GeoSphere Naturgefahren record (any process or quality) lies within 1 km and within 3 days of its reported day, or within 1 km with only year and month known and the same year-month; exact coordinate/day duplicates kept once"
+  }
+ },
+ "process_screen": {
+  "applies_to": "media cohort, before any matching",
+  "conflict_radius_m": 200,
+  "conflict_days": 1,
+  "other_process_patterns": ["Steinschlag", "Blocksturz", "Felssturz", "Bergsturz", "Murgang", "Murartig", "Feststofftransport", "Hochwasser"],
+  "conflict_rule": "a media event is excluded (process_conflict_other_source) if a WLV non-slide record (data/v09/raw/wlv_non_slide.json: Murgang, murartig, Steinschlag) or a Kärnten record of any hazard category whose qualitativeValue matches one of other_process_patterns lies within 200 m and 1 day (local days; WLV validfrom converted from UTC to Europe/Vienna)",
+  "confirm_radius_m": 1000,
+  "confirm_days": 1,
+  "confirm_rule": "label only (no exclusion): a WLV Rutschung or Kärnten slide-token record within 1 km and 1 day"
+ },
+ "process_audit": {
+  "applies_to": "every media event left after the process screen and the unseen-block selection",
+  "blinding": "the auditor sees only event_id, municipality, state, reported day, GeoSphere process subgroup and the original date text; no terrain, weather, control or model information exists for these events at audit time",
+  "search": "publicly accessible online reports (news, fire brigades, municipalities, road and torrent authorities) searched by municipality, date and the terms Hangrutschung, Rutschung, Erdrutsch, Hangmure, Mure, Murenabgang; GeoSphere's own monthly overviews are not counted as independent evidence",
+  "categories": {
+   "slide_confirmed": "a report for this municipality or a named locality in it, dated within 1 day of the reported day, describes a hillslope failure (Hangrutschung, Rutschung, Erdrutsch, Hangmure, abgerutschte Böschung or Hang)",
+   "other_process": "the matching report describes a different process: debris flow in a torrent channel (Murgang, Wildbach, Graben), rockfall, flooding only, river undercutting, avalanche, road collapse without a slope failure",
+   "date_conflict": "a matching report exists but the failure happened more than 1 day before or after the reported day",
+   "ambiguous": "a matching report exists but the process cannot be decided (for example only 'Mure ging ab')",
+   "not_found": "no report matching municipality and date within 1 day"
+  },
+  "record": "URL, publisher, publication date, retrieval date (UTC), category and a one-sentence paraphrase in own words (no long quotes); stored locally in data/v09/audit/process_audit.json, counts in reports/v09",
+  "exclusion": "other_process and date_conflict events are excluded from all analyses",
+  "main_analysis_set": "slide_confirmed + ambiguous + not_found",
+  "sensitivity_set": "slide_confirmed only (cohort definition media_slide_confirmed)",
+  "quality_gate": "Let n = slide_confirmed + other_process and k = other_process. The gate passes if n >= 20 and the Wilson 95 % upper bound of k/n is <= 0.25 (the observed misclassification rate is the estimate of the residual contamination among not_found and ambiguous events)"
+ },
+ "matching": {
+  "unchanged_from": "config/v04.json matching (values copied)",
+  "controls_per_event": 5,
+  "candidate_pool_size": 6000,
+  "control_min_distance_m": 750,
+  "control_max_distance_m": 10000,
+  "control_separation_m": 400,
+  "exclusion_extent_buffer_m": 250,
+  "unknown_position_buffer_m": 2000,
+  "slope_caliper_deg": 5,
+  "elevation_caliper_m": 150,
+  "aspect_caliper_deg": 45,
+  "minimum_slope_deg": 5,
+  "terrain_resolution_m": 30,
+  "terrain_crs": "EPSG:31287",
+  "random_seed": 42,
+  "same_t0": "controls inherit t0 of their positive",
+  "additional_exclusions": "WLV Rutschung records (data/raw/wlv_slides.json) and Kärnten slide-token records (data/v09/raw/kaernten_events.json, any date) are added to the V0.4 GeoSphere exclusion set with radius exclusion_extent_buffer_m only. Their positional accuracy is unknown; the V0 2 km unknown-position buffer is deliberately not used because it would push controls away from the positive and thereby enlarge weather contrasts that have nothing to do with the slide."
+ },
+ "features": {
+  "rule": "identical V0.4 feature code and admission: 22 static (terrain incl. curvature, TRI, TPI, relative position, catchment/TWI; CORINE class with vintage strictly before t0; lithology 1:500 000) and 29 temporal (INCA 18 window features, 4 same-day features, SPARTACUS rr 90/180 d, SNOWGRID 5); WINFORE not admitted (V0.4 admission)",
+  "admitted_daily_features": ["spartacus_rr_90d", "spartacus_rr_180d", "swe_last", "snow_depth_last", "swe_melt_3d", "swe_melt_7d", "swe_melt_14d"],
+  "dem_rule": "DEM object Last-Modified must precede the analysis day (unchanged); events before the April 2016 Skadi object date are excluded and counted",
+  "leakage": "INCA hour T admissible only if T + 1 h < t0; daily products valid at D+1 06:00 UTC and admissible only before t0; no observation on or after t0 is used",
+  "missing": "missing, negative or implausible weather excludes the whole group (unchanged V0.4 rule); every exclusion is counted by reason"
+ },
+ "partition": {
+  "seen_events": "the 500 V0.4 main candidates (every Talwacht model and analysis V0 to V0.8 and Pipeline B used only these or subsets)",
+  "unseen_rule": "temporal episodes (gap <= 3 days, all Austria) and blocks (positives < 2 km on any date) are computed on seen + V0.9 candidates with the unchanged V0.4 functions; V0.9 events in a block that contains a seen event are excluded (seen_block)",
+  "positive_link_m": 2000,
+  "spatial_purge_m": 1000,
+  "spatial_purge_rule": "after matching, a V0.9 group with any positive-involving sample pair < 1 km to any V0.4 dataset sample is excluded (seen_location)",
+  "independence_unit": "temporal episode + positives < 2 km + positive-involving sample pairs < 400 m between groups (V0.4 amendment 1 rule), computed on the analysed V0.9 groups; per cohort for cohort results and jointly for the pooled cohort",
+  "spatiotemporal_units": "not used: rejected by the V0.4 dependence check"
+ },
+ "models": {
+  "families": ["conditional_logit", "logistic_regression", "hist_gradient_boosting"],
+  "variants": ["static", "temporal", "combined"],
+  "hyperparameters": "V0.4 values unchanged: conditional logit L2 1.0 with training mean/sd and group masking; logistic regression C 1.0 balanced; histogram gradient boosting 150 iterations, 7 leaves, min 10 per leaf, L2 1.0, balanced, random_state 42; the three V0.4 rain-terrain interactions for the combined conditional logit",
+  "refit_all": "primary model set: the V0.4 recipe fit once on all 423 V0.4 groups (V0.4 dataset and V0.4 independence units, weights 1/sqrt(groups per unit)); fit and hashed before any V0.9 feature table exists",
+  "frozen_v04_dev": "secondary model set: the stored V0.4 final models (trained on the 123 development groups), verified by the hashes above",
+  "no_tuning": "no hyperparameter search, no seed search, no feature selection, no threshold choice"
+ },
+ "evaluation": {
+  "metric": "independence-unit-weighted mean within-group AUC (rank of the positive among its 5 controls); also top-1, within-group AP, unweighted event means",
+  "bootstrap": {"draws": 2000, "seed": 20261015, "unit": "independence unit"},
+  "chance": "0.5 within-group AUC; random-rank null with the same unit weights (10000 draws)",
+  "minimum_units_for_confirmatory_claim": 15,
+  "secondary": [
+   "every cohort definition x model set x family x variant (72 values)",
+   "combined and temporal against chance",
+   "without the largest independence unit",
+   "time-known subset (clock or daypart) of the media cohort",
+   "groups with any control within 250 m of a WLV or Kärnten slide record excluded"
+  ],
+  "scoring": "exactly once, after the V0.9 dataset, independence units and models are frozen (reports/v09/FREEZE.json); the scoring script refuses to run twice"
+ },
+ "pilot": {
+  "order": "eligible events in deterministic spread order (preslide.pipeline.representative_events, first 20, then event_day order); media cohort first",
+  "steps": ["1 media event", "5 media events", "20 media events", "5 Kärnten events"],
+  "checks": "matching invariants, DEM provenance, static window alignment, land-cover vintage, weather boundary rule, assembled-dataset validation; no model is scored on pilot data",
+  "then": "full run of all eligible events of both cohorts"
+ },
+ "inca_retention": "GeoSphere announced the retirement of INCA v1 for December 2026. Every INCA, SPARTACUS and SNOWGRID response needed for V0.9 is requested in this run and stored with URL, retrieval time and SHA-256 under data/v09/cache/http."
+}
