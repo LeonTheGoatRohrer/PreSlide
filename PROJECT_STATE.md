@@ -4,6 +4,8 @@ Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then t
 
 2026-10-15: **UI redesign implemented**: three German pages (Projekt / Vorgehen / Ergebnisse), hash routes including legacy bookmarks, progressive disclosure, real terrain hero, separate V0.4/V0.5 comparisons and correctly labelled intervals. No model runs or scientific artifact edits. Local production app verified on port 8000. Concurrent remote branding commit `75ca8b1` merged: visible product name is now **Talwacht**, internal package and frozen artifact names stay `preslide`/PreSlide.
 
+2026-10-15 (later): **Content/layout pass on the three pages** (plan: `reports/weiterentwicklung_2026-10-14/UI_UEBERARBEITUNG_PLAN.md`): Kurzfassung cards, key-figure strip from API, idea diagram, sticky in-page navigation (`SectionNav.vue`), pipeline strip, real example visible by default, results hero with Hauptstudie/Ergänzungsstudie switch, plain study names. Frontend only; 11 tests + build pass, browser-checked 1280 px and 375 px. No numbers or artifacts changed.
+
 2026-10-14 (evening): **V0.5 complete and verified** (exploratory neighbour-slope ranking vs ten unmatched controls; `reports/v05/`, verification PASS). Before that, the same day: **V0.4 complete and verified** (pre-registered extension, sealed external test scored once). The **V0.3 Baseline** (V0, V0.2, V0.3 on dataset `046074ba6f12556c`) is frozen, unchanged and additionally archived write-once in `archive/v0.3-baseline/` (2 872 files, ZIP SHA-256 `da3a136e…`; `python scripts/archive_baseline.py --verify`). Local, non-commercial research; no public deployment.
 
 # Verified Working
