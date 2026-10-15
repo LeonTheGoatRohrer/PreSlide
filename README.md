@@ -153,6 +153,12 @@ Pipeline B deliberately uses post-event imagery to learn what documented events 
 .\.venv\Scripts\python -m preslide.satellite baseline                # event-held-out logistic regression / gradient boosting + shortcut checks
 .\.venv\Scripts\python -m preslide.satellite discovery               # held-out rediscovery scan, UNVERIFIED candidate inventory
 .\.venv\Scripts\python -m preslide.satellite report                  # reports/satellite/*.md, data/satellite/web/results.json
+.\.venv\Scripts\python -m preslide.satellite validation              # satellite-0.2: top-30 candidates, after_confirm persistence, candidate contact sheets
+.\.venv\Scripts\python -m preslide.satellite review                  # apply reports/satellite/candidate_review.json -> statuses, candidate_validation.md
+.\.venv\Scripts\python -m preslide.satellite landscape --workers 2   # RANDOM_LANDSCAPE hard negatives (1.5-8 km, outside exclusion radii, same acquisitions)
+.\.venv\Scripts\python -m preslide.satellite baseline-random         # baselines with and without the hard negatives
+.\.venv\Scripts\python -m preslide.satellite discovery --negatives controls_plus_random_landscape   # rediscovery with the hard-negative detector
+.\.venv\Scripts\python -m preslide.satellite embeddings              # Baseline C (optional: requirements-satellite-optional.txt, CPU torch)
 ```
 
 `--limit 0` processes every eligible event. All STAC responses, scene-classification quicklooks and patches are cached with checksums. Configuration: `config/satellite.json`; sources: `DATA_SOURCES.md`.

@@ -15,6 +15,7 @@ def main():
     ap.add_argument('--limit', type=int, default=0, help='first N eligible positives (0 = all)')
     ap.add_argument('--workers', type=int, default=4)
     ap.add_argument('--null-draws', type=int, default=100)
+    ap.add_argument('--reverse', action='store_true', help='landscape: process events from the end (second process)')
     ap.add_argument('--negatives', choices=['controls', 'controls_plus_random_landscape'], default='controls',
                     help='discovery: training table (random-landscape variant writes *_random_landscape outputs)')
     args = ap.parse_args()
@@ -44,7 +45,7 @@ def main():
         print(json.dumps(run(negatives=args.negatives), indent=1, default=str)[:3000])
     elif args.stage == 'landscape':
         from .landscape import run
-        frame, summary = run(args.limit, args.workers)
+        frame, summary = run(args.limit, args.workers, args.reverse)
         print(json.dumps(summary, indent=1, default=str))
     elif args.stage == 'validation':
         from .validation import run

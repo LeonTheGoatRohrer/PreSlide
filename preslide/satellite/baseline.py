@@ -17,9 +17,12 @@ NUISANCE = ['days_before', 'days_after', 'doy_gap', 'before_core_cloud', 'before
             'after_core_snow', 'before_patch_cloud', 'after_patch_cloud']
 
 
+NON_FEATURE = {'group_size', 'draw_index', 'distance_to_nearest_inventory_event_m'}   # bookkeeping columns after the feature block
+
+
 def feature_columns(frame):
     first = list(frame.columns).index('coreg_peak_ratio') + 1
-    return [c for c in frame.columns[first:] if c != 'group_size']
+    return [c for c in frame.columns[first:] if c not in NON_FEATURE]
 
 
 def make_model(kind, cfg):

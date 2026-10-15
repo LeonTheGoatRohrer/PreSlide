@@ -1,0 +1,20 @@
+{
+  "model": "logistic_regression",
+  "negatives": "controls_plus_random_landscape",
+  "events": 129,
+  "independence_units": 15,
+  "hit_radius_m": 160,
+  "suppress_known_positives_m": 160,
+  "searched_km2_per_event": 2.5600000000000005,
+  "detected_any_rank": 63,
+  "detected_rank1": 8,
+  "detected_top3": 24,
+  "detected_top5": 36,
+  "median_hit_rank": 5.0,
+  "median_hit_distance_m": 92.19544457292886,
+  "false_peaks_above_hit_mean": 8.465116279069768,
+  "peaks_per_km2_mean": 4.793483527131782,
+  "peaks_suppressed_known_total": 88,
+  "events_with_other_known_positive_in_patch": 94,
+  "chance_rank1": "a random peak order gives P(rank 1) = 1/peaks per event; mean 1/peaks = 0.096"
+}

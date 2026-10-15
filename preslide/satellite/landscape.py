@@ -140,7 +140,7 @@ def sample_event(event_id, event_row, samples, ex, country, rl, el, workers_note
     return st
 
 
-def run(limit=0, workers=2):
+def run(limit=0, workers=2, reverse=False):
     cfg = config()
     rl = dict(cfg['random_landscape'])
     rl.setdefault('separation_m', read_json(ROOT / 'config/v04.json')['matching']['control_separation_m'])
@@ -149,6 +149,8 @@ def run(limit=0, workers=2):
     pos = frame[frame['label'] == 1].reset_index(drop=True)
     if limit:
         pos = pos.head(limit)
+    if reverse:      # a second process can work from the other end; per-event caches make the two meet safely
+        pos = pos.iloc[::-1]
     samples = events.load_samples()
     event_rows = events.positives(samples).set_index('event_group_id')
     ex, country = exclusion_index(rl), austria_boundary()
@@ -170,6 +172,9 @@ def run(limit=0, workers=2):
             statuses.append(st)
             print(f"{st['event_group_id']}: accepted {len(st['accepted'])} of {st['draws']} draws; geometry {st['geometry_rejections']}; "
                   f"imagery {len(st['imagery_rejections'])}", flush=True)
+    # Assemble from every cached per-event status of the requested events (independent of which process wrote it).
+    statuses = [read_json(SAT_DATA / 'landscape' / f'{eid}.json') for eid in pos['event_group_id']
+                if (SAT_DATA / 'landscape' / f'{eid}.json').exists()]
     rows = [read_json(sample_dir(sid) / 'features.json') for st in statuses for sid in st['accepted']]
     rl_frame = pd.DataFrame(rows)
     out = guard(SAT_DATA / 'tables')

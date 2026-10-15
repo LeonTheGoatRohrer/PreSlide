@@ -173,7 +173,16 @@ def write_random_landscape_report(r, cfg, out):
         lines.append(f"| {key} | {m['within_group_auc']['mean']:.3f} | {m['within_group_auc_unit_weighted']['mean']:.3f} | {m['top1_rate']['mean']:.3f} | "
                      f"{m['positive_vs_random_auc']['mean']:.3f} | {m['top1_vs_controls_and_random']['mean']:.3f} | {m['random_mean_score']['mean']:.3f} | "
                      f"{m['control_mean_score']['mean']:.3f} | {m['positive_mean_score']['mean']:.3f} | {m['random_scored_above_median_positive']['mean']:.3f} |")
+    m = r['models']
+    lr0, lr1 = m['logistic_regression/trained_controls_only'], m['logistic_regression/trained_with_random_landscape']
+    hb0, hb1 = m['hist_gradient_boosting/trained_controls_only'], m['hist_gradient_boosting/trained_with_random_landscape']
     lines += ['', f"Chance: within-group AUC 0.5, positive-vs-random AUC 0.5, top-1 vs all {r['chance']['top1_vs_controls_and_random']:.3f}.", '',
+              f"Result: the controls-only detectors already separate positives from random landscape (LR {lr0['positive_vs_random_auc']['mean']:.2f}, HGB {hb0['positive_vs_random_auc']['mean']:.2f}), "
+              f"less well than from matched controls ({lr0['within_group_auc']['mean']:.2f} / {hb0['within_group_auc']['mean']:.2f}): generic landscape change scores higher than a matched slope on the same dates. "
+              f"Adding the random points to training moves positive-vs-random to {lr1['positive_vs_random_auc']['mean']:.2f} / {hb1['positive_vs_random_auc']['mean']:.2f} and the control metric to "
+              f"{lr1['within_group_auc']['mean']:.2f} / {hb1['within_group_auc']['mean']:.2f}; with 15 independence units and three fold shuffles these differences are within the fold-to-fold spread "
+              "(per-seed values in the JSON) — no established benefit, a small cost for the linear model on matched controls.",
+              '',
               'Reading: `trained_controls_only` scores the random points with a model that never saw any; if ordinary landscape receives event-like scores, '
               'the detector has learned "reported slope vs matched slope" rather than "landslide vs landscape". `trained_with_random_landscape` adds them as label 0; '
               'a drop in the control metrics would mean the hard negatives cost discrimination among matched slopes, a rise in positive-vs-random that they help against '
@@ -212,5 +221,18 @@ def write_web_bundle(cfg, elig, data):
     hd = SAT_REPORT / 'heldout_discovery_results.json'
     if hd.exists():
         bundle['discovery'] = read_json(hd)
+    for key, name in (('validation', 'candidate_validation_summary.json'), ('cloud_proximity', 'cloud_proximity.json'),
+                      ('embedding', 'baseline_results_embedding.json'), ('random_landscape', 'baseline_results_random_landscape.json'),
+                      ('discovery_random_landscape', 'heldout_discovery_results_random_landscape.json')):
+        path = SAT_REPORT / name
+        bundle[key] = read_json(path) if path.exists() else None
+    if bundle['random_landscape']:
+        bundle['random_landscape'] = {'dataset': bundle['random_landscape']['dataset'], 'chance': bundle['random_landscape']['chance'],
+                                      'models': {k: {m: v[m]['mean'] for m in v} for k, v in bundle['random_landscape']['models'].items()}}
+    if bundle['embedding'] and bundle['embedding'].get('ran'):
+        bundle['embedding'] = {'metrics': {m: v['mean'] for m, v in bundle['embedding']['metrics'].items()}, 'config': bundle['embedding']['config']}
+    cv = SAT_DATA / 'tables/candidate_validation.parquet'
+    if cv.exists():
+        bundle['validation_status_counts'] = {k: int(v) for k, v in pd.read_parquet(cv)['validation_status'].value_counts().items()}
     guard(SAT_DATA / 'web')
     (SAT_DATA / 'web/results.json').write_text(json.dumps(bundle, indent=1, ensure_ascii=False, allow_nan=False), encoding='utf-8')
