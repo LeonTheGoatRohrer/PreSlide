@@ -1,0 +1,122 @@
+{
+  "counts": {
+    "media_rows": 323,
+    "media_exact_location_day_duplicate": 0,
+    "media_process_conflict_other_source": 6,
+    "kaernten_excluded": {
+      "outside_period": 1133,
+      "process_not_registered_slide_token": 611,
+      "no_valid_day": 19,
+      "exact_location_day_duplicate": 14,
+      "already_in_geosphere": 356
+    },
+    "media_candidates": 317,
+    "media_in_seen_block": 277,
+    "media_eligible_unseen": 40,
+    "media_eligible_blocks": 22,
+    "kaernten_candidates": 656,
+    "kaernten_in_seen_block": 609,
+    "kaernten_eligible_unseen": 47,
+    "kaernten_eligible_blocks": 33,
+    "eligible_blocks_pooled": 53,
+    "eligible_media_confirmed_by_independent_source": 6
+  },
+  "candidates_sha256": "0095837da539e9662ebbc3e887e7a725a5e480c23d1872cc281c85b8fa015a5a",
+  "eligible_by_year": [
+    {
+      "cohort": "kaernten",
+      "event_day": "2011",
+      "n": 3
+    },
+    {
+      "cohort": "kaernten",
+      "event_day": "2012",
+      "n": 3
+    },
+    {
+      "cohort": "kaernten",
+      "event_day": "2013",
+      "n": 5
+    },
+    {
+      "cohort": "kaernten",
+      "event_day": "2014",
+      "n": 6
+    },
+    {
+      "cohort": "kaernten",
+      "event_day": "2015",
+      "n": 2
+    },
+    {
+      "cohort": "kaernten",
+      "event_day": "2016",
+      "n": 7
+    },
+    {
+      "cohort": "kaernten",
+      "event_day": "2017",
+      "n": 2
+    },
+    {
+      "cohort": "kaernten",
+      "event_day": "2018",
+      "n": 9
+    },
+    {
+      "cohort": "kaernten",
+      "event_day": "2019",
+      "n": 2
+    },
+    {
+      "cohort": "kaernten",
+      "event_day": "2020",
+      "n": 3
+    },
+    {
+      "cohort": "kaernten",
+      "event_day": "2021",
+      "n": 3
+    },
+    {
+      "cohort": "kaernten",
+      "event_day": "2023",
+      "n": 1
+    },
+    {
+      "cohort": "kaernten",
+      "event_day": "2024",
+      "n": 1
+    },
+    {
+      "cohort": "media",
+      "event_day": "2012",
+      "n": 1
+    },
+    {
+      "cohort": "media",
+      "event_day": "2018",
+      "n": 4
+    },
+    {
+      "cohort": "media",
+      "event_day": "2019",
+      "n": 13
+    },
+    {
+      "cohort": "media",
+      "event_day": "2020",
+      "n": 8
+    },
+    {
+      "cohort": "media",
+      "event_day": "2021",
+      "n": 8
+    },
+    {
+      "cohort": "media",
+      "event_day": "2022",
+      "n": 6
+    }
+  ]
+}
