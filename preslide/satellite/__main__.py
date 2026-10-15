@@ -11,7 +11,7 @@ import json
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('stage', choices=['eligibility', 'dataset', 'contact', 'baseline', 'baseline-random', 'discovery', 'landscape',
-                                      'validation', 'review', 'embeddings', 'report'])
+                                      'validation', 'review', 'embeddings', 'cloud-proximity', 'report'])
     ap.add_argument('--limit', type=int, default=0, help='first N eligible positives (0 = all)')
     ap.add_argument('--workers', type=int, default=4)
     ap.add_argument('--null-draws', type=int, default=100)
@@ -60,6 +60,9 @@ def main():
         from .embeddings import run
         r = run()
         print(json.dumps(r['metrics'] if r else r, indent=1))
+    elif args.stage == 'cloud-proximity':
+        from .validation import cloud_proximity_report
+        print(json.dumps(cloud_proximity_report(), indent=1))
     elif args.stage == 'report':
         from .report import write_reports
         write_reports()

@@ -385,3 +385,90 @@ def test_embedding_chip_is_normalised_and_nan_free():
     assert chip.shape == (3, 96, 96) and np.isfinite(chip).all()
     assert chip[2, 30, 30] == pytest.approx((0.1 / 0.3 - 0.406) / 0.225)      # blue channel is index 2
     assert chip[2, 20, 20] == pytest.approx((1.0 - 0.406) / 0.225)               # clipped bright pixel at (100, 100)
+
+
+# ---------- satellite-0.3: whole-patch buffered cloud mask ----------
+
+def _cloud_edge_pair(n=256, blob=(108, 132), scl_margin=8):
+    """Vegetated scene; in `after` a thin bright cloud 24 px (240 m) across of which Sen2Cor classified only the 8 px
+    core (the outer `scl_margin` = 80 m stay SCL 4): the unclassified rim is what produced the satellite-0.2 false peaks.
+    A rim wider than the buffer is not covered by design (documented limit)."""
+    before = np.full((6, n, n), 0.1, dtype=np.float32); before[3] = 0.5
+    after = before.copy()
+    a, b = blob
+    after[:, a:b, a:b] = 0.6                                   # bright in every band: NDVI collapses, brightness jumps
+    scl_b = np.full((n, n), 4, np.uint8)
+    scl_a = scl_b.copy()
+    scl_a[a + scl_margin:b - scl_margin, a + scl_margin:b - scl_margin] = 9      # only the cloud interior is classified
+    return before, after, scl_b, scl_a
+
+
+def test_buffer_mask_radius_covers_scl_cloud_and_ndsi_snow_but_not_nodata():
+    n = 128
+    refl = np.full((6, n, n), 0.1, dtype=np.float32); refl[3] = 0.5
+    scl = np.full((n, n), 4, np.uint8)
+    scl[50, 50] = 9                                             # one classified cloud pixel
+    refl[1, 20, 20], refl[4, 20, 20], refl[3, 20, 20] = 0.6, 0.1, 0.7      # bright NDSI snow, SCL says vegetation
+    scl[100, 100] = 0                                           # nodata: excluded itself, not buffered
+    v = features.valid_mask(refl, scl, buffer_px=10, buffer_classes=CFG['discovery']['cloud_buffer_scl_classes'])
+    assert not v[50, 50] and not v[50, 60] and v[50, 61]        # inclusive 10 px radius (100 m)
+    assert not v[57, 57] and v[58, 58]                          # Euclidean: 9.9 px masked, 11.3 px valid
+    assert not v[20, 20] and not v[20, 30] and v[20, 31]        # NDSI snow is buffered too
+    assert not v[100, 100] and v[100, 101]                      # nodata pixel excluded, neighbour untouched
+    plain = features.valid_mask(refl, scl)
+    assert not plain[50, 50] and plain[50, 51] and not plain[20, 20] and plain[20, 21]
+    assert features.buffer_px_for(100, 10.0) == 10 and features.buffer_px_for(95, 10.0) == 10 and features.buffer_px_for(0, 10.0) == 0
+
+
+def test_cloud_buffer_removes_synthetic_cloud_edge_peak():
+    from preslide.satellite import discovery
+    before, after, scl_b, scl_a = _cloud_edge_pair()
+    d = CFG['discovery']
+    assert d['cloud_buffer_m'] >= 100
+    unbuffered = features.feature_maps(before, after, scl_b, scl_a, 10.0, cloud_buffer_m=0)
+    buffered = features.feature_maps(before, after, scl_b, scl_a, 10.0, cloud_buffer_m=d['cloud_buffer_m'])
+    # The unclassified cloud rim (8 px) is a strong local NDVI loss in the unbuffered maps: a cloud-edge peak.
+    def score(maps, mask=None):
+        v = maps['d_ndvi_small_contrast']
+        ok = np.isfinite(v) if mask is None else (np.isfinite(v) & mask)
+        s = np.where(ok, -v, -np.inf)                                  # NDVI loss scores high; unusable positions never peak
+        s[:48, :] = s[-48:, :] = s[:, :48] = s[:, -48:] = -np.inf
+        return s
+    s0 = score(unbuffered)
+    pk0 = discovery.peaks(s0, 16, threshold=0.1)
+    assert pk0, 'injected cloud edge must produce a peak without the buffer'
+    sc, r, c = pk0[0]
+    assert sc > 0.3 and 80 <= r <= 160 and 80 <= c <= 160          # the top peak sits at the cloud
+    # With the buffer the rim is masked and positions whose core/ring lost too many pixels are not scorable.
+    scorable = features.scorable_mask(buffered, d)
+    pk1 = discovery.peaks(score(buffered, scorable), 16, threshold=0.1)
+    assert not pk1, f'cloud-edge peak survived the buffer: {pk1[:3]}'
+    assert not scorable[r, c]
+    # The buffer leaves cloud-free positions untouched and the pair mask reports what it removed.
+    far = (200, 60)
+    for k in ('d_ndvi_small_contrast', 'd_brightness_contrast', 'before_ndvi_core_mean'):
+        assert buffered[k][far] == pytest.approx(unbuffered[k][far], nan_ok=True)
+    assert scorable[far]
+    valid, masked_frac = features.pair_valid_mask(before, after, scl_b, scl_a, d['cloud_buffer_m'], 10.0, d)
+    expect = (28 ** 2 - 4 * (100 - np.pi * 25) - 8 ** 2) / 256 ** 2     # Euclidean 10 px buffer (rounded corners) around the 8 px SCL core, minus the core
+    assert masked_frac == pytest.approx(expect, rel=0.1)                # discrete pixel disk vs continuous area
+    # Injected-bug check: a 1 px buffer (10 m) leaves the rim scorable and the cloud-edge peak survives.
+    short = features.feature_maps(before, after, scl_b, scl_a, 10.0, cloud_buffer_m=10)
+    assert discovery.peaks(score(short, features.scorable_mask(short, d)), 16, 0.1)
+
+
+def test_buffer_is_a_no_op_on_a_clean_pair_and_off_by_default():
+    n = 128
+    before = np.full((6, n, n), 0.1, dtype=np.float32); before[3] = 0.5
+    after = before.copy(); after[3, 60:68, 60:68] = 0.15; after[2, 60:68, 60:68] = 0.2
+    scl = np.full((n, n), 4, np.uint8)
+    plain = features.feature_maps(before, after, scl, scl, 10.0)
+    buffered = features.feature_maps(before, after, scl, scl, 10.0, cloud_buffer_m=100)
+    for k in plain:
+        np.testing.assert_array_equal(plain[k], buffered[k])
+    assert features.pair_valid_mask(before, after, scl, scl, 100, 10.0, CFG['discovery'])[1] == 0.0
+    import inspect
+    assert inspect.signature(features.feature_maps).parameters['cloud_buffer_m'].default == 0   # training path stays unbuffered
+    from preslide.satellite import dataset
+    src = inspect.getsource(dataset.build_sample)
+    assert 'cloud_buffer_m' not in src

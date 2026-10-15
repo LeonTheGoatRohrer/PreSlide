@@ -1,9 +1,13 @@
 """Interpretable change features: spectral-index differences summarised in a core box and a surrounding ring.
 
 All statistics are computed as full maps with box filters, so the same code scores a centred known-event patch
-(value at the centre pixel) and every position of a sliding-window discovery scan."""
+(value at the centre pixel) and every position of a sliding-window discovery scan.
+
+satellite-0.3: in discovery/validation mode the valid mask can be buffered (`cloud_buffer_m`) around every
+cloud-like SCL pixel and NDSI-snow pixel of either image, so that no scored position sits on a cloud, haze or
+shadow edge. The training table is built without the buffer (see config discovery.cloud_buffer_note)."""
 import numpy as np
-from scipy.ndimage import uniform_filter
+from scipy.ndimage import uniform_filter, distance_transform_edt
 
 from .imagery import REFLECTANCE_BANDS, CLOUD, SNOW, INVALID, ndsi_snow
 from .paths import config
@@ -28,10 +32,32 @@ def indices(refl):
             'brightness': (blue + green + red) / 3.0}
 
 
-def valid_mask(refl, scl):
+def cloud_like_mask(refl, scl, classes, with_ndsi_snow=True):
+    """Pixels that are cloud, shadow, cirrus, snow, dark or unclassified by SCL, or snow by NDSI (either is enough)."""
+    bad = np.isin(scl, list(classes))
+    if with_ndsi_snow:
+        bad = bad | ndsi_snow(refl[B['green']], refl[B['swir16']], refl[B['nir']])
+    return bad
+
+
+def buffer_mask(bad, buffer_px):
+    """True within `buffer_px` (Euclidean pixel distance, inclusive) of any True pixel of `bad`."""
+    if buffer_px <= 0 or not bad.any():
+        return bad.copy()
+    return distance_transform_edt(~bad) <= buffer_px
+
+
+def valid_mask(refl, scl, buffer_px=0, buffer_classes=None, buffer_ndsi_snow=True):
+    """Usable pixels of one acquisition: finite reflectance, not cloud/snow/invalid by SCL, not NDSI snow.
+    With `buffer_px` > 0 every pixel within that distance of a cloud-like pixel (`buffer_classes`, default the
+    discovery classes 2, 3, 7, 8, 9, 10, 11) or an NDSI-snow pixel is removed as well."""
     bad = np.isin(scl, list(CLOUD | SNOW | INVALID))
     snow = ndsi_snow(refl[B['green']], refl[B['swir16']], refl[B['nir']])
-    return np.isfinite(refl).all(axis=0) & ~bad & ~snow
+    valid = np.isfinite(refl).all(axis=0) & ~bad & ~snow
+    if buffer_px > 0:
+        classes = buffer_classes if buffer_classes is not None else config()['discovery']['cloud_buffer_scl_classes']
+        valid &= ~buffer_mask(cloud_like_mask(refl, scl, classes, buffer_ndsi_snow), buffer_px)
+    return valid
 
 
 def _box_sum(a, size):
@@ -59,14 +85,35 @@ def box_stats(values, valid, core_px, big_px, small_px=None):
     return out
 
 
-def feature_maps(before, after, scl_before, scl_after, res_m=10.0):
-    """Per-pixel maps of all model features for a before/after pair (dict name -> (n, n) array)."""
+def buffer_px_for(cloud_buffer_m, res_m):
+    """Buffer radius in pixels (rounded up so that the metre radius is never under-covered); 0 disables it."""
+    return int(np.ceil(cloud_buffer_m / res_m)) if cloud_buffer_m else 0
+
+
+def pair_valid_mask(before, after, scl_before, scl_after, cloud_buffer_m=0, res_m=10.0, dcfg=None):
+    """Valid mask of a before/after pair; with `cloud_buffer_m` > 0 the buffered mask of either image is applied.
+    Returns (valid, masked_by_buffer_fraction) where the fraction counts pixels valid without the buffer but
+    removed by it (relative to all patch pixels)."""
+    plain = valid_mask(before, scl_before) & valid_mask(after, scl_after)
+    px = buffer_px_for(cloud_buffer_m, res_m)
+    if px <= 0:
+        return plain, 0.0
+    dcfg = dcfg or config()['discovery']
+    classes, with_snow = dcfg['cloud_buffer_scl_classes'], dcfg.get('cloud_buffer_ndsi_snow', True)
+    valid = valid_mask(before, scl_before, px, classes, with_snow) & valid_mask(after, scl_after, px, classes, with_snow)
+    return valid, float((plain & ~valid).mean())
+
+
+def feature_maps(before, after, scl_before, scl_after, res_m=10.0, cloud_buffer_m=0):
+    """Per-pixel maps of all model features for a before/after pair (dict name -> (n, n) array).
+    `cloud_buffer_m` > 0 applies the satellite-0.3 buffered mask (discovery and validation only; the training table
+    is built with 0)."""
     cfg = config()
     core_px = int(round(cfg['patch']['core_m'] / res_m))
     big_px = int(round(cfg['patch']['medium_m'] / res_m))
     small_px = int(round(cfg['patch']['small_m'] / res_m))
     thresholds = cfg['features']['change_thresholds']
-    valid = valid_mask(before, scl_before) & valid_mask(after, scl_after)
+    valid, _ = pair_valid_mask(before, after, scl_before, scl_after, cloud_buffer_m, res_m, cfg['discovery'])
     ib, ia = indices(before), indices(after)
     out = {}
     for name in cfg['features']['indices']:
@@ -95,6 +142,12 @@ def feature_maps(before, after, scl_before, scl_after, res_m=10.0):
     out['valid_core_frac'] = vv['core_n'] / cnt['core_n']
     out['valid_ring_frac'] = vv['ring_n'] / cnt['ring_n']
     return out
+
+
+def scorable_mask(maps, dcfg):
+    """Positions whose core and ring keep enough valid pixels (after buffering) to be scored at all."""
+    return ((maps['valid_core_frac'] >= dcfg['scorable_min_valid_core_frac'])
+            & (maps['valid_ring_frac'] >= dcfg['scorable_min_valid_ring_frac']))
 
 
 def features_at(maps, row, col):

@@ -131,24 +131,57 @@ def _disc_rows(r):
             ('events with another known positive inside the patch', r.get('events_with_other_known_positive_in_patch', '—'))]
 
 
+def _buffer_rows(r):
+    if not r.get('cloud_buffer_m'):
+        return [('cloud buffer (m)', 0), ('patch fraction removed by the buffer (mean)', '—'), ('scorable positions inside the margin (mean)', '—'),
+                ('events whose centre is not scorable', '—'), ('rediscovered at any rank, centre scorable only (conditional)', '—'),
+                ('rediscovered at rank 1, centre scorable only (conditional)', '—')]
+    n = r['events_centre_scorable']
+    return [('cloud buffer (m)', r['cloud_buffer_m']), ('patch fraction removed by the buffer (mean)', _fmt(r['buffer_masked_frac_mean'], 3)),
+            ('scorable positions inside the margin (mean)', _fmt(r['scored_positions_frac_mean'], 3)),
+            ('events whose centre is not scorable', r['events_centre_not_scorable']),
+            ('rediscovered at any rank, centre scorable only (conditional)', f"{r['detected_any_rank_centre_scorable']} of {n}"),
+            ('rediscovered at rank 1, centre scorable only (conditional)', f"{r['detected_rank1_centre_scorable']} of {n}")]
+
+
 def write_discovery_report(r, cfg, out):
-    variants = [('controls only (satellite-0.2, suppression)', r)]
+    buffer_m = r.get('cloud_buffer_m', 0)
+    variants = [(f"controls only ({cfg['version']}, {buffer_m} m cloud buffer, suppression)" if buffer_m else 'controls only (satellite-0.2, suppression)', r)]
+    v02 = SAT_REPORT / 'heldout_discovery_results_satellite02.json'
+    if v02.exists():
+        variants.append(('satellite-0.2 (no buffer, suppression, same model)', read_json(v02)))
     old = SAT_REPORT / 'heldout_discovery_results_stage5_no_suppression.json'
     if old.exists():
-        variants.append(('stage 5 (no suppression, same model)', read_json(old)))
+        variants.append(('stage 5 (no suppression, no buffer)', read_json(old)))
     rlv = SAT_REPORT / 'heldout_discovery_results_random_landscape.json'
     if rlv.exists():
-        variants.append(('controls + RANDOM_LANDSCAPE (suppression)', read_json(rlv)))
+        variants.append(('controls + RANDOM_LANDSCAPE (satellite-0.2, no buffer)', read_json(rlv)))
+    d = cfg['discovery']
     lines = ['# Held-out rediscovery of known events', '',
              f"For each independence unit a {r['model']} detector is trained on all other units, then every position of the "
              f"{cfg['patch']['extent_m']} m patch around each held-out event is scored (sliding windows), local maxima at least "
-             f"{cfg['discovery']['min_peak_distance_m']} m apart are ranked, and a hit is a peak within {r['hit_radius_m']} m of the reported position. "
-             f"Since satellite-0.2, peaks within {cfg['discovery'].get('suppress_known_positives_m', 0)} m of any OTHER known V0.4 positive (423 events) are removed "
-             'from the ranking before scoring: they are documented events, not false peaks and not candidates (the search centre keeps priority).', '',
-             '| quantity | ' + ' | '.join(v[0] for v in variants) + ' |', '|---|' + '---:|' * len(variants)]
-    rows = [_disc_rows(v[1]) for v in variants]
+             f"{d['min_peak_distance_m']} m apart are ranked, and a hit is a peak within {r['hit_radius_m']} m of the reported position. "
+             f"Since satellite-0.2, peaks within {d.get('suppress_known_positives_m', 0)} m of any OTHER known V0.4 positive (423 events) are removed "
+             'from the ranking before scoring: they are documented events, not false peaks and not candidates (the search centre keeps priority).', '']
+    if buffer_m:
+        lines += [f"Since satellite-0.3 the whole patch is cloud-screened: every pixel within {buffer_m} m of a cloud-like SCL pixel (classes "
+                  f"{d['cloud_buffer_scl_classes']}) or an NDSI-snow pixel in either image is removed from the valid mask, and a position is scored only if its "
+                  f"320 m core keeps >= {d['scorable_min_valid_core_frac']:.0%} and its ring >= {d['scorable_min_valid_ring_frac']:.0%} valid pixels. "
+                  'The detector and the training table are unchanged (trained without the buffer; `training_buffer_diagnostic.json` records what the buffer '
+                  'would have removed from the training windows). The searched area is therefore smaller than the nominal patch; an event whose own centre '
+                  'is not scorable cannot be rediscovered.', '']
+    lines += ['| quantity | ' + ' | '.join(v[0] for v in variants) + ' |', '|---|' + '---:|' * len(variants)]
+    rows = [_disc_rows(v[1]) + _buffer_rows(v[1]) for v in variants]
     for i, (name, _) in enumerate(rows[0]):
         lines.append(f'| {name} | ' + ' | '.join(str(rr[i][1]) for rr in rows) + ' |')
+    tb = SAT_REPORT / 'training_buffer_diagnostic.json'
+    if buffer_m and tb.exists():
+        t = read_json(tb)
+        lines += ['', f"Training-window diagnostic ({t['samples']} training samples, features NOT recomputed): with the buffer the valid core fraction would be "
+                  f"median {t['valid_core_frac_buffered']['median']:.3f} (min {t['valid_core_frac_buffered']['min']:.3f}), the ring fraction median "
+                  f"{t['valid_ring_frac_buffered']['median']:.3f} (min {t['valid_ring_frac_buffered']['min']:.3f}); {t['samples_with_any_pixel_removed_in_window']} samples would lose "
+                  f"at least one window pixel and {t['samples_not_scorable_under_discovery_rule']} ({t['positives_not_scorable']} positives) would not pass the "
+                  'discovery position rule. The detector scores buffered maps with features learned on unbuffered windows; this mismatch is reported, not corrected.']
     lines += ['', 'Chance reference (controls only): ' + r['chance_rank1'] + '.', '',
               'The search region is centred on the known event, so this is a localisation test inside a small area, not an unknown-region scan. '
               'Peaks that are not the known event are candidate detections for the false-positive analysis; they are NOT labelled as landslides. '

@@ -16,8 +16,8 @@ from ..common import read_json, write_json
 from . import events
 from .baseline import make_model, feature_columns
 from .contact import stretch_rgb
-from .discovery import score_map, peaks
-from .features import feature_maps, model_feature_names, features_at, indices, valid_mask
+from .discovery import score_map, peaks, buffered_maps
+from .features import model_feature_names, features_at, indices, pair_valid_mask
 from .imagery import Grid, fetch_patch, sample_dir
 from .paths import SAT_DATA, SAT_REPORT, guard, config
 
@@ -130,10 +130,17 @@ def persistence_record(cand, model, cols, cfg):
     ra, sa, _ = fetch_patch(sid, sel['items']['after_primary'], grid)
     rc, sc, mc = fetch_patch(sid, sel['items']['after_confirm'], grid)
     margin = int(round(cfg['patch']['medium_m'] / grid.res / 2))
-    maps_p, maps_c = feature_maps(rb, ra, sb, sa, grid.res), feature_maps(rb, rc, sb, sc, grid.res)
+    # satellite-0.3: both pairs use the buffered whole-patch mask; the confirm pair is screened at the candidate itself.
+    maps_p, scor_p, _ = buffered_maps(rb, ra, sb, sa, grid.res, cfg)
+    maps_c, scor_c, diag_c = buffered_maps(rb, rc, sb, sc, grid.res, cfg)
     f_p, f_c = features_at(maps_p, r, c), features_at(maps_c, r, c)
-    s_p, s_c = score_map(model, maps_p, cols, margin), score_map(model, maps_c, cols, margin)
+    s_p, s_c = score_map(model, maps_p, cols, margin, scor_p), score_map(model, maps_c, cols, margin, scor_c)
     score_p, score_c = float(s_p[r, c]), float(s_c[r, c])
+    buffer_px = int(np.ceil(cfg['discovery'].get('cloud_buffer_m', 0) / grid.res))
+    rec['confirm_cloud_like_distance_m'] = cloud_proximity_m(sc, r, c, grid.res, cfg['discovery']['cloud_buffer_scl_classes'])
+    rec['confirm_buffer_masked_frac'] = diag_c['buffer_masked_frac']
+    rec['confirm_candidate_scorable'] = bool(scor_c[r, c]) if scor_c is not None else True
+    rec['cloud_buffer_px'] = buffer_px
     assessable, persists, main, retained = persistence_rule(f_p, f_c, score_c, vcfg)
     min_px = int(round(cfg['discovery']['min_peak_distance_m'] / grid.res / 2))
     hit_px = cfg['discovery']['hit_radius_m'] / grid.res
@@ -179,8 +186,9 @@ def candidate_contact_sheet(rows, labels, out_path, extent_m=640):
         rgb_a, _, _ = stretch_rgb(_crop(ra, r, c, half), lo, hi)
         rgb_c, _, _ = stretch_rgb(_crop(rc, r, c, half), lo, hi)
         ib = indices(rb)['ndvi']
-        dn_p = np.where(valid_mask(rb, sb) & valid_mask(ra, sa), indices(ra)['ndvi'] - ib, np.nan)
-        dn_c = np.where(valid_mask(rb, sb) & valid_mask(rc, sc), indices(rc)['ndvi'] - ib, np.nan)
+        buffer_m = cfg['discovery'].get('cloud_buffer_m', 0)      # the dNDVI panels show what the detector saw (buffered)
+        dn_p = np.where(pair_valid_mask(rb, ra, sb, sa, buffer_m, grid.res, cfg['discovery'])[0], indices(ra)['ndvi'] - ib, np.nan)
+        dn_c = np.where(pair_valid_mask(rb, rc, sb, sc, buffer_m, grid.res, cfg['discovery'])[0], indices(rc)['ndvi'] - ib, np.nan)
         px = rgb_b.shape[0]
         hs = small_m / grid.res / 2
         panels = (rgb_b, rgb_a, rgb_c, _crop(dn_p, r, c, half), _crop(dn_c, r, c, half))
@@ -196,7 +204,7 @@ def candidate_contact_sheet(rows, labels, out_path, extent_m=640):
         axes[i][0].set_title(f"{lab} · vorher {s['before_primary']['datetime'][:10]} ({s['before_primary']['days_from_event']} d)", fontsize=8, loc='left')
         axes[i][1].set_title(f"nachher {s['after_primary']['datetime'][:10]} (+{s['after_primary']['days_from_event']} d) · Score {cand['model_score']:.1f}", fontsize=8, loc='left')
         axes[i][2].set_title(f"Bestätigung {s['after_confirm']['datetime'][:10]} (+{s['after_confirm']['days_from_event']} d) · Score {cand.get('score_confirm', float('nan')):.1f}", fontsize=8, loc='left')
-        axes[i][3].set_title(f'ΔNDVI nachher − vorher · Ausschnitt {extent_m} m', fontsize=8, loc='left')
+        axes[i][3].set_title(f'ΔNDVI nachher − vorher · Ausschnitt {extent_m} m · weiß = Wolkenpuffer {cfg["discovery"].get("cloud_buffer_m", 0)} m', fontsize=8, loc='left')
         axes[i][4].set_title(f"ΔNDVI Bestätigung − vorher · {cand['heuristic_type'].split(' (')[0]}", fontsize=8, loc='left')
     fig.suptitle('PreSlide Pipeline B – UNVERIFIED Kandidaten (Kreuz = Kandidatenpixel, Kasten = 120 m Fenster); keine Ereignislabels', fontsize=10)
     fig.tight_layout()
@@ -244,8 +252,11 @@ def run(top_n=None):
                'excluded_within_known_positive_m': vcfg['exclude_within_known_m'],
                'excluded_near_known_positive': int(phys['excluded_near_known_positive'].iloc[0]) if len(phys) else 0,
                'dedup_m': vcfg['dedup_m'], 'rule': vcfg, 'sheets': sheets,
-               'persistence': {'assessable': int(top['persistence_assessable'].sum()), 'persists': int(top['persists'].sum())}}
+               'persistence': {'assessable': int(top['persistence_assessable'].sum()), 'persists': int(top['persists'].sum())},
+               'cloud_buffer_m': cfg['discovery'].get('cloud_buffer_m', 0),
+               'confirm_cloud_like_distance_m_median': float(top['confirm_cloud_like_distance_m'].replace(np.inf, np.nan).median()) if 'confirm_cloud_like_distance_m' in top else None}
     write_json(SAT_REPORT / 'candidate_validation_summary.json', summary)
+    cloud_proximity_report()
     return top, summary
 
 
@@ -289,12 +300,18 @@ def write_report(top):
     summary = read_json(SAT_REPORT / 'candidate_validation_summary.json')
     counts = top['validation_status'].value_counts().to_dict()
     assessable = top[top['persistence_assessable']]
-    lines = ['# Candidate validation (Pipeline B, satellite-0.2)', '',
+    buffer_m = cfg['discovery'].get('cloud_buffer_m', 0)
+    lines = [f"# Candidate validation (Pipeline B, {cfg['version']})", '',
              f"Top {len(top)} physical candidates of the held-out discovery scan by detector score, after removing every peak within "
              f"{vcfg['exclude_within_known_m']} m of any of the 423 known V0.4 positives and collapsing detections of the same location from "
              f"overlapping search patches (within {vcfg['dedup_m']} m) into one candidate. "
              f"{summary['candidates_considered']} UNVERIFIED detections → {summary['physical_candidates']} physical candidates "
              f"({summary['excluded_near_known_positive']} detections dropped near known positives).", '',
+             (f"Whole-patch cloud screening ({cfg['version']}): every pixel within {buffer_m} m of a cloud-like SCL pixel "
+              f"(classes {cfg['discovery']['cloud_buffer_scl_classes']}) or an NDSI-snow pixel in either image is masked, and a position is scored only if its "
+              f"core keeps >= {cfg['discovery']['scorable_min_valid_core_frac']:.0%} and its ring >= {cfg['discovery']['scorable_min_valid_ring_frac']:.0%} valid pixels; "
+              'the same mask is applied to the (before_primary, after_confirm) pair, so after_confirm is screened at the candidate position.'
+              if buffer_m else 'No cloud buffer (pairs are screened only in the 960 m window around the source event).'), '',
              '## Persistence test', '',
              'For every candidate the same change features are recomputed on the pair (before_primary, after_confirm), where after_confirm is the '
              f"earliest acquisition usable at the source event at least {cfg['eligibility']['confirm_min_gap_days']} days after after_primary. "
@@ -314,32 +331,54 @@ def write_report(top):
              'Columns: heuristic type from the change signature (triage only); d(known) = distance to the nearest known V0.4 positive; n = detections of this location '
              'from overlapping patches; score = held-out log-odds on the primary pair / on the confirm pair; retained = confirm/primary ratio of the main contrast feature; '
              'confirm peak = rank of a confirm-pair peak within 160 m (— none).', '',
-             '| label | type | d(known) m | n | days (before / after / confirm) | score primary | score confirm | main feature | retained | assessable | persists | confirm peak | verdict | status | note |',
-             '|---|---|---:|---:|---|---:|---:|---|---:|---|---|---:|---|---|---|']
+             '| label | type | d(known) m | n | days (before / after / confirm) | score primary | score confirm | main feature | retained | confirm cloud m | assessable | persists | confirm peak | verdict | status | note |',
+             '|---|---|---:|---:|---|---:|---:|---|---:|---:|---|---|---:|---|---|---|']
     for _, r in top.iterrows():
         days = f"{r['candidate_date_window']} / +{r['confirm_days_from_event']} d" if r['confirm_days_from_event'] is not None else r['candidate_date_window']
+        ccd = r.get('confirm_cloud_like_distance_m')
+        ccd = '—' if ccd is None or (isinstance(ccd, float) and np.isnan(ccd)) else ('> patch' if np.isinf(ccd) else f'{ccd:.0f}')
         lines.append(f"| {r['validation_label']} | {r['heuristic_type'].split(' (')[0]} | {r['nearest_v04_positive_m']:.0f} | {r['n_detections']} | {days} | "
-                     f"{_f(r['model_score'], 1)} | {_f(r.get('score_confirm'), 1)} | {r.get('main_contrast_feature', '—')} | {_f(r.get('retained_fraction'))} | "
+                     f"{_f(r['model_score'], 1)} | {_f(r.get('score_confirm'), 1)} | {r.get('main_contrast_feature', '—')} | {_f(r.get('retained_fraction'))} | {ccd} | "
                      f"{'yes' if r['persistence_assessable'] else 'no'} | {'yes' if r['persists'] else 'no'} | "
                      f"{'—' if r.get('confirm_peak_rank_within_hit_radius') is None or (isinstance(r.get('confirm_peak_rank_within_hit_radius'), float) and np.isnan(r.get('confirm_peak_rank_within_hit_radius'))) else int(r['confirm_peak_rank_within_hit_radius'])} | "
                      f"{r.get('review_verdict') or '—'} | {r['validation_status']} | {r.get('review_note') or ''} |")
     cp = SAT_REPORT / 'cloud_proximity.json'
     if cp.exists():
         c = read_json(cp)
+        radii = c.get('radii_m', [100, 300])
+        old = SAT_REPORT / 'cloud_proximity_satellite02.json'
+        c_old = read_json(old) if old.exists() else None
         lines += ['', '## Cloud proximity of the candidates', '',
                   'Distance from each candidate pixel to the nearest cloud-like scene-classification pixel (SCL 2, 3, 7, 8, 9, 10, 11) in before_primary '
-                  'or after_primary (`cloud_proximity.json`). Pairs are screened for cloud and snow only in the 960 m window around the source event; '
-                  'the outer part of the 2.56 km patch is recorded but not required, and Sen2Cor misses thin cloud and haze edges.', '',
-                  '| set | n | within 100 m of a cloud-like pixel | within 300 m |', '|---|---:|---:|---:|',
-                  f"| all candidates | {c['candidate']['n']} | {c['candidate']['within_100_m']:.0%} | {c['candidate']['within_300_m']:.0%} |",
-                  f"| top 30 by score | 30 | {c['top_30_candidates']['within_100_m']:.0%} | {c['top_30_candidates']['within_300_m']:.0%} |",
-                  f"| top 100 by score | 100 | {c['top_100_candidates']['within_100_m']:.0%} | {c['top_100_candidates']['within_300_m']:.0%} |",
-                  f"| top 300 by score | 300 | {c['top_300_candidates']['within_100_m']:.0%} | {c['top_300_candidates']['within_300_m']:.0%} |",
-                  f"| rank-1 candidates per search | {c['rank1_candidates']['n']} | {c['rank1_candidates']['within_100_m']:.0%} | {c['rank1_candidates']['within_300_m']:.0%} |",
-                  f"| rediscovered known events (reference) | {c['known_event_hit']['n']} | {c['known_event_hit']['within_100_m']:.0%} | {c['known_event_hit']['within_300_m']:.0%} |", '',
-                  'The score ranking is dominated by cloud and haze edges: the detector was trained on cloud-free windows and extrapolates to extreme log-odds '
-                  'at unmasked cloud borders. Candidate ranking by raw score is therefore not usable until the discovery scan screens the whole patch '
-                  '(or masks a buffer around every cloud-like pixel); this is the first change for the next Pipeline B version, registered before re-running.']
+                  'or after_primary (`cloud_proximity.json`). ' + c['note'], '']
+        if buffer_m:
+            lines += [f'With the {buffer_m} m buffer no scored position can lie within {buffer_m} m of such a pixel by construction; the larger radii show how '
+                      'strongly the remaining ranking still clusters near cloud-like pixels.', '']
+        cols = [f'within {r} m' for r in radii]
+        lines += ['| set | n | ' + ' | '.join(cols) + ' |', '|---|---:|' + '---:|' * len(cols)]
+
+        def prox_row(name, key, n=None, src=c):
+            if key not in src:
+                return None
+            g = src[key]
+            return f"| {name} | {g.get('n', n)} | " + ' | '.join(f"{g[f'within_{r}_m']:.0%}" if f'within_{r}_m' in g else '—' for r in radii) + ' |'
+        for name, key, n in (('all candidates', 'candidate', None), ('top 30 by score', 'top_30_candidates', 30), ('top 100 by score', 'top_100_candidates', 100),
+                             ('top 300 by score', 'top_300_candidates', 300), ('rank-1 candidates per search', 'rank1_candidates', None),
+                             ('rediscovered known events (reference)', 'known_event_hit', None)):
+            row = prox_row(name, key, n)
+            if row:
+                lines.append(row)
+        if c_old:
+            lines += ['', 'Reference satellite-0.2 (no buffer, `cloud_proximity_satellite02.json`):', '',
+                      '| set | n | within 100 m | within 300 m |', '|---|---:|---:|---:|']
+            for name, key, n in (('all candidates', 'candidate', None), ('top 30 by score', 'top_30_candidates', 30), ('top 100 by score', 'top_100_candidates', 100),
+                                 ('rank-1 candidates per search', 'rank1_candidates', None), ('rediscovered known events (reference)', 'known_event_hit', None)):
+                g = c_old[key]
+                lines.append(f"| {name} | {g.get('n', n)} | {g['within_100_m']:.0%} | {g['within_300_m']:.0%} |")
+        if not buffer_m:
+            lines += ['', 'The score ranking is dominated by cloud and haze edges: the detector was trained on cloud-free windows and extrapolates to extreme log-odds '
+                      'at unmasked cloud borders. Candidate ranking by raw score is therefore not usable until the discovery scan screens the whole patch '
+                      '(or masks a buffer around every cloud-like pixel).']
     lines += ['', '## Visual review', '',
               f"Contact sheets `reports/satellite/contact_sheets/candidates_01..{len(summary['sheets']):02d}.png`: RGB before_primary, after_primary, after_confirm and "
               'ΔNDVI for both pairs, 640 m window, cross = candidate pixel, box = 120 m small window. The reviewer\'s verdicts and notes are in '
@@ -349,8 +388,12 @@ def write_report(top):
               'river-bank and harvest changes); a high score is not evidence of a landslide.',
               '- Persistence separates transient changes (mowing, harvest, moisture, cloud edge) from lasting surface change; a lasting change can still be a '
               'clear-cut, construction or a river-bed shift, which only the visual review and later orthophotos or inventories can resolve.',
-              '- after_confirm was screened for cloud and snow at the source event, not at the candidate; candidates with cloud at their own position are '
-              'reported as not assessable rather than scored.',
+              ('- after_confirm is selected by usability at the source event; at the candidate itself it is screened with the buffered mask, and a candidate '
+               'whose own core/ring fall below the validation minima is reported as not assessable rather than scored.' if buffer_m else
+               '- after_confirm was screened for cloud and snow at the source event, not at the candidate; candidates with cloud at their own position are '
+               'reported as not assessable rather than scored.'),
+              '- A buffer around SCL-classified pixels removes cloud borders that Sen2Cor partly classifies; haze or thin cloud that SCL misses entirely is '
+              'not buffered and can still produce candidates, which only the visual review catches.',
               '- Candidates are UNVERIFIED by default; LIKELY is a hypothesis for field or orthophoto checking, not a documented event, and nothing here is '
               'written to the Pipeline A event tables (write guard).']
     (SAT_REPORT / 'candidate_validation.md').write_text(chr(10).join(lines) + chr(10), encoding='utf-8')
@@ -368,10 +411,11 @@ def cloud_proximity_m(scl, row, col, res_m, classes=(2, 3, 7, 8, 9, 10, 11)):
     return float(d[row, col] * res_m)
 
 
-def cloud_proximity_report(radius_m=(100, 300)):
+def cloud_proximity_report(radius_m=None):
     """For every candidate of the suppressed inventory and for every rediscovered known event: distance to the
     nearest cloud-like SCL pixel in before_primary or after_primary. Written to reports/satellite/cloud_proximity.json."""
     cfg = config()
+    radius_m = tuple(radius_m or cfg['validation'].get('cloud_proximity_radii_m', [100, 300]))
     inv = pd.read_parquet(SAT_DATA / 'tables/candidate_inventory.parquet')
     per_event = read_json(SAT_DATA / 'discovery/per_event.json')
     cache, rows = {}, []
@@ -398,8 +442,12 @@ def cloud_proximity_report(radius_m=(100, 300)):
             rows.append({'kind': 'known_event_hit', 'score': e['centre_score'], 'rank': e['hit_rank'],
                          'cloud_m': min(cloud_proximity_m(sb, r, col, grid.res), cloud_proximity_m(sa, r, col, grid.res))})
     t = pd.DataFrame(rows)
-    out = {'classes': 'SCL 2 dark area, 3 cloud shadow, 7 unclassified, 8/9 cloud, 10 cirrus, 11 snow in before_primary or after_primary',
-           'note': 'pairs are screened for cloud/snow only within the 960 m window around the source event; the outer patch is recorded, not required'}
+    buffer_m = cfg['discovery'].get('cloud_buffer_m', 0)
+    out = {'version': cfg['version'], 'radii_m': list(radius_m), 'cloud_buffer_m': buffer_m,
+           'classes': 'SCL 2 dark area, 3 cloud shadow, 7 unclassified, 8/9 cloud, 10 cirrus, 11 snow in before_primary or after_primary',
+           'note': (f'discovery scan with a {buffer_m} m buffer around every cloud-like SCL / NDSI-snow pixel of either image (whole patch) and '
+                    'position gating by valid core/ring fraction' if buffer_m else
+                    'pairs are screened for cloud/snow only within the 960 m window around the source event; the outer patch is recorded, not required')}
     for kind, g in t.groupby('kind'):
         out[kind] = {'n': int(len(g)), 'median_cloud_m': float(g['cloud_m'].replace(np.inf, np.nan).median()),
                      **{f'within_{r}_m': float((g['cloud_m'] <= r).mean()) for r in radius_m}}
