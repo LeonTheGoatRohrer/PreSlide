@@ -1,0 +1,26 @@
+{
+  "audit_sha256": "3bc4cf2daa1bafdbd50c233ae249e7ae4394590eb7b6dcc9c238686cc3558e44",
+  "events": 40,
+  "gate": {
+    "counts": {
+      "other_process": 7,
+      "not_found": 24,
+      "slide_confirmed": 8,
+      "ambiguous": 1
+    },
+    "n_verifiable": 15,
+    "k_other_process": 7,
+    "wilson_upper_95": 0.698830199745016,
+    "passes": false,
+    "rule": "Let n = slide_confirmed + other_process and k = other_process. The gate passes if n >= 20 and the Wilson 95 % upper bound of k/n is <= 0.25 (the observed misclassification rate is the estimate of the residual contamination among not_found and ambiguous events)"
+  },
+  "excluded": [
+    "1306634_001",
+    "1308080_001",
+    "1309426_001",
+    "1309427_001",
+    "1309428_001",
+    "1309429_001",
+    "1309430_001"
+  ]
+}
