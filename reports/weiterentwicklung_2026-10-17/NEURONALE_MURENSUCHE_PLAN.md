@@ -17,7 +17,7 @@ Wichtige Unterscheidungen:
 
 ## 2. Bestehendes wiederverwenden
 
-Der Hauptbranch enthält die Satellitenarbeit noch nicht. Relevante lokale Entwicklungsstände:
+Der lokale Hauptcheckout zu Sitzungsbeginn (155eaed) enthält die Satellitenarbeit noch nicht. Beim abschließenden Fetch zeigte sich, dass origin/main inzwischen die frühe Satellitenpipeline und V0.6–V0.9 enthält (46dacb2); die späteren Satellitenverbesserungen und der geführte Scan liegen weiterhin in separaten Zweigen. Für eine Umsetzung zuerst diesen aktuellen Integrationsstand prüfen, statt die gesamte Entwicklung erneut zu übernehmen. Dieser Plan wird separat veröffentlicht und führt keine wissenschaftlichen Änderungen aus dem Remote-Stand in den lokalen Checkout ein. Relevante lokale Entwicklungsstände:
 
 | Bestand | Verwendung |
 |---|---|
