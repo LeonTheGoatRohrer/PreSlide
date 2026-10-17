@@ -1,6 +1,6 @@
 {
   "version": "satellite_nn_v01",
-  "status": "DRAFT_NOT_REGISTERED",
+  "status": "REGISTERED",
   "inputs": {"bands": ["B4", "B3", "B2"], "single_image": true},
   "tiles": {"size_px": 128, "stride_px": 64, "pixel_m": 10, "min_valid_fraction": 0.9, "cloud_buffer_m": 100, "min_object_px": 4},
   "seeds": {"model_a": 42, "model_b": 43},

@@ -1,0 +1,14 @@
+{
+  "version": "satellite_nn_v01",
+  "registered_utc": "2026-10-17T17:55:39Z",
+  "config_sha256": "ddfd653ce3291312ad8d7c30fbee7ebcc4bbef7d43aacec947be1b9425963100",
+  "split_sha256": "ab3b9c95a129bd54f5c6cbb0fe12f6aa9168ffd93786007ad383f4cb4ce7a704",
+  "n_train": 3039,
+  "n_dev": 760,
+  "scope": "Pretraining on Landslide4Sense RGB. Dev split is tile-random (no footprints available): NOT spatially independent, no generalisation claim. No test split exists. Austrian evaluation requires separate labelled data.",
+  "checkpoint_selection": "best dev object-F1 (IoU>=0.30 1:1 matching, threshold 0.5, min 4 px)",
+  "normalisation": "per-channel mean/std from the train tiles only",
+  "init": "ImageNet resnet18 encoder (torchvision IMAGENET1K_V1)",
+  "torch": "2.14.1+cpu",
+  "n_comparisons": "model A only; B and updates are separate registered runs"
+}
