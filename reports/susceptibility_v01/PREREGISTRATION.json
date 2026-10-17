@@ -1,0 +1,23 @@
+{
+ "version": "susceptibility_v01",
+ "registered_at_utc": "2026-10-17T20:35:15.057432+00:00",
+ "config_sha256": "c76289a73f86f8870e76bb20641da2ca4c1c54db6938d7b32e9d709eb5d64569",
+ "files_sha256_lf": {
+  "config/susceptibility_v01.json": "c76289a73f86f8870e76bb20641da2ca4c1c54db6938d7b32e9d709eb5d64569",
+  "reports/weiterentwicklung_2026-10-17/ANFAELLIGKEITSSYSTEM_PLAN.md": "71a60d14a6fe1a5989289c996caa3c5d390fbec8b85b833152865d0c470c7194",
+  "reports/weiterentwicklung_2026-10-17/RUTSCHUNGSDATENSAETZE_WELTWEIT.md": "4fb80c6793e6fc2a4b15e45c136fe2b4b46a7c3178b61793941eff0568c0ffd2",
+  "reports/susceptibility_v01/DECISIONS.md": "eddfc3294e8dcb6e6c764457928c562fcff60d88874ad97b2c15ceb8aa41a4d6",
+  "reports/susceptibility_v01/phase0_evidence.json": "5e461251d3b5ac47fd620e8371714f2bb9505b143be28726b6525639806601da",
+  "reports/susceptibility_v01/mutation_check.json": "1de5d2b316a4626feedb042ef52b13432728baeb21d787d6b8a4d3a3f445303f",
+  "preslide/susceptibility/registry.py": "b8d5c7baa26f3001b3ab1f6ce7cf7df21e47a6e12692e1e1517919143b342758",
+  "preslide/susceptibility/paths.py": "b73fcea1a13d82bc270fa72aeba88272c89174a8b62814956a470f7a335962be"
+ },
+ "known_at_registration": "Plan, dataset survey, Zenodo metadata (licence, size, md5) for Far-Western Nepal and RER2023; Suedtirol WFS field list, layer counts and movement-class counts without geometry. No inventory geometry, terrain value, feature or model output.",
+ "pending_by_amendment": [
+  "buffer value",
+  "Gorkha download",
+  "arm hold-out targets and downsampling",
+  "neighbourhood test procedure",
+  "Suedtirol province boundary source"
+ ]
+}

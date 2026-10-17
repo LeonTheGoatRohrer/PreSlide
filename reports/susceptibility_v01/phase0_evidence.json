@@ -1,0 +1,197 @@
+{
+ "retrieved_at_utc": "2026-10-17T20:33:05.612341+00:00",
+ "zenodo_far_western_nepal": {
+  "record": 4290100,
+  "doi": "10.5281/zenodo.4290100",
+  "concept_doi": "10.5281/zenodo.4290099",
+  "title": "Multi-temporal Landslide Inventory for the Far-Western region of Nepal",
+  "license": {
+   "id": "cc-by-4.0"
+  },
+  "publication_date": "2020-11-25",
+  "files": [
+   {
+    "key": "LandslideInventory_FarWesternNepal.zip",
+    "size_bytes": 24112492,
+    "checksum": "md5:faf80509173373ce9a4774a87dcb214e",
+    "url": "https://zenodo.org/api/records/4290100/files/LandslideInventory_FarWesternNepal.zip/content"
+   }
+  ]
+ },
+ "zenodo_rer2023": {
+  "record": 13742643,
+  "doi": "10.5281/zenodo.13742643",
+  "concept_doi": "10.5281/zenodo.13742642",
+  "title": "RER2023: the landslide inventory dataset of the May 2023 Emilia-Romagna event - Version 1",
+  "license": {
+   "id": "cc-by-4.0"
+  },
+  "publication_date": "2024-09-10",
+  "files": [
+   {
+    "key": "RER2023_V1.rar",
+    "size_bytes": 43630642,
+    "checksum": "md5:3f17160d5e160b21cba86d6a696ae867",
+    "url": "https://zenodo.org/api/records/13742643/files/RER2023_V1.rar/content"
+   }
+  ]
+ },
+ "nasadem_planetary_computer": {
+  "temporal": [
+   [
+    "2000-02-20T00:00:00Z",
+    "2000-02-20T00:00:00Z"
+   ]
+  ],
+  "license": "proprietary",
+  "license_link": [
+   {
+    "rel": "license",
+    "href": "https://lpdaac.usgs.gov/data/data-citation-and-policies/",
+    "title": "Public Domain"
+   }
+  ],
+  "item_assets": [
+   "elevation"
+  ],
+  "gsd": [
+   30
+  ],
+  "anonymous_token_ok": true
+ },
+ "shakemap_gorkha": {
+  "event": "us20002926",
+  "title": "M 7.8 - 67 km NNE of Bharatpur, Nepal",
+  "shakemap_version": "1",
+  "status": "UPDATE",
+  "files": {
+   "download/raster.zip": 9598084,
+   "download/grid.xml": 14875206
+  }
+ },
+ "iffi_suedtirol_metadata_only": {
+  "hits": {
+   "IdroGEO-Landslides-Events-Areas": 10463,
+   "IdroGEO-Landslides-IdentificationPoints": 15755,
+   "IdroGEO-Landslides-Events-Linear": 907,
+   "IdroGEO-Landslides-DeepGravitationalSlopeDeformation": 165
+  },
+  "movement_counts": [
+   {
+    "code": 1,
+    "label": "Fallen/Kippen",
+    "n": 601
+   },
+   {
+    "code": 2,
+    "label": "Gleitung rotational/translational",
+    "n": 2482
+   },
+   {
+    "code": 3,
+    "label": "Laterale Zergleitung",
+    "n": 2
+   },
+   {
+    "code": 4,
+    "label": "Langsames Fliessen",
+    "n": 256
+   },
+   {
+    "code": 5,
+    "label": "Schnelles Fliessen (Mure)",
+    "n": 603
+   },
+   {
+    "code": 6,
+    "label": "Einsturz (Pinge)",
+    "n": 2
+   },
+   {
+    "code": 7,
+    "label": "Komplexe Rutschung",
+    "n": 438
+   },
+   {
+    "code": 9,
+    "label": "Gebiet mit Fallen/Kippen",
+    "n": 5553
+   },
+   {
+    "code": 10,
+    "label": "Gebiete mit diffus verteilten Einsturz-Bewegungen (Pinge)",
+    "n": 3
+   },
+   {
+    "code": 11,
+    "label": "Gebiete mit diffus verteilten Oberflächenrutschungen",
+    "n": 523
+   }
+  ],
+  "events_areas_fields": [
+   "IdroGEO-Landslides-Events-AreasType",
+   "ID",
+   "UUID",
+   "CODE",
+   "TYPE_CODE",
+   "TYPE_IT",
+   "TYPE_DE",
+   "INSTITUTION_IT",
+   "MOVEMENT_CODE",
+   "MOVEMENT_IT",
+   "MOVEMENT_DE",
+   "MOVEMENT_ID",
+   "MOVEMENT_LINK_IT",
+   "MOVEMENT_LINK_DE",
+   "MOVEMENT_LINK_LABEL_IT",
+   "MOVEMENT_LINK_LABEL_DE",
+   "SHAPE",
+   "IdroGEO-Landslides-Events-Areas"
+  ],
+  "open_data_portal_records": [
+   {
+    "title": "Elementi geomorfologici legati alle frane",
+    "license_id": "cc-zero",
+    "access_constraints": "[\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\"]",
+    "lineage": "Interpretazione di dati rilevati in campo e da interpretazione cartografica",
+    "reference_date": "[{\"type\": \"creation\", \"value\": \"2002-06-30\"}, {\"type\": \"publication\", \"value\": \"2002-06-30\"}]"
+   },
+   {
+    "title": "Frana lineare",
+    "license_id": "cc-zero",
+    "access_constraints": "[\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\"]",
+    "lineage": "Dati derivati da rilievo in campo e da fotointerpretazione",
+    "reference_date": "[{\"type\": \"creation\", \"value\": \"2022-05-01\"}, {\"type\": \"publication\", \"value\": \"2022-05-01\"}]"
+   },
+   {
+    "title": "Eventi di frana",
+    "license_id": "cc-zero",
+    "access_constraints": "[\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\"]",
+    "lineage": "Dati derivati da rilievo in campo e da fotointerpretazione",
+    "reference_date": "[{\"type\": \"creation\", \"value\": \"2022-05-01\"}, {\"type\": \"publication\", \"value\": \"2022-05-01\"}]"
+   },
+   {
+    "title": "Deformazioni gravitative profonde di versante (DGPV)",
+    "license_id": "cc-zero",
+    "access_constraints": "[\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\"]",
+    "lineage": "Dati derivati da rilievo in campo e da fotointerpretazione",
+    "reference_date": "[{\"type\": \"creation\", \"value\": \"2022-05-01\"}, {\"type\": \"publication\", \"value\": \"2022-05-01\"}]"
+   },
+   {
+    "title": "Punto identificativo del fenomeno franoso (PIFF)",
+    "license_id": "cc-zero",
+    "access_constraints": "[\"https://creativecommons.org/licenses/by-sa/3.0/deed.it\"]",
+    "lineage": "Dati derivati da rilievo in campo e da fotointerpretazione",
+    "reference_date": "[{\"type\": \"creation\", \"value\": \"2022-05-01\"}, {\"type\": \"publication\", \"value\": \"2022-05-01\"}]"
+   }
+  ]
+ },
+ "chirps_daily_head": {
+  "url": "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/tifs/p05/2015/chirps-v2.0.2015.04.25.tif.gz",
+  "status": 200
+ },
+ "open_meteo_archive_reachable": {
+  "time": "iso8601",
+  "soil_moisture_0_to_7cm": "m³/m³"
+ }
+}

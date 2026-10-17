@@ -1,0 +1,60 @@
+{
+ "baseline_summary": "25 passed in 1.53s",
+ "mutants": [
+  {
+   "file": "preslide/susceptibility/registry.py",
+   "mutant": "sealed flags not checked",
+   "tests_failed": true,
+   "summary": "2 failed, 23 passed in 2.22s"
+  },
+  {
+   "file": "preslide/susceptibility/registry.py",
+   "mutant": "sealed dataset allowed in an arm",
+   "tests_failed": true,
+   "summary": "1 failed, 24 passed in 2.17s"
+  },
+  {
+   "file": "preslide/susceptibility/registry.py",
+   "mutant": "DEM date rule off",
+   "tests_failed": true,
+   "summary": "2 failed, 23 passed in 2.18s"
+  },
+  {
+   "file": "preslide/susceptibility/registry.py",
+   "mutant": "DEM rule off by one day (>=)",
+   "tests_failed": true,
+   "summary": "2 failed, 23 passed in 2.26s"
+  },
+  {
+   "file": "preslide/susceptibility/registry.py",
+   "mutant": "amendment may overwrite",
+   "tests_failed": true,
+   "summary": "1 failed, 24 passed in 2.10s"
+  },
+  {
+   "file": "preslide/susceptibility/registry.py",
+   "mutant": "training_datasets returns sealed",
+   "tests_failed": true,
+   "summary": "1 failed, 24 passed in 2.13s"
+  },
+  {
+   "file": "preslide/susceptibility/paths.py",
+   "mutant": "config hash not checked",
+   "tests_failed": true,
+   "summary": "1 failed, 24 passed in 2.18s"
+  },
+  {
+   "file": "preslide/susceptibility/paths.py",
+   "mutant": "amendment sidecar not checked",
+   "tests_failed": true,
+   "summary": "1 failed, 24 passed in 2.08s"
+  },
+  {
+   "file": "preslide/susceptibility/paths.py",
+   "mutant": "guard allows any path",
+   "tests_failed": true,
+   "summary": "4 failed, 21 passed in 2.22s"
+  }
+ ],
+ "status": "PASS"
+}
