@@ -3,8 +3,10 @@
 Configurations below are modified in-memory copies of the registered config; nothing is written to data/ or reports/.
 """
 import copy
+import math
 import json
 
+import numpy as np
 import pytest
 from pyproj import CRS, Transformer
 from shapely.geometry import box
@@ -170,3 +172,83 @@ def test_guard_refuses_paths_outside_namespace(rel, monkeypatch):
     monkeypatch.setattr(P.Path, 'mkdir', no_mkdir)
     with pytest.raises(RuntimeError):
         P.guard(ROOT / rel)
+
+
+# ---------- Phase 2: terrain ----------
+
+from rasterio.transform import from_origin  # noqa: E402
+
+from preslide.matching import angular_distance  # noqa: E402
+from preslide.susceptibility import terrain as T  # noqa: E402
+
+TERRAIN = P.config()['terrain']
+
+
+def test_dem_date_rule_is_strict():
+    c = cfg()
+    T.check_dem_date(c, 'gorkha_2015')
+    c['dem']['acquisition_end'] = c['registry']['datasets']['gorkha_2015']['earliest_event_date']
+    with pytest.raises(ValueError, match='not before'):
+        T.check_dem_date(c, 'gorkha_2015')
+    c['registry']['datasets']['gorkha_2015']['earliest_event_date'] = None
+    with pytest.raises(ValueError):
+        T.check_dem_date(c, 'gorkha_2015')
+
+
+def test_reprojection_keeps_lon_lat_order():
+    # z = 1000*lon + 10*lat on a geographic grid; the UTM grid must reproduce it at each cell centre.
+    res_deg = 1 / 3600
+    lon0, lat1 = 81.0, 29.2
+    rows = cols = 720
+    lat = lat1 - (np.arange(rows) + 0.5) * res_deg
+    lon = lon0 + (np.arange(cols) + 0.5) * res_deg
+    src = (1000 * lon[None, :] + 10 * lat[:, None]).astype('float32')
+    tr = Transformer.from_crs(4326, 32644, always_xy=True)
+    x0, y0 = tr.transform(81.05, 29.15)
+    left, top = math.floor(x0 / 30) * 30, math.ceil(y0 / 30) * 30
+    dst = T.reproject_to_grid(src, from_origin(lon0, lat1, res_deg, res_deg), 'EPSG:4326', left, top, (100, 100),
+                              'EPSG:32644', 30, -32768)
+    back = Transformer.from_crs(32644, 4326, always_xy=True)
+    for r, c in [(5, 5), (50, 80), (95, 10)]:
+        lo, la = back.transform(left + (c + 0.5) * 30, top - (r + 0.5) * 30)
+        assert dst[r, c] == pytest.approx(1000 * lo + 10 * la, abs=0.05)
+
+
+def plane(rows, cols, dz_south, dz_east, res=30.0):
+    r, c = np.mgrid[0:rows, 0:cols]
+    return (r * res * dz_south + c * res * dz_east + 1000).astype('float32')
+
+
+def test_slope_and_circular_aspect_on_planes():
+    north = T.window_features(plane(60, 60, math.tan(math.radians(30)), 0), 30, TERRAIN)[0]
+    east = T.window_features(plane(60, 60, 0, -math.tan(math.radians(20))), 30, TERRAIN)[0]
+    core = (slice(10, 50), slice(10, 50))
+    assert np.nanmedian(north['slope_deg'][core]) == pytest.approx(30, abs=0.01)
+    assert np.nanmedian(north['aspect_cos'][core]) == pytest.approx(1, abs=1e-6)   # faces north (downslope to row 0)
+    assert np.nanmedian(east['aspect_sin'][core]) == pytest.approx(1, abs=1e-6)    # faces east
+    assert angular_distance(359, 1) == 2 and angular_distance(10, 350) == 20
+
+
+def test_catchment_truncation_is_nan_not_guessed():
+    r, c = np.mgrid[0:61, 0:61]
+    cone = (2000 - 30 * np.hypot(r - 30, c - 30)).astype('float32')
+    f = T.window_features(cone, 30, TERRAIN)[0]
+    assert np.isfinite(f['log10_catchment_m2'][20:41, 20:41]).all()
+    tilted = T.window_features(plane(40, 40, -0.3, 0.01), 30, TERRAIN)[0]   # drains to row 0 across the edge
+    assert np.isnan(tilted['log10_catchment_m2'][1:-1, 1:-1]).mean() > 0.9
+    assert np.isnan(tilted['twi']).sum() == np.isnan(tilted['log10_catchment_m2']).sum()
+
+
+def test_block_grid_is_aligned_and_covers_bounds():
+    blocks = T.block_grid((516935.0, 3287900.0, 548000.0, 3302915.0), 15000, 30)
+    assert all(b[2] % 30 == 0 and b[5] % 30 == 0 for b in blocks)
+    assert min(b[2] for b in blocks) <= 516935 and max(b[4] for b in blocks) >= 548000
+    assert min(b[3] for b in blocks) <= 3287900 and max(b[5] for b in blocks) >= 3302915
+
+
+def test_corrupted_feature_block_is_rejected(tmp_path):
+    path = tmp_path / 'block.tif'
+    path.write_bytes(b'raster')
+    path.with_suffix('.json').write_text(json.dumps({'sha256': 'wrong'}))
+    with pytest.raises(T.CacheCorruption):
+        T.load_block(path)

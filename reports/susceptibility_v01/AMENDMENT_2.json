@@ -1,0 +1,67 @@
+{
+ "id": 2,
+ "title": "Terrain feature parameters (fixed before any terrain value is computed)",
+ "basis": "Design choices for Phase 2, taken from common practice and the existing V0.4 terrain code; no terrain value, sample, feature or model existed.",
+ "correct": {
+  "features_terrain": {
+   "from": [
+    "elevation_m",
+    "slope_deg",
+    "aspect_sin",
+    "aspect_cos",
+    "profile_curvature",
+    "plan_curvature",
+    "tri_m",
+    "tpi_m",
+    "relief_1km_m",
+    "flow_accumulation_cells",
+    "twi",
+    "drainage_distance_m",
+    "catchment_area_m2"
+   ],
+   "to": [
+    "elevation_m",
+    "slope_deg",
+    "aspect_sin",
+    "aspect_cos",
+    "profile_curvature",
+    "plan_curvature",
+    "tri_m",
+    "tpi_m",
+    "relief_1km_m",
+    "log10_catchment_m2",
+    "twi",
+    "drainage_distance_m"
+   ],
+   "reason": "flow_accumulation_cells and catchment_area_m2 are the same quantity (area = cells x 900 m2); one log10 catchment area is kept."
+  }
+ },
+ "add": {
+  "terrain": {
+   "value": {
+    "crs_by_dataset": {
+     "gorkha_2015": "EPSG:32645",
+     "far_western_nepal": "EPSG:32644"
+    },
+    "crs_rule": "native projected CRS of the inventory (UTM zone of its centroid)",
+    "resampling": "bilinear from NASADEM 1 arc-second to the 30 m UTM grid; NASADEM nodata -32768 becomes NaN",
+    "grid_origin": "multiples of 30 m in the working CRS",
+    "block_core_m": 15000,
+    "block_margin_m": 3000,
+    "slope_aspect": "preslide.terrain.derivatives (central differences; aspect = downslope azimuth clockwise from grid north; meridian convergence < 2 degrees ignored)",
+    "curvature_tri": "preslide.v04.terrain.curvatures (Zevenbergen-Thorne profile/plan curvature in 1/100 m, mean absolute neighbour difference)",
+    "tpi_radius_m": 300,
+    "relief_radius_m": 1000,
+    "hydrology": "preslide.v04.terrain.fill_depressions (Planchon-Darboux) and flow_accumulation (D8) on the block window; cells whose catchment touches the window edge are truncated and their catchment features are NaN",
+    "channel_threshold_m2": 1000000,
+    "drainage_distance": "Euclidean distance to the nearest cell with catchment >= channel_threshold_m2 inside the window; NaN if none",
+    "nan_policy": "NaN means not computable and is never imputed in the feature tables; counts by feature and reason are reported. Models that cannot take NaN impute inside the training fold only (Phase 4 amendment).",
+    "dem_date_rule": "every DEM source must have acquisition_end strictly before the earliest positive event date of the dataset; checked in code before any value is computed"
+   },
+   "reason": "The registration listed the feature names but not their parameters. They are fixed here before any terrain value exists."
+  }
+ },
+ "written_at_utc": "2026-10-17T21:25:22.393456+00:00",
+ "config_sha256": "c76289a73f86f8870e76bb20641da2ca4c1c54db6938d7b32e9d709eb5d64569",
+ "preconditions": "registration present; no samples, features or models existed"
+}

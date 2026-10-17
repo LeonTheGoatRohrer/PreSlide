@@ -30,6 +30,13 @@ MUTANTS = {
         ('degree areas not projected', "    if to_m:\n        fixed", "    if False:\n        fixed"),
         ('UTM zone from latitude', "zone = int((lon + 180) // 6) + 1", "zone = int((lat + 180) // 6) + 1"),
     ],
+    'preslide/susceptibility/terrain.py': [
+        ('DEM date rule allows same day', "not cfg['dem']['acquisition_end'] < first", "not cfg['dem']['acquisition_end'] <= first"),
+        ('grid origin swapped', "dst_transform=from_origin(left, top, res_m, res_m)", "dst_transform=from_origin(top, left, res_m, res_m)"),
+        ('aspect sin/cos swapped', "'aspect_sin': np.sin(np.deg2rad(aspect))", "'aspect_sin': np.cos(np.deg2rad(aspect))"),
+        ('truncated catchment kept', "'log10_catchment_m2': np.where(edge, np.nan, np.log10(area))", "'log10_catchment_m2': np.log10(area)"),
+        ('block checksum not verified', "if file_digest(path, 'sha256') != meta['sha256']:", "if False:"),
+    ],
 }
 
 
