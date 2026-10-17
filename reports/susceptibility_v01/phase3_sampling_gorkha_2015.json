@@ -1,0 +1,34 @@
+{
+  "dataset": "gorkha_2015",
+  "limit": 0,
+  "positives": 24037,
+  "background": 24037,
+  "known_landslide_polygons": 49709,
+  "background_draws": 60000,
+  "allowed_area_km2": 25877.99929787588,
+  "excluded_area_km2": 2473.7141350399093,
+  "blocks_5km": 1260,
+  "counts": {
+    "null_or_empty_geometry": 1,
+    "positive_containing_cell": 16551,
+    "positive_inside_cell": 7486,
+    "positive_duplicate_cell": 747,
+    "positive_outside_mapping_extent": 10,
+    "dropped_missing_elevation_or_slope_positive": 0,
+    "dropped_missing_elevation_or_slope_background": 0
+  },
+  "nan_by_feature": {
+    "elevation_m": 0,
+    "slope_deg": 0,
+    "aspect_sin": 0,
+    "aspect_cos": 0,
+    "profile_curvature": 0,
+    "plan_curvature": 0,
+    "tri_m": 0,
+    "tpi_m": 0,
+    "relief_1km_m": 0,
+    "log10_catchment_m2": 157,
+    "twi": 157,
+    "drainage_distance_m": 0
+  }
+}
