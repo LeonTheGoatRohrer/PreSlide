@@ -1,0 +1,351 @@
+{
+  "label": "EXPLORATORY diagnostics after a failed gate; not a result and not used to change the design",
+  "per_direction_minus_slope": {
+    "far_western_nepal": {
+      "elevation_only": {
+        "point": -0.18572122748117037,
+        "interval_95": [
+          -0.2262042370169502,
+          -0.1451786116170795
+        ]
+      },
+      "simple_logistic": {
+        "point": -0.002408168467842975,
+        "interval_95": [
+          -0.009756191566921663,
+          0.005191979562366044
+        ]
+      },
+      "hist_gradient_boosting": {
+        "point": 0.022839238048566912,
+        "interval_95": [
+          0.0020562266897453055,
+          0.04232373723213102
+        ]
+      },
+      "random_forest": {
+        "point": 0.019743433945935474,
+        "interval_95": [
+          0.00012437879681999063,
+          0.03779936984540901
+        ]
+      },
+      "logistic_regression": {
+        "point": 0.015334645904772959,
+        "interval_95": [
+          -0.003907797313814456,
+          0.03384654110031148
+        ]
+      },
+      "small_mlp": {
+        "point": 0.01674827957029168,
+        "interval_95": [
+          -0.00433309987824522,
+          0.03683981391611439
+        ]
+      }
+    },
+    "gorkha_2015": {
+      "elevation_only": {
+        "point": -0.19670611570803842,
+        "interval_95": [
+          -0.21717448159503225,
+          -0.17486836742086218
+        ]
+      },
+      "simple_logistic": {
+        "point": -0.0004640065782847147,
+        "interval_95": [
+          -0.0017087894520384367,
+          0.0008327265360640934
+        ]
+      },
+      "hist_gradient_boosting": {
+        "point": -0.009989961202512943,
+        "interval_95": [
+          -0.02081298386714717,
+          0.001269307808724179
+        ]
+      },
+      "random_forest": {
+        "point": 0.017401855869505267,
+        "interval_95": [
+          0.008305165156503914,
+          0.0266371899579587
+        ]
+      },
+      "logistic_regression": {
+        "point": 0.0043108169922105866,
+        "interval_95": [
+          -0.003015497732679845,
+          0.011795111742950597
+        ]
+      },
+      "small_mlp": {
+        "point": -0.024835521898054824,
+        "interval_95": [
+          -0.04175986997245939,
+          -0.009161664450788129
+        ]
+      }
+    }
+  },
+  "univariate_auc_within_inventory": {
+    "far_western_nepal": {
+      "elevation_m": 0.5288295467998543,
+      "slope_deg": 0.6568916806813161,
+      "aspect_sin": 0.508057546893904,
+      "aspect_cos": 0.38873523305568036,
+      "profile_curvature": 0.5126078220512826,
+      "plan_curvature": 0.48455624814117687,
+      "tri_m": 0.6564311256805716,
+      "tpi_m": 0.46093243722076405,
+      "relief_1km_m": 0.5885932096909188,
+      "log10_catchment_m2": 0.5124426162494033,
+      "twi": 0.45542186466819207,
+      "drainage_distance_m": 0.426838373450912
+    },
+    "gorkha_2015": {
+      "elevation_m": 0.5644367363582218,
+      "slope_deg": 0.7611428520662602,
+      "aspect_sin": 0.5322889169790241,
+      "aspect_cos": 0.3964644520370614,
+      "profile_curvature": 0.5537163943505028,
+      "plan_curvature": 0.44300824977449055,
+      "tri_m": 0.7683641750599615,
+      "tpi_m": 0.5682233349987788,
+      "relief_1km_m": 0.7125298983456723,
+      "log10_catchment_m2": 0.46939150795987644,
+      "twi": 0.3466478140994823,
+      "drainage_distance_m": 0.43314011317739937
+    }
+  },
+  "shift_between_inventories": {
+    "positives": {
+      "elevation_m": {
+        "far_western_nepal": 1797.816650390625,
+        "gorkha_2015": 1980.8109130859375,
+        "standardized_mean_difference": -0.41187996576553637
+      },
+      "slope_deg": {
+        "far_western_nepal": 33.518218994140625,
+        "gorkha_2015": 38.24241256713867,
+        "standardized_mean_difference": -0.4099851399083931
+      },
+      "aspect_sin": {
+        "far_western_nepal": 0.04710686206817627,
+        "gorkha_2015": 0.1043335348367691,
+        "standardized_mean_difference": -0.05888819054212319
+      },
+      "aspect_cos": {
+        "far_western_nepal": -0.33208519220352173,
+        "gorkha_2015": -0.5471338629722595,
+        "standardized_mean_difference": 0.19672164383607152
+      },
+      "profile_curvature": {
+        "far_western_nepal": 0.030954981222748756,
+        "gorkha_2015": 0.10263293981552124,
+        "standardized_mean_difference": -0.10481767825811102
+      },
+      "plan_curvature": {
+        "far_western_nepal": -0.01278611272573471,
+        "gorkha_2015": -0.1255771517753601,
+        "standardized_mean_difference": 0.11777462511869081
+      },
+      "tri_m": {
+        "far_western_nepal": 15.3348388671875,
+        "gorkha_2015": 18.36871337890625,
+        "standardized_mean_difference": -0.45928621668955044
+      },
+      "tpi_m": {
+        "far_western_nepal": -4.605668067932129,
+        "gorkha_2015": 7.292575359344482,
+        "standardized_mean_difference": -0.3288231467990654
+      },
+      "relief_1km_m": {
+        "far_western_nepal": 793.8343505859375,
+        "gorkha_2015": 974.5426025390625,
+        "standardized_mean_difference": -0.7942304173178596
+      },
+      "log10_catchment_m2": {
+        "far_western_nepal": 3.653212547302246,
+        "gorkha_2015": 3.556302547454834,
+        "standardized_mean_difference": 0.14707494965059245
+      },
+      "twi": {
+        "far_western_nepal": 5.304407596588135,
+        "gorkha_2015": 4.909617900848389,
+        "standardized_mean_difference": 0.2355610068968961
+      },
+      "drainage_distance_m": {
+        "far_western_nepal": 323.1098937988281,
+        "gorkha_2015": 335.4101867675781,
+        "standardized_mean_difference": 0.0249133153274977
+      }
+    },
+    "background": {
+      "elevation_m": {
+        "far_western_nepal": 1702.1634521484375,
+        "gorkha_2015": 1642.001708984375,
+        "standardized_mean_difference": -0.33250216123954907
+      },
+      "slope_deg": {
+        "far_western_nepal": 27.984304428100586,
+        "gorkha_2015": 26.070457458496094,
+        "standardized_mean_difference": 0.16807720769133255
+      },
+      "aspect_sin": {
+        "far_western_nepal": 0.02002381719648838,
+        "gorkha_2015": -0.04877689853310585,
+        "standardized_mean_difference": 0.030187131757316403
+      },
+      "aspect_cos": {
+        "far_western_nepal": 0.17784425616264343,
+        "gorkha_2015": -0.09714949131011963,
+        "standardized_mean_difference": 0.19413761062594279
+      },
+      "profile_curvature": {
+        "far_western_nepal": 0.005764184519648552,
+        "gorkha_2015": -0.012458768673241138,
+        "standardized_mean_difference": 0.013141450611134725
+      },
+      "plan_curvature": {
+        "far_western_nepal": -0.012311102822422981,
+        "gorkha_2015": -0.0018763105617836118,
+        "standardized_mean_difference": 0.023127539075006438
+      },
+      "tri_m": {
+        "far_western_nepal": 12.3365478515625,
+        "gorkha_2015": 11.421142578125,
+        "standardized_mean_difference": 0.10203341128204663
+      },
+      "tpi_m": {
+        "far_western_nepal": 0.004223555792123079,
+        "gorkha_2015": -0.9993226528167725,
+        "standardized_mean_difference": 0.0072825489354485075
+      },
+      "relief_1km_m": {
+        "far_western_nepal": 713.1491088867188,
+        "gorkha_2015": 714.8095092773438,
+        "standardized_mean_difference": -0.013089799798994259
+      },
+      "log10_catchment_m2": {
+        "far_western_nepal": 3.556302547454834,
+        "gorkha_2015": 3.556302547454834,
+        "standardized_mean_difference": -0.0016627503206071475
+      },
+      "twi": {
+        "far_western_nepal": 5.501796722412109,
+        "gorkha_2015": 5.644526958465576,
+        "standardized_mean_difference": -0.11573996029901815
+      },
+      "drainage_distance_m": {
+        "far_western_nepal": 450.0,
+        "gorkha_2015": 450.0,
+        "standardized_mean_difference": 0.009710969022638816
+      }
+    }
+  },
+  "permutation_importance_primary": {
+    "far_western_nepal": {
+      "elevation_m": {
+        "mean_auc_drop": 0.016175401124224553,
+        "sd": 0.00534705394513339
+      },
+      "slope_deg": {
+        "mean_auc_drop": 0.0009352999629989478,
+        "sd": 0.000780181265542654
+      },
+      "aspect_sin": {
+        "mean_auc_drop": 0.002284171304185412,
+        "sd": 0.0008842024352438253
+      },
+      "aspect_cos": {
+        "mean_auc_drop": 0.012444843743361389,
+        "sd": 0.0021928761235415232
+      },
+      "profile_curvature": {
+        "mean_auc_drop": 0.0035709203138786895,
+        "sd": 0.0014783278845327491
+      },
+      "plan_curvature": {
+        "mean_auc_drop": 0.0013500263380536337,
+        "sd": 0.000512719177553665
+      },
+      "tri_m": {
+        "mean_auc_drop": 0.05159890753796337,
+        "sd": 0.003069890221423591
+      },
+      "tpi_m": {
+        "mean_auc_drop": -0.0017343102956832502,
+        "sd": 0.0021414798521206674
+      },
+      "relief_1km_m": {
+        "mean_auc_drop": 0.02145010681658537,
+        "sd": 0.002877762092222799
+      },
+      "log10_catchment_m2": {
+        "mean_auc_drop": 0.000599690873338532,
+        "sd": 0.0007029739755307492
+      },
+      "twi": {
+        "mean_auc_drop": -0.0005726309467384949,
+        "sd": 0.0002712217503119306
+      },
+      "drainage_distance_m": {
+        "mean_auc_drop": 0.050083716647918664,
+        "sd": 0.0020273821660849326
+      }
+    },
+    "gorkha_2015": {
+      "elevation_m": {
+        "mean_auc_drop": 0.036212370005473504,
+        "sd": 0.0007427260755684214
+      },
+      "slope_deg": {
+        "mean_auc_drop": 0.06088414337670427,
+        "sd": 0.00115838753699973
+      },
+      "aspect_sin": {
+        "mean_auc_drop": 0.002106585092756963,
+        "sd": 0.0009637113416254569
+      },
+      "aspect_cos": {
+        "mean_auc_drop": 0.020683564913216636,
+        "sd": 0.0006490885975099554
+      },
+      "profile_curvature": {
+        "mean_auc_drop": 0.007022446717178066,
+        "sd": 0.0007473361979165015
+      },
+      "plan_curvature": {
+        "mean_auc_drop": 0.005030176234097183,
+        "sd": 0.0010388536563916307
+      },
+      "tri_m": {
+        "mean_auc_drop": 0.039536762438215335,
+        "sd": 0.0013760587602517254
+      },
+      "tpi_m": {
+        "mean_auc_drop": -0.01114477424087077,
+        "sd": 0.0007955829569590082
+      },
+      "relief_1km_m": {
+        "mean_auc_drop": 0.009247991909290754,
+        "sd": 0.001976351928719065
+      },
+      "log10_catchment_m2": {
+        "mean_auc_drop": -0.0021229887835874095,
+        "sd": 0.0007371614862272234
+      },
+      "twi": {
+        "mean_auc_drop": 0.0026882270733137536,
+        "sd": 0.0013621026301333943
+      },
+      "drainage_distance_m": {
+        "mean_auc_drop": 0.03147972738310571,
+        "sd": 0.0033845121593774107
+      }
+    }
+  }
+}

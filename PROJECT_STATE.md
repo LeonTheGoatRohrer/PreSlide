@@ -2,7 +2,7 @@
 
 Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then this file.
 
-2026-10-17 (late): **susceptibility_v01** pre-registered (Phase 0) and Phase 1 data fetched for Far-Western Nepal and RER2023; the Phase 1 gate is **not met** (Gorkha blocked by a ScienceBase human check, RER2023 lacks a mapping extent, Far-Western Nepal has events before the DEM date). Stopped at the gate; see section below and `reports/susceptibility_v01/PHASE1_GATE.md`. No terrain, no model.
+2026-10-18: **susceptibility_v01 stopped at the Phase 4 gate.** Phases 0–3 passed (registration, data incl. Gorkha via user browser download, NASADEM terrain, verified sampling). Leave-one-inventory-out (Gorkha <-> Far-Western Nepal): primary HGB mean AUC 0.715 vs slope-only 0.709, difference +0.006 [-0.005, 0.017] -> gate not passed; no extension (Phases 5-14 not run beyond the registered block CV as diagnosis). See `reports/susceptibility_v01/PHASE4_GATE.md`.
 
 2026-10-17: **Planning only:** concrete single-image neural detector/verifier and controlled self-training plan in `reports/weiterentwicklung_2026-10-17/NEURONALE_MURENSUCHE_PLAN.md`. Proposed namespace `satellite_nn_v01`; no implementation, registration, dataset download or new training. Model agreement remains a pseudo-label; specific mudslide classification requires subtype labels beyond Landslide4Sense. Existing satellite/V0.6–V0.9 work is on separate local branches, not merged here; the plan identifies reusable files and verification limits.
 
@@ -59,12 +59,14 @@ Few independent units (11 test); Stanz dominance; reporting/placement bias in la
 2. Independent confirmation needs unseen dependence units: tier-2 media events (separately labelled) and soil/antecedent-moisture pilot per `reports/weiterentwicklung_2026-10-14/KONKRETER_AENDERUNGSPLAN.md` (new version, own protocol).
 3. Reporting-bias diagnostics (road/settlement distance with dated sources; Sentinel-2 position check); the V0.5 web section is complete.
 
-## susceptibility_v01 (Stand 17.10.2026, Phase 0 registriert, Phase-1-Gate nicht erfüllt)
+## susceptibility_v01 (Stand 18.10.2026, am Phase-4-Gate gestoppt)
 
 - Plan `reports/weiterentwicklung_2026-10-17/ANFAELLIGKEITSSYSTEM_PLAN.md`. Namespace `config/susceptibility_v01.json` (schreibgeschützt), `preslide/susceptibility/`, `data|models|reports/susceptibility_v01/`. Registrierung `reports/susceptibility_v01/PREREGISTRATION.json`, Begründungen `DECISIONS.md`.
 - Entscheidungen: DEM NASADEM (SRTM, Feb 2000), Copernicus GLO-30 abgelehnt (2011–2015); PGA USGS ShakeMap nur explorativ; Modell B CHIRPS + ERA5-Land, Gate 7 (≥ 15 datierte Ereignisse) voraussichtlich nicht bestanden; Verhältnis 1:1; Puffer-Regel registriert, Wert offen; Südtirol IFFI versiegelt (Codes 2/5/7, 3.523 Polygone, Lizenz widersprüchlich → CC BY-SA 3.0).
-- Phase 1: Far-Western Nepal und RER2023 geladen (md5 geprüft), auditiert. Gorkha blockiert (ScienceBase-Menschprüfung), RER2023 ohne Kartierumriss, Far-Western Nepal hat Rutschungen vor dem DEM-Datum. Entscheidungen A–D in `reports/susceptibility_v01/PHASE1_GATE.md`.
-- Tests: `tests/test_susceptibility_v01.py` 33 bestanden; `scripts/mutation_check_susceptibility.py` 12/12 Mutanten erkannt. Neue Abhängigkeit `pyshp` (Shapefiles lesen, rein Python).
+- Phase 1: Gorkha (Nutzer-Download nach ScienceBase-Menschprüfung), Far-Western Nepal, RER2023; Kandidaten Iburi und Wenchuan; 25 NASADEM- und 25 Copernicus-Kacheln (Copernicus je Kachel datiert, nur Dokumentation); Südtirol-Teilmenge versiegelt (3.523 Treffer, nicht geöffnet). Amendment 1: RER2023 ausgesetzt (kein Kartierumriss), Far-Western Nepal nur Positive ab 2001, Puffer 100 m.
+- Phase 2: Geländeraster 30 m (Amendment 2), 42 + 168 Blöcke. Phase 3: Gorkha 24.037+24.037 (1.260 Blöcke), Far-Western Nepal 1.557+1.557 (303 Blöcke), Verifikation PASS; Pufferfehler (Vieleck-Näherung, 99,54 m) gefunden und vor jedem Modell behoben.
+- Phase 4 (Amendment 3, feste Hyperparameter): Gate nicht bestanden (+0,006 [−0,005; 0,017] gegenüber Neigung). Diagnose: innerhalb Gorkha +0,12 (ein Ereignis, Erschütterungs-Stellvertreter möglich), Far-Western Nepal kein Vorteil; TPI kehrt Vorzeichen zwischen Erdbeben und Monsun um. Details `reports/susceptibility_v01/PHASE4_GATE.md`.
+- Tests: `tests/test_susceptibility_v01.py` 52 bestanden; Mutationsprüfung 30/30 erkannt. Neue Abhängigkeit `pyshp`.
 
 ## satellite_nn_v01 (Stand 17.10.2026, M0 teilweise)
 
