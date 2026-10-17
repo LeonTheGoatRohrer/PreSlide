@@ -1,0 +1,39 @@
+{
+  "scope": "reference audit only; no model fitted, nothing scored",
+  "positives": 423,
+  "process_type": {
+    "Lockergesteinsrutschung": 270,
+    "Hangmure": 102,
+    "Hangmure bis Lockergesteinsrutschung": 47,
+    "Hangmure und Lockergesteinsrutschung": 4
+  },
+  "position_upper_m": {
+    "5": 319,
+    "20": 58,
+    "100": 46
+  },
+  "independence_units": 30,
+  "temporal_episodes": 36,
+  "queries_with_neighbour_5km": 369,
+  "queries_without_neighbour_5km": 54,
+  "units_with_neighbour_queries": 13,
+  "largest_unit_share_of_neighbour_queries": 0.659,
+  "by_partition": {
+    "development": {
+      "queries": 123,
+      "with_neighbour": 79,
+      "units": 19,
+      "units_with_neighbour": 8
+    },
+    "sealed_test": {
+      "queries": 300,
+      "with_neighbour": 290,
+      "units": 11,
+      "units_with_neighbour": 5
+    }
+  },
+  "inventory_geometry_types": {
+    "('x', 'y')": 25609
+  },
+  "inventory_has_initiation_or_deposit_field": false
+}
