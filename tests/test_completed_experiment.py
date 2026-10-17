@@ -1,9 +1,7 @@
 """Meaningful real-artifact integration checks; skipped without local snapshots."""
-import numpy as np
 import pandas as pd
 import pytest
 from preslide.sources import ROOT
-from preslide.common import read_json
 from preslide.pipeline import validate_dataset
 from preslide.evaluation import FEATURE_SETS
 from preslide.matching import Exclusions

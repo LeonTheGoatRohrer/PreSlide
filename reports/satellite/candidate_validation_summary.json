@@ -1,0 +1,30 @@
+{
+  "top_n": 30,
+  "candidates_considered": 1416,
+  "physical_candidates": 830,
+  "excluded_within_known_positive_m": 160,
+  "excluded_near_known_positive": 0,
+  "dedup_m": 160,
+  "rule": {
+    "top_n": 30,
+    "exclude_within_known_m": 160,
+    "dedup_m": 160,
+    "min_retained_contrast": 0.5,
+    "min_valid_core_frac": 0.9,
+    "min_valid_ring_frac": 0.8,
+    "rule": "declared before any after_confirm patch was fetched: a candidate persists if the same change features recomputed on (before_primary, after_confirm) still give log-odds > 0 at the candidate pixel and the main contrast feature keeps its sign with >= min_retained_contrast of its primary magnitude; a confirm pair with cloud/snow/nodata at the candidate (valid fractions below the minima) is not assessable. Statuses: LIKELY only if persists AND the visual review notes a slide-like scar; REJECTED only with a named non-slide cause (land use, water) or a transient artefact that did not persist; otherwise UNVERIFIED.",
+    "known_positives": "all 423 V0.4 positives (data/v04 dataset, read only); the candidate inventory distance column used only the 129 satellite positives",
+    "dedup_note": "overlapping 2.56 km patches of neighbouring events detect the same location several times; detections within dedup_m are one physical candidate (highest score kept, others listed as aliases)"
+  },
+  "sheets": [
+    "candidates_01.png",
+    "candidates_02.png",
+    "candidates_03.png",
+    "candidates_04.png",
+    "candidates_05.png"
+  ],
+  "persistence": {
+    "assessable": 18,
+    "persists": 3
+  }
+}

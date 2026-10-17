@@ -45,3 +45,24 @@ The permutation null makes all six group members exchangeable. True positives ar
 - **Reporting bias.** Positives are lower and less forested than the background; inventory points cluster near valleys, settlements and roads. Physics and detection probability cannot be separated (road-distance diagnostic not retrieved).
 - **Temporal ≠ weather here.** 1 km INCA fields carry elevation and location; the weather-only score partly encodes terrain. No weather benefit over static (−0.023).
 - **Retrospective exclusion zones** use the full inventory snapshot, including later events. One group excluded because a control failed the V0.4 5 m DEM alignment check (7.5 m on a 35° slope, sub-cell); the check was not relaxed.
+## Pipeline B (satellite)
+
+- Sentinel-2 L2A in the AWS collections starts over Austria in late 2017, so the 2016 Stanz storm (243 events) and the 2017 events have no pre-event imagery; the satellite dataset is dominated by 2018–2024 events and by Styria.
+- Cloud cover and snow leave many events without a usable pair within ±180/120 days; winter events are rarely usable, and pairs can be weeks apart, so the detected change is "between two clear dates", not "at the event date". Late-season or multi-month gaps mix harvest, mowing and forestry into the difference even after ring normalisation.
+- Small slides (tens of metres) occupy a few 10 m pixels; the 120 m window dilutes them and forest canopy can hide them. A positive without visible change is not evidence against the inventory record.
+- Controls share the acquisition pair but remain pseudo-negatives; several storm clusters put other known events inside a control's 960 m ring.
+- The two Earth Search collections store reflectance with different offsets and different Sen2Cor baselines (02.x vs 05.x); the per-collection offset was verified empirically and is checked at runtime, but residual radiometric differences between mixed-collection pairs remain (`same_collection` is recorded).
+- The held-out rediscovery scan searches only the 2.56 km patch around a known event; it is a localisation test, not evidence that the detector works on unknown regions. Candidate types in the false-positive analysis are heuristics for triage, not labels.
+- Sentinel-1 is not yet integrated; the architecture (per-sample grid, per-item patch cache, feature maps) is designed so that SAR change layers can be added as further bands.
+- **Cloud and haze edges dominate the candidate ranking (satellite-0.2).** Acquisition pairs are screened for cloud and snow only inside the 960 m window around the source event; the outer part of the 2.56 km patch is recorded but not required, and Sen2Cor misses thin cloud, haze and shadow edges. 87 % of the 30 highest-scoring candidates lie within 100 m of a cloud-like SCL pixel (16 % of the rediscovered known events). Raw-score ranking of candidates is therefore not usable; the top-30 validation found 21 REJECTED (20 cloud/haze/shadow or mowing artefacts, 2 harvested fields, 2 lake surfaces, 1 linear flood/works strip), 9 UNVERIFIED and no LIKELY candidate.
+- `after_confirm` is screened at the source event, not at the candidate position: 12 of 30 top candidates could not be assessed for persistence.
+- Known-event suppression uses the 423 V0.4 positives with fine positions; coarse-position inventory records (upper bound > 20 m) are not suppressed, so some candidates may still be documented events.
+- Baseline C uses ImageNet features of 10 m RGB chips; a within-group AUC near 0.5 says that these generic features do not transfer, not that learned encoders cannot work (no fine-tuning, no multispectral pretrained model tried).
+- RANDOM_LANDSCAPE points are generic negatives on the same dates; they contain whatever the landscape does (fields, water, settlements, forestry) and are not matched to the positive's terrain, so a model trained on them answers a different question (landslide vs landscape) than the matched-control baseline (reported slope vs similar slope).
+
+## V0.9 additions
+
+- GeoSphere media events carry no process or mass-movement quality; checked against public reports, 7 of 15 verifiable cases were floods or torrent processes and 24 of 40 had no findable report. Unverified media events stay in the main V0.9 set by registration, so some positives may not be slides.
+- The Kärnten cadastre has no positional accuracy and no verified day precision; its cohort therefore uses t0 three days before the reported day and cannot test trigger rain.
+- The strict unseen rule (Austria-wide day chaining plus 2 km location links) removes most new events; only 30 unseen units remain in total. Results are exploratory and the intervals are wide.
+- The process audit relied on web searches by an assistant; regional newspaper archives (e.g. Kleine Zeitung) were partly unreachable, so "not found" does not mean "no report exists".

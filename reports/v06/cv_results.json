@@ -1,0 +1,381 @@
+{
+  "cohort": {
+    "events": 418,
+    "units": 29,
+    "samples": 4598
+  },
+  "chance_local_auc": 0.5,
+  "variants": {
+    "conditional_logit/combined": {
+      "median_local_auc_units": 0.8507626797025514,
+      "range_local_auc_units": [
+        0.8349891699837627,
+        0.8625161720537756
+      ],
+      "median_top1_units": 0.41278628927250854,
+      "median_mrr_units": 0.6287966198903764,
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/combined_hydro": {
+      "median_local_auc_units": 0.8383480397505241,
+      "range_local_auc_units": [
+        0.8207801359253588,
+        0.8457194776606776
+      ],
+      "median_top1_units": 0.4168977774789789,
+      "median_mrr_units": 0.6172634148606251,
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/hydro_only": {
+      "median_local_auc_units": 0.49462528396590943,
+      "range_local_auc_units": [
+        0.44970105911908537,
+        0.5032817135486769
+      ],
+      "median_top1_units": 0.03610728306377793,
+      "median_mrr_units": 0.2293400757103255,
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/static": {
+      "median_local_auc_units": 0.8653389985541449,
+      "range_local_auc_units": [
+        0.8583351315975528,
+        0.8773611988267159
+      ],
+      "median_top1_units": 0.37516733182133005,
+      "median_mrr_units": 0.6064091420765588,
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/temporal": {
+      "median_local_auc_units": 0.7186910146196699,
+      "range_local_auc_units": [
+        0.7024652924756436,
+        0.7272243468890978
+      ],
+      "median_top1_units": 0.28744390539904074,
+      "median_mrr_units": 0.48404935262122256,
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/temporal_hydro": {
+      "median_local_auc_units": 0.7018450990707201,
+      "range_local_auc_units": [
+        0.667488726123938,
+        0.7143287564273846
+      ],
+      "median_top1_units": 0.2343238380656499,
+      "median_mrr_units": 0.4551814924959505,
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/combined": {
+      "median_local_auc_units": 0.7975862466986865,
+      "range_local_auc_units": [
+        0.7908193469386462,
+        0.8288254640300123
+      ],
+      "median_top1_units": 0.3973714651365745,
+      "median_mrr_units": 0.5730673987408577,
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/combined_hydro": {
+      "median_local_auc_units": 0.8074149528986694,
+      "range_local_auc_units": [
+        0.7916338843583623,
+        0.8337586121004424
+      ],
+      "median_top1_units": 0.3949192367527555,
+      "median_mrr_units": 0.5841372701103493,
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/hydro_only": {
+      "median_local_auc_units": 0.5301185975342446,
+      "range_local_auc_units": [
+        0.5060111402213738,
+        0.5869199462619621
+      ],
+      "median_top1_units": 0.1391783040837546,
+      "median_mrr_units": 0.304262093512032,
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/static": {
+      "median_local_auc_units": 0.7936809736037272,
+      "range_local_auc_units": [
+        0.7818777691407774,
+        0.8041491432266676
+      ],
+      "median_top1_units": 0.3762980092342964,
+      "median_mrr_units": 0.5663625207028199,
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/temporal": {
+      "median_local_auc_units": 0.6579433923224862,
+      "range_local_auc_units": [
+        0.6318105744601232,
+        0.6782910793116578
+      ],
+      "median_top1_units": 0.18731728705155976,
+      "median_mrr_units": 0.380395647727449,
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/temporal_hydro": {
+      "median_local_auc_units": 0.6934928701612363,
+      "range_local_auc_units": [
+        0.6713892037218882,
+        0.7117158439961554
+      ],
+      "median_top1_units": 0.2956809894765648,
+      "median_mrr_units": 0.47129613348040567,
+      "events": 418,
+      "units": 29
+    }
+  },
+  "paired_comparisons_counted": 4,
+  "paired": {
+    "conditional_logit: temporal_hydro - temporal": {
+      "per_repetition": [
+        -0.00625866240329831,
+        -0.01256216200567939,
+        -0.016834342433773797,
+        -0.025379247818377637,
+        -0.03497656635170565
+      ],
+      "median": -0.016834342433773797,
+      "bootstrap_rep1": {
+        "mean": -0.006797113861287718,
+        "ci95": [
+          -0.05855876477715559,
+          0.04142563587965878
+        ],
+        "share_above_zero": 0.399
+      }
+    },
+    "conditional_logit: combined_hydro - combined": {
+      "per_repetition": [
+        -0.00786171142539327,
+        -0.022694184491861114,
+        -0.013090835652169064,
+        -0.016796694393098055,
+        -0.012414639952027295
+      ],
+      "median": -0.013090835652169064,
+      "bootstrap_rep1": {
+        "mean": -0.008458997820635044,
+        "ci95": [
+          -0.0285114942528735,
+          0.015522397571375511
+        ],
+        "share_above_zero": 0.1975
+      }
+    },
+    "hist_gradient_boosting: temporal_hydro - temporal": {
+      "per_repetition": [
+        0.043007228595845604,
+        -0.006901875589769624,
+        0.04095990846037223,
+        0.035549477838750065,
+        0.0763120821498956
+      ],
+      "median": 0.04095990846037223,
+      "bootstrap_rep1": {
+        "mean": 0.04195337407072392,
+        "ci95": [
+          -0.02528172177319381,
+          0.0973910819157738
+        ],
+        "share_above_zero": 0.915
+      }
+    },
+    "hist_gradient_boosting: combined_hydro - combined": {
+      "per_repetition": [
+        0.028196677954124283,
+        0.009828706199982884,
+        0.00674851915937702,
+        0.022946435079360783,
+        -0.03719157967164999
+      ],
+      "median": 0.009828706199982884,
+      "bootstrap_rep1": {
+        "mean": 0.02838138299194798,
+        "ci95": [
+          -0.005346932336295493,
+          0.07056403886496727
+        ],
+        "share_above_zero": 0.943
+      }
+    }
+  },
+  "primary": {
+    "per_repetition": [
+      -0.00786171142539327,
+      -0.022694184491861114,
+      -0.013090835652169064,
+      -0.016796694393098055,
+      -0.012414639952027295
+    ],
+    "median": -0.013090835652169064,
+    "bootstrap_rep1": {
+      "mean": -0.008458997820635044,
+      "ci95": [
+        -0.0285114942528735,
+        0.015522397571375511
+      ],
+      "share_above_zero": 0.1975
+    }
+  },
+  "without_largest_unit_conditional_logit": {
+    "unit": "B_2016-07-25_1200667_001",
+    "temporal_hydro - temporal": {
+      "per_repetition": [
+        -0.004204114338042908,
+        -0.009865601947975033,
+        -0.01490764419911872,
+        -0.023213927010009794,
+        -0.03384477705474265
+      ],
+      "median": -0.01490764419911872
+    },
+    "combined_hydro - combined": {
+      "per_repetition": [
+        -0.005761534452490502,
+        -0.020741610539997457,
+        -0.011294991011292943,
+        -0.015368357640823005,
+        -0.009433563748079576
+      ],
+      "median": -0.011294991011292943
+    }
+  },
+  "max_abs_spearman_with_v05_temporal": {
+    "api_hl3d": 0.975194206490771,
+    "api_hl14d": 0.9367086491587283,
+    "max_sum_3h": 0.8447149228904589,
+    "max_sum_6h": 0.7447905174263233,
+    "max_sum_12h": 0.6350688239094615,
+    "max_sum_24h": 0.6737035677058273,
+    "max_sum_72h": 0.8505075386788316,
+    "max_sum_3h_hours_before_t0": 0.41137996659025,
+    "max_sum_6h_hours_before_t0": 0.47643632429200283,
+    "max_sum_12h_hours_before_t0": 0.5246007103599201,
+    "max_sum_24h_hours_before_t0": 0.4872508945792964,
+    "max_sum_72h_hours_before_t0": 0.536504646855446,
+    "wet_days_ge1mm_14d": 0.5038624741150731,
+    "wet_days_ge1mm_30d": 0.3445491505476291,
+    "wet_days_ge1mm_60d": 0.5018192357220478,
+    "wet_days_ge10mm_14d": 0.8134640713975685,
+    "wet_days_ge10mm_30d": 0.7863139322003089,
+    "wet_days_ge10mm_60d": 0.6293266029050832,
+    "longest_dry_spell_h_60d": 0.47076300523412684,
+    "current_dry_spell_h": 0.9016117507068476,
+    "available_water_3d": 0.9989704308609171,
+    "available_water_7d": 0.9994158270800508,
+    "available_water_14d": 0.9983583574899978
+  },
+  "coverage": {
+    "api_hl3d": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "api_hl14d": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "max_sum_3h": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "max_sum_6h": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "max_sum_12h": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "max_sum_24h": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "max_sum_72h": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "max_sum_3h_hours_before_t0": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "max_sum_6h_hours_before_t0": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "max_sum_12h_hours_before_t0": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "max_sum_24h_hours_before_t0": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "max_sum_72h_hours_before_t0": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "wet_days_ge1mm_14d": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "wet_days_ge1mm_30d": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "wet_days_ge1mm_60d": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "wet_days_ge10mm_14d": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "wet_days_ge10mm_30d": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "wet_days_ge10mm_60d": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "longest_dry_spell_h_60d": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "current_dry_spell_h": {
+      "positive": 1.0,
+      "control": 1.0
+    },
+    "available_water_3d": {
+      "positive": 0.9976076555023924,
+      "control": 0.9952153110047847
+    },
+    "available_water_7d": {
+      "positive": 0.9976076555023924,
+      "control": 0.9952153110047847
+    },
+    "available_water_14d": {
+      "positive": 0.9976076555023924,
+      "control": 0.9952153110047847
+    }
+  },
+  "inputs": {
+    "config_sha256": "355cc10369a38f56b05a93a1a052b1174d9d26c3e10b3d4efd1c701c37879ecb",
+    "oof_sha256": "52061a35a8c798d6576c5777d9e066a761a9ba1baca4d5a9a5a533f5fd4b4720"
+  }
+}

@@ -6,7 +6,6 @@ import shutil
 import subprocess
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
-from functools import lru_cache
 
 import numpy as np
 import rasterio

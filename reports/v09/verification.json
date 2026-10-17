@@ -1,0 +1,27 @@
+{
+  "checks": {
+    "registration_and_inputs": true,
+    "frozen_v04_models": true,
+    "v04_and_baseline_tracked_files_unmodified": true,
+    "no_eligible_event_in_a_seen_block": true,
+    "no_eligible_event_is_a_v04_candidate": true,
+    "no_media_process_conflict": true,
+    "audit_covers_exactly_the_media_candidates": true,
+    "audit_gate_recomputed": true,
+    "dataset_v04_invariants": true,
+    "dataset_v09_invariants": true,
+    "dataset_only_audited_eligible_events": true,
+    "no_audit_excluded_event_in_dataset": true,
+    "all_inca_hours_before_t0": true,
+    "purged_groups_absent": true,
+    "purge_recomputed": true,
+    "pooled_units_recomputed": true,
+    "units_one_per_group": true,
+    "freeze_hashes": true,
+    "scored_once_after_freeze": true,
+    "stored_predictions_reproduced": true,
+    "primary_auc_recomputed": true
+  },
+  "max_prediction_difference": 0.0,
+  "status": "PASS"
+}

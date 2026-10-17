@@ -87,6 +87,21 @@ def stability_figure(figure: str):
     return FileResponse(directory/(figure+'.png'), media_type='image/png')
 
 
+@app.get('/api/satellite')
+def satellite():
+    # Pipeline B aggregate bundle (python -m preslide.satellite report); no coordinates or source identifiers.
+    path=ROOT/'data/satellite/web/results.json'
+    if not path.exists(): raise HTTPException(503,'Satellitenergebnisse fehlen: python -m preslide.satellite report')
+    return read_json(path)
+
+@app.get('/api/satellite/contact_sheets/{name}.png')
+def satellite_contact_sheet(name:str):
+    import re
+    if not re.fullmatch(r'contact_sheet_\d{2}',name): raise HTTPException(404,'Unbekannter Kontaktbogen')
+    path=ROOT/'reports/satellite/contact_sheets'/(name+'.png')
+    if not path.exists(): raise HTTPException(404,'Unbekannter Kontaktbogen')
+    return FileResponse(path,media_type='image/png',headers={'Cache-Control':'private, max-age=3600'})
+
 dist=ROOT/'frontend/dist'
 if dist.exists():
     app.mount('/assets',StaticFiles(directory=dist/'assets'),name='assets')

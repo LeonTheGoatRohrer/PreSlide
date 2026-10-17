@@ -1,0 +1,61 @@
+{
+  "version": "v0.6.0",
+  "registered_on": "2026-10-15",
+  "registered_before": "any V0.6 hydrological feature was computed, viewed or modelled",
+  "status": "exploratory grouped cross-validation on already seen events (V0.5 cohort); no new sealed or external test",
+  "plan": "reports/weiterentwicklung_2026-10-15/UMSETZUNGSPLAN.md, package P3.1 (renumbered V0.6 because V0.5 was already used for the neighbour-slope design)",
+  "question": "Do hydrological summaries of the hourly INCA rain history (antecedent precipitation index, intensity-duration maxima, wet-day counts, dry spells, rain plus snowmelt) add ranking skill beyond the V0.5 temporal features for the documented slope against ten unmatched surrounding slopes?",
+  "primary_endpoint": "conditional logit: unit-weighted local AUC of combined_hydro minus combined (paired, same groups/folds/purge), median over the 5 registered repetitions; 95 % interval from the unit bootstrap of repetition 1 (2000 draws, seed 20261015)",
+  "decision_rule": "A hydrological benefit is called established only if the paired bootstrap interval of the primary difference excludes zero; otherwise 'no established benefit'. All four paired comparisons (2 models x {temporal, combined}) are reported; none is selected after the fact.",
+  "must_not_change": ["baseline V0.3 artifacts", "V0.4 artifacts and sealed test", "V0.5 dataset, cohort freeze, CV plan and results", "config/v05.json"],
+  "comparisons_counted": 4,
+
+  "inputs": {
+    "dataset": "data/v05/run_5b86b6475ecb/dataset.parquet",
+    "dataset_sha256": "6eae56574f9388d4111501afa4b636350d9ab26c0a948f7f079c0e8b9d40eb26",
+    "cv_plan": "data/v05/cv/cv_plan.json",
+    "cv_plan_sha256": "f1aefe8be415b82cec98e95ca66d6582a9060a94ae729aeff78e16e54d231c4a",
+    "cohort": "the 418 frozen V0.5 groups (4 598 samples), identical positives, controls, t0, folds and spatial purge",
+    "weather_source": "hourly INCA v1 RR from the already cached V0.4/V0.5 responses; a cache miss is an error, no download"
+  },
+
+  "hydrology": {
+    "boundary_rule": "identical to V0.4: hourly value at T admissible iff T + 1 h < t0; 60-day window additionally T - 1 h >= t0 - 60 d (1438 hours)",
+    "api_half_lives_days": [3, 14],
+    "api_definition": "API_t = k * API_{t-1} + RR_t with k = 0.5 ** (1 / (24 * half_life_days)), start 0 at the first admissible hour of the 60-day window, value at the last admissible hour (truncation of the 14-day memory at 60 days is accepted and reported)",
+    "max_sum_hours": [3, 6, 12, 24, 72],
+    "max_sum_definition": "maximum over the admissible 60-day window of the rolling sum of RR over h consecutive hours; the time feature is hours between the end of the maximising interval (last hour T + 1 h) and t0, latest maximum on ties",
+    "wet_day_blocks": "24-hour blocks counted backwards from the last admissible hour (not calendar days); incomplete leading remainder discarded",
+    "wet_day_thresholds_mm": [1, 10],
+    "wet_day_windows_days": [14, 30, 60],
+    "dry_hour_threshold_mm": 0.1,
+    "dry_spell": "longest run of dry hours in the 60-day window (hours) and the current run of dry hours up to the last admissible hour",
+    "available_water": "rain_sum_Nd + swe_melt_Nd for N in 3, 7, 14 from existing V0.4 features (SNOWGRID day boundary differs from the t0-anchored rain window; documented); missing if swe_melt is missing",
+    "features": ["api_hl3d", "api_hl14d",
+                 "max_sum_3h", "max_sum_6h", "max_sum_12h", "max_sum_24h", "max_sum_72h",
+                 "max_sum_3h_hours_before_t0", "max_sum_6h_hours_before_t0", "max_sum_12h_hours_before_t0", "max_sum_24h_hours_before_t0", "max_sum_72h_hours_before_t0",
+                 "wet_days_ge1mm_14d", "wet_days_ge1mm_30d", "wet_days_ge1mm_60d", "wet_days_ge10mm_14d", "wet_days_ge10mm_30d", "wet_days_ge10mm_60d",
+                 "longest_dry_spell_h_60d", "current_dry_spell_h",
+                 "available_water_3d", "available_water_7d", "available_water_14d"],
+    "missing_values": "same rule as V0.5 (conditional logit: group-wise training mean; boosting: native); no invented values; a series that fails the V0.4 completeness/plausibility rule never reached the cohort"
+  },
+
+  "variants": {
+    "static": "V0.5 static (22)",
+    "temporal": "V0.5 temporal (29)",
+    "combined": "V0.5 static + temporal (+ V0.5 interactions for conditional logit)",
+    "hydro_only": "23 hydrological features",
+    "temporal_hydro": "temporal + hydrological",
+    "combined_hydro": "combined + hydrological (same V0.5 interactions, no new interactions)"
+  },
+  "models": "conditional_logit (primary) and hist_gradient_boosting with the unchanged V0.5 hyperparameters; no tuning, no seed search",
+  "cross_validation": "the frozen V0.5 plan (5 folds x 5 repetitions, purged primary), unchanged",
+  "metrics": "unchanged V0.5 definitions (local AUC unit-weighted, top-1, top-3, mrr)",
+  "bootstrap": {"draws": 2000, "seed": 20261015, "unit": "V0.4 independence unit", "predictions": "repetition 1 out-of-fold"},
+  "diagnostics": {
+    "stanz": "primary difference with the largest (2016 Stanz) unit removed, same predictions",
+    "correlation": "maximum absolute Spearman correlation of each hydrological feature with the V0.5 temporal features (redundancy check)",
+    "coverage": "share of non-missing values per hydrological feature, by class"
+  },
+  "interpretation_limits": "predictive importance is not causation; INCA 1 km hourly rain is a coarse proxy of slope-scale rainfall; rain after t0 on the event day is invisible; events already seen in V0.4/V0.5 so results are exploratory"
+}

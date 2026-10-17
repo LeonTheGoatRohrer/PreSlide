@@ -1,7 +1,7 @@
 """Observed INCA weather, conservative timestamp envelopes, no event-day data."""
 import numpy as np
 import pandas as pd
-from .sources import ROOT, cached_json
+from .sources import cached_json
 from .terrain import PROJECT
 from .common import write_json
 

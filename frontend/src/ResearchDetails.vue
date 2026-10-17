@@ -5,6 +5,7 @@ import StabilityFigures from './StabilityFigures.vue'
 import InfoTip from './InfoTip.vue'
 import EventExplorer from './EventExplorer.vue'
 import SectionGuide from './SectionGuide.vue'
+import SatelliteResults from './SatelliteResults.vue'
 import {explain} from './metricDefinitions.js'
 const props=defineProps({mode:{type:String,default:'method'},initialCase:String})
 const emit=defineEmits(['show-case'])
@@ -172,6 +173,8 @@ function featureLabel(f){
         <p class="section-intro">Für jedes der {{bundle.event_explorer.events.length}} Ereignisse: Welchen Rang erhielt der echte Rutschungshang unter seinen sechs Hängen, und hat das Wetter geholfen? Nur Bewertungen von Modellen, die die jeweilige Gruppe nicht im Training hatten. Zufall: im Mittel Rang 3,5 und 2,5 geschlagene Kontrollen.</p>
         <EventExplorer :explorer="bundle.event_explorer" :model="model" :names="names" :feature-names="featureNames" @show-case="showCase"/>
       </section>
+
+<details class="disclosure"><summary>Satellitenbilder vor und nach bekannten Ereignissen (Pipeline B, getrennt)</summary><SatelliteResults/></details>
 
 <details class="disclosure"><summary>Historische Datenprüfung und Quellen</summary>      <section id="methodik" class="section methodology">
         <div class="section-heading"><div><p class="section-number">Historisch · Qualitätsprüfung der Baseline</p><h2>Jeder Ausschluss bleibt sichtbar.</h2></div><span class="count-label">{{bundle?.dataset.candidates}} Kandidaten → {{summary.complete_events}} vollständige Gruppen</span></div>

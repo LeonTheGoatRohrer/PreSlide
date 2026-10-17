@@ -1,6 +1,5 @@
 """Resumable real-data experiment; exclusions are recorded, never silently relaxed."""
 import hashlib
-import traceback
 import numpy as np
 import pandas as pd
 from shapely import contains_xy

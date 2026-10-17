@@ -76,7 +76,7 @@ def main():
       f"**Median {f3(p['median'])}** (Spannweite der fünf Wiederholungen {f3(p['range'][0])}–{f3(p['range'][1])}; "
       f"Bootstrap Wiederholung 1 {ci(p['ci95_rep1'])}). Zufall 0,5; Neigungsregel ohne Fit {f3(p['slope_rule'])}.\n")
     d = p['combined_minus_static_rep1_bootstrap']
-    w(f"**Hauptvergleich kombiniert − statisch:** je Wiederholung " + ', '.join(f3(x) for x in p['combined_minus_static_per_repetition'])
+    w("**Hauptvergleich kombiniert − statisch:** je Wiederholung " + ', '.join(f3(x) for x in p['combined_minus_static_per_repetition'])
       + f"; Bootstrap (Wdh. 1) {f3(d['mean'])} {ci(d['ci95'])}, Anteil > 0: {f3(d['share_above_zero'])}.\n")
     w('## Alle Modelle (räumlich bereinigt; Median über 5 Wiederholungen, Einheiten gleich gewichtet)\n')
     w('| Modell | Merkmale | lokale AUC | Top-1 | Top-3 | mittl. Rang | MRR | lokale AUC je Ereignis | gepoolte AP |')

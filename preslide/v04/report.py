@@ -46,7 +46,6 @@ def balance(data, cols):
     for c in cols:
         if c not in data:
             continue
-        g = data.groupby('event_group_id')
         diff = (data[data.label == 1].set_index('event_group_id')[c] - data[data.label == 0].groupby('event_group_id')[c].mean())
         sd = data[c].std()
         out[c] = float(diff.mean() / sd) if sd and np.isfinite(sd) and diff.notna().any() else None

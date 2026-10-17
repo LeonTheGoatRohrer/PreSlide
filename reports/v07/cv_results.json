@@ -1,0 +1,348 @@
+{
+  "cohort": {
+    "events": 418,
+    "units": 29,
+    "samples": 4598
+  },
+  "chance_local_auc": 0.5,
+  "a_in_model": {
+    "conditional_logit/static": {
+      "median_local_auc_units": 0.8653389985541449,
+      "range": [
+        0.8583351315975528,
+        0.8773611988267159
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/combined": {
+      "median_local_auc_units": 0.8507626797025514,
+      "range": [
+        0.8349891699837627,
+        0.8625161720537756
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/infra_only": {
+      "median_local_auc_units": 0.9282377732495148,
+      "range": [
+        0.9240899888287417,
+        0.9296387769524588
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/static_infra": {
+      "median_local_auc_units": 0.9116893038949954,
+      "range": [
+        0.9005275276216754,
+        0.9286145874157243
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/combined_infra": {
+      "median_local_auc_units": 0.9012253441809428,
+      "range": [
+        0.8913886027913959,
+        0.9159446511640306
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/paired": {
+      "static_infra - static": {
+        "mean": 0.0539022394388148,
+        "ci95": [
+          0.02730787037037036,
+          0.08247476900236915
+        ],
+        "share_above_zero": 1.0
+      },
+      "combined_infra - combined": {
+        "mean": 0.05705095105786151,
+        "ci95": [
+          0.025550748701104728,
+          0.09127585734206908
+        ],
+        "share_above_zero": 1.0
+      },
+      "infra_only_ci95": [
+        0.8881997965535577,
+        0.9573400052510522
+      ]
+    },
+    "hist_gradient_boosting/static": {
+      "median_local_auc_units": 0.7936809736037272,
+      "range": [
+        0.7818777691407774,
+        0.8041491432266676
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/combined": {
+      "median_local_auc_units": 0.7975862466986865,
+      "range": [
+        0.7908193469386462,
+        0.8288254640300123
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/infra_only": {
+      "median_local_auc_units": 0.8920716799222238,
+      "range": [
+        0.8798856982038913,
+        0.8981005625582161
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/static_infra": {
+      "median_local_auc_units": 0.9139130839966646,
+      "range": [
+        0.8867910461998029,
+        0.9272253880324576
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/combined_infra": {
+      "median_local_auc_units": 0.9136479466349073,
+      "range": [
+        0.9041430099880847,
+        0.9205008178741338
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/paired": {
+      "static_infra - static": {
+        "mean": 0.1393001929658423,
+        "ci95": [
+          0.07354000168143589,
+          0.2150020133875264
+        ],
+        "share_above_zero": 1.0
+      },
+      "combined_infra - combined": {
+        "mean": 0.11471735699413677,
+        "ci95": [
+          0.058502827427639764,
+          0.18762442230785514
+        ],
+        "share_above_zero": 1.0
+      },
+      "infra_only_ci95": [
+        0.8517078782842669,
+        0.9273014674424574
+      ]
+    }
+  },
+  "b_caliper": {
+    "groups_kept": 173,
+    "groups_total": 418,
+    "controls_kept_share": 0.3083732057416268,
+    "units_kept": 10
+  },
+  "b_equal_visibility": {
+    "conditional_logit/static": {
+      "all_controls_same_groups": {
+        "median_local_auc_units": 0.7963401360544216,
+        "range": [
+          0.7482312925170066,
+          0.8210782312925169
+        ],
+        "events": 173,
+        "units": 10
+      },
+      "caliper_controls": {
+        "median_local_auc_units": 0.7832200086383758,
+        "range": [
+          0.7295855739121043,
+          0.7979850448115753
+        ],
+        "events": 173,
+        "units": 10
+      },
+      "difference": -0.013120127416045735,
+      "bootstrap_rep1_difference": {
+        "mean": -0.017329048536875086,
+        "ci95": [
+          -0.068125,
+          0.03085271568945025
+        ],
+        "share_above_zero": 0.253
+      }
+    },
+    "conditional_logit/temporal": {
+      "all_controls_same_groups": {
+        "median_local_auc_units": 0.6396054421768708,
+        "range": [
+          0.610891156462585,
+          0.6607210884353739
+        ],
+        "events": 173,
+        "units": 10
+      },
+      "caliper_controls": {
+        "median_local_auc_units": 0.6179150469711693,
+        "range": [
+          0.5944090810927546,
+          0.6693457779937372
+        ],
+        "events": 173,
+        "units": 10
+      },
+      "difference": -0.021690395205701485
+    },
+    "conditional_logit/combined": {
+      "all_controls_same_groups": {
+        "median_local_auc_units": 0.8052925170068026,
+        "range": [
+          0.777874149659864,
+          0.822190476190476
+        ],
+        "events": 173,
+        "units": 10
+      },
+      "caliper_controls": {
+        "median_local_auc_units": 0.7815235395745599,
+        "range": [
+          0.7116296026347045,
+          0.7942407137458156
+        ],
+        "events": 173,
+        "units": 10
+      },
+      "difference": -0.02376897743224271,
+      "bootstrap_rep1_difference": {
+        "mean": -0.06652642064841813,
+        "ci95": [
+          -0.17197371369182607,
+          0.0050029141021486765
+        ],
+        "share_above_zero": 0.0445
+      }
+    },
+    "bootstrap_ci95_caliper_static": [
+      0.6793658419717091,
+      0.8882777777777777
+    ],
+    "land_cover_ablation_combined": {
+      "with_lc_all_groups": {
+        "median_local_auc_units": 0.8052925170068026,
+        "range": [
+          0.777874149659864,
+          0.822190476190476
+        ],
+        "events": 173,
+        "units": 10
+      },
+      "without_lc_all_groups": {
+        "median_local_auc_units": 0.7657959183673468,
+        "range": [
+          0.7347551020408163,
+          0.8121632653061224
+        ],
+        "events": 173,
+        "units": 10
+      },
+      "with_lc_caliper": {
+        "median_local_auc_units": 0.7815235395745599,
+        "range": [
+          0.7116296026347045,
+          0.7942407137458156
+        ],
+        "events": 173,
+        "units": 10
+      },
+      "without_lc_caliper": {
+        "median_local_auc_units": 0.7744022513767412,
+        "range": [
+          0.7344821293596804,
+          0.8160979375877334
+        ],
+        "events": 173,
+        "units": 10
+      }
+    }
+  },
+  "diagnostics": {
+    "distance_quantiles_m": {
+      "dist_building_m": {
+        "positive": [
+          13.4,
+          39.6,
+          212.5,
+          5000.0,
+          5000.0
+        ],
+        "control": [
+          66.7,
+          179.0,
+          903.7,
+          5000.0,
+          5000.0
+        ]
+      },
+      "dist_road_m": {
+        "positive": [
+          6.7,
+          16.8,
+          90.8,
+          5000.0,
+          5000.0
+        ],
+        "control": [
+          56.5,
+          208.7,
+          5000.0,
+          5000.0,
+          5000.0
+        ]
+      },
+      "dist_infrastructure_m": {
+        "positive": [
+          6.2,
+          10.4,
+          70.8,
+          5000.0,
+          5000.0
+        ],
+        "control": [
+          40.2,
+          115.9,
+          578.5,
+          5000.0,
+          5000.0
+        ]
+      }
+    },
+    "capped_share": {
+      "building_capped": {
+        "positive": 0.4473684210526316,
+        "control": 0.4739234449760766
+      },
+      "road_capped": {
+        "positive": 0.3875598086124402,
+        "control": 0.5409090909090909
+      }
+    },
+    "spearman_dist_infrastructure": {
+      "elevation": 0.45757076606301705,
+      "lc_forest": 0.45759814959498885,
+      "lc_grass_shrub": -0.2840100029571859,
+      "lc_agriculture": -0.27368462811918814,
+      "lc_open_bare": 0.015547980513318264,
+      "lc_artificial_water_other": -0.18957085803323476
+    }
+  },
+  "inputs": {
+    "config_sha256": "7e321379b1b88fd4100ae2c3c4035c353fc3437242b5ffa749ba2d6b9c9841e2",
+    "oof_infra_sha256": "277a12d9f03311f133c63402267d79294cc4c684a588d5ebe4e002e8f2898c65",
+    "infrastructure_sha256": "50ce02da0e90b6d6113a0c6596fef05d8b9659ee282f43c6c0a2476accf0d9ef"
+  }
+}
