@@ -37,6 +37,23 @@ MUTANTS = {
         ('truncated catchment kept', "'log10_catchment_m2': np.where(edge, np.nan, np.log10(area))", "'log10_catchment_m2': np.log10(area)"),
         ('block checksum not verified', "if file_digest(path, 'sha256') != meta['sha256']:", "if False:"),
     ],
+    'preslide/susceptibility/sampling.py': [
+        ('buffer not applied', "shapely.buffer(np.array(known, dtype=object), circumscribed, quad_segs=quad_segs)", "shapely.buffer(np.array(known, dtype=object), 0, quad_segs=quad_segs)"),
+        ('buffer chord error', "circumscribed = buffer_m / math.cos(math.pi / (4 * quad_segs))", "circumscribed = buffer_m"),
+        ('obscured areas ignored', "    if obscured:\n        zone = shapely.union", "    if False:\n        zone = shapely.union"),
+        ('min separation ignored', "            if too_close(xi, yi, tree,", "            if False and too_close(xi, yi, tree,"),
+        ('extent not checked', "inside = shapely.contains_xy(allowed, x, y)\n        x, y", "inside = np.ones(len(x), bool)\n        x, y"),
+        ('top third ignored', "top = z >= np.quantile(z, 2 / 3)", "top = z >= np.quantile(z, 0)"),
+        ('small polygon dropped', "return float(cell_centre(p.x, cell)), float(cell_centre(p.y, cell)), 'containing_cell'",
+         "return None, None, 'containing_cell'"),
+    ],
+    'preslide/susceptibility/evaluate.py': [
+        ('held-out inventory in training', "return data[data.dataset != held], data[data.dataset == held]", "return data, data[data.dataset == held]"),
+        ('blocks split across folds', "return np.array([fold_of[b] for b in blocks])", "return np.arange(len(blocks)) % k"),
+        ('no purge', "return train[d >= gap_m]", "return train"),
+        ('bootstrap ignores blocks', "return counts[:, codes]", "return rng.integers(0, 3, size=(n, len(codes)))"),
+        ('Boyce ratio inverted', "ratio.append(np.mean((pres >= lo) & (pres <= hi)) / e)", "ratio.append(e / max(np.mean((pres >= lo) & (pres <= hi)), 1e-9))"),
+    ],
 }
 
 

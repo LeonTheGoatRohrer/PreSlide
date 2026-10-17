@@ -1,107 +1,179 @@
 {
- "baseline_summary": "40 passed, 2 warnings in 5.71s",
+ "baseline_summary": "52 passed, 2 warnings in 7.81s",
  "mutants": [
   {
    "file": "preslide/susceptibility/registry.py",
    "mutant": "sealed flags not checked",
    "tests_failed": true,
-   "summary": "2 failed, 38 passed, 2 warnings in 7.22s"
+   "summary": "2 failed, 50 passed, 2 warnings in 9.00s"
   },
   {
    "file": "preslide/susceptibility/registry.py",
    "mutant": "sealed dataset allowed in an arm",
    "tests_failed": true,
-   "summary": "1 failed, 39 passed, 2 warnings in 7.22s"
+   "summary": "1 failed, 51 passed, 2 warnings in 9.44s"
   },
   {
    "file": "preslide/susceptibility/registry.py",
    "mutant": "DEM date rule off",
    "tests_failed": true,
-   "summary": "2 failed, 38 passed, 2 warnings in 7.04s"
+   "summary": "2 failed, 50 passed, 2 warnings in 9.18s"
   },
   {
    "file": "preslide/susceptibility/registry.py",
    "mutant": "DEM rule off by one day (>=)",
    "tests_failed": true,
-   "summary": "2 failed, 38 passed, 2 warnings in 9.19s"
+   "summary": "2 failed, 50 passed, 2 warnings in 9.57s"
   },
   {
    "file": "preslide/susceptibility/registry.py",
    "mutant": "amendment may overwrite",
    "tests_failed": true,
-   "summary": "1 failed, 39 passed, 2 warnings in 9.70s"
+   "summary": "1 failed, 51 passed, 2 warnings in 8.61s"
   },
   {
    "file": "preslide/susceptibility/registry.py",
    "mutant": "training_datasets returns sealed",
    "tests_failed": true,
-   "summary": "1 failed, 39 passed, 2 warnings in 9.77s"
+   "summary": "1 failed, 51 passed, 2 warnings in 9.94s"
   },
   {
    "file": "preslide/susceptibility/paths.py",
    "mutant": "config hash not checked",
    "tests_failed": true,
-   "summary": "1 failed, 39 passed, 2 warnings in 7.41s"
+   "summary": "1 failed, 51 passed, 2 warnings in 9.15s"
   },
   {
    "file": "preslide/susceptibility/paths.py",
    "mutant": "amendment sidecar not checked",
    "tests_failed": true,
-   "summary": "1 failed, 39 passed, 2 warnings in 7.22s"
+   "summary": "1 failed, 51 passed, 2 warnings in 9.12s"
   },
   {
    "file": "preslide/susceptibility/paths.py",
    "mutant": "guard allows any path",
    "tests_failed": true,
-   "summary": "4 failed, 36 passed, 2 warnings in 7.81s"
+   "summary": "4 failed, 48 passed, 2 warnings in 9.55s"
   },
   {
    "file": "preslide/susceptibility/inventory.py",
    "mutant": "archive members not checked",
    "tests_failed": true,
-   "summary": "5 failed, 35 passed, 2 warnings in 7.61s"
+   "summary": "5 failed, 47 passed, 2 warnings in 10.37s"
   },
   {
    "file": "preslide/susceptibility/inventory.py",
    "mutant": "degree areas not projected",
    "tests_failed": true,
-   "summary": "1 failed, 39 passed, 2 warnings in 7.24s"
+   "summary": "1 failed, 51 passed, 2 warnings in 12.72s"
   },
   {
    "file": "preslide/susceptibility/inventory.py",
    "mutant": "UTM zone from latitude",
    "tests_failed": true,
-   "summary": "2 failed, 38 passed, 2 warnings in 6.66s"
+   "summary": "2 failed, 50 passed, 2 warnings in 14.66s"
   },
   {
    "file": "preslide/susceptibility/terrain.py",
    "mutant": "DEM date rule allows same day",
    "tests_failed": true,
-   "summary": "1 failed, 39 passed, 2 warnings in 7.10s"
+   "summary": "1 failed, 51 passed, 2 warnings in 10.09s"
   },
   {
    "file": "preslide/susceptibility/terrain.py",
    "mutant": "grid origin swapped",
    "tests_failed": true,
-   "summary": "1 failed, 39 passed, 2 warnings in 7.12s"
+   "summary": "1 failed, 51 passed, 2 warnings in 10.01s"
   },
   {
    "file": "preslide/susceptibility/terrain.py",
    "mutant": "aspect sin/cos swapped",
    "tests_failed": true,
-   "summary": "1 failed, 39 passed, 2 warnings in 7.09s"
+   "summary": "1 failed, 51 passed, 2 warnings in 9.77s"
   },
   {
    "file": "preslide/susceptibility/terrain.py",
    "mutant": "truncated catchment kept",
    "tests_failed": true,
-   "summary": "1 failed, 39 passed, 2 warnings in 6.97s"
+   "summary": "1 failed, 51 passed, 2 warnings in 9.41s"
   },
   {
    "file": "preslide/susceptibility/terrain.py",
    "mutant": "block checksum not verified",
    "tests_failed": true,
-   "summary": "1 failed, 39 passed, 2 warnings in 6.81s"
+   "summary": "1 failed, 51 passed, 2 warnings in 9.38s"
+  },
+  {
+   "file": "preslide/susceptibility/sampling.py",
+   "mutant": "buffer not applied",
+   "tests_failed": true,
+   "summary": "2 failed, 50 passed, 2 warnings in 10.04s"
+  },
+  {
+   "file": "preslide/susceptibility/sampling.py",
+   "mutant": "buffer chord error",
+   "tests_failed": true,
+   "summary": "1 failed, 51 passed, 2 warnings in 9.44s"
+  },
+  {
+   "file": "preslide/susceptibility/sampling.py",
+   "mutant": "obscured areas ignored",
+   "tests_failed": true,
+   "summary": "1 failed, 51 passed, 2 warnings in 9.89s"
+  },
+  {
+   "file": "preslide/susceptibility/sampling.py",
+   "mutant": "min separation ignored",
+   "tests_failed": true,
+   "summary": "2 failed, 50 passed, 2 warnings in 9.58s"
+  },
+  {
+   "file": "preslide/susceptibility/sampling.py",
+   "mutant": "extent not checked",
+   "tests_failed": true,
+   "summary": "1 failed, 51 passed, 2 warnings in 9.55s"
+  },
+  {
+   "file": "preslide/susceptibility/sampling.py",
+   "mutant": "top third ignored",
+   "tests_failed": true,
+   "summary": "1 failed, 51 passed, 2 warnings in 9.70s"
+  },
+  {
+   "file": "preslide/susceptibility/sampling.py",
+   "mutant": "small polygon dropped",
+   "tests_failed": true,
+   "summary": "1 failed, 51 passed, 2 warnings in 9.77s"
+  },
+  {
+   "file": "preslide/susceptibility/evaluate.py",
+   "mutant": "held-out inventory in training",
+   "tests_failed": true,
+   "summary": "1 failed, 51 passed, 2 warnings in 9.79s"
+  },
+  {
+   "file": "preslide/susceptibility/evaluate.py",
+   "mutant": "blocks split across folds",
+   "tests_failed": true,
+   "summary": "1 failed, 51 passed, 2 warnings in 9.86s"
+  },
+  {
+   "file": "preslide/susceptibility/evaluate.py",
+   "mutant": "no purge",
+   "tests_failed": true,
+   "summary": "1 failed, 51 passed, 2 warnings in 9.40s"
+  },
+  {
+   "file": "preslide/susceptibility/evaluate.py",
+   "mutant": "bootstrap ignores blocks",
+   "tests_failed": true,
+   "summary": "1 failed, 51 passed, 2 warnings in 9.84s"
+  },
+  {
+   "file": "preslide/susceptibility/evaluate.py",
+   "mutant": "Boyce ratio inverted",
+   "tests_failed": true,
+   "summary": "1 failed, 51 passed, 2 warnings in 9.70s"
   }
  ],
  "status": "PASS"

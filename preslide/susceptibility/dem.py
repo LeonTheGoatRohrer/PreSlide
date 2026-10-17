@@ -85,8 +85,12 @@ def fetch_nasadem(lat, lon):
     return rec
 
 
+MARGIN_DEG = 0.1  # covers the terrain block margin (3 km) around the extent
+
+
 def fetch(dataset, limit=0):
-    tiles = tiles_for(extent_bbox_lonlat(dataset))
+    lon0, lat0, lon1, lat1 = extent_bbox_lonlat(dataset)
+    tiles = tiles_for((lon0 - MARGIN_DEG, lat0 - MARGIN_DEG, lon1 + MARGIN_DEG, lat1 + MARGIN_DEG))
     tiles = tiles[:limit] if limit else tiles
     out = []
     for lat, lon in tiles:

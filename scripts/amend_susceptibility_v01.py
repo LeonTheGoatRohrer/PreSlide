@@ -15,16 +15,20 @@ sys.path.insert(0, str(ROOT))
 from preslide.common import read_json  # noqa: E402
 from preslide.susceptibility import paths as P, registry  # noqa: E402
 
-LATER_STAGES = [P.DATA / 'samples', P.DATA / 'features', P.MODELS]
+# An amendment states the earliest stage it must precede; everything from that stage on must not exist yet.
+STAGES = {'samples': [P.DATA / 'samples', P.DATA / 'features', P.MODELS],
+          'features': [P.DATA / 'features', P.DATA / 'samples', P.MODELS],
+          'models': [P.MODELS, P.DATA / 'predictions']}
 
 
 def main(draft_path):
     if not P.REGISTRATION.exists():
         sys.exit('not registered')
-    started = [str(p) for p in LATER_STAGES if p.exists() and any(p.rglob('*'))]
-    if started:
-        sys.exit(f'samples, features or models already exist ({started}); a design change now needs a new version')
     draft = read_json(draft_path)
+    later = STAGES[draft.get('before', 'samples')]
+    started = [str(p) for p in later if p.exists() and any(p.rglob('*'))]
+    if started:
+        sys.exit(f'later-stage outputs already exist ({started}); a design change now needs a new version')
     existing = P.amendments()
     if draft['id'] != len(existing) + 1:
         sys.exit(f'amendment id must be {len(existing) + 1}')
@@ -33,7 +37,7 @@ def main(draft_path):
     registry.validate(cfg)
     record = {**draft, 'written_at_utc': datetime.now(timezone.utc).isoformat(),
               'config_sha256': P.text_sha(P.CONFIG),
-              'preconditions': 'registration present; no samples, features or models existed'}
+              'preconditions': f'registration present; nothing from stage {draft.get("before", "samples")!r} on existed'}
     out = P.REPORT / f'AMENDMENT_{draft["id"]}.json'
     if out.exists():
         sys.exit(f'{out} exists (write-once)')

@@ -7,6 +7,7 @@ import math
 import json
 
 import numpy as np
+import shapely
 import pytest
 from pyproj import CRS, Transformer
 from shapely.geometry import box
@@ -252,3 +253,146 @@ def test_corrupted_feature_block_is_rejected(tmp_path):
     path.with_suffix('.json').write_text(json.dumps({'sha256': 'wrong'}))
     with pytest.raises(T.CacheCorruption):
         T.load_block(path)
+
+
+# ---------- Phase 3: sampling ----------
+
+from shapely.geometry import Point  # noqa: E402
+
+from preslide.susceptibility import sampling as S  # noqa: E402
+
+
+def square(x0, y0, size):
+    return box(x0, y0, x0 + size, y0 + size)
+
+
+def test_background_respects_buffer_extent_and_min_separation():
+    area = square(0, 0, 6000)
+    slides = [Point(1500, 1500).buffer(200), Point(4200, 3900).buffer(80)]
+    hidden = square(5000, 0, 1000)
+    allowed = area.difference(S.exclusion_zone(slides, [hidden], 100))
+    x, y, _ = S.draw_background(allowed, 400, 30, 90, np.random.default_rng(7))
+    pts = shapely.points(x, y)
+    assert len(x) == 400
+    assert shapely.contains(area, pts).all()
+    assert min(shapely.distance(s, pts).min() for s in slides) >= 100 - 1e-6
+    assert not shapely.intersects(hidden, pts).any()
+    d = np.hypot(x[:, None] - x[None, :], y[:, None] - y[None, :]) + np.eye(len(x)) * 1e9
+    assert d.min() >= 90
+    assert np.allclose((x - 15) % 30, 0) and np.allclose((y - 15) % 30, 0)
+
+
+def test_background_draw_is_reproducible_from_seed():
+    allowed = square(0, 0, 3000)
+    a = S.draw_background(allowed, 100, 30, 90, np.random.default_rng(101))
+    b = S.draw_background(allowed, 100, 30, 90, np.random.default_rng(101))
+    c = S.draw_background(allowed, 100, 30, 90, np.random.default_rng(102))
+    assert np.array_equal(a[0], b[0]) and np.array_equal(a[1], b[1]) and not np.array_equal(a[0], c[0])
+
+
+def test_background_fails_loudly_when_area_is_too_small():
+    with pytest.raises(RuntimeError, match='only'):
+        S.draw_background(square(0, 0, 300), 50, 30, 90, np.random.default_rng(1), batch=1000, max_draws=20000)
+
+
+def test_positive_cell_lies_in_polygon_or_contains_small_polygon():
+    rng = np.random.default_rng(3)
+    big = square(1000, 1000, 400)
+    x, y, how = S.choose_positive(big, 30, rng)
+    assert how == 'inside_cell' and big.contains(Point(x, y))
+    tiny = square(1012, 1012, 5)          # smaller than one cell
+    x, y, how = S.choose_positive(tiny, 30, rng)
+    assert how == 'containing_cell' and box(x - 15, y - 15, x + 15, y + 15).contains(tiny)
+
+
+def test_positive_uses_top_elevation_third_without_source_area():
+    rng = np.random.default_rng(5)
+    poly = square(0, 0, 900)                      # 30 x 30 cells, elevation rises with y
+    for _ in range(20):
+        x, y, _ = S.choose_positive(poly, 30, rng, elevation_at=lambda xs, ys: ys)
+        assert y >= 600 - 15
+
+
+def test_exclusion_zone_covers_every_point_closer_than_buffer():
+    # Regression: a plain polygonal buffer let a background cell sit at 99.54 m from a landslide.
+    slide = square(0, 0, 50)
+    zone = S.exclusion_zone([slide], [], 100)
+    angles = np.linspace(0, np.pi / 2, 721)
+    pts = shapely.points(50 + 99.9 * np.cos(angles), 50 + 99.9 * np.sin(angles))   # around the rounded corner
+    assert shapely.contains(zone, pts).all()
+
+
+# ---------- Phases 4-5: evaluation ----------
+
+import pandas as pd  # noqa: E402
+
+from preslide.susceptibility import evaluate as E  # noqa: E402
+
+
+def toy(n=400, seed=0):
+    rng = np.random.default_rng(seed)
+    f = pd.DataFrame({k: rng.normal(size=n) for k in P.config()['features_terrain']})
+    f['label'] = (f['slope_deg'] + rng.normal(scale=0.5, size=n) > 0).astype(int)
+    f['dataset'] = np.where(np.arange(n) < n // 2, 'a', 'b')
+    f['x'] = rng.uniform(0, 20000, n)
+    f['y'] = rng.uniform(0, 20000, n)
+    f['block_id'] = [f'{d}:{int(x // 5000)}:{int(y // 5000)}' for d, x, y in zip(f.dataset, f.x, f.y)]
+    return f
+
+
+def test_loio_training_never_contains_held_out_inventory():
+    data = toy()
+    for held in ('a', 'b'):
+        train, test = E.split_loio(data, held)
+        assert set(train.dataset) == {'a', 'b'} - {held} and set(test.dataset) == {held}
+        assert not set(train.index) & set(data[data.dataset == held].index)
+
+
+def test_block_folds_keep_blocks_whole():
+    data = toy()
+    folds = E.block_folds(data.block_id.to_numpy(), 5, 102)
+    assert (data.assign(f=folds).groupby('block_id').f.nunique() == 1).all()
+    assert set(folds) <= set(range(5))
+
+
+def test_purge_removes_training_samples_near_test():
+    data = toy()
+    test, train = data.iloc[:50], data.iloc[50:]
+    kept = E.purge(train, test, 1000)
+    d = np.hypot(kept.x.to_numpy()[:, None] - test.x.to_numpy()[None, :], kept.y.to_numpy()[:, None] - test.y.to_numpy()[None, :])
+    assert d.min() >= 1000 and len(kept) < len(train)
+
+
+def test_preprocessing_is_fitted_on_training_only():
+    data = toy()
+    train, test = data.iloc[:300], data.iloc[300:].copy()
+    _, before = E.fit_predict('logistic_regression', train, test, P.config())
+    shifted = test.copy()
+    shifted.iloc[50:, shifted.columns.get_loc('slope_deg')] += 100.0      # change other test rows only
+    _, after = E.fit_predict('logistic_regression', train, shifted, P.config())
+    assert np.allclose(before[:50], after[:50])
+
+
+def test_block_bootstrap_weights_follow_blocks_and_permutation_keeps_block_counts():
+    data = toy()
+    w = E.block_weights(data.block_id.to_numpy(), 50, np.random.default_rng(1))
+    for b in data.block_id.unique():
+        idx = np.flatnonzero(data.block_id == b)
+        assert (w[:, idx] == w[:, idx[:1]]).all()
+    y = data.label.to_numpy()
+    rng = np.random.default_rng(2)
+    null = E.permutation_null(y, data.slope_deg.to_numpy(), data.block_id.to_numpy(), 20, rng)
+    assert np.all((null > 0.3) & (null < 0.7))
+
+
+def test_boyce_and_threshold_metrics_on_known_cases():
+    rng = np.random.default_rng(4)
+    back = rng.uniform(0, 1, 20000)
+    pres = np.sqrt(rng.uniform(0, 1, 20000))            # density 2s: P/E rises with the score
+    y = np.r_[np.ones(20000), np.zeros(20000)].astype(int)
+    assert E.boyce(y, np.r_[pres, back]) > 0.95
+    assert abs(E.boyce(y, np.r_[rng.uniform(0, 1, 20000), back])) < 0.5   # no relation
+    y = np.r_[np.ones(500), np.zeros(500)].astype(int)
+    s = np.r_[np.linspace(0.5, 1, 500), np.linspace(0, 0.5, 500)]
+    m = E.threshold_metrics(y, s, 0.2)
+    assert m['recall_top_area'] == pytest.approx(1.0) and sum(m['confusion_matrix_tn_fp_fn_tp']) == 1000
