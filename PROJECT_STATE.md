@@ -56,3 +56,11 @@ Few independent units (11 test); Stanz dominance; reporting/placement bias in la
 1. Interpret V0.4/V0.5 together: terrain/land-cover contrast is strong, weather increment unproven in both designs. Do not tune on either.
 2. Independent confirmation needs unseen dependence units: tier-2 media events (separately labelled) and soil/antecedent-moisture pilot per `reports/weiterentwicklung_2026-10-14/KONKRETER_AENDERUNGSPLAN.md` (new version, own protocol).
 3. Reporting-bias diagnostics (road/settlement distance with dated sources; Sentinel-2 position check); the V0.5 web section is complete.
+
+## satellite_nn_v01 (Stand 17.10.2026, M0 teilweise)
+
+- Neuer Namespace `preslide/satellite_nn/`, `config/satellite_nn_v01.json` (Status DRAFT_NOT_REGISTERED), Tests `tests/test_satellite_nn.py` (14 bestanden; Fehlerinjektion für Split-, IoU- und Wolken-Regel getestet, scheiterten wie vorgesehen).
+- Implementiert: Kachelung/Mosaik/Objekte, Zustandsmaschine, 1:1-Abgleich, Zulassungsregeln für Pseudo-Labels, Modelle A (U-Net/ResNet-18) und B (LR-ASPP/MobileNetV3), maskierter BCE+Dice-Verlust, Namespace-Schutz.
+- CPU-Messung (8 Threads, torch 2.14 CPU): Trainingsschritt Batch 4 × 128 px: A 0,29 s, B 0,21 s → ca. 4-5 min je Epoche auf 3.799 Landslide4Sense-Kacheln.
+- NICHT erledigt: keine Daten geladen, kein Training, nichts registriert, kein Ergebnis. Landslide4Sense (CC BY 4.0, TrainData.zip 2,48 GB, md5 408f09247e3dd256458bc2f6e9edbffb, Zenodo 10463239) wartet auf Download-Freigabe; h5py fehlt (nötig für .h5).
+- Nächste Schritte: Download freigeben → RGB/Masken-Adapter + Audit (1→5→20) → Design registrieren → A trainieren. Satellitenzweige aus origin/main (46dacb2) sind noch nicht integriert.
