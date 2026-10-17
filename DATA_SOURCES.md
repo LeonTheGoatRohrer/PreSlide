@@ -100,3 +100,21 @@ Land cover, geology, soil moisture and snow are not included in this V0. Terrain
 ## V0.5 (2026-10-14)
 
 No new data source. V0.5 queries the same V0.4 endpoints (INCA v1, SPARTACUS v2, SNOWGRID-CL v2, CORINE 2012/2018, GeoSphere geology 1:500 000) for the ten new unmatched control points per event; new responses are cached under `data/v05/cache/http/`, existing baseline/V0.4 responses and DEM tiles are only read. Control points come from the existing V0.4 pools (`data/v04/cache/control_pools/`, audited, see `data/v05/pool_audit/`).
+
+## susceptibility_v01 (2026-10-17; registration `reports/susceptibility_v01/PREREGISTRATION.json`)
+
+Raw files under `data/susceptibility_v01/raw/<dataset>/` with `provenance.json` (URL, size, md5, SHA-256, archive members). Aggregate audits (no record-level rows) in `reports/susceptibility_v01/phase1_audit_*.json`. Metadata probes in `reports/susceptibility_v01/phase0_evidence.json`.
+
+| Dataset | Provider / original record | Licence (checked at the original) | CRS (from `.prj`) | Retrieved | Status |
+|---|---|---|---|---|---|
+| Far-Western Nepal multi-temporal inventory | Zenodo concept DOI 10.5281/zenodo.4290099, version 10.5281/zenodo.4290100, `LandslideInventory_FarWesternNepal.zip` 24,112,492 B, md5 `faf80509173373ce9a4774a87dcb214e` | CC BY 4.0 (Zenodo record) | WGS 84 / UTM 44N (EPSG:32644) | 2026-10-17 | downloaded, md5 verified |
+| RER2023 Emilia-Romagna May 2023 | Zenodo 10.5281/zenodo.13742643, `RER2023_V1.rar` 43,630,642 B, md5 `3f17160d5e160b21cba86d6a696ae867`; article ESSD 17, 1055 (2025) | CC BY 4.0 (Zenodo record) | RDN2008 / UTM 32N (EPSG:7791) | 2026-10-17 | downloaded, md5 verified; **no mapping-extent file** |
+| Gorkha 2015 (Roback, Zekkos, Clark et al.) | USGS data release DOI 10.5066/F7DZ06F9 (ScienceBase item 582c74fbe4b04d580bd377e8) | CC0 1.0 ("Rights: This work is marked with CC0 1.0 Universal", USGS data page) | not yet read | not retrieved | ScienceBase shows a Cloudflare human check; not bypassed |
+| IFFI Südtirol (sealed blind test) | Autonome Provinz Bozen, WFS `https://geoservices1.civis.bz.it/geoserver/p_bz-Geology/ows`, layer `IdroGEO-Landslides-Events-Areas` (WFS 2.0.0, SHAPE-ZIP/JSON) | **conflicting:** open-data portal record "Eventi di frana" `license_id: cc-zero`; embedded metadata `access_constraints` CC BY-SA 3.0. Stricter reading (CC BY-SA 3.0) applies | EPSG:25832 (default CRS) | metadata only | 10,463 polygons; fields ID, UUID, CODE, TYPE_*, INSTITUTION_IT, MOVEMENT_*, SHAPE; **no date field**; lineage "field survey and photo-interpretation"; reference date 2022-05-01. Geometry not downloaded |
+| NASADEM HGT v001 (DEM) | Microsoft Planetary Computer STAC `nasadem`, anonymous SAS token | Planetary Computer links LP DAAC policy titled "Public Domain"; NASA page itself not reachable (HTTP 403) | geographic, 1 arc-second, EGM96 | decided, not retrieved | SRTM flown 11–22 Feb 2000 (USGS EROS SRTM page). Void fill from other sources of unrecorded date; hosted copy has only the `elevation` asset (no source-flag layer) |
+| Copernicus DEM GLO-30 | Copernicus Data Space | free licence, attribution DLR/Airbus/EU | EGM2008 | rejected for training | "Data were acquired by the TanDEM-X mission between 2011 and 2015" |
+| USGS ShakeMap Gorkha | event us20002926, `grid.xml` 14,875,206 B, `raster.zip` 9,598,084 B | USGS public domain [not re-read] | geographic grid | decided, not retrieved | exploratory PGA variant for earthquake inventories only |
+| CHIRPS v2.0 daily 0.05° | UCSB CHC `data.chc.ucsb.edu` | not yet read at the original | geographic | decided, not retrieved | Model B only after Gate 7 |
+| ERA5-Land soil moisture | Open-Meteo archive API | Open-Meteo terms not yet read | ~0.1° | decided, not retrieved | Model B only after Gate 7 |
+
+Known limitations from the audits: Far-Western Nepal dates are annual and automatic (83 % accuracy per record description); the dated-point layer reaches back to 1992, i.e. before the DEM acquisition. The point layer has 25,679 features while the record text says 25,639. RER2023 polygons are small (median 479 m²; 71 % below one 30 m cell) and include debris flows (`ClassNew` DF1/DF2) and earth flows (EF).

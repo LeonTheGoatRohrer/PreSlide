@@ -2,6 +2,8 @@
 
 Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then this file.
 
+2026-10-17 (late): **susceptibility_v01** pre-registered (Phase 0) and Phase 1 data fetched for Far-Western Nepal and RER2023; the Phase 1 gate is **not met** (Gorkha blocked by a ScienceBase human check, RER2023 lacks a mapping extent, Far-Western Nepal has events before the DEM date). Stopped at the gate; see section below and `reports/susceptibility_v01/PHASE1_GATE.md`. No terrain, no model.
+
 2026-10-17: **Planning only:** concrete single-image neural detector/verifier and controlled self-training plan in `reports/weiterentwicklung_2026-10-17/NEURONALE_MURENSUCHE_PLAN.md`. Proposed namespace `satellite_nn_v01`; no implementation, registration, dataset download or new training. Model agreement remains a pseudo-label; specific mudslide classification requires subtype labels beyond Landslide4Sense. Existing satellite/V0.6–V0.9 work is on separate local branches, not merged here; the plan identifies reusable files and verification limits.
 
 2026-10-15: **UI redesign implemented**: three German pages (Projekt / Vorgehen / Ergebnisse), hash routes including legacy bookmarks, progressive disclosure, real terrain hero, separate V0.4/V0.5 comparisons and correctly labelled intervals. No model runs or scientific artifact edits. Local production app verified on port 8000. Concurrent remote branding commit `75ca8b1` merged: visible product name is now **Talwacht**, internal package and frozen artifact names stay `preslide`/PreSlide.
@@ -56,6 +58,13 @@ Few independent units (11 test); Stanz dominance; reporting/placement bias in la
 1. Interpret V0.4/V0.5 together: terrain/land-cover contrast is strong, weather increment unproven in both designs. Do not tune on either.
 2. Independent confirmation needs unseen dependence units: tier-2 media events (separately labelled) and soil/antecedent-moisture pilot per `reports/weiterentwicklung_2026-10-14/KONKRETER_AENDERUNGSPLAN.md` (new version, own protocol).
 3. Reporting-bias diagnostics (road/settlement distance with dated sources; Sentinel-2 position check); the V0.5 web section is complete.
+
+## susceptibility_v01 (Stand 17.10.2026, Phase 0 registriert, Phase-1-Gate nicht erfüllt)
+
+- Plan `reports/weiterentwicklung_2026-10-17/ANFAELLIGKEITSSYSTEM_PLAN.md`. Namespace `config/susceptibility_v01.json` (schreibgeschützt), `preslide/susceptibility/`, `data|models|reports/susceptibility_v01/`. Registrierung `reports/susceptibility_v01/PREREGISTRATION.json`, Begründungen `DECISIONS.md`.
+- Entscheidungen: DEM NASADEM (SRTM, Feb 2000), Copernicus GLO-30 abgelehnt (2011–2015); PGA USGS ShakeMap nur explorativ; Modell B CHIRPS + ERA5-Land, Gate 7 (≥ 15 datierte Ereignisse) voraussichtlich nicht bestanden; Verhältnis 1:1; Puffer-Regel registriert, Wert offen; Südtirol IFFI versiegelt (Codes 2/5/7, 3.523 Polygone, Lizenz widersprüchlich → CC BY-SA 3.0).
+- Phase 1: Far-Western Nepal und RER2023 geladen (md5 geprüft), auditiert. Gorkha blockiert (ScienceBase-Menschprüfung), RER2023 ohne Kartierumriss, Far-Western Nepal hat Rutschungen vor dem DEM-Datum. Entscheidungen A–D in `reports/susceptibility_v01/PHASE1_GATE.md`.
+- Tests: `tests/test_susceptibility_v01.py` 33 bestanden; `scripts/mutation_check_susceptibility.py` 12/12 Mutanten erkannt. Neue Abhängigkeit `pyshp` (Shapefiles lesen, rein Python).
 
 ## satellite_nn_v01 (Stand 17.10.2026, M0 teilweise)
 

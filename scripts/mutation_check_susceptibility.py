@@ -25,6 +25,11 @@ MUTANTS = {
         ('amendment sidecar not checked', "if not side.exists() or side.read_text", "if False and side.read_text"),
         ('guard allows any path', "if not any(path == r or r in path.parents for r in roots):", "if False:"),
     ],
+    'preslide/susceptibility/inventory.py': [
+        ('archive members not checked', "    if bad:\n        raise RuntimeError(f'unsafe", "    if False:\n        raise RuntimeError(f'unsafe"),
+        ('degree areas not projected', "    if to_m:\n        fixed", "    if False:\n        fixed"),
+        ('UTM zone from latitude', "zone = int((lon + 180) // 6) + 1", "zone = int((lat + 180) // 6) + 1"),
+    ],
 }
 
 

@@ -6,9 +6,12 @@ import copy
 import json
 
 import pytest
+from pyproj import CRS, Transformer
+from shapely.geometry import box
 
 from preslide.common import read_json
 from preslide.sources import ROOT
+from preslide.susceptibility import inventory as I
 from preslide.susceptibility import paths as P
 from preslide.susceptibility import registry as G
 
@@ -117,6 +120,32 @@ def test_text_hash_ignores_crlf(tmp_path):
     a.write_bytes(b'{\n "x": 1\n}\n')
     b.write_bytes(b'{\r\n "x": 1\r\n}\r\n')
     assert P.text_sha(a) == P.text_sha(b)
+
+
+@pytest.mark.parametrize('name', ['../evil.shp', 'a/../../evil', '/abs/x.shp', 'C:/x.shp', '\\\\server\\x'])
+def test_archive_members_cannot_escape(name):
+    with pytest.raises(RuntimeError, match='unsafe'):
+        I.safe_members(['ok/x.shp', name])
+
+
+def test_polygon_area_from_geographic_crs_matches_utm():
+    # 1 km x 1 km square built in UTM 44N (Far-Western Nepal), stored as lon/lat, measured again.
+    utm, wgs = CRS.from_epsg(32644), CRS.from_epsg(4326)
+    square = box(500000, 3200000, 501000, 3201000)
+    lonlat = I.reproject(square, Transformer.from_crs(utm, wgs, always_xy=True).transform)
+    areas, metric_crs, invalid, null = I.polygon_areas_m2([lonlat, None], wgs)
+    assert metric_crs.to_epsg() == 32644 and invalid == 0 and null == 1
+    assert areas[0] == pytest.approx(1e6, rel=1e-6)
+    # Projected metre CRS is used unchanged.
+    areas, metric_crs, _, _ = I.polygon_areas_m2([square], utm)
+    assert metric_crs == utm and areas[0] == pytest.approx(1e6)
+
+
+def test_latlon_swap_is_not_silently_accepted():
+    # Swapped axis order lands far outside the UTM zone of the true location.
+    _, wrong = I.metric_transformer(CRS.from_epsg(4326), 28.9, 81.0)
+    _, right = I.metric_transformer(CRS.from_epsg(4326), 81.0, 28.9)
+    assert right.to_epsg() == 32644 and wrong.to_epsg() != 32644
 
 
 @pytest.mark.parametrize('rel', ['data/v04/x', 'reports/v05/x', 'models/v04', 'reports/baseline', 'data/susceptibility_v02', 'config'])

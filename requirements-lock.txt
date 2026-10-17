@@ -34,6 +34,7 @@ pydantic_core==2.50.1
 Pygments==2.21.0
 pyparsing==3.3.3
 pyproj==3.7.2
+pyshp==3.1.6
 pytest==9.1.1
 python-dateutil==2.9.0.post0
 rasterio==1.4.4
