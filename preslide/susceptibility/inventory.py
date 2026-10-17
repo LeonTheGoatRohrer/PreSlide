@@ -20,11 +20,12 @@ from shapely import make_valid
 from shapely.geometry import shape
 
 from ..common import read_json, write_json
-from .download import download
+from .download import download, fetch_json, file_digest
 from .paths import DATA, REPORT, config, guard
 
 RAW = DATA / 'raw'
 EVIDENCE_KEYS = {'far_western_nepal': 'zenodo_far_western_nepal', 'rer2023': 'zenodo_rer2023'}
+AUDITABLE = sorted(EVIDENCE_KEYS) + ['gorkha_2015']
 AREA_QUANTILES = (0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99)
 
 
@@ -63,6 +64,56 @@ def fetch(dataset):
     prov.update({'dataset': dataset, 'record': ev['record'], 'doi': ev['doi'], 'concept_doi': ev['concept_doi'],
                  'licence_from_record': ev['license']['id'], 'title': ev['title'],
                  'members': sorted(names)})
+    write_json(folder / 'provenance.json', prov)
+    return prov
+
+
+def fetch_candidate(name, record):
+    """Unregistered candidate inventory (registry only, never training without an amendment): all record files,
+    md5-verified, archives extracted with member checks."""
+    d = fetch_json(f'https://zenodo.org/api/records/{record}')
+    folder = guard(RAW / 'candidates' / name)
+    files = []
+    for f in d['files']:
+        prov = download(f['links']['self'], folder / f['key'], f['checksum'], f['size'])
+        if f['key'].lower().endswith(('.zip', '.rar')):
+            target = folder / 'extracted' / Path(f['key']).stem
+            names = subprocess.run([_bsdtar(), '-tf', str(folder / f['key'])], capture_output=True, text=True,
+                                   check=True).stdout.split('\n')
+            prov['members'] = safe_members(sorted(n for n in names if n.strip()))
+            if not target.exists():
+                tmp = guard(folder / 'extracting')
+                subprocess.run([_bsdtar(), '-xf', str(folder / f['key']), '-C', str(tmp)], check=True)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                tmp.replace(target)
+        files.append(prov)
+    out = {'candidate': name, 'status': 'not registered; registry only', 'record': d['id'], 'doi': d['metadata'].get('doi'),
+           'concept_doi': d.get('conceptdoi'), 'title': d['metadata']['title'], 'licence_from_record': d['metadata']['license']['id'],
+           'files': files}
+    write_json(folder / 'provenance.json', out)
+    return out
+
+
+def register_manual(dataset, archive, listed_size_mib, source_url, note):
+    """Archive downloaded by the user in a browser (no published checksum): size check against the listing,
+    hashes recorded, members checked, then extracted like a scripted download."""
+    folder = guard(RAW / dataset)
+    path = folder / archive
+    if not path.exists():
+        raise RuntimeError(f'{path} missing')
+    size_mib = path.stat().st_size / 2**20
+    if round(size_mib, 2) != listed_size_mib:
+        raise RuntimeError(f'{archive}: {size_mib:.2f} MiB does not match the listed {listed_size_mib} MB')
+    names = subprocess.run([_bsdtar(), '-tf', str(path)], capture_output=True, text=True, check=True).stdout.split('\n')
+    names = safe_members([n for n in names if n.strip()])
+    out = folder / 'extracted'
+    if not out.exists():
+        tmp = guard(folder / 'extracting')
+        subprocess.run([_bsdtar(), '-xf', str(path), '-C', str(tmp)], check=True)
+        tmp.replace(out)
+    prov = {'dataset': dataset, 'file': archive, 'size_bytes': path.stat().st_size, 'listed_size': f'{listed_size_mib} MB',
+            'md5': file_digest(path, 'md5'), 'sha256': file_digest(path, 'sha256'), 'source': source_url,
+            'retrieval': note, 'members': sorted(names)}
     write_json(folder / 'provenance.json', prov)
     return prov
 
@@ -161,7 +212,7 @@ def audit(dataset, limit):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('stage', choices=['fetch', 'audit'])
-    ap.add_argument('dataset', choices=sorted(EVIDENCE_KEYS))
+    ap.add_argument('dataset', choices=AUDITABLE)
     ap.add_argument('--limit', type=int, default=0)
     a = ap.parse_args()
     result = fetch(a.dataset) if a.stage == 'fetch' else audit(a.dataset, a.limit)

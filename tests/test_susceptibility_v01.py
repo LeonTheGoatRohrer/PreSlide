@@ -96,6 +96,20 @@ def test_amendment_fills_placeholder_only():
                                    {'id': 2, 'set': {'sampling.background_rule.exclusion_buffer_m': 60}}])
 
 
+def test_correction_needs_current_value_and_reason():
+    ok = {'id': 1, 'correct': {'sampling.cell_m': {'from': 30, 'to': 25, 'reason': 'test'}}}
+    assert G.apply_amendments(cfg(), [ok])['sampling']['cell_m'] == 25
+    with pytest.raises(ValueError, match='not 31'):
+        G.apply_amendments(cfg(), [{'id': 1, 'correct': {'sampling.cell_m': {'from': 31, 'to': 25, 'reason': 'x'}}}])
+    with pytest.raises(ValueError, match='needs a reason'):
+        G.apply_amendments(cfg(), [{'id': 1, 'correct': {'sampling.cell_m': {'from': 30, 'to': 25, 'reason': ' '}}}])
+    with pytest.raises(ValueError, match='already exists'):
+        G.apply_amendments(cfg(), [{'id': 1, 'add': {'sampling.cell_m': {'value': 1, 'reason': 'x'}}}])
+    with pytest.raises(ValueError, match='needs a reason'):
+        G.apply_amendments(cfg(), [{'id': 1, 'add': {'sampling.new_key': {'value': 1}}}])
+    assert G.apply_amendments(cfg(), [{'id': 1, 'add': {'sampling.new_key': {'value': 1, 'reason': 'x'}}}])['sampling']['new_key'] == 1
+
+
 def test_changed_config_and_tampered_amendment_are_refused(tmp_path):
     conf, reg, rep = tmp_path / 'c.json', tmp_path / 'r.json', tmp_path / 'rep'
     rep.mkdir()

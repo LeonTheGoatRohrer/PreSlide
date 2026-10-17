@@ -1,0 +1,146 @@
+[
+  {
+    "dataset": "gorkha_2015",
+    "tile": "Copernicus_DSM_COG_10_N26_00_E083_00_DEM",
+    "acquisition_start": "2011-04-30",
+    "acquisition_stop": "2013-04-14",
+    "registered_earliest_event": "2015-04-25",
+    "usable_for_all_events": true,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "gorkha_2015",
+    "tile": "Copernicus_DSM_COG_10_N26_00_E084_00_DEM",
+    "acquisition_start": "2011-01-10",
+    "acquisition_stop": "2014-03-27",
+    "registered_earliest_event": "2015-04-25",
+    "usable_for_all_events": true,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "gorkha_2015",
+    "tile": "Copernicus_DSM_COG_10_N26_00_E085_00_DEM",
+    "acquisition_start": "2011-05-28",
+    "acquisition_stop": "2014-09-08",
+    "registered_earliest_event": "2015-04-25",
+    "usable_for_all_events": true,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "gorkha_2015",
+    "tile": "Copernicus_DSM_COG_10_N26_00_E086_00_DEM",
+    "acquisition_start": "2011-01-05",
+    "acquisition_stop": "2014-09-08",
+    "registered_earliest_event": "2015-04-25",
+    "usable_for_all_events": true,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "gorkha_2015",
+    "tile": "Copernicus_DSM_COG_10_N27_00_E083_00_DEM",
+    "acquisition_start": "2011-03-06",
+    "acquisition_stop": "2014-09-13",
+    "registered_earliest_event": "2015-04-25",
+    "usable_for_all_events": true,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "gorkha_2015",
+    "tile": "Copernicus_DSM_COG_10_N27_00_E084_00_DEM",
+    "acquisition_start": "2011-01-10",
+    "acquisition_stop": "2014-08-22",
+    "registered_earliest_event": "2015-04-25",
+    "usable_for_all_events": true,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "gorkha_2015",
+    "tile": "Copernicus_DSM_COG_10_N27_00_E085_00_DEM",
+    "acquisition_start": "2011-04-14",
+    "acquisition_stop": "2014-09-08",
+    "registered_earliest_event": "2015-04-25",
+    "usable_for_all_events": true,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "gorkha_2015",
+    "tile": "Copernicus_DSM_COG_10_N27_00_E086_00_DEM",
+    "acquisition_start": "2011-01-05",
+    "acquisition_stop": "2014-09-08",
+    "registered_earliest_event": "2015-04-25",
+    "usable_for_all_events": true,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "gorkha_2015",
+    "tile": "Copernicus_DSM_COG_10_N28_00_E083_00_DEM",
+    "acquisition_start": "2011-01-10",
+    "acquisition_stop": "2014-09-13",
+    "registered_earliest_event": "2015-04-25",
+    "usable_for_all_events": true,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "gorkha_2015",
+    "tile": "Copernicus_DSM_COG_10_N28_00_E084_00_DEM",
+    "acquisition_start": "2011-01-10",
+    "acquisition_stop": "2014-08-22",
+    "registered_earliest_event": "2015-04-25",
+    "usable_for_all_events": true,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "gorkha_2015",
+    "tile": "Copernicus_DSM_COG_10_N28_00_E085_00_DEM",
+    "acquisition_start": "2011-03-12",
+    "acquisition_stop": "2014-09-08",
+    "registered_earliest_event": "2015-04-25",
+    "usable_for_all_events": true,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "gorkha_2015",
+    "tile": "Copernicus_DSM_COG_10_N28_00_E086_00_DEM",
+    "acquisition_start": "2011-01-05",
+    "acquisition_stop": "2014-08-28",
+    "registered_earliest_event": "2015-04-25",
+    "usable_for_all_events": true,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "far_western_nepal",
+    "tile": "Copernicus_DSM_COG_10_N28_00_E080_00_DEM",
+    "acquisition_start": "2011-04-18",
+    "acquisition_stop": "2014-08-10",
+    "registered_earliest_event": "2001-01-01",
+    "usable_for_all_events": false,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "far_western_nepal",
+    "tile": "Copernicus_DSM_COG_10_N28_00_E081_00_DEM",
+    "acquisition_start": "2011-01-04",
+    "acquisition_stop": "2014-09-07",
+    "registered_earliest_event": "2001-01-01",
+    "usable_for_all_events": false,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "far_western_nepal",
+    "tile": "Copernicus_DSM_COG_10_N29_00_E080_00_DEM",
+    "acquisition_start": "2011-04-18",
+    "acquisition_stop": "2014-09-07",
+    "registered_earliest_event": "2001-01-01",
+    "usable_for_all_events": false,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  },
+  {
+    "dataset": "far_western_nepal",
+    "tile": "Copernicus_DSM_COG_10_N29_00_E081_00_DEM",
+    "acquisition_start": "2011-01-04",
+    "acquisition_stop": "2014-09-07",
+    "registered_earliest_event": "2001-01-01",
+    "usable_for_all_events": false,
+    "usable_rule": "only for landslides dated after acquisition_stop"
+  }
+]

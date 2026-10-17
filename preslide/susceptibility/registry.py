@@ -58,19 +58,45 @@ def validate(cfg):
     return True
 
 
+def _parent(cfg, dotted):
+    *parents, leaf = dotted.split('.')
+    node = cfg
+    for p in parents:
+        node = node[p]
+    return node, leaf
+
+
 def apply_amendments(cfg, amendments):
-    """Fill registered placeholders. An amendment may only set dotted paths whose registered value is null."""
+    """Apply amendments in id order.
+
+    set:     fill a registered placeholder (value must currently be null)
+    correct: change a registered value; needs the exact current value ('from') and a reason
+    add:     add a key that does not exist yet; needs a reason
+    """
     for am in sorted(amendments, key=lambda a: a['id']):
-        for dotted, value in am['set'].items():
-            *parents, leaf = dotted.split('.')
-            node = cfg
-            for p in parents:
-                node = node[p]
+        for dotted, value in am.get('set', {}).items():
+            node, leaf = _parent(cfg, dotted)
             if leaf not in node:
                 raise ValueError(f'amendment {am["id"]}: unknown path {dotted}')
             if node[leaf] is not None:
                 raise ValueError(f'amendment {am["id"]}: {dotted} is already registered as {node[leaf]!r}')
             node[leaf] = value
+        for dotted, change in am.get('correct', {}).items():
+            node, leaf = _parent(cfg, dotted)
+            if leaf not in node:
+                raise ValueError(f'amendment {am["id"]}: unknown path {dotted}')
+            if node[leaf] != change['from']:
+                raise ValueError(f'amendment {am["id"]}: {dotted} is {node[leaf]!r}, not {change["from"]!r}')
+            if not str(change.get('reason', '')).strip():
+                raise ValueError(f'amendment {am["id"]}: correction of {dotted} needs a reason')
+            node[leaf] = change['to']
+        for dotted, change in am.get('add', {}).items():
+            node, leaf = _parent(cfg, dotted)
+            if leaf in node:
+                raise ValueError(f'amendment {am["id"]}: {dotted} already exists; use correct')
+            if not str(change.get('reason', '')).strip():
+                raise ValueError(f'amendment {am["id"]}: addition of {dotted} needs a reason')
+            node[leaf] = change['value']
     return cfg
 
 

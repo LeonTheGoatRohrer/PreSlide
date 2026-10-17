@@ -48,6 +48,42 @@ def file_digest(path, algorithm):
     return h.hexdigest()
 
 
+def head(url):
+    """Lower-cased response headers of a HEAD request (200 only)."""
+    text = fetch_bytes(url, method='HEAD').decode('latin-1')
+    block = text.replace('\r\n', '\n').strip().split('\n\n')[-1]
+    return {k.strip().lower(): v.strip() for k, _, v in (line.partition(':') for line in block.split('\n')[1:]) if k}
+
+
+def download_object(url, target, query=''):
+    """Object without a published checksum (S3 / Azure blob): size from HEAD must match; a single-part S3 ETag or an
+    Azure Content-MD5 is verified as md5. `query` (e.g. a SAS token) is appended for transfer only, never recorded."""
+    import base64
+    target = Path(target)
+    h = head(url + query)
+    size = int(h['content-length'])
+    etag = h.get('etag', '').strip('"')
+    md5 = etag if etag and '-' not in etag and len(etag) == 32 else None
+    if not md5 and h.get('content-md5'):
+        md5 = base64.b64decode(h['content-md5']).hex()
+    if not target.exists():
+        target.parent.mkdir(parents=True, exist_ok=True)
+        part = target.with_suffix(target.suffix + '.part')
+        result = subprocess.run([_curl(), '--fail', '--silent', '--show-error', '--location', '--retry', '2',
+                                 '--max-time', str(MAX_TIME_S), '--output', str(part), url + query],
+                                capture_output=True, timeout=MAX_TIME_S + 60)
+        if result.returncode != 0:
+            raise RuntimeError(f'download failed for {url}: {result.stderr[:300]!r}')
+        part.replace(target)
+    if target.stat().st_size != size:
+        raise RuntimeError(f'{target}: {target.stat().st_size} B, server reports {size} B')
+    if md5 and file_digest(target, 'md5') != md5:
+        raise RuntimeError(f'{target}: md5 does not match the server ETag/Content-MD5')
+    return {'url': url, 'file': target.name, 'size_bytes': size, 'md5_verified': bool(md5),
+            'sha256': file_digest(target, 'sha256'), 'last_modified': h.get('last-modified'),
+            'verified_at_utc': datetime.now(timezone.utc).isoformat()}
+
+
 def download(url, target, checksum, size_bytes):
     """Download `url` to `target` once; `checksum` is 'md5:<hex>' as published by the record. Returns provenance."""
     target = Path(target)

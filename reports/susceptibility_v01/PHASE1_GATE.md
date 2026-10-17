@@ -30,3 +30,14 @@ Deshalb wurde **Amendment 1 (Pufferwert) nicht geschrieben**: Die registrierte R
 | D | Südtirol-Schnappschuss | Geometrie jetzt einmal in den versiegelten Ordner laden und per Prüfsumme einfrieren (der Anbieter aktualisiert „bei Bedarf“), ohne sie zu öffnen; oder erst in Phase 15 abrufen | jetzt einfrieren, nur nach Freigabe |
 
 B und C ändern das registrierte Design und werden als Amendment mit Begründung festgehalten, bevor irgendein Modell oder Geländewert die Daten sieht. Der Amendment-Mechanismus erlaubt bisher nur das Füllen von Platzhaltern; eine Korrektur registrierter Werte bräuchte eine ausdrückliche, getestete Erweiterung (alter Wert, neuer Wert, Grund).
+
+## Nachtrag 17.10.2026 (später): Gate nach Amendment 1 erfüllt
+
+- **Gorkha** wurde vom Nutzer im externen Browser geladen (Menschprüfung, keine Umgehung). Kartierumriss (1 Polygon, 28.345 km²) und verdeckte Flächen (456 Polygone) sind vorhanden, die Lizenz CC0 1.0 ist am Original bestätigt.
+- **Amendment 1** (`AMENDMENT_1.json`, vor jeder Stichprobe, jedem Merkmal und jedem Modell):
+  - RER2023 ist **ausgesetzt** (Rolle `suspended`), weil kein Kartierumriss vorliegt. Die Arme lauten jetzt Q = Gorkha, D = Gorkha + Far-Western Nepal.
+  - Far-Western Nepal: Positive sind nur Polygone, deren datierte Punkte alle aus 2001 oder später stammen (1.587 Polygone). Alle anderen Polygone dienen nur als Ausschlussfläche.
+  - Regel für kleine Polygone: Statt eines Ausschlusses unter 900 m² zählt die Zelle, die das Polygon enthält. Der alte Ausschluss hätte 89 % der Gorkha-Anrissflächen verworfen und große Rutschungen bevorzugt. Für Südtirol gilt dieselbe Regel.
+  - **Puffer 100 m** nach der registrierten Regel: Gorkha-Anrissflächen 17,5 m, Far-Western-Nepal-Positive 93,5 m, Maximum aufgerundet.
+- **Gate Phase 1: erfüllt** für die Entwicklungsinventare Gorkha und Far-Western Nepal. RER2023 bleibt offen, bis die Autoren oder die Region einen Umriss liefern.
+- Konsequenz: Beide Entwicklungsinventare liegen in Nepal. Leave-one-inventory-out prüft damit die Übertragung zwischen zwei Himalaya-Regionen und zwei Auslösern (Erdbeben gegenüber Monsun), nicht zwischen Gebirgen.
