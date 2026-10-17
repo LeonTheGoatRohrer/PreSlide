@@ -1,0 +1,22 @@
+{
+  "source": "Landslide4Sense TrainData.zip, Zenodo 10463239, CC BY 4.0",
+  "md5_verified": "408f09247e3dd256458bc2f6e9edbffb",
+  "retrieved": "2026-10-17",
+  "tiles": 3799,
+  "tiles_with_landslide": 2231,
+  "mean_landslide_fraction_in_positive_tiles": 0.0395,
+  "schema": "img (128,128,14) float64, mask (128,128) uint8 {0,1}; RGB = channels 3,2,1 (B4,B3,B2); values are pre-scaled (band means ~0.93-0.96), not raw reflectance",
+  "exact_duplicate_rgb_tiles": 0,
+  "pilot_audits": [
+    1,
+    5,
+    20
+  ],
+  "visual_check": "audit_rgb_check.png (4 tiles, mask aligns with bare scars)",
+  "grouping": "NO coordinates/footprints/event ids in the files -> related-tile grouping cannot be reconstructed; dataset allowed for pretraining only, no spatially independent evaluation from random tile splits",
+  "open": [
+    "channel scaling vs Austrian Sentinel-2 L2A reflectance must be resolved before transfer",
+    "band order assumed from official documentation; colour view plausible but not independently proven"
+  ],
+  "domain_note": "scenes visually non-Alpine; Austrian transfer is untested"
+}
