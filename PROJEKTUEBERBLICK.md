@@ -129,6 +129,10 @@ Die lokale Oberfläche führt über **Projekt → Vorgehen → Ergebnisse**. Dir
 
 Kennzahlen und Intervalle kommen aus den vorhandenen API-Bündeln. V0.5-Wiederholungsspannen sind ausdrücklich keine Konfidenzintervalle; das Bootstrap-Intervall der ersten Wiederholung wird separat gezeigt. Keine wissenschaftlichen Artefakte oder Modelle wurden verändert.
 
+## Hangkarte: relative Anteile auf einer 3D-Ansicht (17.10.2026, Anwendung, keine neue Studie)
+
+Neue vierte Seite `#/hangkarte`: Gebiet (Klick oder Beispiel) wählen, das eingefrorene V0.5-Modell (nur Gelände, Landbedeckung, Geologie) bewertet Hangzellen, und die Anteile einer Vergleichsgruppe (10 automatisch verteilte Hänge oder 2–12 eigene Punkte) summieren sich zu 100 %. Darstellung: MapLibre-3D-Gelände mit Orthofoto oder Reliefschummerung, Farbebene nach Rang im Gebiet, Prozentmarker je Hang, deutsche Erklärung. **Das sind relative Anteile zwischen Vergleichshängen, keine Eintrittswahrscheinlichkeiten und keine Warnung.** V0.5 ist explorativ; ein Teil der Trennung (AUC 0,85, mit gematchten Kontrollen 0,70) ist Meldebias – die Karte hebt deshalb tendenziell Siedlungs- und Grünlandhänge hervor. Optional und getrennt: Niederschlag der letzten 7 Tage (INCA), ausdrücklich keine Bodenfeuchte und nicht im Modell; Sentinel-1-Bodenfeuchte ist nicht umgesetzt. Details und Prüfungen: `reports/hangmap_v01/summary.md`; Code `preslide/hangmap/`, Konfiguration `config/hangmap_v01.json`.
+
 ## Genau eine nächste wissenschaftliche Priorität
 
 **Den in V0.4 gefundenen Gelände- und Landbedeckungseffekt gegen Meldebias absichern und mehr unabhängige Episoden gewinnen** (z. B. getrennt gekennzeichnete Medienereignisse, vorab registriertes Case-Crossover-Design oder Satellitenprüfung der Positionen). Jede Erweiterung ist eine neue Version; der V0.4-Test ist jetzt gesehen und darf keine Auswahl mehr steuern.
@@ -158,6 +162,7 @@ Kennzahlen und Intervalle kommen aus den vorhandenen API-Bündeln. V0.5-Wiederho
 | `reports/current_state_audit.md` | Ergänzender Gesamtcheck des aktuellen Projektbestands |
 | `reports/baseline/` | Eingefrorene V0.3-Baseline: Manifest, Status, Fehleranalyse je Ereignis |
 | `archive/v0.3-baseline/` | Schreibgeschützte Kopie aller Baseline-Ausgaben mit Prüfsummen |
+| `config/hangmap_v01.json`, `preslide/hangmap/`, `reports/hangmap_v01/` | Hangkarte (3D, relative Anteile) |
 | `config/v05.json`, `reports/v05/`, `preslide/v05/` | V0.5: Registrierung, Kohorten-Freeze, CV-Ergebnisse, Bericht, Verifikation |
 | `config/v04.json`, `reports/v04/` | V0.4: Präregistrierung, Änderung 1, Freeze, Test, Bericht, Verifikation |
 | `preslide/v04/` | V0.4-Code (Audit, Datumsregeln, Pipeline, Modelle, Auswertung) |

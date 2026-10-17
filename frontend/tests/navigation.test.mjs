@@ -2,8 +2,8 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {pages,resolveRoute} from '../src/navigation.js'
 
-test('all three pages support direct links and a safe default',()=>{
-  assert.deepEqual(pages.map(p=>p.label),['Projekt','Vorgehen','Ergebnisse'])
+test('all four pages support direct links and a safe default',()=>{
+  assert.deepEqual(pages.map(p=>p.label),['Projekt','Vorgehen','Ergebnisse','Hangkarte'])
   for(const {id} of pages) assert.deepEqual(resolveRoute('#/'+id),{page:id,section:''})
   for(const hash of ['', '#', '#/unbekannt']) assert.equal(resolveRoute(hash).page,'projekt')
 })

@@ -4,6 +4,7 @@ import ProjectPage from './ProjectPage.vue'
 import { resolveRoute, pages } from './navigation.js'
 const MethodPage = defineAsyncComponent(() => import('./MethodPage.vue'))
 const ResultsPage = defineAsyncComponent(() => import('./ResultsPage.vue'))
+const HangkartePage = defineAsyncComponent(() => import('./HangkartePage.vue'))
 const route = ref(resolveRoute(location.hash))
 const initialCase = ref(''), heading = ref(null)
 async function changed() {
@@ -23,6 +24,6 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', changed))
     <nav aria-label="Hauptnavigation"><a v-for="(p,i) in pages" :key="p.id" :href="'#/'+p.id" :aria-current="route.page===p.id?'page':undefined"><span class="nav-index">0{{i+1}}</span>{{p.label}}</a></nav>
     <span class="header-caption">Forschungsprototyp<br>Österreich</span>
   </header>
-  <main id="inhalt" ref="heading" tabindex="-1" class="site-main"><ProjectPage v-if="route.page==='projekt'"/><MethodPage v-else-if="route.page==='vorgehen'" :initial-case="initialCase" :section="route.section"/><ResultsPage v-else :section="route.section" @show-case="showCase"/></main>
+  <main id="inhalt" ref="heading" tabindex="-1" class="site-main"><ProjectPage v-if="route.page==='projekt'"/><MethodPage v-else-if="route.page==='vorgehen'" :initial-case="initialCase" :section="route.section"/><HangkartePage v-else-if="route.page==='hangkarte'"/><ResultsPage v-else :section="route.section" @show-case="showCase"/></main>
   <footer class="site-footer"><a class="footer-brand" href="#/projekt">Talwacht.</a><p>Retrospektive Forschung · Österreich<br>Lokale Demonstration · Stand 14. Oktober 2026</p><span>Erkenntnis vor Kennzahl.</span></footer>
 </template>

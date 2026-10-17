@@ -1,0 +1,97 @@
+{
+  "version": "hangmap_v01",
+  "registered_on": "2026-10-17",
+  "status": "application of the frozen V0.5 static conditional-logit model; exploratory, no new evaluation, no new training, no sealed or external test",
+  "purpose": "relative terrain-only shares inside a local comparison group (sum = 100 %), shown on a 3D terrain view",
+  "not_claimed": [
+    "probability of a landslide",
+    "warning",
+    "causality",
+    "validated hazard map",
+    "geographic generalisation beyond the V0.5 cross-validation"
+  ],
+  "model": {
+    "bundle": "models/v05/final_all_data/conditional_logit_static.joblib",
+    "bundle_sha256": "bc29a37ac6c22f307bce912d133557f5ec267b76431819709b8f3f8310ff3a24",
+    "provenance": "reports/v05/cv_results.json (final_models); trained on all 418 V0.5 groups, i.e. on events that were already seen; read only, never refitted here",
+    "columns_from": "config/v05.json features.static (22 columns)",
+    "score": "linear conditional-logit score; share = softmax of the score inside the comparison group"
+  },
+  "terrain": {
+    "resolution_m": 30,
+    "crs": "EPSG:31287",
+    "dem": "same read-only Skadi tile cache as V0.5 (data/raw/terrain, data/v04/cache/terrain_tiles); never downloaded here",
+    "reference_date": "2026-10-17",
+    "reference_date_rule": "every DEM tile must have a provider Last-Modified date before this date; no event day exists in this application",
+    "catchment_margin_m": 5300,
+    "minimum_slope_deg": 5,
+    "elevation_range_m": [
+      0,
+      4500
+    ]
+  },
+  "land_cover": {
+    "vintage": "CLC2018",
+    "source": "CORINE CLC2018 vector via EEA discomap, polygons fetched per area envelope",
+    "classes_from": "config/v04.json features.land_cover.classes",
+    "ambiguous_or_missing": "cell excluded and counted (V0.4/V0.5 rule: no or several polygons = missing)"
+  },
+  "geology": {
+    "source": "GeoSphere 1:500 000 lithology, five V0.4 classes",
+    "ambiguous_or_missing": "cell excluded and counted"
+  },
+  "area": {
+    "radius_m": {
+      "default": 2000,
+      "min": 500,
+      "max": 3000
+    },
+    "cell_m": 90,
+    "inside_austria": "area centre and every custom point must lie inside the GISCO Austria boundary",
+    "heat_layer": "every eligible cell; share = softmax over all eligible cells of the area, shown as index = share * N (1.0 = area average) and rank percentile",
+    "comparison_group": {
+      "size": 10,
+      "separation_m": 400,
+      "seed": "int(first 16 hex chars of SHA-256('<lon:.5f>|<lat:.5f>|<radius_m>|hangmap_v01' UTF-8), 16)",
+      "draw": "numpy PCG64 permutation of the eligible cell ids (sorted); walk it and accept a cell >= separation_m (EPSG:31287 metres) from every accepted cell; stop at size"
+    },
+    "custom_points": {
+      "min": 2,
+      "max": 12,
+      "rule": "user-chosen points form their own comparison group; each point is evaluated at its 30 m DEM cell"
+    }
+  },
+  "recent_rain_layer": {
+    "status": "optional, separate, never an input of the score; V0.5 found no established benefit of weather",
+    "source": "GeoSphere INCA v1 hourly precipitation, one point at the area centre",
+    "days": 7,
+    "label": "Niederschlag der letzten Tage, keine Bodenfeuchte"
+  },
+  "cache": {
+    "directory": "data/hangmap_v01/cache",
+    "key": "SHA-256 of request and this configuration; sidecar SHA-256 verified on every read"
+  },
+  "examples": [
+    {
+      "id": "stanz_landeck",
+      "name": "Stanz bei Landeck (Tirol)",
+      "longitude": 10.5617,
+      "latitude": 47.1478,
+      "radius_m": 1500
+    },
+    {
+      "id": "feldbach_hills",
+      "name": "Hügelland bei Feldbach (Steiermark)",
+      "longitude": 15.89,
+      "latitude": 46.95,
+      "radius_m": 2000
+    },
+    {
+      "id": "gasteinertal",
+      "name": "Gasteiner Tal (Salzburg)",
+      "longitude": 13.11,
+      "latitude": 47.11,
+      "radius_m": 2000
+    }
+  ]
+}

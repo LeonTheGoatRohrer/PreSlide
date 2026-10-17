@@ -6,6 +6,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from .common import read_json
 from .sources import ROOT
+from .hangmap.routes import router as hangkarte_router
 
 app=FastAPI(title='Talwacht – lokaler Forschungsprototyp',docs_url=None,redoc_url=None)
 
@@ -21,6 +22,8 @@ def case_path(case_id,suffix):
     allowed={r['id'] for r in read_json(demo_directory()/'cases.json')}
     if case_id not in allowed: raise HTTPException(404,'Unbekanntes Demonstrationsbeispiel')
     return demo_directory()/f'{case_id}.{suffix}'
+
+app.include_router(hangkarte_router)
 
 @app.get('/api/health')
 def health():

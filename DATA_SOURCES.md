@@ -100,3 +100,13 @@ Land cover, geology, soil moisture and snow are not included in this V0. Terrain
 ## V0.5 (2026-10-14)
 
 No new data source. V0.5 queries the same V0.4 endpoints (INCA v1, SPARTACUS v2, SNOWGRID-CL v2, CORINE 2012/2018, GeoSphere geology 1:500 000) for the ten new unmatched control points per event; new responses are cached under `data/v05/cache/http/`, existing baseline/V0.4 responses and DEM tiles are only read. Control points come from the existing V0.4 pools (`data/v04/cache/control_pools/`, audited, see `data/v05/pool_audit/`).
+
+## Hangkarte hangmap_v01 (2026-10-17)
+
+No new modelling data. The relative shares use the frozen V0.5 static model on DEM (Skadi tiles, read-only cache), CORINE CLC2018 polygons (envelope queries instead of V0.5 point queries, same class rules) and the GeoSphere 1:500 000 geology layer (cached). New responses are cached under `data/hangmap_v01/cache/http/`.
+
+| Provider / dataset | Endpoint | Licence | Use | Limitation |
+|---|---|---|---|---|
+| basemap.at Orthofoto | `mapsneu.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg` | CC BY 4.0 (basemap.at) | display only, loaded by the viewer's browser | not used in any computation; tile imagery date varies and is not necessarily pre-event |
+| Mapzen Terrarium DEM tiles (AWS) | `s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png` | Mapzen terms; attribution incl. Austrian DGM, EU-DEM, USGS | 3D relief and hillshade display only | display only; the model uses the cached Skadi 30 m grid, not these tiles |
+| GeoSphere INCA v1 (live) | `…/inca-v1-1h-1km`, one point | CC BY 4.0 | optional separate rain layer, last 7 UTC days | precipitation, not soil moisture; not an input of the shares; INCA v1 retirement announced Dec 2026 |
