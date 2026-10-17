@@ -1,6 +1,8 @@
 # Talwacht — Ziel, Projektstand und Orientierung
 
 **Stand: 15. Oktober 2026 (nach V0.5 und UI-Neugestaltung). Diese Datei zu Beginn jeder Session vollständig lesen.**
+
+**Planungsergänzung 17.10.2026:** Auf Nutzerauftrag liegt ein konkreter Plan für eine Einzelbildsuche mit zwei neuronalen Netzen und kontrolliertem Weiterlernen unter `reports/weiterentwicklung_2026-10-17/NEURONALE_MURENSUCHE_PLAN.md`. Noch keine Umsetzung oder neuen Ergebnisse. Der Plan berücksichtigt die bislang separat entwickelten Satellitenzweige; reine Murenerkennung erfordert zusätzliche Prozesslabels, Modellübereinstimmung allein ergibt nur ein Pseudo-Label.
 Danach `PROJECT_STATE.md` für den technischen Arbeitsstand lesen. Bei Widersprüchen die gespeicherten Artefakte prüfen; keine Ergebnisse erfinden oder historische Experimente überschreiben.
 
 ## Was ist Talwacht?

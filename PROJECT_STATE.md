@@ -2,6 +2,8 @@
 
 Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then this file.
 
+2026-10-17: **Planning only:** concrete single-image neural detector/verifier and controlled self-training plan in `reports/weiterentwicklung_2026-10-17/NEURONALE_MURENSUCHE_PLAN.md`. Proposed namespace `satellite_nn_v01`; no implementation, registration, dataset download or new training. Model agreement remains a pseudo-label; specific mudslide classification requires subtype labels beyond Landslide4Sense. Existing satellite/V0.6–V0.9 work is on separate local branches, not merged here; the plan identifies reusable files and verification limits.
+
 2026-10-15: **UI redesign implemented**: three German pages (Projekt / Vorgehen / Ergebnisse), hash routes including legacy bookmarks, progressive disclosure, real terrain hero, separate V0.4/V0.5 comparisons and correctly labelled intervals. No model runs or scientific artifact edits. Local production app verified on port 8000. Concurrent remote branding commit `75ca8b1` merged: visible product name is now **Talwacht**, internal package and frozen artifact names stay `preslide`/PreSlide.
 
 2026-10-15 (later): **Content/layout pass on the three pages** (plan: `reports/weiterentwicklung_2026-10-14/UI_UEBERARBEITUNG_PLAN.md`): Kurzfassung cards, key-figure strip from API, idea diagram, sticky in-page navigation (`SectionNav.vue`), pipeline strip, real example visible by default, results hero with Hauptstudie/Ergänzungsstudie switch, plain study names. Frontend only; 11 tests + build pass, browser-checked 1280 px and 375 px. No numbers or artifacts changed.
