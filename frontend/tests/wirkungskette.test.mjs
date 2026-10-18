@@ -49,7 +49,8 @@ test('every map layer carries one of the three statement kinds', () => {
 })
 
 test('no probability, risk or endangerment wording in the Prüfgebiete and Wirkungskette views', () => {
-  const files = ['src/PruefgebietePage.vue', ...readdirSync('src/wirkungskette').map(f => `src/wirkungskette/${f}`)]
+  // The Prüfgebiete page became chapter 5 of "So funktioniert's" (pages/HowPage.vue).
+  const files = ['src/pages/HowPage.vue', ...readdirSync('src/wirkungskette').map(f => `src/wirkungskette/${f}`)]
   for (const f of files) {
     const text = readFileSync(f, 'utf8').split('\n').filter(l => !l.includes('export const FORBIDDEN_WORDS')).join('\n')
     assert.ok(!FORBIDDEN_WORDS.test(text), `${f} uses a forbidden word`)

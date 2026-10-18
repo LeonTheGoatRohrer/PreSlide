@@ -1,37 +1,71 @@
-// Jury-facing entry pages first; the earlier three pages stay intact as the research area.
+// User-first structure: one main action (Hang-Check) and four questions a visitor asks.
+// Hash routes keep working in the existing FastAPI static deployment without a server route.
+export const primaryAction = {id: 'check', label: 'Hang prüfen'}
 export const mainNav = [
-  {id:'start',label:'Start'},
-  {id:'pruefgebiete',label:'Demo'},
-  {id:'befunde',label:'Ergebnisse'},
-  {id:'methodik',label:'Methodik & Grenzen',short:'Methodik'},
-  {id:'forschung',label:'Forschung'},
+  {id: 'so-funktionierts', label: "So funktioniert's"},
+  {id: 'belastbar', label: 'Wie belastbar'},
+  {id: 'studien', label: 'Studienatlas'},
+  {id: 'ueber', label: 'Über'},
 ]
-// Old route ids are kept as the canonical addresses of the research pages, so every earlier link still works.
-export const researchPages = [
-  {id:'projekt',label:'Projekt'},
-  {id:'vorgehen',label:'Vorgehen'},
-  {id:'ergebnisse',label:'Ergebnisse im Detail'},
-  {id:'hangkarte',label:'Hangkarte'},
-]
-export const pages = [...mainNav, ...researchPages]
-export const pageTitles = {pruefgebiete:'Demo: Prüfgebiete',forschung:'Forschungsbereich'}
-// Hash routes work in the existing FastAPI static deployment, without a new server route.
-const legacy = {experiment:['vorgehen','beispiel'],wetter:['vorgehen','beispiel'],warum:['vorgehen',''],methodik:['vorgehen','quellen'],v04:['ergebnisse','v04'],v05:['ergebnisse','v05'],benchmarks:['ergebnisse','vergleich'],einzelfaelle:['ergebnisse','historie'],ergebnisse:['ergebnisse','historie']}
-export function resolveRoute(hash) {
-  const value = hash.replace(/^#\/?/,'')
-  const old = !hash.startsWith('#/') && legacy[value]
-  if (old) return {page:old[0],section:old[1]}
-  const [page,section=''] = value.split('/')
-  if (page==='forschung' && researchPages.some(p=>p.id===section)) return {page:section,section:''}
-  return {page:pages.some(p=>p.id===page)?page:'start',section}
+export const pages = ['start', primaryAction.id, ...mainNav.map(p => p.id)]
+export const pageTitles = {start: 'Hang-Check bei Starkregen', check: 'Hang-Check', 'so-funktionierts': "So funktioniert's",
+  belastbar: 'Wie belastbar', studien: 'Studienatlas', ueber: 'Über Talwacht'}
+
+// Every earlier address leads to the place where its content lives now.
+export const redirects = {
+  start: '', hangcheck: 'check', hangkarte: 'check',
+  pruefgebiete: 'so-funktionierts#wirkungskette', befunde: 'belastbar', methodik: 'so-funktionierts',
+  forschung: 'studien', projekt: 'studien#kernfrage', vorgehen: 'studien#baseline',
+  'vorgehen/beispiel': 'studien#baseline', 'vorgehen/quellen': 'studien#v04',
+  ergebnisse: 'studien', 'ergebnisse/v04': 'studien#v04', 'ergebnisse/v05': 'studien#v05',
+  'ergebnisse/vergleich': 'studien#vergleich', 'ergebnisse/historie': 'studien#baseline',
+  'forschung/projekt': 'studien#kernfrage', 'forschung/vorgehen': 'studien#baseline',
+  'forschung/ergebnisse': 'studien', 'forschung/hangkarte': 'check',
 }
-// Which main navigation entry is highlighted for a page: research pages belong to "Forschung".
-export function activeNav(page) {
-  return researchPages.some(p=>p.id===page) ? 'forschung' : page
+// Bookmarks of the very first single-page version (without "/").
+export const legacyAnchors = {
+  experiment: 'vorgehen/beispiel', wetter: 'vorgehen/beispiel', warum: 'vorgehen', methodik: 'vorgehen/quellen',
+  v04: 'ergebnisse/v04', v05: 'ergebnisse/v05', benchmarks: 'ergebnisse/vergleich',
+  einzelfaelle: 'ergebnisse/historie', ergebnisse: 'ergebnisse/historie',
 }
-export function isResearch(page) {
-  return page==='forschung' || researchPages.some(p=>p.id===page)
+
+function split(text, sep) {
+  const i = text.indexOf(sep)
+  return i < 0 ? [text, ''] : [text.slice(0, i), text.slice(i + 1)]
 }
+
+// "#/check?lon=…&lat=…" or "#/studien#v04" → path, query parameters and in-page anchor.
+export function parseHash(hash = '') {
+  const raw = hash.replace(/^#\/?/, '')
+  const [pathQuery, anchor] = split(raw, '#')
+  const [path, query] = split(pathQuery, '?')
+  return {path: path.replace(/\/+$/, ''), anchor, params: Object.fromEntries(new URLSearchParams(query))}
+}
+
+function target(path) {
+  const [page, anchor] = split(path, '#')
+  return {page: page || 'start', anchor}
+}
+
+/** Resolve a location hash. `redirect` is the canonical hash when the address is an old or unknown one. */
+export function resolveRoute(hash = '') {
+  if (hash.length > 1 && !hash.startsWith('#/') && legacyAnchors[hash.slice(1)]) hash = '#/' + legacyAnchors[hash.slice(1)]
+  const {path, anchor, params} = parseHash(hash)
+  const forward = redirects[path] ?? redirects[path.split('/')[0]]
+  if (forward !== undefined) {
+    const t = target(forward)
+    const query = new URLSearchParams(params).toString()
+    return {page: t.page, anchor: t.anchor || anchor, params,
+      redirect: '#/' + (t.page === 'start' ? '' : t.page) + (query ? '?' + query : '') + (t.anchor || anchor ? '#' + (t.anchor || anchor) : '')}
+  }
+  const page = path.split('/')[0] || 'start'
+  if (!pages.includes(page)) return {page: 'start', anchor: '', params: {}, redirect: '#/'}
+  return {page, anchor, params, redirect: null}
+}
+
 export function pageTitle(page) {
-  return pageTitles[page] || pages.find(p=>p.id===page)?.label || 'Start'
+  return pageTitles[page] || pageTitles.start
+}
+export function href(page, anchor = '') {
+  return '#/' + (page === 'start' ? '' : page) + (anchor ? '#' + anchor : '')
 }

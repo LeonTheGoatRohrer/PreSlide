@@ -1,0 +1,88 @@
+{
+  "version": "hangcheck_v01",
+  "registered_on": "2026-10-18",
+  "status": "Anwendung des eingefrorenen V0.4-Gelände-Modells; keine neue Auswertung, kein Training, kein Test",
+  "purpose": "relative order of terrain cells inside a user-chosen radius: which slopes to look at first when heavy rain is expected; the heavy-rain switch only selects this view and never changes the classes",
+  "not_claimed": [
+    "probability of a landslide",
+    "warning",
+    "causality",
+    "validated hazard map",
+    "safety of unmarked slopes",
+    "any effect of the expected rain on the classes (no weather input)"
+  ],
+  "model": {
+    "bundle": "models/v04/final_c6d67a854ba7/conditional_logit_static.joblib",
+    "bundle_sha256": "fbce46ad7f25e43e9ca954b177f4a5dea2e40680fa5fa035217cfcba15e753b4",
+    "provenance": "V0.4 final static conditional logit, trained only on the 123 development events (reports/v04/); same model as config/wirkungskette_v01.json review_points; read only, never refitted here",
+    "columns_from": "preslide.v04.models.STATIC (22 columns, order checked)",
+    "score": "linear conditional-logit score; only its rank inside the radius is used"
+  },
+  "terrain": {
+    "resolution_m": 30,
+    "crs": "EPSG:31287",
+    "dem": "read-only Skadi tile cache (data/raw/terrain, data/v04/cache/terrain_tiles); never downloaded here; Skadi over Austria is practically SRTMGL1 v3 (February 2000)",
+    "feature_code": "preslide.hangmap.build.build_features (V0.5 static_features, byte-identical algorithm to preslide.v04.terrain.static_features)",
+    "reference_date": "2026-10-18",
+    "reference_date_rule": "every DEM tile must have a provider Last-Modified date before this date",
+    "catchment_margin_m": 5300,
+    "minimum_slope_deg": 5,
+    "elevation_range_m": [0, 4500]
+  },
+  "land_cover": {
+    "vintage": "CLC2018",
+    "rule": "V0.4 rule: CLC2018 for dates from 2019-01-01; no or several polygons covering a cell = not assessable (counted)"
+  },
+  "geology": {
+    "source": "GeoSphere 1:500 000 lithology, five V0.4 classes; missing or ambiguous = not assessable (counted)"
+  },
+  "area": {
+    "cell_m": 90,
+    "minimum_assessable_cells": 100,
+    "inside_austria": "the chosen centre must lie inside the GISCO Austria boundary; cells outside Austria are counted, not assessed"
+  },
+  "radius_m": {
+    "min": 1000,
+    "max": 3000,
+    "step": 500,
+    "default": 2000
+  },
+  "classes": [
+    {"id": 1, "label": "Prüfstufe 1", "top_fraction": 0.05},
+    {"id": 2, "label": "Prüfstufe 2", "top_fraction": 0.20},
+    {"id": 3, "label": "ohne Markierung", "top_fraction": 1.0}
+  ],
+  "classes_rule": "same logic as preslide.wirkungskette.core.review_classes: descending rank of the score among all assessable cells inside the radius; top 5 % = Prüfstufe 1, next 15 % = Prüfstufe 2, rest unmarked. Relative inside the radius only.",
+  "review_points": {
+    "count": 5,
+    "separation_m": 300,
+    "rule": "highest scores first among Prüfstufe-1 cells; a cell is taken only if >= separation_m (EPSG:31287 metres) from every taken cell (preslide.wirkungskette.core.select_release_points)"
+  },
+  "municipalities": {
+    "source": "data/wirkungskette_gebietstest_v01/cache/gisco/LAU_RG_01M_2021_4326.geojson",
+    "source_url": "https://gisco-services.ec.europa.eu/distribution/v2/lau/geojson/LAU_RG_01M_2021_4326.geojson",
+    "source_sha256": "21685c52910b8fe6b89a6b697b9c0f9c2ec81a1e90a361f0a7971e83c70bd289",
+    "filter": "CNTR_CODE == 'AT'",
+    "point": "shapely representative_point of the municipality polygon (inside the polygon, not the centroid)",
+    "state_from": "first digit of LAU_ID (Gemeindekennziffer)",
+    "states": {"1": "Burgenland", "2": "Kärnten", "3": "Niederösterreich", "4": "Oberösterreich", "5": "Salzburg",
+               "6": "Steiermark", "7": "Tirol", "8": "Vorarlberg", "9": "Wien"},
+    "max_results": 10,
+    "geocoding": "offline only; no external geocoder"
+  },
+  "data_vintages": {
+    "terrain": "Höhenmodell Stand 2000",
+    "land_cover": "Landbedeckung 2018",
+    "geology": "Geologie 1:500 000"
+  },
+  "cache": {
+    "directory": "data/hangcheck_v01/cache",
+    "key": "identity = SHA-256 of rounded request and this configuration; sidecar SHA-256 verified on every read"
+  },
+  "examples": [
+    {"id": "stanz_landeck", "name": "Stanz bei Landeck (Tirol)", "longitude": 10.5617, "latitude": 47.1478, "radius_m": 1500},
+    {"id": "feldbach_hills", "name": "Hügelland bei Feldbach (Steiermark)", "longitude": 15.89, "latitude": 46.95, "radius_m": 2000},
+    {"id": "gasteinertal", "name": "Gasteiner Tal (Salzburg)", "longitude": 13.11, "latitude": 47.11, "radius_m": 2000}
+  ],
+  "examples_from": "config/hangmap_v01.json examples (same three areas)"
+}

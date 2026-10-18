@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from .common import read_json
 from .sources import ROOT
 from .hangmap.routes import router as hangkarte_router
+from .studien import router as studien_router
 
 app=FastAPI(title='Talwacht – lokaler Forschungsprototyp',docs_url=None,redoc_url=None)
 from .extremwetter.routes import router as extremwetter_router; app.include_router(extremwetter_router)  # GET /api/extremwetter
@@ -25,6 +26,8 @@ def case_path(case_id,suffix):
     return demo_directory()/f'{case_id}.{suffix}'
 
 app.include_router(hangkarte_router)
+app.include_router(studien_router)  # GET /api/studien, /api/studien/{id}/bericht (study atlas registry)
+app.include_router(__import__('preslide.hangcheck.routes', fromlist=['router']).router)  # Hang-Check (preslide/hangcheck)
 
 @app.get('/api/health')
 def health():
@@ -133,5 +136,9 @@ def satellite_contact_sheet(name:str):
 dist=ROOT/'frontend/dist'
 if dist.exists():
     app.mount('/assets',StaticFiles(directory=dist/'assets'),name='assets')
+    if (dist/'media').exists():  # generated illustrations from frontend/public/media (labelled on the page)
+        app.mount('/media',StaticFiles(directory=dist/'media'),name='media')
+    @app.get('/favicon.svg')
+    def favicon(): return FileResponse(dist/'favicon.svg',media_type='image/svg+xml')
     @app.get('/')
-    def index(): return FileResponse(dist/'index.html')
+    def index(): return FileResponse(dist/'index.html',headers={'Cache-Control':'no-cache'})  # always pick up a new build

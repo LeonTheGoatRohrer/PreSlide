@@ -5,7 +5,6 @@ import StabilityFigures from './StabilityFigures.vue'
 import InfoTip from './InfoTip.vue'
 import EventExplorer from './EventExplorer.vue'
 import SectionGuide from './SectionGuide.vue'
-import SatelliteResults from './SatelliteResults.vue'
 import {explain} from './metricDefinitions.js'
 const props=defineProps({mode:{type:String,default:'method'},initialCase:String})
 const emit=defineEmits(['show-case'])
@@ -174,7 +173,6 @@ function featureLabel(f){
         <EventExplorer :explorer="bundle.event_explorer" :model="model" :names="names" :feature-names="featureNames" @show-case="showCase"/>
       </section>
 
-<details class="disclosure"><summary>Satellitenbilder vor und nach bekannten Ereignissen (Pipeline B, getrennt)</summary><SatelliteResults/></details>
 
 <details class="disclosure"><summary>Historische Datenprüfung und Quellen</summary>      <section id="methodik" class="section methodology">
         <div class="section-heading"><div><p class="section-number">Historisch · Qualitätsprüfung der Baseline</p><h2>Jeder Ausschluss bleibt sichtbar.</h2></div><span class="count-label">{{bundle?.dataset.candidates}} Kandidaten → {{summary.complete_events}} vollständige Gruppen</span></div>
