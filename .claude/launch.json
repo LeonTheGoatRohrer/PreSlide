@@ -16,6 +16,20 @@
       "port": 8010
     },
     {
+      "name": "preslide-api-pruefgebiete",
+      "runtimeExecutable": ".venv/Scripts/python.exe",
+      "runtimeArgs": [
+        "-m",
+        "uvicorn",
+        "preslide.api:app",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "8030"
+      ],
+      "port": 8030
+    },
+    {
       "name": "preslide-api-v04",
       "runtimeExecutable": ".venv/Scripts/python.exe",
       "runtimeArgs": [

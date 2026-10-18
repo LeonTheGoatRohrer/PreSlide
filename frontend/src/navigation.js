@@ -1,4 +1,4 @@
-export const pages = [{id:'projekt',label:'Projekt'},{id:'vorgehen',label:'Vorgehen'},{id:'ergebnisse',label:'Ergebnisse'}]
+export const pages = [{id:'projekt',label:'Projekt'},{id:'vorgehen',label:'Vorgehen'},{id:'ergebnisse',label:'Ergebnisse'},{id:'pruefgebiete',label:'Prüfgebiete'}]
 // Hash routes work in the existing FastAPI static deployment, without a new server route.
 const legacy = {experiment:['vorgehen','beispiel'],wetter:['vorgehen','beispiel'],warum:['vorgehen',''],methodik:['vorgehen','quellen'],v04:['ergebnisse','v04'],v05:['ergebnisse','v05'],benchmarks:['ergebnisse','vergleich'],einzelfaelle:['ergebnisse','historie'],ergebnisse:['ergebnisse','historie']}
 export function resolveRoute(hash) {
