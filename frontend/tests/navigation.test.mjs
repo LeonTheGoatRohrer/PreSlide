@@ -1,20 +1,49 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {pages,resolveRoute} from '../src/navigation.js'
+import {mainNav,researchPages,pages,resolveRoute,activeNav,isResearch,pageTitle} from '../src/navigation.js'
 
-test('all four pages support direct links and a safe default',()=>{
-  assert.deepEqual(pages.map(p=>p.label),['Projekt','Vorgehen','Ergebnisse','Prüfgebiete'])
+test('jury entry first, research area last, start page as safe default',()=>{
+  assert.deepEqual(mainNav.map(p=>p.id),['start','pruefgebiete','befunde','methodik','forschung'])
+  assert.deepEqual(researchPages.map(p=>p.id),['projekt','vorgehen','ergebnisse'])
   for(const {id} of pages) assert.deepEqual(resolveRoute('#/'+id),{page:id,section:''})
-  for(const hash of ['', '#', '#/unbekannt']) assert.equal(resolveRoute(hash).page,'projekt')
+  for(const hash of ['', '#', '#/', '#/unbekannt']) assert.deepEqual(resolveRoute(hash),{page:'start',section:''})
+  assert.equal(pageTitle('pruefgebiete'),'Demo: Prüfgebiete')
 })
-test('old bookmarks retain their content destination',()=>{
-  assert.deepEqual(resolveRoute('#v05'),{page:'ergebnisse',section:'v05'})
-  assert.deepEqual(resolveRoute('#experiment'),{page:'vorgehen',section:'beispiel'})
-  assert.deepEqual(resolveRoute('#einzelfaelle'),{page:'ergebnisse',section:'historie'})
-  assert.deepEqual(resolveRoute('#ergebnisse'),{page:'ergebnisse',section:'historie'})
-  assert.deepEqual(resolveRoute('#/ergebnisse'),{page:'ergebnisse',section:''})
+
+test('research pages are highlighted under "Forschung" and keep their own addresses',()=>{
+  for(const {id} of researchPages){ assert.equal(activeNav(id),'forschung'); assert.equal(isResearch(id),true) }
+  for(const id of ['start','pruefgebiete','befunde','methodik']){ assert.equal(activeNav(id),id); assert.equal(isResearch(id),false) }
+  assert.deepEqual(resolveRoute('#/forschung/vorgehen'),{page:'vorgehen',section:''})
+  assert.deepEqual(resolveRoute('#/forschung'),{page:'forschung',section:''})
 })
-test('links to details preserve the requested panel',()=>{
-  assert.deepEqual(resolveRoute('#/vorgehen/beispiel'),{page:'vorgehen',section:'beispiel'})
-  assert.deepEqual(resolveRoute('#/ergebnisse/vergleich'),{page:'ergebnisse',section:'vergleich'})
+
+// Every bookmark that existed before the jury restructuring must reach the same content as before.
+const oldBookmarks={
+  '#v05':{page:'ergebnisse',section:'v05'},
+  '#v04':{page:'ergebnisse',section:'v04'},
+  '#benchmarks':{page:'ergebnisse',section:'vergleich'},
+  '#experiment':{page:'vorgehen',section:'beispiel'},
+  '#wetter':{page:'vorgehen',section:'beispiel'},
+  '#warum':{page:'vorgehen',section:''},
+  '#methodik':{page:'vorgehen',section:'quellen'},
+  '#einzelfaelle':{page:'ergebnisse',section:'historie'},
+  '#ergebnisse':{page:'ergebnisse',section:'historie'},
+  '#/projekt':{page:'projekt',section:''},
+  '#/vorgehen':{page:'vorgehen',section:''},
+  '#/vorgehen/beispiel':{page:'vorgehen',section:'beispiel'},
+  '#/vorgehen/quellen':{page:'vorgehen',section:'quellen'},
+  '#/ergebnisse':{page:'ergebnisse',section:''},
+  '#/ergebnisse/v04':{page:'ergebnisse',section:'v04'},
+  '#/ergebnisse/v05':{page:'ergebnisse',section:'v05'},
+  '#/ergebnisse/vergleich':{page:'ergebnisse',section:'vergleich'},
+  '#/ergebnisse/historie':{page:'ergebnisse',section:'historie'},
+  '#/pruefgebiete':{page:'pruefgebiete',section:''},
+}
+test('old bookmarks and hash routes keep their content destination',()=>{
+  for(const [hash,target] of Object.entries(oldBookmarks)) assert.deepEqual(resolveRoute(hash),target,hash)
+})
+
+test('the new "#/methodik" page and the old "#methodik" bookmark stay distinct',()=>{
+  assert.deepEqual(resolveRoute('#/methodik'),{page:'methodik',section:''})
+  assert.notDeepEqual(resolveRoute('#methodik'),resolveRoute('#/methodik'))
 })

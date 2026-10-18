@@ -23,6 +23,7 @@ test('loading, unavailable data, retry, and successful-response caching',async(t
   assert.equal(first.state.data.value,null)
   complete({ok:false,status:503});await flush()
   assert.match(first.state.error.value,/503/)
+  assert.equal(first.state.status.value,503)
   assert.equal(first.state.loading.value,false)
   assert.equal(first.state.data.value,null)
   const retry=first.state.reload()
@@ -42,7 +43,7 @@ test('network and malformed JSON failures remain errors, never fabricated values
   const old=globalThis.fetch;t.after(()=>{globalThis.fetch=old})
   globalThis.fetch=async()=>{throw Error('Verbindung unterbrochen')}
   const {state,unmount}=mount('/test/unavailable-resource')
-  await flush();assert.equal(state.data.value,null);assert.match(state.error.value,/Verbindung/)
+  await flush();assert.equal(state.data.value,null);assert.match(state.error.value,/Verbindung/);assert.equal(state.status.value,0)
   globalThis.fetch=async()=>({ok:true,json:async()=>{throw Error('Ungültiges JSON')}})
   await state.reload();assert.equal(state.data.value,null);assert.match(state.error.value,/JSON/)
   unmount()
