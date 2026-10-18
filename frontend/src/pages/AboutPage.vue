@@ -71,8 +71,6 @@ const software = ['Vue 3 und Vite (MIT)', 'MapLibre GL JS (BSD-3-Clause)', 'Fast
 </template>
 
 <style>
-.page-head{padding-top:clamp(140px,18vh,190px);padding-bottom:clamp(48px,7vw,88px)}
-.page-head h1{max-width:16ch;margin-bottom:22px}
 .about-block{padding-bottom:clamp(64px,9vw,120px)}
 .about-block h2{margin-bottom:28px}
 .about-cols{display:grid;grid-template-columns:1fr 1fr;gap:32px 56px}

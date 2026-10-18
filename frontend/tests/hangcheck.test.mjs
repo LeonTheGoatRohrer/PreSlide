@@ -70,5 +70,6 @@ test('flow-path request carries only position and radius; infrastructure text li
   const labels = {gebaeude: 'Gebäude', strasse: 'Straßen', weg: 'Forst- und Feldwege', bahn: 'Bahn'}
   assert.equal(infraText({gebaeude: {anzahl: 3}, strasse: {anzahl: 0}, bahn: {anzahl: 1}}, labels), 'Gebäude 3 · Bahn 1')
   assert.equal(infraText({gebaeude: {anzahl: 0}}, labels), '')
-  assert.doesNotMatch(page + helpers, /wird getroffen|getroffen werden/)
+  assert.ok(page.includes('Szenario, ungeprüft') && page.includes('im Szenario liegen'))
+  assert.doesNotMatch(page, /wird getroffen|getroffen werden/)
 })
