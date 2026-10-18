@@ -1,0 +1,8 @@
+{
+ "registered_at_utc": "2026-10-18T10:57:58.239244+00:00",
+ "config": "config/anfaelligkeit_at_v01.json",
+ "config_sha256": "d1c8ed691d35a9ef8b3dcddda4a4a70a653ec491440df12228be22ba6c984fa2",
+ "input_sha256": {
+  "data/raw/geosphere_natural_hazards.json": "9dc1581c122b83839b45ac7cc53eec83177fe4e54c785019f7a519313eaa3d97"
+ }
+}
