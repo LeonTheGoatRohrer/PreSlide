@@ -158,7 +158,7 @@ ausgeschlossen). Für echte Zwillinge die Aufnahme eines Ereignisses aus der Dem
 > Zufall wäre null Komma fünf.
 >
 > Den Großteil leistet das Gelände. Ein Zusatznutzen des Wetters: nicht belegt – auch nicht auf neuen, ungesehenen
-> Ereignissen.
+> Ereignissen. Deshalb nutzt unser Werkzeug nur Gelände, Landbedeckung und Geologie.
 >
 > Und doch: Am selben Ort waren die drei Tage vor einem Ereignis in einem Viertel der Fälle extrem nass. Erwartet
 > wäre jeder zwanzigste.
@@ -169,53 +169,53 @@ ausgeschlossen). Für echte Zwillinge die Aufnahme eines Ereignisses aus der Dem
 
 | Zeit | Bild | Ton |
 |---|---|---|
-| 3:25 | Nachtaufnahme: eine Talstraße mit Lichtern (eigene Aufnahme) oder die Karte mit dem Straßennetz als leuchtende Linien. Die orangen Ereignispunkte rücken sichtbar an die Linien heran. Einblendung: *Abstand zu Straßen und Gebäuden allein: 0,93*. | Musik bricht ab, nur ein tiefer, dissonanter Ton. |
-| 3:38 | Spiegelung: ein Teammitglied im dunklen Bildschirm, nachdenklich. Drei Zeilen erscheinen nacheinander: *11 Episoden* · *eine Episode dominiert* · *ohne Meldung ≠ stabil* | Jeweils ein leiser Akzent. |
-| 3:50 | Schwarz. Weißer Text: *Kein Warnsystem. Keine Wahrscheinlichkeit.* | Stille. |
+| 3:25 | Clip `a5_meldebias`: *0,93 – nur der Abstand zu Straßen und Gebäuden*, darüber feine Straßenlinien. | Musik bricht ab, nur ein tiefer, dissonanter Ton. |
+| 3:38 | Clip `a5_grenzen`: *11 unabhängige Episoden* · *eine Episode = 243 von 300* · *nicht gemeldet heißt nicht sicher*. Optional dazwischen: Teammitglied im dunklen Bildschirm gespiegelt. | Jeweils ein leiser Akzent. |
+| 3:50 | Clip `a5_kein_warnsystem`. | Stille. |
 
 **ERZÄHLER**
 > Dann haben wir gegen uns selbst gesucht.
 > Allein der Abstand zu Straßen und Häusern trennt gemeldete von ungemeldeten Hängen fast perfekt. Gemeldet wird,
 > was Menschen sehen. Ein Teil des Signals ist Meldeverhalten – nicht Natur.
 >
-> Elf unabhängige Episoden. Eine davon dominiert. Und „ohne Meldung“ heißt nicht „stabil“.
+> Elf unabhängige Episoden. Eine davon dominiert. Und nicht gemeldet heißt nicht sicher.
 >
-> Talwacht ist kein Warnsystem. Es berechnet keine Wahrscheinlichkeit.
+> Talwacht warnt nicht. Es gibt eine begründete Reihenfolge: wo man zuerst hinschaut.
 
 ---
 
-## AKT VI – Das Produkt (3:55–4:20)
+## AKT VI – Das Produkt: der Hang-Check (3:55–4:25)
 
 | Zeit | Bild | Ton |
 |---|---|---|
-| 3:55 | Laptop in dunklem Raum, Kamera fährt auf den Bildschirm zu, bis er das Bild füllt. | Musik löst sich auf, warm. |
-| 3:59 | **Demo:** ein Ereignis mit seinen fünf Zwillingen auf der Karte; Klick öffnet die 60 Tage Niederschlag davor. | Weiche Klicks. |
-| 4:06 | **Ergebnisse:** Kennzahlen mit Unsicherheitsbereich. | |
-| 4:10 | **Hangkarte, Beispiel Gasteiner Tal:** das 3D-Gelände dreht sich, die Vergleichsgruppe erscheint mit Anteilen (Summe 100 %). Einblendung: *relative Rangfolge · keine Gefahrenkarte* | |
+| 3:55 | App-Clip `app_01_start`: Startseite „Wo zuerst hinschauen, wenn der Starkregen kommt.“ | Musik löst sich auf, warm. |
+| 4:00 | App-Clip `app_02_hangcheck_gastein`: Beispiel *Gasteiner Tal (Salzburg)* wird gewählt, Prüfstufen rot/orange und fünf Prüfpunkte erscheinen auf der 3D-Karte, die Karte dreht sich. | Weiche Klicks. |
+| 4:12 | App-Clip `app_04_starkregen` (oder `app_03_fliessweg`): Schalter „Starkregen oder Unwetter erwartet“, mögliche Fließwege mit Straßen und Gebäuden im Szenario. Einblendung: *Szenario, ungeprüft · kein Wetter im Modell*. | |
+| 4:20 | Optional App-Clip `app_05_belastbar` kurz: jede Aussage mit Intervall. | |
 
 **ERZÄHLER**
-> Was bleibt, ist ein offenes Werkzeug: jedes Ereignis mit seinen Zwillingen, die sechzig Tage davor, jede Zahl mit
-> ihrer Unsicherheit.
-> Und zurück im Gasteinertal – einem Tal, das unser Modell nie gesehen hat – vergleicht die Hangkarte Hänge
-> untereinander. Als Rangfolge. Nicht als Urteil.
+> Daraus ist ein Werkzeug geworden: der Hang-Check.
+> Ort wählen – zum Beispiel das Gasteinertal, ein Tal, das unser Modell nie gesehen hat.
+> Sofort zeigt Talwacht die auffälligsten Hänge im Umkreis und fünf Prüfpunkte: hier zuerst hinschauen.
+> Und wenn Starkregen erwartet wird: mögliche Fließwege – und welche Straßen und Häuser im Szenario liegen.
+> Für die Gemeinde nach dem Unwetter, den Straßenerhalter auf Kontrollfahrt, die Menschen am Hang.
 
 ---
 
-## AKT VII – Finale (4:20–4:40)
+## AKT VII – Finale (4:25–4:45)
 
 | Zeit | Bild | Ton |
 |---|---|---|
-| 4:20 | Letterbox kehrt zurück. Das Gasteinertal, jetzt hell, der Nebel hebt sich (3D-Flug mit Lichtwechsel oder eigene Aufnahme). Ein Satellitenbild blendet kurz über das Gelände. | Musik steigt an. |
-| 4:30 | Das Team nebeneinander, Blick in die Kamera. | Musik hält. |
-| 4:34 | Schwarz. **TALWACHT**. Darunter Teamnamen, Schule. Kleiner: *Daten: GeoSphere Austria · Copernicus/CORINE · u. a.* | Letzter Boom, Ausklang. |
+| 4:25 | Letterbox kehrt zurück. Clip `a3_01_ebenen` (Anfang, nur Gelände) oder ein ruhiger Moment aus `app_02` ohne Bedienfeld. | Musik steigt an. |
+| 4:33 | Das Team nebeneinander, Blick in die Kamera. | Musik hält. |
+| 4:37 | Clip `a7_endtafel`: **TALWACHT** · *Wo zuerst hinschauen, wenn der Starkregen kommt.* · Datenquellen. Teamnamen im Schnittprogramm darüber setzen. | Letzter Boom, Ausklang. |
 
 **ERZÄHLER**
 > Als Nächstes: ein vorab registrierter Test mit Ereignissen, die erst noch kommen. Und Satellitenbilder vorher und
 > nachher – um zu prüfen, ob die Zwillinge wirklich ruhig geblieben sind.
 
 **TEAM (on camera, gemeinsam oder eine Person)**
-> Talwacht. Nicht lauter warnen – genauer hinschauen.
-
+> Talwacht. Wo zuerst hinschauen, wenn der Starkregen kommt.
 ---
 
 ## Abdeckung der Jury-Kriterien
@@ -290,3 +290,29 @@ und Zahlen zu Schäden oder Häufigkeiten von Muren in Österreich.
 2. Wer die Erzählerstimme spricht.
 3. Eigene Aufnahme einer gesperrten Straße oder Bahnlinie für Akt II, sonst lizenziertes Symbolbild.
 4. Ob die Anwendung öffentlich erreichbar ist (dann Link/QR in die Endtafel).
+
+---
+
+## Material für den Schnitt (erzeugt 18.10.2026)
+
+Alle Dateien liegen in `deliverables/pitch/` (lokal, nicht im Repository). 1920×1080, 25 fps, H.264.
+Animationen: `scripts/pitch/render_clips.py`; App-Aufnahmen: `scripts/pitch/record_app.mjs` (Hang-Check, aktueller Stand).
+
+| Akt | Datei | Länge | Inhalt |
+|---|---|---|---|
+| I | `clips/a1_terminal.mp4` | 5 s | getippte Meldung 18.11.2019 · Bad Hofgastein · Hangmure (schwarzer Grund → Mischmodus „Bildschirm“) |
+| I | `clips/a1_ort.mp4` | 5 s | Bauchbinde GASTEINERTAL · SALZBURG (Mischmodus „Bildschirm“) |
+| I | `clips/a1_titel.mp4` | 7 s | Titel TALWACHT |
+| I, III/01, VII | `clips/a3_01_ebenen.mp4` | 24 s | echtes 3D-Gelände Gasteinertal, Ebenen Gelände → Neigung → Landbedeckung → Geologie → 1-km-Raster |
+| III/02 | `clips/a3_02_filter_oesterreich.mp4` | 15 s | 25 609 Inventarpunkte → 423 Ereignisse |
+| III/02 | `clips/a3_02_gastein_ausschluss.mp4` | 13 s | Gastein-Einträge erlöschen, Hangmure 2019 „AUSGESCHLOSSEN“, im Datensatz: 0 |
+| III/03 | `clips/a3_03_zwillinge.mp4` | 19 s | echte Zwillingssuche, Rutschung Tamsweg 05.07.2023 |
+| III/04 | `clips/a3_04_zeitwand.mp4`, `a3_04_gruppen.mp4`, `a3_04_siegel.mp4` | 7 / 7,5 / 6 s | Zeitwand t₀, Gruppen, Siegel |
+| III/05 | `clips/a3_05_modell.mp4` | 9 s | Waage, Formel, Modelle |
+| IV | `clips/a4_ergebnis.mp4`, `a4_balken.mp4`, `a4_ungesehen.mp4`, `a4_extremwetter.mp4` | 10 / 11 / 7 / 9 s | Ergebnisse mit Intervallen |
+| V | `clips/a5_meldebias.mp4`, `a5_grenzen.mp4`, `a5_kein_warnsystem.mp4` | 8 / 8 / 5 s | Reflexion |
+| VI | `app/app_01_start.mp4` … `app_05_belastbar.mp4` | je 15–30 s | Hang-Check: Start, Gastein mit Prüfpunkten, Fließweg, Starkregen-Ansicht, „Wie belastbar“ |
+| VII | `clips/a7_endtafel.mp4` | 9 s | Endtafel; Teamnamen im Schnitt ergänzen |
+
+Die Zwillingssuche zeigt ein echtes Ereignis aus Salzburg (Tamsweg), nicht Gastein: Für Gastein gibt es kein
+geprüftes Ereignis. In der Zwillings-Szene sagt der Erzähler deshalb nichts Ortsbezogenes.
