@@ -20,59 +20,37 @@ ROOT = Path(__file__).resolve().parents[2]
 PITCH = ROOT / 'deliverables/pitch'
 BUILD = PITCH / 'build'
 FPS = 25
-VOICE_DELAY_S = 0.7
-TAIL_S = 1.0
+VOICE_DELAY_S = 0.6
+TAIL_S = 0.7
 
 # (clip, start_s, duration_s or None = to end); app clips come from deliverables/pitch/app
 SEGMENTS = [
-    dict(id='01_hook', clips=[('app3/app_00_hero.webm|crop=1920:1062:0:10', 0.8, 11.0), ('clips/a1_terminal.mp4', 0, 5), ('app3/app_02_hangcheck_gastein.webm|crop=1440:810:480:100', 'mark:app_02_hangcheck_gastein:-2.5', 7.0, 'clips/a1_ort.mp4')],
-         text='Achtzehnter November 2019. Gasteiner Tal. Ein Eintrag im Naturgefahren-Inventar: Hangmure. '
-              'Rundherum: Hänge. Genauso steil. Genauso hoch. Von ihnen: keine Meldung. '
-              'Was unterscheidet diesen einen Hang von seinen Zwillingen – bevor etwas passiert?'),
-    dict(id='02_titel', clips=[('clips/a1_titel.mp4', 0, 7)], text=''),
+    dict(id='01_hook', clips=[('app3/app_00_hero.webm|crop=1920:1062:0:10', 0.8, 7.5), ('clips/a1_terminal.mp4', 0, 4.2), ('app3/app_02_hangcheck_gastein.webm|crop=1440:810:480:100', 'mark:app_02_hangcheck_gastein:-2.0', 6.0, 'clips/a1_ort.mp4')],
+         text='Achtzehnter November 2019. Gasteiner Tal. Ein Eintrag im Naturgefahren-Inventar: Hangmure. Rundherum: Hänge. Genauso steil. Genauso hoch. Von ihnen: keine Meldung. Was unterscheidet diesen einen Hang von seinen Zwillingen – bevor etwas passiert?'),
+    dict(id='02_titel', clips=[('clips/a1_titel.mp4', 1.0, 5.0)], text=''),
     dict(id='03_idee', clips=[('app3/app_01_start.webm', 3.0, None)],
-         text='Rutschungen und Muren treffen in Österreich jedes Jahr Straßen, Bahnlinien und Häuser. '
-              'Gefahrenkarten zeigen, wo ein Hang grundsätzlich anfällig ist. '
-              'Wir wollten etwas Schärferes wissen: Lässt sich der betroffene Hang von seinen Zwillingen unterscheiden – '
-              'nur mit dem, was vorher bekannt war?'),
+         text='Rutschungen und Muren treffen in Österreich jedes Jahr Straßen, Bahnlinien und Häuser. Wir wollten wissen: Lässt sich der betroffene Hang von seinen Zwillingen unterscheiden – nur mit dem, was vorher bekannt war?'),
     dict(id='04_daten', clips=[('clips/a3_01_ebenen.mp4', 3.5, None)],
-         text='Talwacht baut jeden Hang aus echten Daten neu auf: das Gelände auf dreißig Meter genau. Landbedeckung. '
-              'Geologie. Und Niederschlag – Stunde für Stunde, sechzig Tage zurück.'),
+         text='Talwacht baut jeden Hang aus echten Daten neu auf: Gelände auf dreißig Meter genau, Landbedeckung, Geologie – und Niederschlag, Stunde für Stunde, sechzig Tage zurück.'),
     dict(id='05_filter', clips=[('clips/a3_02_filter_oesterreich.mp4', 0, None)],
          text='Aus über fünfundzwanzigtausend Einträgen bleibt nur, was gesichert ist: Datum, Prozess, Lage. 423 Ereignisse.'),
-    dict(id='05b_gastein', delay=1.6, clips=[('clips/a3_02_gastein_ausschluss.mp4|setpts=PTS/1.5', 0, None)],
-         text='Und die Hangmure aus dem Gasteiner Tal? … Aussortiert. Ob es wirklich eine war, ist nicht bestätigt. '
-              'Kein Eintrag aus diesem Tal hat die Prüfung bestanden.'),
+    dict(id='05b_gastein', delay=2.2, clips=[('clips/a3_02_gastein_ausschluss.mp4|setpts=PTS/1.5', 0, None)],
+         text='Und die Hangmure aus dem Gasteiner Tal? Aussortiert – ob es wirklich eine war, ist nicht bestätigt.'),
     dict(id='06_zwillinge', clips=[('clips/a3_03_zwillinge.mp4', 0, None)],
-         text='Dann sucht das System jedem Ereignis fünf Zwillinge: in der Nähe, gleich steil, gleich hoch, gleich ausgerichtet – '
-              'mit demselben Stichtag. Hang gegen Zwilling. Nicht Berg gegen Flachland.'),
+         text='Jedes Ereignis bekommt fünf Zwillinge: in der Nähe, gleich steil, gleich hoch, gleich ausgerichtet – mit demselben Stichtag.'),
     dict(id='07_regeln', clips=[('clips/a3_04_zeitwand.mp4', 0, None), ('clips/a3_04_gruppen.mp4', 0, None), ('clips/a3_04_siegel.mp4', 0, None)],
-         text='Und es darf sich nicht selbst betrügen. Keine Information ab dem Ereignis. '
-              'Ein Hang und seine Zwillinge bleiben immer zusammen. Der Plan wurde vorab festgeschrieben, der Test versiegelt.'),
+         text='Keine Information ab dem Ereignis. Ein Hang und seine Zwillinge bleiben immer zusammen. Der Plan wurde vorab festgeschrieben, der Test versiegelt.'),
     dict(id='08_modell', clips=[('clips/a3_05_modell.mp4', 0, None)],
-         text='Im Kern: eine selbst gebaute bedingte logistische Regression. Sie wägt immer einen Hang gegen seine fünf Zwillinge ab – '
-              'gegengeprüft mit Random Forest, Gradient Boosting und Zufallsvergleichen.'),
+         text='Im Kern: eine selbst gebaute bedingte logistische Regression – gegengeprüft mit Random Forest, Gradient Boosting und Zufallsvergleichen.'),
     dict(id='09_ergebnis', clips=[('clips/a4_ergebnis.mp4', 0, None), ('clips/a4_balken.mp4', 0, None),
                                   ('clips/a4_ungesehen.mp4', 0, None), ('clips/a4_extremwetter.mp4', 0, None)],
-         text='Das Ergebnis. … In rund drei von vier Vergleichen liegt der betroffene Hang vor seinen Zwillingen. '
-              'Null Komma fünfundsiebzig. Zufall wäre null Komma fünf. Den Großteil leistet das Gelände. '
-              'Ein Zusatznutzen des Wetters: nicht belegt – auch nicht auf neuen, ungesehenen Ereignissen. '
-                            'Und doch: Am selben Ort waren die drei Tage vor einem Ereignis in einem Viertel der Fälle extrem nass. '
-              'Erwartet wäre jeder zwanzigste.'),
+         text='Das Ergebnis: In rund drei von vier Vergleichen liegt der betroffene Hang vor seinen Zwillingen. Null Komma fünfundsiebzig – Zufall wäre null Komma fünf. Den Großteil leistet das Gelände. Ein Zusatznutzen des Wetters ist nicht belegt – auch nicht auf neuen Ereignissen. Und doch: Die drei Tage vor einem Ereignis waren in einem Viertel der Fälle extrem nass. Erwartet wäre jeder zwanzigste.'),
     dict(id='10_spiegel', clips=[('clips/a5_meldebias.mp4', 0, None), ('clips/a5_grenzen.mp4', 0, None), ('clips/a5_kein_warnsystem.mp4', 0, None)],
-         text='Allein der Abstand zu Straßen und Häusern trennt gemeldete von '
-              'ungemeldeten Hängen fast perfekt. Gemeldet wird, was Menschen sehen. Ein Teil des Signals ist Meldeverhalten – '
-              'nicht Natur. Elf unabhängige Episoden. Eine davon dominiert. Und nicht gemeldet heißt nicht sicher. '
-              'Talwacht warnt nicht. Es gibt eine begründete Reihenfolge: wo man zuerst hinschaut.'),
-    dict(id='11_produkt', clips=[('app3/app_02_hangcheck_gastein.webm', 'mark:app_02_hangcheck_gastein:-1.0', 12.0), ('app3/app_04_starkregen.webm', 'mark:app_04_ready:+2.5', 22.0)],
-         text='Daraus ist ein Werkzeug geworden: der Hang-Check. Ort wählen – zum Beispiel das Gasteiner Tal, ein Tal, '
-              'das unser Modell nie gesehen hat. Sofort zeigt Talwacht die auffälligsten Hänge im Umkreis und fünf Prüfpunkte: '
-              'hier zuerst hinschauen. Und wenn Starkregen erwartet wird: mögliche Fließwege – und welche Straßen und Häuser '
-              'im Szenario liegen.'),
-    dict(id='12_finale', clips=[('app3/app_05_belastbar.webm', 2.0, 9.0), ('clips/a7_endtafel.mp4', 0, None)],
-         text='Als Nächstes: ein vorab registrierter Test mit Ereignissen, die erst noch kommen. Und Satellitenbilder vorher und '
-              'nachher – um zu prüfen, ob die Zwillinge wirklich ruhig geblieben sind. … Talwacht. Wo zuerst hinschauen, '
-              'wenn der Starkregen kommt.'),
+         text='Allein der Abstand zu Straßen und Häusern trennt fast perfekt – gemeldet wird, was Menschen sehen. Elf unabhängige Episoden, eine dominiert. Nicht gemeldet heißt nicht sicher. Talwacht warnt nicht – es gibt eine begründete Reihenfolge.'),
+    dict(id='11_produkt', clips=[('app3/app_02_hangcheck_gastein.webm', 'mark:app_02_hangcheck_gastein:-1.0', 9.0), ('app3/app_04_starkregen.webm', 'mark:app_04_ready:+2.5', 12.0)],
+         text='Daraus wurde der Hang-Check: Ort wählen – zum Beispiel das Gasteiner Tal. Sofort zeigt Talwacht die auffälligsten Hänge und fünf Prüfpunkte: hier zuerst hinschauen. Bei Starkregen: mögliche Fließwege – und welche Straßen und Häuser im Szenario liegen.'),
+    dict(id='12_finale', clips=[('app3/app_05_belastbar.webm', 2.0, 5.0), ('clips/a7_endtafel.mp4', 0, 7.0)],
+         text='Als Nächstes: ein vorab registrierter Test mit Ereignissen, die erst noch kommen. Talwacht. Wo zuerst hinschauen, wenn der Starkregen kommt.'),
 ]
 
 
@@ -139,7 +117,8 @@ def build_segment(seg, idx):
     vis = sum(lens)
     speech = duration(seg['voice']) if seg['voice'] else 0.0
     delay_s = seg.get('delay', VOICE_DELAY_S)
-    length = max(vis, speech + delay_s + TAIL_S)
+    length = (speech + delay_s + TAIL_S) if speech else vis
+    k = min(1.0, length / vis)
     seg['length'] = length
     seg['speech'] = speech
     inputs, filters, labels = [], [], []
@@ -164,7 +143,8 @@ def build_segment(seg, idx):
         chain += f',format=yuv420p,fade=t=in:st=0:d=0.35,fade=t=out:st={max(d - 0.35, 0):.3f}:d=0.35[v{k}]'
         filters.append(chain)
         labels.append(f'[v{k}]')
-    filters.append(''.join(labels) + f'concat=n={len(labels)}:v=1:a=0[vout]')
+    filters.append(''.join(labels) + f'concat=n={len(labels)}:v=1:a=0[vcat]')
+    filters.append(f'[vcat]setpts=PTS*{k:.5f}[vout]' if k < 0.999 else '[vcat]null[vout]')
     if seg['voice']:
         inputs += ['-i', str(seg['voice'])]
         delay = int(delay_s * 1000)
@@ -214,7 +194,7 @@ def ts(s):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--voice', default='de-AT-JonasNeural')
-    ap.add_argument('--rate', default='-6%')
+    ap.add_argument('--rate', default='+8%')
     ap.add_argument('--keep-voice', action='store_true')
     args = ap.parse_args()
     if not shutil.which('ffmpeg'):
