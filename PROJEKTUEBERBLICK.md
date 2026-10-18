@@ -133,6 +133,8 @@ Kennzahlen und Intervalle kommen aus den vorhandenen API-Bündeln. V0.5-Wiederho
 
 Die Prüfgebiete-Seite zeigt für das Demogebiet Stanz (25.07.2016) die Kette relative Prüfpunkte → Auslaufszenario → Infrastruktur im Szenario. Prüfpunkte kommen aus dem eingefrorenen V0.4-Geländemodell, relativ zu einem Umkreis von 1–10 km. Der Auslauf ist eine deterministische D8-Route mit vier Literatur-Reichweiten und ausdrücklich **unvalidiert**, weil das Inventar keine Auslaufgeometrien enthält. Die Infrastruktur stammt aus OpenStreetMap. Explorativ konzentrieren die Prüfstufen die dokumentierten Stanz-Ereignisse nicht (Stufe 1: 3,4 % der Ereignisse bei 5 % Fläche). Keine Eintritts- oder Schadensaussage, keine kombinierte Stufe. Details: `reports/wirkungskette_v01/summary.md`.
 
+Gegenprobe v02 (vorab registriert): Mit 24 Schadensmeldungen aus Gasen 2017/2018 als Startpunkt passen Szenario und Meldung qualitativ zusammen (Straße im Szenario bei 21–22 von 22 Straßenschäden), aber 20 dieser Punkte liegen schon höchstens 25 m neben einer Straße. Die Übereinstimmung entsteht also am Punkt selbst; den Auslauf bestätigt sie nicht. Ohne Angabe, ob ein Punkt Anriss oder Schadensort ist, bleibt der Auslauf unvalidiert. Details: `reports/wirkungskette_v02/gegenprobe.md`.
+
 ## Genau eine nächste wissenschaftliche Priorität
 
 **Den in V0.4 gefundenen Gelände- und Landbedeckungseffekt gegen Meldebias absichern und mehr unabhängige Episoden gewinnen** (z. B. getrennt gekennzeichnete Medienereignisse, vorab registriertes Case-Crossover-Design oder Satellitenprüfung der Positionen). Jede Erweiterung ist eine neue Version; der V0.4-Test ist jetzt gesehen und darf keine Auswahl mehr steuern.
