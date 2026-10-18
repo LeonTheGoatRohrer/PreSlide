@@ -100,3 +100,14 @@ Land cover, geology, soil moisture and snow are not included in this V0. Terrain
 ## V0.5 (2026-10-14)
 
 No new data source. V0.5 queries the same V0.4 endpoints (INCA v1, SPARTACUS v2, SNOWGRID-CL v2, CORINE 2012/2018, GeoSphere geology 1:500 000) for the ten new unmatched control points per event; new responses are cached under `data/v05/cache/http/`, existing baseline/V0.4 responses and DEM tiles are only read. Control points come from the existing V0.4 pools (`data/v04/cache/control_pools/`, audited, see `data/v05/pool_audit/`).
+
+## wirkungskette_v01 (2026-10-18)
+
+| Provider / dataset | Endpoint | Licence / attribution | Use | Limitation |
+|---|---|---|---|---|
+| OpenStreetMap contributors via Overpass API | `https://overpass-api.de/api/interpreter`, one bbox query for the demo window (buildings, roads, tracks, rail ways, `out geom`) | ODbL 1.0; attribution "© OpenStreetMap-Mitwirkende" shown on the map | infrastructure lying inside the runout scenario corridor | retrieved 2026-10-18 09:52 UTC, OSM base 2026-10-18 09:50 UTC; **today's** state, not 2016; completeness of building/track mapping varies. Raw response cached with URL + SHA-256 in `data/wirkungskette_v01/cache/http/`; parsed table sealed in `data/wirkungskette_v01/demo_r10000/infrastructure.parquet` |
+| Copernicus CORINE Land Cover 2012 (EEA) | same CLC2012 MapServer as V0.4, but envelope queries (4 × 4 tiles, deduplicated by OBJECTID) | Copernicus Land, free and open with attribution | land-cover one-hot for scoring review cells | V0.4 vintage rule (reference day 2016-07-25 < 2019); 25 ha MMU |
+| GeoSphere Austria geology 1:500 000, Skadi DEM, GISCO Austria polygon | unchanged V0.4 sources, read from the existing caches | see above | static features, relief/contours, D8 route | DEM tile N47E015 Last-Modified 2016-04-26 (pre-event). Hillshade and contours are display products derived locally from the same 30 m grid |
+| Literature (runout scenarios, not data) | Hürlimann, McArdell & Rickli (2015) Geomorphology 232:20–32, doi:10.1016/j.geomorph.2014.11.030; Horton et al. (2013) NHESS 13:869–885 | — | fixed reaches 45 m / 467 m; energy-line angles 11° / 7°; v_max 15 m/s | values copied from the papers (checked in the full text); never fitted to the demo events |
+
+Not used (documented alternatives): GIP Austria road graph (data.gv.at, CC BY 4.0) and BEV address/building products; see `reports/wirkungskette_v01/AUDIT.md`.
