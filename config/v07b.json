@@ -1,0 +1,39 @@
+{
+  "version": "v0.7b",
+  "registered_on": "2026-10-18",
+  "registered_before": "any exact (corrected) infrastructure distance was computed or viewed for any V0.5 sample, and before any V0.7 analysis was re-run with corrected distances",
+  "status": "correction of V0.7 (exploratory, already seen V0.5 events); no new independent test",
+  "trigger": "anfaelligkeit_at_v01 AMENDMENT_2 (branch claude/anfaelligkeit-at-v01, 2026-10-18): preslide.v07.infrastructure.RunningMinimum assigns every OSM vertex only to its single nearest sample, so a sample whose nearest vertex lies even nearer to another sample is never updated by it and its distance is overestimated, up to the 5000 m cap",
+  "question": "Does the V0.7 result (distance to infrastructure alone 0.928; caliper-restricted unaware static model 0.783; V0.7 reading on reporting bias) change when the infrastructure distances are computed exactly with the registered V0.7 definitions?",
+  "primary_endpoint": "the V0.7 primary endpoint unchanged: (b) conditional-logit static local AUC (unit-weighted, repetition-wise median) on the caliper-restricted groups versus the same model on all controls of the same groups, repetition-1 unit-bootstrap interval; reported next to the V0.7 value",
+  "decision_rule": "The V0.7 decision rule is applied unchanged to the corrected numbers. The V0.7 conclusion is called changed if (i) the decision-rule verdict differs, or (ii) infra_only (conditional logit) is no longer above static, or (iii) the caliper keeps a different set of groups. Every V0.7 number is reported old and new side by side; nothing is selected.",
+  "must_not_change": ["baseline V0.3", "V0.4 artifacts and sealed test", "V0.5 dataset, freeze, CV plan, oof predictions and results", "V0.6 results", "V0.7 config, registration, code (preslide/v07), data/v07 tables and reports/v07 results", "V0.8, V0.9 results"],
+  "comparisons_counted": "the 7 registered V0.7 comparisons, re-run once; plus the descriptive old-versus-new distance comparison",
+
+  "inputs": {
+    "dataset": "data/v05/run_5b86b6475ecb/dataset.parquet",
+    "dataset_sha256": "6eae56574f9388d4111501afa4b636350d9ab26c0a948f7f079c0e8b9d40eb26",
+    "cv_plan": "data/v05/cv/cv_plan.json",
+    "cv_plan_sha256": "f1aefe8be415b82cec98e95ca66d6582a9060a94ae729aeff78e16e54d231c4a",
+    "v05_oof": "data/v05/analysis/oof_purged.parquet",
+    "v05_oof_sha256": "c0c0046e708488a754e7b0a68b4984b74217f7b47b1a3c0a28637427709458d5",
+    "v07_infrastructure": "data/v07/infrastructure.parquet",
+    "v07_infrastructure_sha256": "50ce02da0e90b6d6113a0c6596fef05d8b9659ee282f43c6c0a2476accf0d9ef",
+    "v07_oof_infra": "data/v07/analysis/oof_infra.parquet",
+    "v07_oof_infra_sha256": "277a12d9f03311f133c63402267d79294cc4c684a588d5ebe4e002e8f2898c65",
+    "osm_pbf": "data/v07/source/austria-261014.osm.pbf",
+    "osm_pbf_sha256": "3d00a7f2e50b6338ff91f3c140715b5a7513057896c9d21eda60b7afc7ad01cf"
+  },
+
+  "distances": {
+    "definitions": "identical to config/v07.json 'infrastructure' (buildings: any 'building' tag except 'no', outline vertices; roads: registered highway classes, densified to <= 25 m; EPSG:31287; cap 5000 m with flag; dist_infrastructure_m = min of both)",
+    "implementation": "the unchanged V0.7 stream (preslide.v07.infrastructure.extract) with the accumulator replaced: every buffered vertex chunk gets its own KD-tree that all samples query, so the running minimum is the exact nearest-vertex distance",
+    "reproduction_check": "the V0.7 accumulator is run in the same stream; its output must equal data/v07/infrastructure.parquet exactly (else stop: the difference would not be attributable to the accumulator alone)",
+    "plausibility_check": "brute-force nearest distance (full distance matrix to every streamed vertex, no tree, no cap) for 20 samples drawn with seed 20261018, computed in the same stream, must match the corrected values within 0.01 m (values above the cap: corrected value = cap)"
+  },
+
+  "analyses": {
+    "repeat_v07": "preslide.v07.experiment.main run unchanged (config/v07.json analyses, V0.5 CV plan and hyperparameters, bootstrap 2000 draws seed 20261016, caliper factor 2, min 3 controls, land-cover ablation), with only the distance table and the output directories rebound to v07b",
+    "old_vs_new": ["number and share of samples whose building, road or infrastructure distance changes by more than 1 m, by class", "distribution of the change (new - old) and of the ratio", "capped shares old and new", "caliper retention old and new (groups, units, controls, overlap of retained groups)", "every V0.7 metric old and new with its difference"]
+  }
+}

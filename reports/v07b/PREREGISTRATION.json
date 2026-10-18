@@ -1,0 +1,13 @@
+{
+ "registered_at_utc": "2026-10-18T13:48:17.774128+00:00",
+ "config": "config/v07b.json",
+ "config_sha256": "a07d9ef1c1c550e1b35b7bc90a2a33668bade5b312daa82057d3a1c115c27d6c",
+ "input_sha256": {
+  "data/v05/run_5b86b6475ecb/dataset.parquet": "6eae56574f9388d4111501afa4b636350d9ab26c0a948f7f079c0e8b9d40eb26",
+  "data/v05/cv/cv_plan.json": "f1aefe8be415b82cec98e95ca66d6582a9060a94ae729aeff78e16e54d231c4a",
+  "data/v05/analysis/oof_purged.parquet": "c0c0046e708488a754e7b0a68b4984b74217f7b47b1a3c0a28637427709458d5",
+  "data/v07/infrastructure.parquet": "50ce02da0e90b6d6113a0c6596fef05d8b9659ee282f43c6c0a2476accf0d9ef",
+  "data/v07/analysis/oof_infra.parquet": "277a12d9f03311f133c63402267d79294cc4c684a588d5ebe4e002e8f2898c65",
+  "data/v07/source/austria-261014.osm.pbf": "3d00a7f2e50b6338ff91f3c140715b5a7513057896c9d21eda60b7afc7ad01cf"
+ }
+}
