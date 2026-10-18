@@ -27,12 +27,12 @@ TAIL_S = 1.0
 SEGMENTS = [
     dict(id='01_hook', clips=[('app3/app_00_hero.webm|crop=1920:1062:0:10', 0.8, 11.0), ('clips/a1_terminal.mp4', 0, 5), ('app3/app_02_hangcheck_gastein.webm|crop=1440:810:480:100', 'mark:app_02_hangcheck_gastein:-2.5', 7.0, 'clips/a1_ort.mp4')],
          text='Achtzehnter November 2019. Gasteiner Tal. Ein Eintrag im Naturgefahren-Inventar: Hangmure. '
-              'Rundherum: Hänge. Genauso steil. Genauso hoch. Genauso ausgerichtet. Von ihnen: keine Meldung. '
+              'Rundherum: Hänge. Genauso steil. Genauso hoch. Von ihnen: keine Meldung. '
               'Was unterscheidet diesen einen Hang von seinen Zwillingen – bevor etwas passiert?'),
     dict(id='02_titel', clips=[('clips/a1_titel.mp4', 0, 7)], text=''),
     dict(id='03_idee', clips=[('app3/app_01_start.webm', 3.0, None)],
          text='Rutschungen und Muren treffen in Österreich jedes Jahr Straßen, Bahnlinien und Häuser. '
-              'Niemand kann jeden Hang beobachten. Gefahrenkarten zeigen, wo ein Hang grundsätzlich anfällig ist. '
+              'Gefahrenkarten zeigen, wo ein Hang grundsätzlich anfällig ist. '
               'Wir wollten etwas Schärferes wissen: Lässt sich der betroffene Hang von seinen Zwillingen unterscheiden – '
               'nur mit dem, was vorher bekannt war?'),
     dict(id='04_daten', clips=[('clips/a3_01_ebenen.mp4', 3.5, None)],
@@ -47,7 +47,7 @@ SEGMENTS = [
          text='Dann sucht das System jedem Ereignis fünf Zwillinge: in der Nähe, gleich steil, gleich hoch, gleich ausgerichtet – '
               'mit demselben Stichtag. Hang gegen Zwilling. Nicht Berg gegen Flachland.'),
     dict(id='07_regeln', clips=[('clips/a3_04_zeitwand.mp4', 0, None), ('clips/a3_04_gruppen.mp4', 0, None), ('clips/a3_04_siegel.mp4', 0, None)],
-         text='Und es darf sich nicht selbst betrügen. Keine Information ab dem Ereignis – automatische Tests schlagen Alarm. '
+         text='Und es darf sich nicht selbst betrügen. Keine Information ab dem Ereignis. '
               'Ein Hang und seine Zwillinge bleiben immer zusammen. Der Plan wurde vorab festgeschrieben, der Test versiegelt.'),
     dict(id='08_modell', clips=[('clips/a3_05_modell.mp4', 0, None)],
          text='Im Kern: eine selbst gebaute bedingte logistische Regression. Sie wägt immer einen Hang gegen seine fünf Zwillinge ab – '
@@ -57,11 +57,10 @@ SEGMENTS = [
          text='Das Ergebnis. … In rund drei von vier Vergleichen liegt der betroffene Hang vor seinen Zwillingen. '
               'Null Komma fünfundsiebzig. Zufall wäre null Komma fünf. Den Großteil leistet das Gelände. '
               'Ein Zusatznutzen des Wetters: nicht belegt – auch nicht auf neuen, ungesehenen Ereignissen. '
-              'Deshalb nutzt unser Werkzeug nur Gelände, Landbedeckung und Geologie. '
-              'Und doch: Am selben Ort waren die drei Tage vor einem Ereignis in einem Viertel der Fälle extrem nass. '
+                            'Und doch: Am selben Ort waren die drei Tage vor einem Ereignis in einem Viertel der Fälle extrem nass. '
               'Erwartet wäre jeder zwanzigste.'),
     dict(id='10_spiegel', clips=[('clips/a5_meldebias.mp4', 0, None), ('clips/a5_grenzen.mp4', 0, None), ('clips/a5_kein_warnsystem.mp4', 0, None)],
-         text='Dann haben wir gegen uns selbst gesucht. Allein der Abstand zu Straßen und Häusern trennt gemeldete von '
+         text='Allein der Abstand zu Straßen und Häusern trennt gemeldete von '
               'ungemeldeten Hängen fast perfekt. Gemeldet wird, was Menschen sehen. Ein Teil des Signals ist Meldeverhalten – '
               'nicht Natur. Elf unabhängige Episoden. Eine davon dominiert. Und nicht gemeldet heißt nicht sicher. '
               'Talwacht warnt nicht. Es gibt eine begründete Reihenfolge: wo man zuerst hinschaut.'),
@@ -69,7 +68,7 @@ SEGMENTS = [
          text='Daraus ist ein Werkzeug geworden: der Hang-Check. Ort wählen – zum Beispiel das Gasteiner Tal, ein Tal, '
               'das unser Modell nie gesehen hat. Sofort zeigt Talwacht die auffälligsten Hänge im Umkreis und fünf Prüfpunkte: '
               'hier zuerst hinschauen. Und wenn Starkregen erwartet wird: mögliche Fließwege – und welche Straßen und Häuser '
-              'im Szenario liegen. Für die Gemeinde nach dem Unwetter, den Straßenerhalter auf Kontrollfahrt, die Menschen am Hang.'),
+              'im Szenario liegen.'),
     dict(id='12_finale', clips=[('app3/app_05_belastbar.webm', 2.0, 9.0), ('clips/a7_endtafel.mp4', 0, None)],
          text='Als Nächstes: ein vorab registrierter Test mit Ereignissen, die erst noch kommen. Und Satellitenbilder vorher und '
               'nachher – um zu prüfen, ob die Zwillinge wirklich ruhig geblieben sind. … Talwacht. Wo zuerst hinschauen, '
