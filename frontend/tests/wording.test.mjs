@@ -8,7 +8,7 @@ const src = new URL('../src/', import.meta.url)
 const dir = d => readdirSync(new URL(d, src)).filter(f => /\.(vue|js)$/.test(f)).map(f => d + f)
 // Every new page and component is covered automatically; the listed root files are shared by them.
 export const juryFiles = [...dir('pages/'), ...dir('ui/'),
-  'App.vue', 'navigation.js', 'places.js', 'session.js', 'sources.js', 'InfoTip.vue', 'IntervalPlot.vue',
+  'App.vue', 'navigation.js', 'places.js', 'session.js', 'sources.js', 'check.js', 'hangcheck.js', 'studien.js', 'map/TerrainMap.vue', 'map/LiveExample.vue', 'InfoTip.vue', 'IntervalPlot.vue',
   'BefundePage.vue', 'MethodikPage.vue', 'ExtremwetterSection.vue']
 const banned = /wahrscheinlich|risik|vorhersag|prognos|gefährdet/i
 export const bannedWord = text => text.match(banned)?.[0] ?? null

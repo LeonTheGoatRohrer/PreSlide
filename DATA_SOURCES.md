@@ -206,3 +206,13 @@ No new modelling data. The relative shares use the frozen V0.5 static model on D
 | basemap.at Orthofoto | `mapsneu.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg` | CC BY 4.0 (basemap.at) | display only, loaded by the viewer's browser | not used in any computation; tile imagery date varies and is not necessarily pre-event |
 | Mapzen Terrarium DEM tiles (AWS) | `s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png` | Mapzen terms; attribution incl. Austrian DGM, EU-DEM, USGS | 3D relief and hillshade display only | display only; the model uses the cached Skadi 30 m grid, not these tiles |
 | GeoSphere INCA v1 (live) | `…/inca-v1-1h-1km`, one point | CC BY 4.0 | optional separate rain layer, last 7 UTC days | precipitation, not soil moisture; not an input of the shares; INCA v1 retirement announced Dec 2026 |
+
+## Hang-Check hangcheck_v01 (2026-10-18)
+
+No new modelling data. The relative Prüfstufen use the frozen V0.4 static model on the same feature code and sources as the Hangkarte (Skadi DEM read-only cache, CORINE CLC2018 envelope queries, GeoSphere geology 1:500 000). CORINE responses are fetched through `preslide.hangmap.build.cached_json` and therefore cached under `data/hangmap_v01/cache/http/` (shared request cache, same request form); results are cached under `data/hangcheck_v01/cache/results/`. No weather source is used.
+
+| Provider / dataset | Endpoint | Licence | Use | Limitation |
+|---|---|---|---|---|
+| Eurostat / GISCO LAU 2021 (municipalities) | `https://gisco-services.ec.europa.eu/distribution/v2/lau/geojson/LAU_RG_01M_2021_4326.geojson` (retrieved 2026-10-18 for the Gebietstest, SHA-256 `21685c52…bd289`, local copy `data/wirkungskette_gebietstest_v01/cache/gisco/`) | © EuroGeographics for the administrative boundaries; Eurostat/GISCO dissemination conditions | offline municipality search only: filtered to `CNTR_CODE == 'AT'` (2 095 municipalities), one `representative_point` per polygon, Bundesland from the first digit of `LAU_ID`; derived list `data/hangcheck_v01/gemeinden.json` with SHA-256 sidecar | 2021 boundaries; no district field, so same-name municipalities are told apart by Bundesland; place names never leave the machine (no external geocoder) |
+| basemap.at Orthofoto, Mapzen Terrarium | as for the Hangkarte | as above | display only | as above; attribution shown as text below the map |
+| GeoSphere Austria website | `https://www.geosphere.at/de` (HTTP 200 checked 2026-10-18) | — | link to official warnings in the notice block | Landeswarnzentralen are named without links (URLs not checked) |

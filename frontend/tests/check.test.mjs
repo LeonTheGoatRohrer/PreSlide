@@ -1,32 +1,24 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
-import {requestBody, runCheck, readParams, clampRadius, circleRing, normalize} from '../src/check.js'
-import {distanceM} from '../src/hangkarte.js'
+import {readCheck, CheckFailure, readParams, clampRadius, normalize} from '../src/check.js'
+import {createLayerLoader} from '../src/hangcheck.js'
 
 const place = {name: 'Stanz bei Landeck', longitude: 10.5617, latitude: 47.1478}
 
-test('switch off sends nothing; switch on sends exactly one request with place and radius only', async () => {
-  assert.equal(requestBody(place, 1500, false), null)
-  assert.equal(requestBody(null, 1500, true), null)
-  const calls = []
-  const fetcher = async (url, init) => { calls.push({url, body: JSON.parse(init.body)}); return {ok: true, status: 200, json: async () => ({pruefpunkte: []})} }
-  const body = requestBody(place, 1500, true)
-  const r = await runCheck(body, fetcher)
-  assert.equal(r.ok, true)
-  assert.equal(calls.length, 1)
-  assert.equal(calls[0].url, '/api/hangcheck')
-  assert.deepEqual(Object.keys(calls[0].body).sort(), ['latitude', 'longitude', 'radius_m'])   // no rain or switch parameter
-})
-
-test('errors stay errors with a German message; nothing is replaced by a fallback value', async () => {
-  const reply = (status, json) => async () => ({ok: false, status, json: async () => json})
-  assert.equal((await runCheck({}, reply(503, {}))).kind, 'busy')
-  const out = await runCheck({}, reply(422, {detail: 'Der Ort liegt außerhalb Österreichs.'}))
-  assert.deepEqual([out.kind, out.message], ['outside', 'Der Ort liegt außerhalb Österreichs.'])
-  assert.equal((await runCheck({}, reply(404, null))).kind, 'missing')
-  assert.equal((await runCheck({}, async () => { throw Error('net') })).kind, 'offline')
-  assert.equal('data' in (await runCheck({}, reply(500, {}))), false)
+test('failures are thrown with a kind and a German message, so the layer loader never keeps them', async () => {
+  const reply = (status, json, ok = false) => ({ok, status, json: async () => json})
+  await assert.rejects(readCheck(reply(503, {})), e => e instanceof CheckFailure && e.kind === 'busy')
+  await assert.rejects(readCheck(reply(422, {detail: 'Der Ort liegt außerhalb Österreichs.'})), {kind: 'outside', message: 'Der Ort liegt außerhalb Österreichs.'})
+  await assert.rejects(readCheck(reply(404, null)), {kind: 'missing'})
+  await assert.rejects(readCheck({ok: false, status: 500, json: async () => { throw Error('x') }}), {kind: 'error'})
+  assert.deepEqual(await readCheck(reply(200, {pruefpunkte: []}, true)), {pruefpunkte: []})
+  // A failed request is retried by the shared loader instead of being served from memory.
+  let calls = 0
+  const loader = createLayerLoader(async () => { calls++; if (calls === 1) throw new CheckFailure('busy', 'x'); return {ok: true} })
+  await assert.rejects(loader.update({on: true, place, radiusM: 2000}))
+  assert.deepEqual(await loader.update({on: true, place, radiusM: 2000}), {ok: true})
+  assert.equal(calls, 2)
 })
 
 test('address state: radius snapped to the allowed steps, invalid coordinates give no place', () => {
@@ -37,12 +29,6 @@ test('address state: radius snapped to the allowed steps, invalid coordinates gi
   const s = readParams({lon: '10.5617', lat: '47.1478', r: '1500', regen: '1', ort: 'Stanz'})
   assert.deepEqual([s.place.name, s.radius, s.rain], ['Stanz', 1500, true])
   assert.equal(readParams({}).rain, false)
-})
-
-test('radius ring is geodesic: every vertex lies at the radius', () => {
-  const ring = circleRing(place, 2000)
-  assert.deepEqual(ring[0], ring.at(-1))
-  for (const [longitude, latitude] of ring) assert.ok(Math.abs(distanceM(place, {longitude, latitude}) - 2000) < 2)
 })
 
 test('only marked cells are drawn; distance for the radial reveal is in metres', () => {
@@ -56,6 +42,7 @@ test('only marked cells are drawn; distance for the radial reveal is in metres',
 
 test('the notice block is part of the page, not only a tooltip', () => {
   const page = readFileSync(new URL('../src/pages/CheckPage.vue', import.meta.url), 'utf8')
-  assert.ok(page.includes('Nicht markiert heißt nicht sicher.'))
+  assert.match(page, /nicht markiert heißt nicht sicher/i)
+  assert.match(page, /v-for="h in notice"/)
   assert.ok(page.includes('class="cp-notice"'))
 })

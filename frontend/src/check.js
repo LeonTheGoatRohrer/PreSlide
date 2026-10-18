@@ -20,29 +20,22 @@ export function readParams(params = {}, limits = RADIUS) {
   return {place, radius: params.r != null ? clampRadius(params.r, limits) : limits.default, rain: params.regen === '1'}
 }
 
-/** The request body, or null when nothing may be requested (no place, or the switch is off). */
-export function requestBody(place, radiusM, rain) {
-  if (!rain || !place) return null
-  return {longitude: Number(place.longitude.toFixed(5)), latitude: Number(place.latitude.toFixed(5)), radius_m: radiusM}
+/** Turns a Hang-Check response into its result, or throws a CheckFailure (kind + German message).
+ * Failures are thrown so the Hang-Check layer loader never keeps them as a result. */
+export class CheckFailure extends Error {
+  constructor(kind, message) { super(message); this.kind = kind }
 }
-
-/** POST /api/hangcheck. Failures become a kind plus a German message; nothing is replaced by a fallback value. */
-export async function runCheck(body, fetcher = fetch) {
-  let r
-  try {
-    r = await fetcher('/api/hangcheck', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)})
-  } catch {
-    return {ok: false, kind: 'offline', message: 'Keine Verbindung zum lokalen Talwacht-Server.'}
-  }
+export async function readCheck(r) {
   let json = null
   try { json = await r.json() } catch { /* error bodies may be empty */ }
-  if (r.ok && json) return {ok: true, data: json}
+  if (r.ok && json) return json
   const detail = typeof json?.detail === 'string' ? json.detail : ''
-  if (r.status === 503) return {ok: false, kind: 'busy', message: 'Gerade läuft eine andere Berechnung. Gleich noch einmal versuchen.'}
-  if (r.status === 422) return {ok: false, kind: 'outside', message: detail || 'Dieser Ort lässt sich nicht prüfen. Wähle einen Ort in Österreich.'}
-  if (r.status === 404) return {ok: false, kind: 'missing', message: 'Der Hang-Check-Rechner ist in diesem Stand der Seite noch nicht eingebunden.'}
-  return {ok: false, kind: 'error', message: `Der Hang-Check ist gerade nicht erreichbar (HTTP ${r.status}).`}
+  if (r.status === 503) throw new CheckFailure('busy', 'Gerade läuft eine andere Berechnung. Gleich noch einmal versuchen.')
+  if (r.status === 422) throw new CheckFailure('outside', detail || 'Dieser Ort lässt sich nicht prüfen. Wähle einen Ort in Österreich.')
+  if (r.status === 404) throw new CheckFailure('missing', 'Der Hang-Check-Rechner ist in diesem Stand der Seite noch nicht eingebunden.')
+  throw new CheckFailure('error', `Der Hang-Check ist gerade nicht erreichbar (HTTP ${r.status}).`)
 }
+export const OFFLINE = () => new CheckFailure('offline', 'Keine Verbindung zum lokalen Talwacht-Server.')
 
 /** Adds the distance from the centre to every cell (for the radial reveal) and normalises the review points. */
 export function normalize(json, centre) {
@@ -56,21 +49,6 @@ export function normalize(json, centre) {
   return {cells: {type: 'FeatureCollection', features}, points, maxD: Math.max(1, ...features.map(f => f.properties.d))}
 }
 
-/** Geodesic circle (spherical destination formula) as a closed GeoJSON ring; no metres on degrees. */
-export function circleRing(centre, radiusM, steps = 96) {
-  const R = 6371008.8, rad = Math.PI / 180, d = radiusM / R
-  const lat1 = centre.latitude * rad, lon1 = centre.longitude * rad
-  const ring = []
-  for (let i = 0; i <= steps; i++) {
-    const b = (i % steps) / steps * 2 * Math.PI
-    const lat2 = Math.asin(Math.sin(lat1) * Math.cos(d) + Math.cos(lat1) * Math.sin(d) * Math.cos(b))
-    const lon2 = lon1 + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(lat1), Math.cos(d) - Math.sin(lat1) * Math.sin(lat2))
-    ring.push([+(lon2 / rad).toFixed(6), +(lat2 / rad).toFixed(6)])
-  }
-  return ring
-}
-
-export const km = m => (m / 1000).toLocaleString('de-AT', {minimumFractionDigits: 1, maximumFractionDigits: 1}) + ' km'
 export const coord = v => v.toLocaleString('de-AT', {minimumFractionDigits: 5, maximumFractionDigits: 5})
 /** Zoom so that the radius fills the visible map comfortably. */
 export const zoomFor = radiusM => 14.6 - Math.log2(radiusM / 1000)

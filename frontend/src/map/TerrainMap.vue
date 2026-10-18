@@ -5,7 +5,8 @@ import {ref, watch, onMounted, onBeforeUnmount} from 'vue'
 import * as maplibregl from 'maplibre-gl'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import {circleRing, zoomFor} from '../check.js'
+import {zoomFor} from '../check.js'
+import {circle} from '../hangcheck.js'
 import {reducedMotion} from '../ui/motion.js'
 maplibregl.setWorkerUrl(workerUrl)
 
@@ -42,7 +43,7 @@ function style() {
 
 function setRing() {
   if (!ready) return
-  map.getSource('ring').setData(props.centre ? {type: 'Feature', geometry: {type: 'LineString', coordinates: circleRing(props.centre, props.radiusM)}, properties: {}} : EMPTY)
+  map.getSource('ring').setData(props.centre ? {type: 'Feature', geometry: {type: 'LineString', coordinates: circle(props.centre, props.radiusM).geometry.coordinates[0]}, properties: {}} : EMPTY)
   centreMarker?.remove(); centreMarker = null
   if (props.centre) {
     const dot = document.createElement('div'); dot.className = 'tm-centre'; dot.setAttribute('aria-hidden', 'true')

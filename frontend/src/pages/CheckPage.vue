@@ -2,7 +2,8 @@
 // Hang-Check: pick a place, set the radius, switch on "Starkregen oder Unwetter erwartet", see where to look first.
 // The switch only selects this view; the request carries place and radius, nothing else.
 import {ref, computed, watch, onMounted, onBeforeUnmount, nextTick, defineAsyncComponent} from 'vue'
-import {RADIUS, clampRadius, readParams, requestBody, runCheck, normalize, km, coord} from '../check.js'
+import {RADIUS, clampRadius, readParams, readCheck, OFFLINE, normalize, coord} from '../check.js'
+import {createLayerLoader, FALLBACK_HINWEISE, OFFICIAL, classShareText, km} from '../hangcheck.js'
 import {checkHash, loadExamples} from '../places.js'
 import {takePendingPlace, takeArrival} from '../session.js'
 import PlaceSearch from '../ui/PlaceSearch.vue'
@@ -19,13 +20,7 @@ const arrival = takeArrival(), mapRef = ref(null), sheet = ref(null), listRef = 
 const webgl = (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')) } catch { return false } })()
 let seq = 0, timer = 0, phaseTimer = 0
 
-const FALLBACK_NOTICE = [
-  {titel: 'Nicht markiert heißt nicht sicher.', text: 'Die Einstufung ist relativ: In jedem Gebiet sind Hänge markiert, auch wenn dort nichts passiert. Auch nicht markierte Hänge können abgehen.'},
-  {titel: 'Talwacht ist keine Warnung.', text: 'Aktuelle Unwetterwarnungen geben GeoSphere Austria und die Landeswarnzentralen. Im Notfall: Euronotruf 112, Feuerwehr 122.'},
-  {titel: 'Grundlage ist nur das Gelände.', text: 'Berücksichtigt sind Höhenmodell Stand 2000, Landbedeckung 2018 und Geologie 1:500 000. Nicht berücksichtigt sind Wetter, der Untergrund im Detail und Schutzbauten.'},
-  {titel: 'Gelernt aus gemeldeten Ereignissen.', text: 'Ein Teil der Unterschiede kann daher von der Meldung kommen (zum Beispiel die Nähe zu Straßen), nicht vom Hang selbst.'},
-]
-const notice = computed(() => result.value?.raw.hinweise?.length ? result.value.raw.hinweise : meta.value?.hinweise?.length ? meta.value.hinweise : FALLBACK_NOTICE)
+const notice = computed(() => result.value?.raw.hinweise?.length ? result.value.raw.hinweise : meta.value?.hinweise?.length ? meta.value.hinweise : FALLBACK_HINWEISE)
 const stage = computed(() => !place.value ? 1 : !rain.value ? 3 : status.value === 'ready' ? 4 : 3)
 const steps = ['Ort', 'Umkreis', 'Starkregen', 'Ergebnis']
 const PHASES = ['Gelände lesen', 'Landbedeckung und Geologie', 'Hänge einstufen']
@@ -38,17 +33,28 @@ function syncAddress() {
   const h = checkHash(place.value, radius.value, rain.value)
   if (location.hash !== h) history.replaceState(null, '', h)
 }
+// One request per place and radius while the switch is on (shared Hang-Check loader); the body is
+// exactly the loader's request body: position and radius.
+async function fetchLayer(body) {
+  let r
+  try {
+    r = await fetch('/api/hangcheck', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)})
+  } catch { throw OFFLINE() }
+  return readCheck(r)
+}
+const loader = createLayerLoader(fetchLayer)
 async function compute() {
-  const body = requestBody(place.value, radius.value, rain.value)
-  if (!body) { status.value = 'idle'; result.value = null; return }
   const mine = ++seq
+  if (!rain.value || !place.value) { status.value = 'idle'; result.value = null; return }
   status.value = 'loading'; failure.value = null; result.value = null; active.value = null
   phase.value = 0; clearInterval(phaseTimer); phaseTimer = setInterval(() => { phase.value = Math.min(PHASES.length - 1, phase.value + 1) }, 1600)
-  const r = await runCheck(body)
+  let data
+  try { data = await loader.update({on: rain.value, place: place.value, radiusM: radius.value}) }
+  catch (e) { if (mine === seq) { clearInterval(phaseTimer); status.value = 'error'; failure.value = {kind: e.kind ?? 'error', message: e.message} } return }
   if (mine !== seq) return
   clearInterval(phaseTimer)
-  if (!r.ok) { status.value = 'error'; failure.value = r; return }
-  result.value = {raw: r.data, ...normalize(r.data, place.value)}
+  if (!data) { status.value = 'idle'; return }
+  result.value = {raw: data, ...normalize(data, place.value)}
   status.value = 'ready'
   await nextTick()
   sheet.value?.set('halb')
@@ -160,7 +166,7 @@ onBeforeUnmount(() => { clearTimeout(timer); clearInterval(phaseTimer); seq++ })
           <input v-model="rain" type="checkbox" role="switch" :disabled="!place" :aria-checked="rain" aria-labelledby="cp-sw-l" aria-describedby="cp-sw-d">
           <span class="cp-toggle" aria-hidden="true"></span>
         </label>
-        <p v-if="place && !rain" class="cp-hint">Schalter aktivieren, um zu sehen, welche Hänge man bei Starkregen zuerst ansehen sollte.</p>
+        <p v-if="place && !rain" class="cp-hint">Schalter aktivieren, um zu sehen, welche Hänge man bei Starkregen zuerst ansehen sollte. Die Markierung ist relativ: nicht markiert heißt nicht sicher.</p>
       </section>
 
       <section v-if="rain && place" class="cp-result" aria-labelledby="cp-erg" aria-live="polite">
@@ -179,8 +185,8 @@ onBeforeUnmount(() => { clearTimeout(timer); clearInterval(phaseTimer); seq++ })
 
         <template v-else-if="status === 'ready' && result">
           <ul class="cp-legend" aria-label="Legende">
-            <li><i class="sw sw1"></i><span><strong>Prüfstufe 1</strong> auffälligste Hänge im Umkreis</span></li>
-            <li><i class="sw sw2"></i><span><strong>Prüfstufe 2</strong> die nächsten</span></li>
+            <li><i class="sw sw1"></i><span><strong>Prüfstufe 1</strong> auffälligste {{ classShareText(result.raw.stufen, 1) }} der bewerteten Hänge im Umkreis</span></li>
+            <li><i class="sw sw2"></i><span><strong>Prüfstufe 2</strong> die nächsten {{ classShareText(result.raw.stufen, 2) }}</span></li>
             <li><i class="sw sw0"></i><span>ohne Markierung</span></li>
           </ul>
           <ol v-if="result.points.length" ref="listRef" class="cp-points">
@@ -211,7 +217,7 @@ onBeforeUnmount(() => { clearTimeout(timer); clearInterval(phaseTimer); seq++ })
       <section class="cp-notice" aria-labelledby="cp-notice">
         <h2 id="cp-notice" class="sr-only">Wichtige Hinweise</h2>
         <div v-for="h in notice" :key="h.titel"><strong>{{ h.titel }}</strong><p>{{ h.text }}</p></div>
-        <p class="cp-small"><template v-if="vintages">Datenstand: {{ Object.values(vintages).join(' · ') }}. </template><a href="#/belastbar">Wie belastbar ist das?</a></p>
+        <p class="cp-small">Unwetterwarnungen: <a :href="OFFICIAL.geosphere" target="_blank" rel="noopener noreferrer">GeoSphere Austria</a> und die Landeswarnzentralen. <template v-if="vintages">Datenstand: {{ Object.values(vintages).join(' · ') }}. </template><a href="#/belastbar">Wie belastbar ist das?</a></p>
       </section>
     </BottomSheet>
 

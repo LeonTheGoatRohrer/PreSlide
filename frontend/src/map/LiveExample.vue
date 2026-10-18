@@ -3,7 +3,8 @@
 // without the Hang-Check API the section is left out instead of showing a placeholder.
 import {ref, onMounted, defineAsyncComponent} from 'vue'
 import {loadExamples} from '../places.js'
-import {runCheck, requestBody, normalize, km} from '../check.js'
+import {readCheck, normalize} from '../check.js'
+import {requestBody, km} from '../hangcheck.js'
 import {openCheck} from '../session.js'
 import {vReveal} from '../ui/motion.js'
 const TerrainMap = defineAsyncComponent(() => import('./TerrainMap.vue'))
@@ -16,9 +17,12 @@ onMounted(async () => {
   const io = new IntersectionObserver(async ([e]) => {
     if (!e.isIntersecting) return
     io.disconnect()
-    const r = await runCheck(requestBody(ex, ex.radius_m ?? 2000, true))
-    if (!r.ok) return
-    example.value = ex; result.value = {raw: r.data, ...normalize(r.data, ex)}; visible.value = true
+    let data
+    try {
+      const r = await fetch('/api/hangcheck', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(requestBody(ex, ex.radius_m ?? 2000))})
+      data = await readCheck(r)
+    } catch { return }   // no Hang-Check result: the section stays out
+    example.value = ex; result.value = {raw: data, ...normalize(data, ex)}; visible.value = true
   }, {rootMargin: '400px 0px'})
   io.observe(host.value)
 })

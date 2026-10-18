@@ -27,6 +27,7 @@ def case_path(case_id,suffix):
 
 app.include_router(hangkarte_router)
 app.include_router(studien_router)  # GET /api/studien, /api/studien/{id}/bericht (study atlas registry)
+app.include_router(__import__('preslide.hangcheck.routes', fromlist=['router']).router)  # Hang-Check (preslide/hangcheck)
 
 @app.get('/api/health')
 def health():
