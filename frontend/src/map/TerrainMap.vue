@@ -115,7 +115,8 @@ function overview() { fly() }
 function snapshot() {
   return new Promise(resolve => {
     if (!map) return resolve(null)
-    map.once('render', () => { try { resolve(map.getCanvas().toDataURL('image/jpeg', .85)) } catch { resolve(null) } })
+    const timer = setTimeout(() => resolve(null), 1500)   // no frame (hidden tab): print the list without the image
+    map.once('render', () => { clearTimeout(timer); try { resolve(map.getCanvas().toDataURL('image/jpeg', .85)) } catch { resolve(null) } })
     map.triggerRepaint()
   })
 }

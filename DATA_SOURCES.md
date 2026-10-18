@@ -216,3 +216,15 @@ No new modelling data. The relative Prüfstufen use the frozen V0.4 static model
 | Eurostat / GISCO LAU 2021 (municipalities) | `https://gisco-services.ec.europa.eu/distribution/v2/lau/geojson/LAU_RG_01M_2021_4326.geojson` (retrieved 2026-10-18 for the Gebietstest, SHA-256 `21685c52…bd289`, local copy `data/wirkungskette_gebietstest_v01/cache/gisco/`) | © EuroGeographics for the administrative boundaries; Eurostat/GISCO dissemination conditions | offline municipality search only: filtered to `CNTR_CODE == 'AT'` (2 095 municipalities), one `representative_point` per polygon, Bundesland from the first digit of `LAU_ID`; derived list `data/hangcheck_v01/gemeinden.json` with SHA-256 sidecar | 2021 boundaries; no district field, so same-name municipalities are told apart by Bundesland; place names never leave the machine (no external geocoder) |
 | basemap.at Orthofoto, Mapzen Terrarium | as for the Hangkarte | as above | display only | as above; attribution shown as text below the map |
 | GeoSphere Austria website | `https://www.geosphere.at/de` (HTTP 200 checked 2026-10-18) | — | link to official warnings in the notice block | Landeswarnzentralen are named without links (URLs not checked) |
+
+## Website redesign (2026-10-18): map tiles, fonts, illustrations
+
+Display only; nothing here enters a model, a feature or a figure. Both tile sources were fetched and checked on 2026-10-18 (HTTP 200, CORS `*`).
+
+| Provider / dataset | Endpoint | Licence | Use | Limitation |
+|---|---|---|---|---|
+| basemap.at grau (Verwaltungsgrundkarte Österreich) | `https://mapsneu.wien.gv.at/basemap/bmapgrau/normal/google3857/{z}/{y}/{x}.png` | CC BY 4.0, attribution "basemap.at" | light base map of the Hang-Check, the start-page example and the event overview | loaded by the viewer's browser; needs internet |
+| basemap.at Orthofoto | `https://mapsneu.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg` | CC BY 4.0 | "Luftbild" switch of the Hang-Check | image date varies |
+| Mapzen Terrarium DEM tiles (AWS Open Data) | `https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png` | Mapzen terms; attribution incl. DGM Österreich, EU-DEM, USGS | 3D terrain (exaggeration 1.4) and hillshade of the Hang-Check | display only; the model uses the cached Skadi 30 m grid |
+| Fontsource: Archivo (variable, width axis), IBM Plex Sans (variable), IBM Plex Mono | npm `@fontsource-variable/archivo@5.3.0`, `@fontsource-variable/ibm-plex-sans@5.3.0`, `@fontsource/ibm-plex-mono@5.3.0` | SIL Open Font License 1.1 | all typography; served from the local build, no font CDN | — |
+| Higgsfield (model `gpt_image_2_5`) | generated 2026-10-18, jobs listed in `frontend/public/media/README.md` | generated for this project | four labelled illustrations (`tal`, `hang`, `morgen`, `luft`) | **KI-generierte Illustrationen**: no real place, event or data; labelled on every image and described under "Über → Medien und KI" |

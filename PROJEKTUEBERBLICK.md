@@ -54,9 +54,9 @@ Nachweise: `reports/*/verification.json` (PASS). V0.4 wurde vor dem Test einmal 
 
 **Anfälligkeit international (`susceptibility_v01`, `v02`, abgeschlossen).** Polygoninventare aus Nepal (Gorkha 2015, Far-Western Nepal), Japan (Iburi 2018), Italien (RER2023). v01: Gelände überträgt zwischen Regionen nicht besser als die Neigung allein (+0,006 [−0,005; +0,017]), Gate nicht bestanden. v02 (je Auslöser): auf Iburi Gelände + PGA 0,826 gegen Neigung + PGA 0,841, **nicht belegt**; Regenarm mangels Kartierumriss nicht testbar; Iburi ist jetzt gesehen. Ein v01-Fehler (DEM-Blöcke bis 15 m verschoben) wurde dokumentiert, v01 bleibt unverändert. `reports/susceptibility_v01/PHASE4_GATE.md`, `reports/susceptibility_v02/PHASE4_RESULTS.md`.
 
-**Hangkarte (`hangmap_v01`, Anwendung, keine neue Studie).** Seite `#/hangkarte` im Forschungsbereich: Das eingefrorene V0.5-Modell (nur Gelände, Landbedeckung, Geologie) bewertet Hangzellen in einem frei gewählten Gebiet auf einer 3D-Ansicht; angezeigt werden nur relative Anteile innerhalb einer Vergleichsgruppe (Summe 100 %). Keine Eintrittswahrscheinlichkeit, keine Gefahrenkarte. Die hohe V0.5-Trennung ist teils Meldebias (mit gematchten Kontrollen nur 0,705), die Anteile hängen stark an der Landbedeckung. In Stanz wäre das V0.5-Modell in-sample. Optionale INCA-Regenebene ist getrennt und kein Modelleingang. `reports/hangmap_v01/summary.md`.
+**Hangkarte (`hangmap_v01`, Anwendung, keine neue Studie).** Im Studienatlas als Vorgänger des Hang-Checks (`#/studien#hangkarte`): Das eingefrorene V0.5-Modell (nur Gelände, Landbedeckung, Geologie) bewertet Hangzellen in einem frei gewählten Gebiet auf einer 3D-Ansicht; angezeigt werden nur relative Anteile innerhalb einer Vergleichsgruppe (Summe 100 %). Keine Eintrittswahrscheinlichkeit, keine Gefahrenkarte. Die hohe V0.5-Trennung ist teils Meldebias (mit gematchten Kontrollen nur 0,705), die Anteile hängen stark an der Landbedeckung. In Stanz wäre das V0.5-Modell in-sample. Optionale INCA-Regenebene ist getrennt und kein Modelleingang. `reports/hangmap_v01/summary.md`.
 
-**Hang-Check (`hangcheck_v01`, Anwendung, keine neue Studie).** Seite `#/hangcheck` in der Hauptnavigation: Ort wählen (Gemeindesuche offline, Kartenklick, eigener Standort), Schalter „Starkregen oder Unwetter erwartet“; die Karte markiert die auffälligsten Hänge im Umkreis 1–3 km (Prüfstufe 1 = oberste 5 %, Prüfstufe 2 = nächste 15 %) und fünf Prüfpunkte „Hier zuerst hinschauen“. Eingefrorenes V0.4-Geländemodell, kein Wetter, der Schalter ändert die Einstufung nicht. Nicht markiert heißt nicht sicher; keine Warnung; Siedlungsflächen heben die Einstufung (möglicher Meldeeffekt). Fließwege noch nicht umgesetzt.
+**Hang-Check (`hangcheck_v01`, Anwendung, keine neue Studie).** Hauptaktion der Website (`#/check`, alte Adresse `#/hangcheck` leitet um): Ort wählen (Gemeindesuche offline, Kartenklick, eigener Standort), Schalter „Starkregen oder Unwetter erwartet“; die Karte markiert die auffälligsten Hänge im Umkreis 1–3 km (Prüfstufe 1 = oberste 5 %, Prüfstufe 2 = nächste 15 %) und fünf Prüfpunkte „Hier zuerst hinschauen“. Eingefrorenes V0.4-Geländemodell, kein Wetter, der Schalter ändert die Einstufung nicht. Nicht markiert heißt nicht sicher; keine Warnung; Siedlungsflächen heben die Einstufung (möglicher Meldeeffekt). Fließwege noch nicht umgesetzt.
 
 **Hangmuren-Anfälligkeit Österreich (`anfaelligkeit_at_v01`, registriert, noch kein Ergebnis).** Vorregistriert: statisches Modell für genau verortete reine Hangmuren, Leave-one-area-out gegen Neigung allein (Plan `reports/weiterentwicklung_2026-10-18/TRAININGSPLAN_ALLE_INVENTARDATEN.md`). Amendment 1: Skadi über Österreich ist praktisch SRTMGL1. Pipeline und Sicherheitstests sind integriert, das Experiment ist nicht gelaufen.
 
@@ -68,9 +68,9 @@ Nachweise: `reports/*/verification.json` (PASS). V0.4 wurde vor dem Test einmal 
 
 Eine Wahrscheinlichkeit, dass an einem bestimmten Hang eine Mure abgeht, kann das Projekt nicht liefern: Das Design ergibt Rangfolgen, keine Häufigkeiten; das Inventar enthält nur Punkte (Anriss, Weg oder Ablagerung unbekannt); ein Wetternutzen bei 1 km ist nicht belegt; der Auslauf ist nicht prüfbar. Warnung, Gefahrenkarte oder Schadensvorhersage sind nicht belegt. Begründung: `reports/weiterentwicklung_2026-10-18/PROJEKTBEWERTUNG_VOR_ZUSAMMENFUEHRUNG.md`.
 
-## Webdemonstration (Jury-Einstieg seit 18.10.2026)
+## Webdemonstration (Neugestaltung „Nutzer zuerst“, 18.10.2026, Branch `claude/website-redesign`)
 
-Python/FastAPI, Vue 3/Vite/MapLibre, CPU-Betrieb; Start `scripts/start.ps1` (üblich `http://127.0.0.1:8000`). Hauptnavigation: **Start** (`#/start`) · **Hang-Check** (`#/hangcheck`, Ort wählen und Starkregen-Ansicht, eingefrorenes V0.4-Geländemodell) · **Demo** (`#/pruefgebiete`, Ereignisübersicht und Wirkungskette) · **Ergebnisse** kurz (`#/befunde`, inkl. Extremwetter und Hangmuren-Pilot) · **Methodik & Grenzen** (`#/methodik`) · **Forschung** (`#/forschung`). Die früheren Seiten Projekt, Vorgehen und Ergebnisse bleiben inhaltlich unverändert als Forschungsbereich unter ihren alten Adressen; dort liegt auch die Hangkarte (`#/hangkarte`). Kennzahlen kommen nur aus den API-Bündeln, immer mit Intervall; ein Wortlauttest verhindert Wahrscheinlichkeits-, Risiko- und Vorhersagewörter auf den Jury-Seiten. Meisterprompt für die geplante Überarbeitung: `reports/weiterentwicklung_2026-10-18/MEISTERPROMPT_JURY_WEBSITE.md`.
+Python/FastAPI, Vue 3/Vite/MapLibre, CPU-Betrieb; Start `scripts/start.ps1` (üblich `http://127.0.0.1:8000`). Gestaltung „Nach dem Regen“ (`frontend/src/theme.css`, Schriften Archivo/IBM Plex lokal über Fontsource). Hauptaktion **Hang-Check** (`#/check`: Ort, Umkreis, Schalter „Starkregen oder Unwetter erwartet“, Prüfstufen und fünf Prüfpunkte auf echter 3D-Karte, Druckansicht der Prüfliste) und vier Menüpunkte: **So funktioniert's** (`#/so-funktionierts`, Methode in fünf Kapiteln, Wirkungskette unter `#wirkungskette`) · **Wie belastbar** (`#/belastbar`, jede Aussage mit Intervall, Einheiten und Status) · **Studienatlas** (`#/studien`, alle Studien mit Zeitleiste, Drawern, Berichten; Registry `config/studien_atlas.json`, API `/api/studien`) · **Über** (`#/ueber`, Quellen, Lizenzen, Medien und KI). Es gibt keinen Menüpunkt „Forschung“ mehr; alle alten Adressen leiten um (Test). Kennzahlen kommen nur aus gespeicherten Dateien über die API, immer mit Intervall; Wortlaut-, Literal- und Bildkennzeichnungstests decken alle neuen Seiten ab. Die vier Fotos sind gekennzeichnete KI-Illustrationen (`frontend/public/media/README.md`). Meisterprompt: `reports/weiterentwicklung_2026-10-18/MEISTERPROMPT_REDESIGN_USER_FIRST.md`.
 
 ## Noch nicht integriert
 
@@ -79,7 +79,7 @@ Python/FastAPI, Vue 3/Vite/MapLibre, CPU-Betrieb; Start `scripts/start.ps1` (üb
 
 ## Nächste Prioritäten
 
-1. **UI-Arbeit** auf diesem gemeinsamen Stand (Nutzerwunsch), mit den bestehenden Wortlaut- und Intervallregeln.
+1. Website-Neugestaltung (`claude/website-redesign`) nach Durchsicht in den Integrationsstand übernehmen; danach Gebietstest und V0.7b integrieren (erscheinen dann automatisch im Studienatlas).
 2. Schutzprüfungen reparieren: Auf `origin/main` wurden geschützte Dateien geändert (`requirements-lock.txt` durch V0.7, Original-Code durch die Ruff-Bereinigung `b93b937`), deshalb scheitern Baseline-Manifest-, Stabilitäts- und V0.5-Integritätsprüfung. Kein eingefrorenes Ergebnis ist betroffen; die geschützten Bytes müssen wiederhergestellt werden. Danach den Gebietstest der Prüfstufen abschließen und integrieren (Namensraumumzug laut Amendment 1).
 3. Vorwärts gerichteter Test mit Ereignissen nach dem 15.10.2026 vorab registrieren (bewerten ab 15 neuen Einheiten; Übergang INCA v1 → v2 vor Dezember 2026 festlegen). Anfragen an Datenhalter nur nach Freigabe des Nutzers.
 
@@ -90,7 +90,7 @@ Python/FastAPI, Vue 3/Vite/MapLibre, CPU-Betrieb; Start `scripts/start.ps1` (üb
 - Gelernte Vorverarbeitung nur am jeweiligen Training anpassen; keine Auswahl nach gesehenen Testergebnissen, keine Seed-Suche, kein Nachjustieren der Kontrollen.
 - Neue Experimente in eigenem Namensraum, vor der Modellierung registrieren; Änderungen als Amendment mit Grund. Eingefrorene Artefakte (AGENTS.md §45) nie ändern.
 - Caches und gültige Checkpoints verwenden; Wetter, Gelände und fertige Läufe nicht unnötig neu berechnen.
-- Oberfläche: Jury-Einstieg plus Forschungsbereich (Projekt, Vorgehen, Ergebnisse im Detail, Hangkarte); die Forschungsseiten unter ihren alten Adressen erhalten; grundlegende Umgestaltungen nur auf Auftrag.
+- Oberfläche: Hang-Check als Hauptaktion, vier Menüpunkte, alle Studien im Studienatlas; neue Studien in `config/studien_atlas.json` eintragen (Test prüft, dass jeder `reports/*/summary.md` registriert ist); alte Adressen leiten um; grundlegende Umgestaltungen nur auf Auftrag.
 - Rohdaten und Probenvorhersagen bleiben lokal. Die GeoSphere-Quelle hat keine geklärte spezifische Weiterverwendungslizenz; lokale nicht kommerzielle Forschung ist vom Nutzer autorisiert.
 - Passende vorhandene Skills dürfen ohne erneute Nachfrage verwendet werden; das ist keine Erlaubnis für Veröffentlichung oder externe Kommunikation.
 
@@ -111,7 +111,8 @@ Python/FastAPI, Vue 3/Vite/MapLibre, CPU-Betrieb; Start `scripts/start.ps1` (üb
 | `config/anfaelligkeit_at_v01.json`, `preslide/anfaelligkeit_at_v01/`, `reports/anfaelligkeit_at_v01/` | Hangmuren-Anfälligkeit Österreich (registriert) |
 | `config/satellite_nn_v01.json`, `preslide/satellite_nn/` | Neuronale Murensuche (Gerüst) |
 | `config/hangmap_v01.json`, `preslide/hangmap/`, `reports/hangmap_v01/` | Hangkarte (3D, relative Anteile, V0.5-Modell) |
-| `config/hangcheck_v01.json`, `preslide/hangcheck/`, `frontend/src/HangCheckPage.vue` | Hang-Check (Prüfstufen im Umkreis, V0.4-Geländemodell, kein Wetter) |
+| `config/hangcheck_v01.json`, `preslide/hangcheck/`, `frontend/src/pages/CheckPage.vue` | Hang-Check (Prüfstufen im Umkreis, V0.4-Geländemodell, kein Wetter) |
+| `config/studien_atlas.json`, `preslide/studien.py`, `frontend/src/pages/` | Studienatlas-Registry und neue Website-Seiten |
 | `reports/weiterentwicklung_2026-10-1*/` | Pläne, Meisterprompts, Projektbewertung |
 | `METHODOLOGY.md`, `DATA_SOURCES.md`, `RESULTS.md`, `LIMITATIONS.md`, `README.md` | Methodik, Quellen, historische Ergebnisse, Grenzen, Einrichtung |
 

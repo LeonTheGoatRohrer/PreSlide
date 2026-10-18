@@ -28,14 +28,14 @@ async function changed() {
   const samePage = next.page === lastPage
   const apply = () => { route.value = next }
   palette.value = false
+  document.title = `Talwacht · ${pageTitle(next.page)}`
   // The map page has its own arrival; a cross-fade of the WebGL canvas would only blur it.
-  if (!samePage && next.page !== 'check' && lastPage !== 'check' && document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (!samePage && next.page !== 'check' && lastPage !== 'check' && !document.hidden && document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const t = document.startViewTransition(apply)
     t.ready.catch(() => {}); t.finished.catch(() => {})   // an interrupted transition is harmless
     await t.updateCallbackDone.catch(apply)
   } else apply()
   lastPage = next.page
-  document.title = `Talwacht · ${pageTitle(next.page)}`
   await nextTick()
   if (next.anchor) {
     // Async pages render after a tick; retry briefly until the anchor exists.
