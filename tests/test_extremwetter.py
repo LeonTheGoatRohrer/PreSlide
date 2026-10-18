@@ -210,3 +210,20 @@ def test_evaluate_extreme_cases_versus_exchangeable_cases():
     row0, _ = A.evaluate(m_null, ev, (3, PRIMARY_END), (1991, 2025), full, 'episode', CFG)
     assert abs(row0['null_mean_pr'] - 0.5) < 0.01
     assert row0['mean_pr_ci95'][0] <= row0['mean_pr'] <= row0['mean_pr_ci95'][1]
+
+
+# --- API route --------------------------------------------------------------------------------
+
+def test_route_returns_503_without_bundle_and_aggregate_bundle_otherwise(tmp_path, monkeypatch):
+    from fastapi.testclient import TestClient
+
+    from preslide.api import app
+    from preslide.extremwetter import routes
+    client = TestClient(app)
+    monkeypatch.setattr(routes, 'WEB', tmp_path / 'missing.json')
+    assert client.get('/api/extremwetter').status_code == 503
+    bundle = tmp_path / 'results.json'
+    bundle.write_text('{"version": "extremwetter_v01", "explorativ": true}', encoding='utf-8')
+    monkeypatch.setattr(routes, 'WEB', bundle)
+    response = client.get('/api/extremwetter')
+    assert response.status_code == 200 and response.json()['explorativ'] is True
