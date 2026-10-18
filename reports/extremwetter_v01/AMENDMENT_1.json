@@ -1,0 +1,11 @@
+{
+  "version": "extremwetter_v01",
+  "amendment": 1,
+  "date": "2026-10-18",
+  "made_before": "any percentile rank of the full run was computed; only the 20 pilot events had been ranked",
+  "config_sha256_unchanged": "98e33aa7ea3c56afe35695be9ba2d33ba1b755eb7e482a34dcc9880f3f0b2a88",
+  "trigger": "The full run stopped (fail-loud rule) because the SPARTACUS response for one event coordinate (lon 10.465, lat 46.883; nearest cell 526 m away, inside the 800 m tolerance) contains no value at all (24 030 of 24 030 days null). The same event already had no SPARTACUS value in V0.4 (spartacus_rr_90d missing). The registered configuration does not cover a cell outside the product's data mask.",
+  "rule": "An event whose nearest SPARTACUS cell returns null for every day of the requested period is excluded from all analyses and counted as 'no_spartacus_data_at_cell'. Any partial gap (some but not all days null) still stops the run as registered.",
+  "reason": "A completely empty series is a coverage limit of the grid product, not a data error that could bias the comparison; the decision depends only on data availability, never on rain values or results. The alternative (moving the point to another cell) would invent a location.",
+  "effect": "Analysed cohort 422 instead of 423 events if no other cell is empty; the event belongs to a single-event check, its process class and episode are reported in comparisons.json."
+}

@@ -40,11 +40,14 @@ def cohort(cfg: dict) -> pd.DataFrame:
     return events[cols].sort_values('event_group_id').reset_index(drop=True)
 
 
-def spartacus(events: pd.DataFrame, cfg: dict) -> dict:
-    """Daily RR per event (cached raw responses). Returns {event_group_id: (first_label, values, offset_m, lon, lat)}."""
+def spartacus(events: pd.DataFrame, cfg: dict) -> tuple[dict, dict]:
+    """Daily RR per event (cached raw responses).
+
+    Returns ({event_group_id: (first_label, values, offset_m, lon, lat)}, {event_group_id: exclusion reason}).
+    """
     w = cfg['weather']
     start, end = w['request_period']
-    out, step = {}, w['points_per_request']
+    out, excluded, step = {}, {}, w['points_per_request']
     for i in range(0, len(events), step):
         chunk = events.iloc[i:i + step]
         params = {'parameters': w['parameter'], 'start': f'{start}T00:00', 'end': f'{end}T00:00',
@@ -60,10 +63,13 @@ def spartacus(events: pd.DataFrame, cfg: dict) -> dict:
             if rr['unit'] not in ('kg m-2', 'mm'):
                 raise ValueError(f"Unexpected RR unit {rr['unit']}")
             cell, offset = nearest([feature], row.x, row.y)
+            if all(v is None for v in rr['data']):
+                excluded[row.event_group_id] = 'no_spartacus_data_at_cell'     # AMENDMENT_1: cell outside product mask
+                continue
             values = check_series([np.nan if v is None else v for v in rr['data']])
             lon, lat = cell['geometry']['coordinates']
             out[row.event_group_id] = (stamps[0].date(), values, offset, lon, lat)
-    return out
+    return out, excluded
 
 
 def _local_day(ms) -> date:

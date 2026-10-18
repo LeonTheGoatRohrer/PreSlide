@@ -20,13 +20,19 @@ def prepare(limit=None):
     if limit is not None:
         # fetch whole request chunks so the pilot responses are the same cached URLs as the full run
         step = cfg['weather']['points_per_request']
-        series = spartacus(events.iloc[:-(-limit // step) * step], cfg)
-        events = events.iloc[:limit].reset_index(drop=True)
+        series, excluded = spartacus(events.iloc[:-(-limit // step) * step], cfg)
+        events = events.iloc[:limit]
     else:
-        series = spartacus(events, cfg)
+        series, excluded = spartacus(events, cfg)
+    # AMENDMENT_1: events without any SPARTACUS value at their cell are dropped and reported (episodes stay as
+    # defined on the full registered cohort)
+    dropped = events[events.event_group_id.isin(excluded)]
+    events = events[~events.event_group_id.isin(excluded)].reset_index(drop=True)
+    excluded = [{'reason': excluded[r.event_group_id], 'event_day': r.event_day.isoformat(), 'process_class': r.process_class,
+                 'episode': r.episode} for r in dropped.itertuples()]
     records, counts = dated_records(cfg)
     intervals = nearby_intervals(records, events, cfg['reference']['documented_event_exclusion']['radius_m'])
-    return cfg, events, series, records, counts, intervals
+    return cfg, events, series, excluded, counts, intervals
 
 
 def pilot(n):
@@ -47,7 +53,7 @@ def pilot(n):
 def run():
     from ..common import write_json
     from .paths import DATA, REPORT, V04_DATASET, guard
-    cfg, events, series, _, counts, intervals = prepare()
+    cfg, events, series, excluded, counts, intervals = prepare()
     m = A.build(events, series, intervals, cfg)
     out = guard(DATA / f'run_{sha(CONFIG)[:12]}')
     rows, event_tables = [], {}
@@ -67,6 +73,7 @@ def run():
     offsets = np.array([series[g][2] for g in events.event_group_id])
     meta = {
         'config_sha256': sha(CONFIG), 'v04_dataset_sha256': sha(V04_DATASET),
+        'cohort_events': cfg['cohort']['expected_events'], 'excluded_events': excluded,
         'n_events': int(len(events)), 'n_episodes': int(events.episode.nunique()),
         'episode_sizes': events.episode.value_counts().to_dict(),
         'grid_offset_m': {'max': float(offsets.max()), 'median': float(np.median(offsets))},

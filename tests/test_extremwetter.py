@@ -227,3 +227,27 @@ def test_route_returns_503_without_bundle_and_aggregate_bundle_otherwise(tmp_pat
     monkeypatch.setattr(routes, 'WEB', bundle)
     response = client.get('/api/extremwetter')
     assert response.status_code == 200 and response.json()['explorativ'] is True
+
+
+# --- amendment 1: empty cell excluded, partial gap fails --------------------------------------
+
+def test_empty_spartacus_cell_is_excluded_but_partial_gap_fails(monkeypatch):
+    from preslide.extremwetter import data as W
+    from preslide.terrain import PROJECT
+    lon, lat = 13.0, 47.0
+    x, y = PROJECT.transform(lon, lat)
+    events = pd.DataFrame({'event_group_id': ['A', 'B'], 'latitude': [lat, lat], 'longitude': [lon, lon], 'x': [x, x], 'y': [y, y]})
+    stamps = [f'2000-01-0{i}T00:00+00:00' for i in range(1, 4)]
+
+    def response(data_b):
+        def fake(url, params):
+            feats = [{'geometry': {'type': 'Point', 'coordinates': [lon, lat]},
+                      'properties': {'parameters': {'RR': {'unit': 'kg m-2', 'data': d}}}} for d in ([1.0, 2.0, 0.0], data_b)]
+            return {'timestamps': stamps, 'features': feats}
+        return fake
+    monkeypatch.setattr(W, 'cached_json', response([None, None, None]))
+    series, excluded = W.spartacus(events, CFG)
+    assert list(series) == ['A'] and excluded == {'B': 'no_spartacus_data_at_cell'}
+    monkeypatch.setattr(W, 'cached_json', response([1.0, None, 2.0]))
+    with pytest.raises(ValueError, match='missing_weather_values'):
+        W.spartacus(events, CFG)
