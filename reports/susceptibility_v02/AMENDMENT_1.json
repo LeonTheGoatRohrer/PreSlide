@@ -1,0 +1,60 @@
+{
+ "id": 1,
+ "before": "samples",
+ "title": "Iburi 2018: GSI D1-No.991 polygons and GSI interpretation extent (registered fallback source)",
+ "basis": "Layer-level check of the GSI archive only (files, geometry types, counts, fields, CRS, extent closure and area, counts of polygons inside the extent). No terrain value, no sample, no model of Iburi; no v02 sample, feature or model exists.",
+ "correct": {
+  "registry.datasets.iburi_2018.role": {
+   "from": "pending_extent",
+   "to": "development",
+   "reason": "pending_extent meant \"blocked until an independent mapping extent is documented\"; it now is. The earthquake Phase 1 gate additionally needs the Iburi ShakeMap over the whole extent and the buffer amendment; no Iburi sample is drawn before both exist."
+  },
+  "registry.datasets.iburi_2018.provider": {
+   "from": "Zhang, Li, Wang, Iio (Shimane University), Zenodo doi 10.5281/zenodo.2577300 (concept 10.5281/zenodo.2577273)",
+   "to": "Geospatial Information Authority of Japan (GSI), technical document D1-No.991, slope failure and deposit distribution map of the 2018 Hokkaido Eastern Iburi earthquake (Atsuma area), interpreted from GSI aerial photographs of 6-11 Sep 2018, https://www.gsi.go.jp/BOUSAI/H30-hokkaidoiburi-east-earthquake-index.html. Zenodo 10.5281/zenodo.2577300 (Zhang et al.) is kept only for old_landslides.shp.",
+   "reason": "The GSI D1-No.991 archive contains its interpretation extent (判読範囲) as data: one closed, simple LineString ring drawn by GSI (phase1_iburi_gsi_check.json). This is the second acceptable source registered in mapping_extent.acceptable_sources_in_order; the registration fixed that the GSI slope-failure polygons then replace the Zenodo polygons because inventory and extent must come from the same mapping."
+  },
+  "registry.datasets.iburi_2018.license": {
+   "from": "CC-BY-4.0",
+   "to": "GSI content terms of use (国土地理院コンテンツ利用規約, attribution required) for positives and extent; old-landslide exclusion layer CC-BY-4.0 (Zenodo 2577300)",
+   "reason": "Positives and extent now come from GSI; terms as stated on the GSI page (phase0_data_audit.json iburi_2018.alternatives_checked.gsi_d1_no991)."
+  },
+  "registry.datasets.iburi_2018.positive_geometry": {
+   "from": "landslide_inventory.shp (5,625 polygons, JGD2000 / UTM 54N, EPSG:3100); no source areas, so the top-elevation-third rule applies. Polygons intersecting old_landslides.shp (pre-2018 landslide bodies, incl. the 110 reactivated) are not positives (pre-DEM morphology, same logic as the Far-Western Nepal date rule) and are background exclusion only.",
+   "to": "GSI layer ..._斜面崩壊・堆積範囲.geojson (CRS84 lon/lat, 3306 polygons in the common red style); slope failure and deposit are mapped together, no source area, so the top-elevation-third rule applies. The single feature with a deviating style (black outline, opacity 0, about 830 m2) is not a positive but is part of the background exclusion. Polygons intersecting Zenodo old_landslides.shp (pre-2018 landslide bodies incl. the 110 reactivated) are not positives and are background exclusion only (registered rule unchanged). The Zenodo landslide_inventory.shp is not used.",
+   "reason": "The GSI D1-No.991 archive contains its interpretation extent (判読範囲) as data: one closed, simple LineString ring drawn by GSI (phase1_iburi_gsi_check.json). This is the second acceptable source registered in mapping_extent.acceptable_sources_in_order; the registration fixed that the GSI slope-failure polygons then replace the Zenodo polygons because inventory and extent must come from the same mapping."
+  },
+  "registry.datasets.iburi_2018.mapping_extent": {
+   "from": {
+    "status": "missing",
+    "checked": "Archive contains landslide_inventory, old_landslides, reactivated_landslides, 4 AMeDAS rain-gauge points and 3 standard-deviational ellipses. The ellipses are statistics of the landslide distribution (ArcGIS standard deviational ellipse, 1-3 SD) and are not a mapping extent. The record description mentions a 'study area' without a file.",
+    "acceptable_sources_in_order": [
+     "a mapping-extent file or explicit study-area boundary from the authors of the Zenodo record",
+     "the interpretation extent (hanrei hani) of GSI technical document D1-No.991, if the GSI archive itself contains it as data; then the GSI slope-failure polygons replace the Zenodo polygons (inventory and extent must come from the same mapping)"
+    ]
+   },
+   "to": {
+    "status": "available",
+    "source": "GSI D1-No.991 archive (SHA-256 5353f2247a07f59a48d4ad3ec23853355ad5f3373998b32a5acf0bdf6319451e), layer ..._判読範囲.geojson: one closed simple LineString ring drawn by GSI (1802 vertices); the extent polygon is exactly this ring, nothing is inferred or buffered; area 1357.6 km2 in EPSG:32654",
+    "obscured": "GSI layer ..._雲による未判読範囲.geojson (10 polygons, 1.65 km2, not interpreted because of cloud): no background there",
+    "checked": "reports/susceptibility_v02/phase1_iburi_gsi_check.json"
+   },
+   "reason": "The GSI D1-No.991 archive contains its interpretation extent (判読範囲) as data: one closed, simple LineString ring drawn by GSI (phase1_iburi_gsi_check.json). This is the second acceptable source registered in mapping_extent.acceptable_sources_in_order; the registration fixed that the GSI slope-failure polygons then replace the Zenodo polygons because inventory and extent must come from the same mapping."
+  },
+  "registry.datasets.iburi_2018.raw_data": {
+   "from": "data/susceptibility_v01/raw/candidates/iburi_2018 (downloaded in v01 as unregistered candidate, md5 2bcd2b370a82be7858b794f92cbb54c5, SHA-256 891542a6abe6e2b5596663485b77c4575d0ded1c03740cde7c112257b183e4a3)",
+   "to": "data/susceptibility_v02/raw/gsi_d1_991 (gsi_d1_991.zip, SHA-256 5353f2247a07f59a48d4ad3ec23853355ad5f3373998b32a5acf0bdf6319451e, downloaded 2026-10-18 after release by the user); old_landslides.shp read-only from data/susceptibility_v01/raw/candidates/iburi_2018 (SHA-256 891542a6abe6e2b5596663485b77c4575d0ded1c03740cde7c112257b183e4a3)",
+   "reason": "The GSI D1-No.991 archive contains its interpretation extent (判読範囲) as data: one closed, simple LineString ring drawn by GSI (phase1_iburi_gsi_check.json). This is the second acceptable source registered in mapping_extent.acceptable_sources_in_order; the registration fixed that the GSI slope-failure polygons then replace the Zenodo polygons because inventory and extent must come from the same mapping."
+  }
+ },
+ "add": {
+  "registry.datasets.iburi_2018.working_crs": {
+   "value": "EPSG:32654",
+   "reason": "GSI layers are geographic lon/lat (JGD2011, practically identical to WGS84 at this scale) and NASADEM is WGS84; WGS84 / UTM 54N replaces the JGD2000 UTM 54N of the unused Zenodo polygons. The registered rule (UTM zone of the centroid, 54N) is unchanged."
+  }
+ },
+ "not_changed": "Iburi stays the confirmatory test inventory of the earthquake arm; event date, ShakeMap event, model, features, hypotheses and seeds are unchanged. The buffer value follows in a later amendment after Phase 1 (the registration called it \"Amendment 1\"; it is now the next free number). rer2023 stays pending_extent.",
+ "written_at_utc": "2026-10-18T06:30:39.278160+00:00",
+ "config_sha256": "f6883194f18d67d580066076206a227a10e4e547a0620483b2fa1955e542d4fe",
+ "preconditions": "registration present; nothing from stage 'samples' on existed"
+}

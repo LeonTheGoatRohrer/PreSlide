@@ -1,0 +1,132 @@
+{
+ "baseline_summary": "24 passed in 5.82s",
+ "mutants": [
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "grid spacing from rounded header",
+   "tests_failed": true,
+   "summary": "4 failed, 20 passed in 7.81s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "lattice order check disabled",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.64s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "corner check disabled",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.42s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "rows counted from the south",
+   "tests_failed": true,
+   "summary": "4 failed, 20 passed in 7.65s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "half-cell offset",
+   "tests_failed": true,
+   "summary": "4 failed, 20 passed in 7.66s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "lon/lat swapped in interpolation",
+   "tests_failed": true,
+   "summary": "4 failed, 20 passed in 7.59s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "outside grid clamped instead of NaN",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.64s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "easting/northing swapped",
+   "tests_failed": true,
+   "summary": "2 failed, 22 passed in 7.55s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "axis order not forced",
+   "tests_failed": true,
+   "summary": "2 failed, 22 passed in 7.64s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "non-positive PGA filled with 0",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.54s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "PGA units not checked",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.77s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "open extent line accepted",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.65s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "GSI role by suffix match",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.67s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_phase1.py",
+   "mutant": "cp932 member names not decoded",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 8.10s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sensitivity.py",
+   "mutant": "PGA in terrain-only model",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.98s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sensitivity.py",
+   "mutant": "block index truncated not floored",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.63s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sensitivity.py",
+   "mutant": "hyperparameter check disabled",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.45s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sensitivity.py",
+   "mutant": "purge skipped",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.45s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sensitivity.py",
+   "mutant": "interval clause dropped from rule",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.44s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sensitivity.py",
+   "mutant": "half boundary inclusive",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.61s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sensitivity.py",
+   "mutant": "design constants changed",
+   "tests_failed": true,
+   "summary": "1 failed, 23 passed in 7.65s"
+  }
+ ],
+ "status": "PASS"
+}

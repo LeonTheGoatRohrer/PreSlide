@@ -1,0 +1,34 @@
+{
+  "dataset": "gorkha_2015",
+  "crs": "EPSG:32645",
+  "v01_samples_sha256": "b14548972daad65db576a2cc661d51d71d91bcbdca9ae3c4784d37926c6a58eb",
+  "grid_sha256": "3ffbe2492aed02029ddd3a08c8a0aa4f3206085acdd46c07423bb261cd43291c",
+  "grid_version": "1",
+  "process_timestamp": "2020-06-03T05:37:03",
+  "interpolation": "bilinear interpolation of PGA (percent g) at the 30 m cell centre on the WGS84 grid lattice, then log10; cells outside the grid stay NaN",
+  "n": 48074,
+  "nan_outside_grid": 0,
+  "nan_by_label": {
+    "0": 0,
+    "1": 0
+  },
+  "quantiles_log10_pga": {
+    "0": 1.0189201999620257,
+    "0.05": 1.3352019153091883,
+    "0.5": 1.7617160114399406,
+    "0.95": 1.8271614272968064,
+    "1": 1.934532686805295
+  },
+  "extent_coverage": {
+    "extent_file": "MappingExtent20170209.shp",
+    "vertices": 132,
+    "vertices_inside_grid": 132,
+    "extent_lonlat_bbox": [
+      83.98970151386273,
+      26.995650947526446,
+      86.95383948395762,
+      28.778455996631823
+    ]
+  },
+  "computed_at_utc": "2026-10-18T06:33:52.561403+00:00"
+}

@@ -116,3 +116,58 @@ Südtirol öffnen; Modell, Hyperparameter, Merkmale oder Splits nach einer v02-A
 ## Nachweis der Schutztests
 
 `tests/test_susceptibility_v02.py`: 30 Tests (1 übersprungen vor der Registrierung: Prüfsummenvergleich). `scripts/mutation_check_susceptibility_v02.py` schaltet 18 Regeln einzeln ab (Auslösertrennung, gesehener Testsatz, Umrisspflicht, Lizenz, DEM-Tagesgrenze, ShakeMap-Pflicht, Bonferroni, Trainingsliste, Gegenauslöser-Referenz, Konfigurationshash, Schreibschutz, Leseverbot Südtirol). Jeder Mutant lässt mindestens einen Test scheitern: `mutation_check.json`, Status PASS.
+
+---
+
+## Nachtrag 18.10.2026: Phase 1 – GSI-Prüfung (Iburi) und Gorkha-Sensitivität
+
+Dieser Nachtrag wurde nach der Registrierung angefügt. Die Prüfsumme dieser Datei in `PREREGISTRATION.json` bezieht sich auf den Stand ohne Nachtrag. Die Konfiguration ist unverändert; Designänderungen stehen nur in `AMENDMENT_1.json`. Der Nutzer hat genau zwei Downloads freigegeben: das GSI-Archiv D1-No.991 und die Gorkha-ShakeMap `grid.xml`.
+
+### Iburi: Das GSI-Archiv enthält den Interpretationsbereich als Daten
+
+`phase1_iburi_gsi_check.json` (nur Ebenen- und Metadaten, Anzahlen; kein Geländewert, keine Stichprobe):
+
+- Archiv: 1.179.719 B, SHA-256 `5353f224…`. Vier Dateien mit cp932-Namen; die Mitgliederprüfung ist bestanden.
+- `…_判読範囲.geojson`: der Interpretationsbereich. Eine von GSI gezeichnete, geschlossene, einfache Linie (LineString) mit 1.802 Stützpunkten. Die Fläche ist der Ring selbst, 1.357,6 km² in EPSG:32654. Es wird nichts abgeleitet, gepuffert oder ergänzt; eine offene Linie würde verweigert (getestet).
+- `…_雲による未判読範囲.geojson`: 10 wegen Wolken nicht interpretierte Flächen, 1,65 km², alle im Bereich. Dort wird kein Hintergrund gezogen.
+- `…_斜面崩壊・堆積範囲.geojson`: 3.307 Polygone (CRS84). Davon 3.306 im gemeinsamen Stil, alle im Bereich, eine ungültige Geometrie. Ein abweichend gestaltetes Objekt (schwarz, Linie unsichtbar, ca. 830 m²) ist nur Ausschlussfläche. Abriss und Ablagerung sind laut Haftungshinweis gemeinsam kartiert; deshalb gilt die Regel „oberstes Höhendrittel“.
+- Der Haftungshinweis nennt Luftbilder vom 6.–11.09.2018 und keine Geländeprüfung.
+
+**Entscheidung (Amendment 1, vor jeder v02-Stichprobe, jedem v02-Merkmal und jedem Modell):** Iburi wechselt auf den registrierten Ersatzweg 2. Positive und Umriss stammen aus der GSI-Kartierung; die Zenodo-Polygone werden nicht mehr verwendet. `old_landslides.shp` (Zenodo) bleibt wie registriert reine Ausschlussfläche. Rolle `development`, Arbeits-KBS EPSG:32654. Lizenz: GSI-Nutzungsbedingungen mit Quellenangabe.
+
+Iburi bleibt der bestätigende Testsatz des Erdbebenarms. Es gibt noch keinen Iburi-Geländewert, keine Stichprobe und kein Modell.
+
+**Phase-1-Gate:**
+
+- Erdbeben: noch offen. Es fehlen die Iburi-ShakeMap (`us2000h8ty`, 14.484.026 B; Download nicht freigegeben) über den ganzen Umriss und das Puffer-Amendment. Das Puffer-Amendment trägt jetzt die nächste freie Nummer statt „Amendment 1“. Erst danach dürfen Iburi-Stichproben gezogen werden.
+- Regen: weiter nicht erfüllt, RER2023 bleibt `pending_extent`.
+
+Offener Prüfpunkt für Phase 1: Die Zenodo-Altrutschungen stammen aus einer anderen Kartierung, deren Abdeckung den GSI-Bereich möglicherweise nicht ganz deckt (Begrenzungsrechteck beginnt bei 42,58° N, der GSI-Bereich bei 42,54° N). Die Abdeckung wird vor dem Puffer-Amendment gezählt und berichtet.
+
+### Gorkha: vorab registrierte 20-km-Sensitivität (explorativ)
+
+ShakeMap Gorkha: Version 1, atlas, process_timestamp 2020-06-03T05:37:03, updateTime 1594162031303, `grid.xml` 14.875.206 B (= Registrierung), SHA-256 `3ffbe249…`. Werte eingefroren in `data/susceptibility_v02/raw/shakemap_gorkha_2015/provenance.json`. PGA an allen 48.074 v01-Stichproben, 0 außerhalb des Gitters.
+
+| Differenz der ROC AUC | 5-km-Blöcke | 20-km-Blöcke |
+|---|---|---|
+| EQ_TERRAIN − slope_only | +0,124 [0,113; 0,136] | +0,120 [0,096; 0,142] |
+| EQ_TERRAIN_PGA − slope_pga_logistic | +0,062 [0,055; 0,069] | +0,055 [0,041; 0,071] |
+
+Die Mindestens-25-Blöcke-Regel ist erfüllt: Positive liegen in 575 bzw. 76 Blöcken.
+
+Deutungsregel:
+
+1. Räumliche Nähe erklärt **keinen** großen Teil. Die 20-km-Differenz ist 97 % der 5-km-Differenz; ihr Intervall enthält die Null nicht.
+2. „Weitgehend durch modellierte Erschütterung erklärt“ ist formal **nicht** erfüllt, aber nur knapp. Mit PGA bleiben 50,1 % des Vorteils, die Schwelle liegt bei unter 50 %. PGA halbiert den Vorteil also fast genau.
+
+Explorativ, ein Ereignis, keine Übertragbarkeitsaussage. Bericht: `SENSITIVITY_GORKHA_20KM.md`.
+
+### Nächste Schritte
+
+1. Download der Iburi-ShakeMap freigeben, dann Abdeckung prüfen.
+2. Abdeckung der Altrutschungen zählen.
+3. Puffer-Amendment schreiben (registrierte v01-Regel über alle v02-Entwicklungsinventare).
+4. Iburi-Gelände und -Stichproben (Phase 2/3).
+5. H1/H2 für den Erdbebenarm.
+
+Der Regenarm wartet weiter auf einen Umriss für RER2023.
