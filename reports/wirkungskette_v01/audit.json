@@ -1,0 +1,113 @@
+{
+  "demo": {
+    "id": "stanz_muerztal_2016",
+    "name": "Stanz im Mürztal (Steiermark)",
+    "centre_longitude": 15.49683,
+    "centre_latitude": 47.44533,
+    "centre_source": "data/pruefgebiete_v01/web/overview.json cluster TE001_2016-07-25_C01 (243 events, 56 Hangmuren)",
+    "reference_day": "2016-07-25",
+    "reference_rule": "terrain state and land cover must be demonstrably before this day (pre-event information only); infrastructure is today's OpenStreetMap state and is labelled so",
+    "sealed_test_note": "The 25.07.2016 storm belongs to the sealed V0.4 test, which has been scored once and is now seen data. Used here only as a labelled demonstration; nothing is tuned on it."
+  },
+  "gelaende": {
+    "dem_kacheln": [
+      {
+        "url": "https://elevation-tiles-prod.s3.amazonaws.com/skadi/N47/N47E015.hgt.gz",
+        "object_last_modified": "2016-04-26T07:15:43+00:00",
+        "sha256": "c1fb722c2284710294db12613ae8979d3190bb41618285e5c485ebaf141435a2",
+        "vertical_datum": "EGM96",
+        "resolution": "1 arc second"
+      }
+    ],
+    "fenster_radius_m": 15310.0,
+    "fenster_zellen": [
+      1021,
+      1021
+    ],
+    "nodata_zellen": 0,
+    "fuellung_iterationen": 872
+  },
+  "zellen": {
+    "raster_zellen_bis_10km": 38797,
+    "bewertbar": 36569,
+    "nicht_bewertbar_nach_grund": {
+      "slope_below_minimum": 2222,
+      "catchment_truncated": 6
+    },
+    "dokumentierte_ereignisse_im_fenster": 241,
+    "davon_bewertbar": 238
+  },
+  "infrastruktur": {
+    "identity": "1f897010c72328aa",
+    "sha256": "4d5ac4146380d08f76f0db8f078cf74ddf14a39ce0f78bb7a00e2d04f90aa8c5",
+    "overpass_url_sha256": "e263617cd7670ff5ec3a52990d78bb37e3a189c5b6965d051dde9377cf882a30",
+    "retrieved_at": "2026-10-18T09:52:23.990935+00:00",
+    "osm_base": "2026-10-18T09:50:30Z",
+    "counts": {
+      "gebaeude": 39041,
+      "strasse": 11286,
+      "weg": 9886,
+      "bahn": 810
+    }
+  },
+  "auslaufreferenzen": {
+    "stanz_v04_ereignisse": {
+      "ereignisse": 241,
+      "mit_irgendeinem_schadensfeld": 0,
+      "verkehrsanlagen_1": 0,
+      "bauwerke_1": 0,
+      "versorgungsinfrastruktur_1": 0
+    },
+    "stanz_prozesse": {
+      "Lockergesteinsrutschung": 160,
+      "Hangmure": 55,
+      "Hangmure bis Lockergesteinsrutschung": 26
+    },
+    "stanz_lagequalitaet": {
+      "Lage sehr genau / sehr sicher (0-5m)": 234,
+      "Lage relativ genau (20-100m)": 7
+    },
+    "stanz_erhebung": {
+      "Ereignisdokumentation - Detaildiagnose Gelaende": 205,
+      "Ereignisdokumentation - Grobdiagnose Gelaende": 18,
+      "Ereignisdokumentation - Detaildiagnose Gelaende und Ferndiagnose Hubschrauber": 10,
+      "Ereignisdokumentation - Ferndiagnose Gelaende": 8
+    },
+    "stanz_projekt": {
+      "GEORIOS: Ereignisdokumentation Stanz i. Muerztal und Pernegg 2016": 241
+    },
+    "v04_positive_alle": {
+      "ereignisse": 423,
+      "mit_irgendeinem_schadensfeld": 107,
+      "verkehrsanlagen_1": 67,
+      "bauwerke_1": 16,
+      "versorgungsinfrastruktur_1": 4
+    },
+    "v04_positive_hangmuren_typ": {
+      "ereignisse": 153,
+      "mit_irgendeinem_schadensfeld": 35,
+      "verkehrsanlagen_1": 21,
+      "bauwerke_1": 5,
+      "versorgungsinfrastruktur_1": 0
+    },
+    "inventar_im_10km_umkreis": {
+      "ereignisse": 633,
+      "mit_irgendeinem_schadensfeld": 97,
+      "verkehrsanlagen_1": 51,
+      "bauwerke_1": 20,
+      "versorgungsinfrastruktur_1": 1,
+      "nach_kampagne": {
+        "Stanz_im_Muerztal_25_Juli_2016": 330,
+        "Gasen_Haslau_August_2005": 146,
+        "Gasen_September_2018": 32,
+        "Gasen_August_2017": 8,
+        "Pernegg_24_Juli_2016": 2,
+        "Oesterreich_Sept_2024": 1,
+        "Kaernten_Steiermark_August_2023": 1
+      }
+    },
+    "geometrie": "nur Punkte; keine Anriss-, Transport- oder Ablagerungsgeometrie, kein Feld zum Ortsbezug des Punkts",
+    "wlv_ereignisse_im_10km_umkreis": 112,
+    "wlv_mit_intensitaet": 112
+  }
+}

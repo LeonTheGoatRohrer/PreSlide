@@ -1,0 +1,119 @@
+{
+  "version": "wirkungskette_v01",
+  "created_on": "2026-10-18",
+  "status": "technical demonstration on one demo window; exploratory; no new training, no new evaluation claim, no test",
+  "purpose": "chain: relative terrain-based review points inside a user radius -> deterministic runout scenario from one release point -> infrastructure lying inside the scenario corridor",
+  "not_claimed": [
+    "probability of a landslide or of being reached",
+    "risk (hazard x exposure x vulnerability)",
+    "warning or forecast",
+    "validated runout",
+    "causality"
+  ],
+  "demo": {
+    "id": "stanz_muerztal_2016",
+    "name": "Stanz im Mürztal (Steiermark)",
+    "centre_longitude": 15.49683,
+    "centre_latitude": 47.44533,
+    "centre_source": "data/pruefgebiete_v01/web/overview.json cluster TE001_2016-07-25_C01 (243 events, 56 Hangmuren)",
+    "reference_day": "2016-07-25",
+    "reference_rule": "terrain state and land cover must be demonstrably before this day (pre-event information only); infrastructure is today's OpenStreetMap state and is labelled so",
+    "sealed_test_note": "The 25.07.2016 storm belongs to the sealed V0.4 test, which has been scored once and is now seen data. Used here only as a labelled demonstration; nothing is tuned on it."
+  },
+  "terrain": {
+    "crs": "EPSG:31287",
+    "resolution_m": 30,
+    "dem": "Skadi 1 arc-second composite via the read-only V0.4 tile cache (object Last-Modified must precede reference_day)",
+    "catchment_margin_m": 5010,
+    "window_extra_m": 300,
+    "minimum_slope_deg": 5,
+    "elevation_range_m": [0, 4500],
+    "fill": "Planchon-Darboux depression filling, eps 1e-3 m per cell (preslide.v04.terrain.fill_depressions, unchanged)",
+    "sink_flag_depth_m": 0.5
+  },
+  "radius_m": {
+    "min": 1000,
+    "max": 10000,
+    "default": 3000,
+    "step": 1000,
+    "reason": "V0.4 controls were drawn 750 m to 10 km from each positive; outside 10 km the model was never asked to compare slopes, below 1 km the window holds too few cells for a relative ranking"
+  },
+  "review_points": {
+    "model": "models/v04/final_c6d67a854ba7/conditional_logit_static.joblib",
+    "model_sha256": "fbce46ad7f25e43e9ca954b177f4a5dea2e40680fa5fa035217cfcba15e753b4",
+    "model_choice": "V0.4 static conditional logit, trained only on the 123 development events (no Stanz event in training). The V0.5 static model was trained on all 418 groups including the Stanz storm and would be applied in-sample here.",
+    "cell_m": 90,
+    "land_cover_vintage": "CLC2012",
+    "land_cover_rule": "V0.4 rule: CLC2012 for t0 before 2019-01-01; no or several polygons covering a cell = not assessable",
+    "classes": [
+      {"id": 1, "label": "Prüfstufe 1", "top_fraction": 0.05},
+      {"id": 2, "label": "Prüfstufe 2", "top_fraction": 0.20},
+      {"id": 3, "label": "Prüfstufe 3", "top_fraction": 0.50},
+      {"id": 4, "label": "Prüfstufe 4", "top_fraction": 1.0}
+    ],
+    "classes_rule": "rank of the linear static score among all assessable cells inside the chosen radius; top 5 % = Stufe 1, next 15 % = Stufe 2, next 30 % = Stufe 3, rest = Stufe 4. Relative inside the window only; the same colour means something different for another radius or area.",
+    "known_weaknesses": {
+      "v04_test_static_local_auc": "0.702 (sealed test, unit-weighted, 11 units)",
+      "v04_test_static_stanz_per_event": "0.455 (Stanz storm, per event, matched controls)",
+      "mudslide_cascade_v01_local_auc": "0.539 [0.406; 0.669] (pilot, terrain pre-selection for pure Hangmuren; no benefit established)"
+    }
+  },
+  "release_points": {
+    "modes": ["pruefpunkte", "hangmuren"],
+    "pruefpunkte_count": 5,
+    "pruefpunkte_separation_m": 300,
+    "hangmuren_source": "V0.4 positives of 2016-07-25 with process 'Hangmure' (point position, relation of the point to release/deposit not stated in the inventory)"
+  },
+  "runout": {
+    "route": "D8 steepest descent on the depression-filled 30 m surface (single path); start cell = release point",
+    "end_reasons": {
+      "rand": "route reaches the border of the computation window (runout end unknown, not an end point)",
+      "nodata": "route reaches a DEM nodata cell",
+      "max_laenge": "route longer than max_route_m"
+    },
+    "max_route_m": 15000,
+    "display_beyond_longest_scenario_m": 1000,
+    "energy_line": {
+      "rule": "energy height h(s) = min(h(s-1) + dz - dx * tan(alpha), v_max^2 / 2g), h(0) = 0, original (unfilled) DEM heights along the route; scenario stops at the last cell with h >= 0",
+      "g_m_s2": 9.81,
+      "v_max_m_s": 15,
+      "v_max_source": "Horton et al. (2013) Flow-R, NHESS 13:869-885: limit 15 m/s, observed debris-flow maxima in Switzerland 13-14 m/s (Rickenmann & Zimmermann 1993)"
+    },
+    "scenarios": [
+      {"id": "reach_45m", "label": "Reichweite 45 m", "kind": "fixed_reach", "reach_m": 45,
+       "source": "Hürlimann, McArdell & Rickli (2015) Geomorphology 232:20-32: median horizontal runout of 178 open-slope hillslope debris flows in Switzerland (range 7-467 m)"},
+      {"id": "reach_467m", "label": "Reichweite 467 m", "kind": "fixed_reach", "reach_m": 467,
+       "source": "Hürlimann, McArdell & Rickli (2015): maximum observed horizontal runout of the same 178 open-slope events"},
+      {"id": "energy_11deg", "label": "Energielinie 11°", "kind": "energy_line", "angle_deg": 11,
+       "source": "Horton et al. (2013) Flow-R: minimum travel angle about 11 deg for coarse/medium-grained debris flows in the Swiss Alps (Zimmermann et al. 1997); applies when a Hangmure enters a channel and behaves as a debris flow"},
+      {"id": "energy_7deg", "label": "Energielinie 7°", "kind": "energy_line", "angle_deg": 7,
+       "source": "Horton et al. (2013) Flow-R: minimum travel angle about 7 deg for fine-grained debris flows (Zimmermann et al. 1997); extreme mobility bound"}
+    ],
+    "scenario_rule": "all four scenarios are always shown together as a band; none was fitted to the demo events. Literature angles are minima for debris flows, i.e. upper-end reach for Hangmuren.",
+    "corridor": {
+      "width_m": 50,
+      "label": "Korridorbreite 50 m (25 m je Seite der Route)",
+      "assumption": "named display assumption, not calibrated: covers the 30 m route cell plus lateral spreading; Hürlimann et al. (2015) report a median initial failure width of 12.5 m and affected areas of 87-9460 m2"
+    },
+    "missing_quantities": ["release volume", "material and grain size", "water content", "entrainment", "protection structures and obstacles", "flow depth and pressure"]
+  },
+  "infrastructure": {
+    "source": "OpenStreetMap via Overpass API (overpass-api.de), today's state; ODbL, attribution '© OpenStreetMap-Mitwirkende'",
+    "user_agent": "Talwacht-research-prototype/0.1 (local non-commercial research)",
+    "types": {
+      "gebaeude": {"label": "Gebäude", "query": "way[\"building\"]"},
+      "strasse": {"label": "Straßen", "query": "way[\"highway\"~\"^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|living_street|service|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link)$\"]"},
+      "weg": {"label": "Forst- und Feldwege", "query": "way[\"highway\"=\"track\"]"},
+      "bahn": {"label": "Bahn", "query": "way[\"railway\"~\"^(rail|light_rail|narrow_gauge)$\"]"}
+    },
+    "critical_infrastructure": "not fetched; only aggregate counts would be shown",
+    "wording": "liegt im Auslaufszenario (never: gefährdet)"
+  },
+  "exploratory": {
+    "documented_events_in_classes": "share of the documented 2016-07-25 events (all processes and Hangmuren only) per Prüfstufe next to the area share; seen data, descriptive only, no hit rate claimed"
+  },
+  "cache": {
+    "directory": "data/wirkungskette_v01",
+    "rule": "every checkpoint carries a SHA-256 sidecar and the configuration hash; mismatch raises"
+  }
+}

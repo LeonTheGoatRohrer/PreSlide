@@ -51,6 +51,8 @@ def pruefgebiete():
     if not path.exists(): raise HTTPException(503,'Ereignisübersicht fehlt: python -m preslide.pruefgebiete')
     return read_json(path)
 
+app.include_router(__import__('preslide.wirkungskette.routes', fromlist=['router']).router)  # Wirkungskette demo (preslide/wirkungskette)
+
 @app.get('/api/results_v05')
 def results_v05():
     # Separate V0.5 bundle (python -m preslide.v05.web); aggregates plus eight ID-selected example groups, local only.

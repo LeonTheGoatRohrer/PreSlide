@@ -1,0 +1,68 @@
+[
+ {
+  "mutation": "radius",
+  "tests": "radius",
+  "ergebnis": "1 failed, 15 passed, 22 deselected in 7.56s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "grad-distanz",
+  "tests": "degree",
+  "ergebnis": "1 failed, 1 passed, 36 deselected in 6.93s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "d8-steigt",
+  "tests": "d8_route_descends or end_reasons",
+  "ergebnis": "1 failed, 1 passed, 36 deselected in 7.84s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "nodata-als-rand",
+  "tests": "end_reasons",
+  "ergebnis": "1 failed, 37 deselected in 6.95s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "rand-als-stopp",
+  "tests": "border_exit",
+  "ergebnis": "1 failed, 37 deselected in 7.16s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "energie-ohne-deckel",
+  "tests": "energy_line_stops",
+  "ergebnis": "3 failed, 35 deselected in 7.52s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "korridor-volle-breite",
+  "tests": "corridor_counts",
+  "ergebnis": "1 failed, 37 deselected in 7.59s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "verbotene-woerter",
+  "tests": "banned_words",
+  "ergebnis": "1 failed, 37 deselected in 7.45s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "cache-identitaet",
+  "tests": "checkpoint_refuses",
+  "ergebnis": "1 failed, 37 deselected in 7.01s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "identitaet-ohne-terrain",
+  "tests": "relevant_config_change",
+  "ergebnis": "1 failed, 37 deselected in 7.14s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "stufen-absolut",
+  "tests": "review_classes",
+  "ergebnis": "1 failed, 37 deselected in 6.96s",
+  "gescheitert": true
+ }
+]
