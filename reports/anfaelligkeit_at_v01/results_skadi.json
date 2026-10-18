@@ -1,0 +1,1977 @@
+{
+  "variant": "skadi",
+  "tag": "skadi",
+  "evaluation_areas": [
+    "Gasen_Haslau_August_2005",
+    "Kaernten_Steiermark_August_2023",
+    "Klingfurth_Juni_2009",
+    "Mautern_Aflenz_Juli 2024",
+    "Moelltal_November_2019",
+    "Nordhaelfte_Oesterreich_Juni_2013",
+    "Oberkaernten_Ende_Oktober_Anfang_November 2018",
+    "Oesterreich_Sept_2024",
+    "Sellrain_Juni_2015",
+    "Stanz_im_Muerztal_25_Juli_2016",
+    "Suedwechsel_Juni_2018",
+    "Thiersee_1970",
+    "Vorarlberg_Tirol_August_2005",
+    "tile_10_6",
+    "tile_10_7",
+    "tile_11_6",
+    "tile_2_7",
+    "tile_3_7",
+    "tile_3_8",
+    "tile_4_7",
+    "tile_5_7",
+    "tile_6_7",
+    "tile_6_8",
+    "tile_8_6",
+    "tile_8_7",
+    "tile_9_7"
+  ],
+  "n_evaluation_areas": 26,
+  "primary_model": "hgb:terrain_geology",
+  "primary": {
+    "auc": {
+      "mean": 0.6820423141988895,
+      "ci95": [
+        0.640507654041988,
+        0.7227720438325964
+      ],
+      "n_areas": 26
+    },
+    "diff": {
+      "mean": 0.09208382593238754,
+      "ci95": [
+        0.05495478105756236,
+        0.12809985579653582
+      ],
+      "n_areas": 26
+    }
+  },
+  "verdict": {
+    "better_than_slope_alone": true,
+    "above_chance": true,
+    "statement": "besser als die Neigung allein"
+  },
+  "summary": {
+    "hgb:slope_only": {
+      "auc": {
+        "mean": 0.5899584882665021,
+        "ci95": [
+          0.5566455997619976,
+          0.621961334009581
+        ],
+        "n_areas": 26
+      },
+      "ap": {
+        "mean": 0.32828366787168756,
+        "ci95": [
+          0.2990285103401126,
+          0.3576151595653624
+        ],
+        "n_areas": 26
+      },
+      "capture_top20": {
+        "mean": 0.2855952575731569,
+        "ci95": [
+          0.2294928182698673,
+          0.341384227620909
+        ],
+        "n_areas": 26
+      }
+    },
+    "hgb:terrain_geology": {
+      "auc": {
+        "mean": 0.6820423141988895,
+        "ci95": [
+          0.640507654041988,
+          0.7227720438325964
+        ],
+        "n_areas": 26
+      },
+      "ap": {
+        "mean": 0.4311178600042581,
+        "ci95": [
+          0.3852454593059706,
+          0.47973866376984026
+        ],
+        "n_areas": 26
+      },
+      "capture_top20": {
+        "mean": 0.43831900280005337,
+        "ci95": [
+          0.3704516346755749,
+          0.5068590706563499
+        ],
+        "n_areas": 26
+      },
+      "auc_minus_hgb:slope_only": {
+        "mean": 0.09208382593238754,
+        "ci95": [
+          0.05495478105756236,
+          0.12809985579653582
+        ],
+        "n_areas": 26
+      }
+    },
+    "lr:terrain_geology": {
+      "auc": {
+        "mean": 0.7028099877177072,
+        "ci95": [
+          0.6632632737064764,
+          0.7383254064676447
+        ],
+        "n_areas": 26
+      },
+      "ap": {
+        "mean": 0.43811511401829445,
+        "ci95": [
+          0.3958128115390955,
+          0.4813107072498048
+        ],
+        "n_areas": 26
+      },
+      "capture_top20": {
+        "mean": 0.47524894011103913,
+        "ci95": [
+          0.4067575684705645,
+          0.5459240552704422
+        ],
+        "n_areas": 26
+      },
+      "auc_minus_hgb:slope_only": {
+        "mean": 0.11285149945120529,
+        "ci95": [
+          0.07917929308920901,
+          0.1468527500480138
+        ],
+        "n_areas": 26
+      }
+    },
+    "slope_rule:slope_only": {
+      "auc": {
+        "mean": 0.5776924101341339,
+        "ci95": [
+          0.5346704517856915,
+          0.6151839055046666
+        ],
+        "n_areas": 26
+      },
+      "ap": {
+        "mean": 0.31716955785795103,
+        "ci95": [
+          0.28132473400778196,
+          0.35493415266717987
+        ],
+        "n_areas": 26
+      },
+      "capture_top20": {
+        "mean": 0.24782595619224607,
+        "ci95": [
+          0.1822837380796901,
+          0.31612606850564035
+        ],
+        "n_areas": 26
+      },
+      "auc_minus_hgb:slope_only": {
+        "mean": -0.012266078132368142,
+        "ci95": [
+          -0.054142725734135304,
+          0.028171926920808804
+        ],
+        "n_areas": 26
+      }
+    }
+  },
+  "fold_info": {
+    "Gasen_Haslau_August_2005": {
+      "train_samples": 9105,
+      "train_positives": 2279,
+      "purged_samples": 59,
+      "test_samples": 284
+    },
+    "Kaernten_Steiermark_August_2023": {
+      "train_samples": 9372,
+      "train_positives": 2343,
+      "purged_samples": 0,
+      "test_samples": 76
+    },
+    "Klingfurth_Juni_2009": {
+      "train_samples": 9212,
+      "train_positives": 2303,
+      "purged_samples": 4,
+      "test_samples": 232
+    },
+    "Mautern_Aflenz_Juli 2024": {
+      "train_samples": 9408,
+      "train_positives": 2352,
+      "purged_samples": 0,
+      "test_samples": 40
+    },
+    "Moelltal_November_2019": {
+      "train_samples": 9241,
+      "train_positives": 2318,
+      "purged_samples": 79,
+      "test_samples": 128
+    },
+    "Nordhaelfte_Oesterreich_Juni_2013": {
+      "train_samples": 8716,
+      "train_positives": 2138,
+      "purged_samples": 324,
+      "test_samples": 408
+    },
+    "Oberkaernten_Ende_Oktober_Anfang_November 2018": {
+      "train_samples": 8900,
+      "train_positives": 2227,
+      "purged_samples": 124,
+      "test_samples": 424
+    },
+    "Oesterreich_Sept_2024": {
+      "train_samples": 9098,
+      "train_positives": 2274,
+      "purged_samples": 2,
+      "test_samples": 348
+    },
+    "Sellrain_Juni_2015": {
+      "train_samples": 9116,
+      "train_positives": 2277,
+      "purged_samples": 36,
+      "test_samples": 296
+    },
+    "Stanz_im_Muerztal_25_Juli_2016": {
+      "train_samples": 9245,
+      "train_positives": 2313,
+      "purged_samples": 19,
+      "test_samples": 184
+    },
+    "Suedwechsel_Juni_2018": {
+      "train_samples": 9388,
+      "train_positives": 2347,
+      "purged_samples": 0,
+      "test_samples": 60
+    },
+    "Thiersee_1970": {
+      "train_samples": 9069,
+      "train_positives": 2270,
+      "purged_samples": 43,
+      "test_samples": 336
+    },
+    "Vorarlberg_Tirol_August_2005": {
+      "train_samples": 4163,
+      "train_positives": 1025,
+      "purged_samples": 1013,
+      "test_samples": 4272
+    },
+    "tile_10_6": {
+      "train_samples": 9405,
+      "train_positives": 2351,
+      "purged_samples": 3,
+      "test_samples": 40
+    },
+    "tile_10_7": {
+      "train_samples": 9407,
+      "train_positives": 2352,
+      "purged_samples": 1,
+      "test_samples": 40
+    },
+    "tile_11_6": {
+      "train_samples": 9366,
+      "train_positives": 2342,
+      "purged_samples": 6,
+      "test_samples": 76
+    },
+    "tile_2_7": {
+      "train_samples": 6956,
+      "train_positives": 1627,
+      "purged_samples": 1684,
+      "test_samples": 808
+    },
+    "tile_3_7": {
+      "train_samples": 8230,
+      "train_positives": 1935,
+      "purged_samples": 982,
+      "test_samples": 236
+    },
+    "tile_3_8": {
+      "train_samples": 9219,
+      "train_positives": 2317,
+      "purged_samples": 125,
+      "test_samples": 104
+    },
+    "tile_4_7": {
+      "train_samples": 9254,
+      "train_positives": 2303,
+      "purged_samples": 150,
+      "test_samples": 44
+    },
+    "tile_5_7": {
+      "train_samples": 9162,
+      "train_positives": 2276,
+      "purged_samples": 158,
+      "test_samples": 128
+    },
+    "tile_6_7": {
+      "train_samples": 9279,
+      "train_positives": 2310,
+      "purged_samples": 57,
+      "test_samples": 112
+    },
+    "tile_6_8": {
+      "train_samples": 9203,
+      "train_positives": 2305,
+      "purged_samples": 197,
+      "test_samples": 48
+    },
+    "tile_8_6": {
+      "train_samples": 9348,
+      "train_positives": 2337,
+      "purged_samples": 0,
+      "test_samples": 100
+    },
+    "tile_8_7": {
+      "train_samples": 9311,
+      "train_positives": 2327,
+      "purged_samples": 1,
+      "test_samples": 136
+    },
+    "tile_9_7": {
+      "train_samples": 9400,
+      "train_positives": 2349,
+      "purged_samples": 4,
+      "test_samples": 44
+    }
+  },
+  "largest_area": "Vorarlberg_Tirol_August_2005",
+  "pooled_auc": {
+    "hgb:slope_only": 0.5979049869275074,
+    "hgb:terrain_geology": 0.6784683550157842,
+    "lr:terrain_geology": 0.654201305005992,
+    "slope_rule:slope_only": 0.568891769839135
+  },
+  "without_largest_area": {
+    "hgb:slope_only": {
+      "auc": {
+        "mean": 0.5887192125970612,
+        "ci95": [
+          0.5554076218270929,
+          0.6215381174983471
+        ],
+        "n_areas": 25
+      },
+      "ap": {
+        "mean": 0.3284009342299978,
+        "ci95": [
+          0.30004259278754253,
+          0.3592085544138529
+        ],
+        "n_areas": 25
+      },
+      "capture_top20": {
+        "mean": 0.2855209405352592,
+        "ci95": [
+          0.2291845583505926,
+          0.34659994067628797
+        ],
+        "n_areas": 25
+      }
+    },
+    "hgb:terrain_geology": {
+      "auc": {
+        "mean": 0.681194707950291,
+        "ci95": [
+          0.6388807629055482,
+          0.7221984429205668
+        ],
+        "n_areas": 25
+      },
+      "ap": {
+        "mean": 0.43359661055305027,
+        "ci95": [
+          0.3880906039225778,
+          0.4804845081716254
+        ],
+        "n_areas": 25
+      },
+      "capture_top20": {
+        "mean": 0.44027123856748623,
+        "ci95": [
+          0.3701128906110896,
+          0.5088035931319038
+        ],
+        "n_areas": 25
+      },
+      "auc_minus_hgb:slope_only": {
+        "mean": 0.09247549535322981,
+        "ci95": [
+          0.055376867512384596,
+          0.1287299542641491
+        ],
+        "n_areas": 25
+      }
+    },
+    "lr:terrain_geology": {
+      "auc": {
+        "mean": 0.7042786436848688,
+        "ci95": [
+          0.6653102095032968,
+          0.7421560199527325
+        ],
+        "n_areas": 25
+      },
+      "ap": {
+        "mean": 0.44220723727629524,
+        "ci95": [
+          0.39870988988093947,
+          0.48617176102041354
+        ],
+        "n_areas": 25
+      },
+      "capture_top20": {
+        "mean": 0.48137500258439453,
+        "ci95": [
+          0.4104754487560221,
+          0.5536623167517021
+        ],
+        "n_areas": 25
+      },
+      "auc_minus_hgb:slope_only": {
+        "mean": 0.11555943108780765,
+        "ci95": [
+          0.0806984138992795,
+          0.15208152385343043
+        ],
+        "n_areas": 25
+      }
+    },
+    "slope_rule:slope_only": {
+      "auc": {
+        "mean": 0.5778907399705568,
+        "ci95": [
+          0.5338613980369247,
+          0.6163558787497557
+        ],
+        "n_areas": 25
+      },
+      "ap": {
+        "mean": 0.3196027465210079,
+        "ci95": [
+          0.2813942481292487,
+          0.3589469304443581
+        ],
+        "n_areas": 25
+      },
+      "capture_top20": {
+        "mean": 0.2528326273987374,
+        "ci95": [
+          0.1838563701139035,
+          0.3213742596147367
+        ],
+        "n_areas": 25
+      },
+      "auc_minus_hgb:slope_only": {
+        "mean": -0.010828472626504248,
+        "ci95": [
+          -0.050356193608977584,
+          0.030831292886445465
+        ],
+        "n_areas": 25
+      }
+    }
+  },
+  "reporting_bias": {
+    "distance_only_auc": {
+      "mean": 0.6654649414376391,
+      "ci95": [
+        0.6221285458266943,
+        0.7100610569279412
+      ],
+      "n_areas": 26
+    },
+    "distance_only_per_area": {
+      "Gasen_Haslau_August_2005": 0.7268,
+      "Kaernten_Steiermark_August_2023": 0.6565,
+      "Klingfurth_Juni_2009": 0.5338,
+      "Mautern_Aflenz_Juli 2024": 0.8867,
+      "Moelltal_November_2019": 0.8607,
+      "Nordhaelfte_Oesterreich_Juni_2013": 0.638,
+      "Oberkaernten_Ende_Oktober_Anfang_November 2018": 0.8336,
+      "Oesterreich_Sept_2024": 0.6224,
+      "Sellrain_Juni_2015": 0.8051,
+      "Stanz_im_Muerztal_25_Juli_2016": 0.5433,
+      "Suedwechsel_Juni_2018": 0.7911,
+      "Thiersee_1970": 0.701,
+      "Vorarlberg_Tirol_August_2005": 0.6245,
+      "tile_10_6": 0.4067,
+      "tile_10_7": 0.65,
+      "tile_11_6": 0.6731,
+      "tile_2_7": 0.5453,
+      "tile_3_7": 0.6582,
+      "tile_3_8": 0.6124,
+      "tile_4_7": 0.6584,
+      "tile_5_7": 0.6839,
+      "tile_6_7": 0.5047,
+      "tile_6_8": 0.6921,
+      "tile_8_6": 0.6923,
+      "tile_8_7": 0.519,
+      "tile_9_7": 0.7824
+    },
+    "far_from_infrastructure_200m": {
+      "areas": [
+        "Gasen_Haslau_August_2005",
+        "Klingfurth_Juni_2009",
+        "Nordhaelfte_Oesterreich_Juni_2013",
+        "Oberkaernten_Ende_Oktober_Anfang_November 2018",
+        "Oesterreich_Sept_2024",
+        "Sellrain_Juni_2015",
+        "Stanz_im_Muerztal_25_Juli_2016",
+        "Thiersee_1970",
+        "Vorarlberg_Tirol_August_2005",
+        "tile_10_6",
+        "tile_2_7",
+        "tile_3_7",
+        "tile_3_8",
+        "tile_4_7",
+        "tile_5_7",
+        "tile_6_7",
+        "tile_8_6",
+        "tile_8_7"
+      ],
+      "positives_share_far": 0.40008467400508047,
+      "background_share_far": 0.6014676827547276,
+      "summary": {
+        "hgb:slope_only": {
+          "auc": {
+            "mean": 0.5380753948097482,
+            "ci95": [
+              0.4826092304289117,
+              0.5896044425361778
+            ],
+            "n_areas": 18
+          },
+          "ap": {
+            "mean": 0.23795507067641264,
+            "ci95": [
+              0.1738536753925601,
+              0.3190892329933311
+            ],
+            "n_areas": 18
+          },
+          "capture_top20": {
+            "mean": 0.2120505261486377,
+            "ci95": [
+              0.15175129297741624,
+              0.2781483296145766
+            ],
+            "n_areas": 18
+          }
+        },
+        "hgb:terrain_geology": {
+          "auc": {
+            "mean": 0.6534997453439315,
+            "ci95": [
+              0.5875673059248334,
+              0.7163708914753115
+            ],
+            "n_areas": 18
+          },
+          "ap": {
+            "mean": 0.3297950237228207,
+            "ci95": [
+              0.251178085800945,
+              0.41871811225697836
+            ],
+            "n_areas": 18
+          },
+          "capture_top20": {
+            "mean": 0.37232020820400824,
+            "ci95": [
+              0.2792339262941969,
+              0.4669383805182589
+            ],
+            "n_areas": 18
+          },
+          "auc_minus_hgb:slope_only": {
+            "mean": 0.11542435053418328,
+            "ci95": [
+              0.04581779895603045,
+              0.1825036894018723
+            ],
+            "n_areas": 18
+          }
+        }
+      },
+      "per_area": [
+        {
+          "area_id": "Gasen_Haslau_August_2005",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 5,
+          "n_bg": 79,
+          "auc": 0.6127,
+          "ap": 0.0891,
+          "capture_top20": 0.0
+        },
+        {
+          "area_id": "Gasen_Haslau_August_2005",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 5,
+          "n_bg": 79,
+          "auc": 0.7823,
+          "ap": 0.4113,
+          "capture_top20": 0.4
+        },
+        {
+          "area_id": "Klingfurth_Juni_2009",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 22,
+          "n_bg": 77,
+          "auc": 0.3937,
+          "ap": 0.1908,
+          "capture_top20": 0.1364
+        },
+        {
+          "area_id": "Klingfurth_Juni_2009",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 22,
+          "n_bg": 77,
+          "auc": 0.3318,
+          "ap": 0.1704,
+          "capture_top20": 0.0455
+        },
+        {
+          "area_id": "Nordhaelfte_Oesterreich_Juni_2013",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 30,
+          "n_bg": 156,
+          "auc": 0.6505,
+          "ap": 0.2148,
+          "capture_top20": 0.2667
+        },
+        {
+          "area_id": "Nordhaelfte_Oesterreich_Juni_2013",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 30,
+          "n_bg": 156,
+          "auc": 0.8047,
+          "ap": 0.3591,
+          "capture_top20": 0.6667
+        },
+        {
+          "area_id": "Oberkaernten_Ende_Oktober_Anfang_November 2018",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 6,
+          "n_bg": 202,
+          "auc": 0.5157,
+          "ap": 0.0322,
+          "capture_top20": 0.1667
+        },
+        {
+          "area_id": "Oberkaernten_Ende_Oktober_Anfang_November 2018",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 6,
+          "n_bg": 202,
+          "auc": 0.7195,
+          "ap": 0.0555,
+          "capture_top20": 0.1667
+        },
+        {
+          "area_id": "Oesterreich_Sept_2024",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 13,
+          "n_bg": 98,
+          "auc": 0.3917,
+          "ap": 0.1115,
+          "capture_top20": 0.0769
+        },
+        {
+          "area_id": "Oesterreich_Sept_2024",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 13,
+          "n_bg": 98,
+          "auc": 0.668,
+          "ap": 0.2631,
+          "capture_top20": 0.4615
+        },
+        {
+          "area_id": "Sellrain_Juni_2015",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 9,
+          "n_bg": 153,
+          "auc": 0.4027,
+          "ap": 0.0482,
+          "capture_top20": 0.0
+        },
+        {
+          "area_id": "Sellrain_Juni_2015",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 9,
+          "n_bg": 153,
+          "auc": 0.716,
+          "ap": 0.1493,
+          "capture_top20": 0.4444
+        },
+        {
+          "area_id": "Stanz_im_Muerztal_25_Juli_2016",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 20,
+          "n_bg": 52,
+          "auc": 0.5981,
+          "ap": 0.391,
+          "capture_top20": 0.4
+        },
+        {
+          "area_id": "Stanz_im_Muerztal_25_Juli_2016",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 20,
+          "n_bg": 52,
+          "auc": 0.7452,
+          "ap": 0.5479,
+          "capture_top20": 0.5
+        },
+        {
+          "area_id": "Thiersee_1970",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 22,
+          "n_bg": 140,
+          "auc": 0.5589,
+          "ap": 0.1679,
+          "capture_top20": 0.3636
+        },
+        {
+          "area_id": "Thiersee_1970",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 22,
+          "n_bg": 140,
+          "auc": 0.3403,
+          "ap": 0.102,
+          "capture_top20": 0.0909
+        },
+        {
+          "area_id": "Vorarlberg_Tirol_August_2005",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 542,
+          "n_bg": 2178,
+          "auc": 0.6165,
+          "ap": 0.2615,
+          "capture_top20": 0.2694
+        },
+        {
+          "area_id": "Vorarlberg_Tirol_August_2005",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 542,
+          "n_bg": 2178,
+          "auc": 0.7133,
+          "ap": 0.3057,
+          "capture_top20": 0.3875
+        },
+        {
+          "area_id": "tile_10_6",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 5,
+          "n_bg": 8,
+          "auc": 0.75,
+          "ap": 0.7254,
+          "capture_top20": 0.4
+        },
+        {
+          "area_id": "tile_10_6",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 5,
+          "n_bg": 8,
+          "auc": 0.775,
+          "ap": 0.8,
+          "capture_top20": 0.6
+        },
+        {
+          "area_id": "tile_2_7",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 119,
+          "n_bg": 384,
+          "auc": 0.6272,
+          "ap": 0.3045,
+          "capture_top20": 0.2269
+        },
+        {
+          "area_id": "tile_2_7",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 119,
+          "n_bg": 384,
+          "auc": 0.7148,
+          "ap": 0.4359,
+          "capture_top20": 0.4538
+        },
+        {
+          "area_id": "tile_3_7",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 33,
+          "n_bg": 139,
+          "auc": 0.6436,
+          "ap": 0.3413,
+          "capture_top20": 0.4242
+        },
+        {
+          "area_id": "tile_3_7",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 33,
+          "n_bg": 139,
+          "auc": 0.7877,
+          "ap": 0.4717,
+          "capture_top20": 0.6364
+        },
+        {
+          "area_id": "tile_3_8",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 15,
+          "n_bg": 50,
+          "auc": 0.6033,
+          "ap": 0.2816,
+          "capture_top20": 0.2
+        },
+        {
+          "area_id": "tile_3_8",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 15,
+          "n_bg": 50,
+          "auc": 0.576,
+          "ap": 0.3287,
+          "capture_top20": 0.2
+        },
+        {
+          "area_id": "tile_4_7",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 6,
+          "n_bg": 20,
+          "auc": 0.5292,
+          "ap": 0.3074,
+          "capture_top20": 0.1667
+        },
+        {
+          "area_id": "tile_4_7",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 6,
+          "n_bg": 20,
+          "auc": 0.8,
+          "ap": 0.541,
+          "capture_top20": 0.6667
+        },
+        {
+          "area_id": "tile_5_7",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 10,
+          "n_bg": 55,
+          "auc": 0.5,
+          "ap": 0.1619,
+          "capture_top20": 0.1
+        },
+        {
+          "area_id": "tile_5_7",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 10,
+          "n_bg": 55,
+          "auc": 0.6364,
+          "ap": 0.2252,
+          "capture_top20": 0.3
+        },
+        {
+          "area_id": "tile_6_7",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 7,
+          "n_bg": 27,
+          "auc": 0.619,
+          "ap": 0.3211,
+          "capture_top20": 0.4286
+        },
+        {
+          "area_id": "tile_6_7",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 7,
+          "n_bg": 27,
+          "auc": 0.4497,
+          "ap": 0.1998,
+          "capture_top20": 0.0
+        },
+        {
+          "area_id": "tile_8_6",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 10,
+          "n_bg": 45,
+          "auc": 0.3889,
+          "ap": 0.1565,
+          "capture_top20": 0.1
+        },
+        {
+          "area_id": "tile_8_6",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 10,
+          "n_bg": 45,
+          "auc": 0.6422,
+          "ap": 0.3113,
+          "capture_top20": 0.5
+        },
+        {
+          "area_id": "tile_8_7",
+          "model": "hgb",
+          "feature_set": "slope_only",
+          "n_pos": 22,
+          "n_bg": 71,
+          "auc": 0.2836,
+          "ap": 0.1764,
+          "capture_top20": 0.0909
+        },
+        {
+          "area_id": "tile_8_7",
+          "model": "hgb",
+          "feature_set": "terrain_geology",
+          "n_pos": 22,
+          "n_bg": 71,
+          "auc": 0.5602,
+          "ap": 0.2584,
+          "capture_top20": 0.1818
+        }
+      ]
+    }
+  },
+  "dem_date_description": {
+    "areas_year_ge_2017": [
+      "Kaernten_Steiermark_August_2023",
+      "Mautern_Aflenz_Juli 2024",
+      "Moelltal_November_2019",
+      "Oberkaernten_Ende_Oktober_Anfang_November 2018",
+      "Oesterreich_Sept_2024",
+      "Suedwechsel_Juni_2018"
+    ],
+    "mean_auc_diff_late": 0.15261526157185887,
+    "mean_auc_diff_other": 0.07392439524054614
+  },
+  "permutation_importance_mean": {
+    "elevation": 0.0468,
+    "roughness_tri": 0.0432,
+    "aspect": 0.0431,
+    "tpi_500m": 0.0136,
+    "relative_position_500m": 0.0078,
+    "slope": 0.0022,
+    "tpi_150m": 0.0021,
+    "plan_curvature": -0.0002,
+    "geology": -0.0011,
+    "twi": -0.0017,
+    "log10_catchment_m2": -0.002,
+    "profile_curvature": -0.0035
+  },
+  "land_cover": {
+    "evaluation_areas": [
+      "Gasen_Haslau_August_2005",
+      "Kaernten_Steiermark_August_2023",
+      "Klingfurth_Juni_2009",
+      "Mautern_Aflenz_Juli 2024",
+      "Moelltal_November_2019",
+      "Nordhaelfte_Oesterreich_Juni_2013",
+      "Oberkaernten_Ende_Oktober_Anfang_November 2018",
+      "Oesterreich_Sept_2024",
+      "Sellrain_Juni_2015",
+      "Stanz_im_Muerztal_25_Juli_2016",
+      "Suedwechsel_Juni_2018",
+      "Vorarlberg_Tirol_August_2005"
+    ],
+    "vintages": {
+      "Edelschrott_Juli_2024": "CLC2018",
+      "Feldbach_August_2020": "CLC2018",
+      "Feldbach_Juni_August_2009": "CLC2006",
+      "Gasen_August_2017": "CLC2012",
+      "Gasen_Haslau_August_2005": "CLC2000",
+      "Gasen_September_2018": "CLC2012",
+      "Hartberg_Fuerstenfeld_Juni_2024": "CLC2018",
+      "Kaernten_Steiermark_August_2023": "CLC2018",
+      "Klingfurth_Juni_2009": "CLC2006",
+      "Knittelfeld_August_2020": "CLC2018",
+      "Mautern_Aflenz_Juli 2024": "CLC2018",
+      "Moelltal_November_2019": "CLC2018",
+      "Nordhaelfte_Oesterreich_Juni_2013": "CLC2012",
+      "Obdach_Packsattel_Juli_2012": "CLC2006",
+      "Oberkaernten_Ende_Oktober_Anfang_November 2018": "CLC2012",
+      "Oberwoelz_August_2017": "CLC2012",
+      "Oesterreich_Sept_2024": "CLC2018",
+      "Pernegg_24_Juli_2016": "CLC2012",
+      "Pinzgau_Pongau_August_2024": "CLC2018",
+      "Sellrain_Juni_2015": "CLC2012",
+      "St_Lorenzen_i_P_Juli_2012": "CLC2006",
+      "Stanz_im_Muerztal_25_Juli_2016": "CLC2012",
+      "Suedwechsel_Juni_2018": "CLC2012",
+      "Taxenbach_Juni_2013": "CLC2012",
+      "Vorarlberg_Tirol_August_2005": "CLC2000",
+      "tile_10_10": "CLC2018",
+      "tile_7_7": "CLC2018",
+      "tile_7_8": "CLC2018"
+    },
+    "lc_missing_samples": 0,
+    "summary": {
+      "hgb:slope_only": {
+        "auc": {
+          "mean": 0.5769985793733011,
+          "ci95": [
+            0.5423335717088649,
+            0.61345732440517
+          ],
+          "n_areas": 12
+        },
+        "ap": {
+          "mean": 0.31368475939417445,
+          "ci95": [
+            0.28213673122274646,
+            0.34815585027136603
+          ],
+          "n_areas": 12
+        },
+        "capture_top20": {
+          "mean": 0.2560503979474571,
+          "ci95": [
+            0.19905326140071153,
+            0.31404475751873545
+          ],
+          "n_areas": 12
+        }
+      },
+      "hgb:terrain_geology": {
+        "auc": {
+          "mean": 0.7299644831346499,
+          "ci95": [
+            0.6752867209714863,
+            0.784825607680952
+          ],
+          "n_areas": 12
+        },
+        "ap": {
+          "mean": 0.487460615986133,
+          "ci95": [
+            0.41977790529201114,
+            0.557548016527272
+          ],
+          "n_areas": 12
+        },
+        "capture_top20": {
+          "mean": 0.5212708483576897,
+          "ci95": [
+            0.41457106714083847,
+            0.6244408044079967
+          ],
+          "n_areas": 12
+        },
+        "auc_minus_hgb:slope_only": {
+          "mean": 0.1529659037613487,
+          "ci95": [
+            0.10725802369536243,
+            0.19861774960968204
+          ],
+          "n_areas": 12
+        }
+      },
+      "hgb:terrain_geology_landcover": {
+        "auc": {
+          "mean": 0.7520360346106713,
+          "ci95": [
+            0.6825879340154044,
+            0.8188610960483015
+          ],
+          "n_areas": 12
+        },
+        "ap": {
+          "mean": 0.5238761309560563,
+          "ci95": [
+            0.43947517698568256,
+            0.6057883266073637
+          ],
+          "n_areas": 12
+        },
+        "capture_top20": {
+          "mean": 0.556389452953126,
+          "ci95": [
+            0.4410125501314058,
+            0.6741872768338062
+          ],
+          "n_areas": 12
+        },
+        "auc_minus_hgb:slope_only": {
+          "mean": 0.17503745523737016,
+          "ci95": [
+            0.1165579353313893,
+            0.23254563708572773
+          ],
+          "n_areas": 12
+        }
+      },
+      "lr:terrain_geology": {
+        "auc": {
+          "mean": 0.7196679690374309,
+          "ci95": [
+            0.6573816945662179,
+            0.7736361240938305
+          ],
+          "n_areas": 12
+        },
+        "ap": {
+          "mean": 0.4395121508092645,
+          "ci95": [
+            0.37993288865401703,
+            0.4994804940016169
+          ],
+          "n_areas": 12
+        },
+        "capture_top20": {
+          "mean": 0.531398596502074,
+          "ci95": [
+            0.41746511657844654,
+            0.6435263502751856
+          ],
+          "n_areas": 12
+        },
+        "auc_minus_hgb:slope_only": {
+          "mean": 0.1426693896641298,
+          "ci95": [
+            0.09487746990760647,
+            0.191275956608554
+          ],
+          "n_areas": 12
+        }
+      },
+      "lr:terrain_geology_landcover": {
+        "auc": {
+          "mean": 0.744379048087556,
+          "ci95": [
+            0.6699322247732604,
+            0.8085935728756746
+          ],
+          "n_areas": 12
+        },
+        "ap": {
+          "mean": 0.49694278333952946,
+          "ci95": [
+            0.4211623915276448,
+            0.5672477025653376
+          ],
+          "n_areas": 12
+        },
+        "capture_top20": {
+          "mean": 0.5509973064166501,
+          "ci95": [
+            0.4025437447595621,
+            0.6918236537683224
+          ],
+          "n_areas": 12
+        },
+        "auc_minus_hgb:slope_only": {
+          "mean": 0.1673804687142546,
+          "ci95": [
+            0.10348388520382147,
+            0.2306843360459322
+          ],
+          "n_areas": 12
+        }
+      },
+      "slope_rule:slope_only": {
+        "auc": {
+          "mean": 0.5580532739320184,
+          "ci95": [
+            0.4906556501621019,
+            0.6199679608151922
+          ],
+          "n_areas": 12
+        },
+        "ap": {
+          "mean": 0.30520542213611046,
+          "ci95": [
+            0.24865960362519657,
+            0.36778330554871635
+          ],
+          "n_areas": 12
+        },
+        "capture_top20": {
+          "mean": 0.2478254148217657,
+          "ci95": [
+            0.13878912974410074,
+            0.3687979301490267
+          ],
+          "n_areas": 12
+        },
+        "auc_minus_hgb:slope_only": {
+          "mean": -0.018945305441282857,
+          "ci95": [
+            -0.07544354458171455,
+            0.03415417969558009
+          ],
+          "n_areas": 12
+        }
+      }
+    },
+    "hgb_landcover_minus_terrain_geology": {
+      "mean": 0.022071551476021457,
+      "ci95": [
+        -0.0005121266165753659,
+        0.0441272754217797
+      ],
+      "n_areas": 12
+    },
+    "lr_landcover_minus_terrain_geology": {
+      "mean": 0.024711079050124846,
+      "ci95": [
+        -0.00327965730550169,
+        0.053618487049438786
+      ],
+      "n_areas": 12
+    },
+    "per_area": [
+      {
+        "area_id": "Gasen_Haslau_August_2005",
+        "model": "hgb",
+        "feature_set": "slope_only",
+        "n_pos": 71,
+        "n_bg": 213,
+        "auc": 0.5724,
+        "ap": 0.2882,
+        "capture_top20": 0.2113
+      },
+      {
+        "area_id": "Gasen_Haslau_August_2005",
+        "model": "hgb",
+        "feature_set": "terrain_geology",
+        "n_pos": 71,
+        "n_bg": 213,
+        "auc": 0.75,
+        "ap": 0.4846,
+        "capture_top20": 0.493
+      },
+      {
+        "area_id": "Gasen_Haslau_August_2005",
+        "model": "hgb",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 71,
+        "n_bg": 213,
+        "auc": 0.7832,
+        "ap": 0.5697,
+        "capture_top20": 0.6056
+      },
+      {
+        "area_id": "Gasen_Haslau_August_2005",
+        "model": "lr",
+        "feature_set": "terrain_geology",
+        "n_pos": 71,
+        "n_bg": 213,
+        "auc": 0.8455,
+        "ap": 0.6672,
+        "capture_top20": 0.6901
+      },
+      {
+        "area_id": "Gasen_Haslau_August_2005",
+        "model": "lr",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 71,
+        "n_bg": 213,
+        "auc": 0.8664,
+        "ap": 0.7278,
+        "capture_top20": 0.7465
+      },
+      {
+        "area_id": "Gasen_Haslau_August_2005",
+        "model": "slope_rule",
+        "feature_set": "slope_only",
+        "n_pos": 71,
+        "n_bg": 213,
+        "auc": 0.6824,
+        "ap": 0.4165,
+        "capture_top20": 0.4789
+      },
+      {
+        "area_id": "Kaernten_Steiermark_August_2023",
+        "model": "hgb",
+        "feature_set": "slope_only",
+        "n_pos": 19,
+        "n_bg": 57,
+        "auc": 0.6879,
+        "ap": 0.4314,
+        "capture_top20": 0.4211
+      },
+      {
+        "area_id": "Kaernten_Steiermark_August_2023",
+        "model": "hgb",
+        "feature_set": "terrain_geology",
+        "n_pos": 19,
+        "n_bg": 57,
+        "auc": 0.7045,
+        "ap": 0.5008,
+        "capture_top20": 0.6316
+      },
+      {
+        "area_id": "Kaernten_Steiermark_August_2023",
+        "model": "hgb",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 19,
+        "n_bg": 57,
+        "auc": 0.7156,
+        "ap": 0.5073,
+        "capture_top20": 0.4737
+      },
+      {
+        "area_id": "Kaernten_Steiermark_August_2023",
+        "model": "lr",
+        "feature_set": "terrain_geology",
+        "n_pos": 19,
+        "n_bg": 57,
+        "auc": 0.7922,
+        "ap": 0.4915,
+        "capture_top20": 0.8947
+      },
+      {
+        "area_id": "Kaernten_Steiermark_August_2023",
+        "model": "lr",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 19,
+        "n_bg": 57,
+        "auc": 0.7387,
+        "ap": 0.4693,
+        "capture_top20": 0.5789
+      },
+      {
+        "area_id": "Kaernten_Steiermark_August_2023",
+        "model": "slope_rule",
+        "feature_set": "slope_only",
+        "n_pos": 19,
+        "n_bg": 57,
+        "auc": 0.7248,
+        "ap": 0.4519,
+        "capture_top20": 0.6316
+      },
+      {
+        "area_id": "Klingfurth_Juni_2009",
+        "model": "hgb",
+        "feature_set": "slope_only",
+        "n_pos": 58,
+        "n_bg": 174,
+        "auc": 0.4719,
+        "ap": 0.2497,
+        "capture_top20": 0.1724
+      },
+      {
+        "area_id": "Klingfurth_Juni_2009",
+        "model": "hgb",
+        "feature_set": "terrain_geology",
+        "n_pos": 58,
+        "n_bg": 174,
+        "auc": 0.536,
+        "ap": 0.2703,
+        "capture_top20": 0.1724
+      },
+      {
+        "area_id": "Klingfurth_Juni_2009",
+        "model": "hgb",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 58,
+        "n_bg": 174,
+        "auc": 0.5228,
+        "ap": 0.2726,
+        "capture_top20": 0.2586
+      },
+      {
+        "area_id": "Klingfurth_Juni_2009",
+        "model": "lr",
+        "feature_set": "terrain_geology",
+        "n_pos": 58,
+        "n_bg": 174,
+        "auc": 0.4649,
+        "ap": 0.2638,
+        "capture_top20": 0.2241
+      },
+      {
+        "area_id": "Klingfurth_Juni_2009",
+        "model": "lr",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 58,
+        "n_bg": 174,
+        "auc": 0.4549,
+        "ap": 0.3195,
+        "capture_top20": 0.2069
+      },
+      {
+        "area_id": "Klingfurth_Juni_2009",
+        "model": "slope_rule",
+        "feature_set": "slope_only",
+        "n_pos": 58,
+        "n_bg": 174,
+        "auc": 0.4534,
+        "ap": 0.2215,
+        "capture_top20": 0.0862
+      },
+      {
+        "area_id": "Mautern_Aflenz_Juli 2024",
+        "model": "hgb",
+        "feature_set": "slope_only",
+        "n_pos": 10,
+        "n_bg": 30,
+        "auc": 0.5083,
+        "ap": 0.306,
+        "capture_top20": 0.3
+      },
+      {
+        "area_id": "Mautern_Aflenz_Juli 2024",
+        "model": "hgb",
+        "feature_set": "terrain_geology",
+        "n_pos": 10,
+        "n_bg": 30,
+        "auc": 0.6633,
+        "ap": 0.5129,
+        "capture_top20": 0.5
+      },
+      {
+        "area_id": "Mautern_Aflenz_Juli 2024",
+        "model": "hgb",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 10,
+        "n_bg": 30,
+        "auc": 0.6467,
+        "ap": 0.4455,
+        "capture_top20": 0.4
+      },
+      {
+        "area_id": "Mautern_Aflenz_Juli 2024",
+        "model": "lr",
+        "feature_set": "terrain_geology",
+        "n_pos": 10,
+        "n_bg": 30,
+        "auc": 0.7367,
+        "ap": 0.4947,
+        "capture_top20": 0.6
+      },
+      {
+        "area_id": "Mautern_Aflenz_Juli 2024",
+        "model": "lr",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 10,
+        "n_bg": 30,
+        "auc": 0.7633,
+        "ap": 0.4925,
+        "capture_top20": 0.5
+      },
+      {
+        "area_id": "Mautern_Aflenz_Juli 2024",
+        "model": "slope_rule",
+        "feature_set": "slope_only",
+        "n_pos": 10,
+        "n_bg": 30,
+        "auc": 0.3133,
+        "ap": 0.1947,
+        "capture_top20": 0.0
+      },
+      {
+        "area_id": "Moelltal_November_2019",
+        "model": "hgb",
+        "feature_set": "slope_only",
+        "n_pos": 32,
+        "n_bg": 96,
+        "auc": 0.6733,
+        "ap": 0.356,
+        "capture_top20": 0.2812
+      },
+      {
+        "area_id": "Moelltal_November_2019",
+        "model": "hgb",
+        "feature_set": "terrain_geology",
+        "n_pos": 32,
+        "n_bg": 96,
+        "auc": 0.9004,
+        "ap": 0.7362,
+        "capture_top20": 0.875
+      },
+      {
+        "area_id": "Moelltal_November_2019",
+        "model": "hgb",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 32,
+        "n_bg": 96,
+        "auc": 0.9196,
+        "ap": 0.7731,
+        "capture_top20": 0.9375
+      },
+      {
+        "area_id": "Moelltal_November_2019",
+        "model": "lr",
+        "feature_set": "terrain_geology",
+        "n_pos": 32,
+        "n_bg": 96,
+        "auc": 0.8317,
+        "ap": 0.5056,
+        "capture_top20": 0.7812
+      },
+      {
+        "area_id": "Moelltal_November_2019",
+        "model": "lr",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 32,
+        "n_bg": 96,
+        "auc": 0.8766,
+        "ap": 0.6417,
+        "capture_top20": 0.9062
+      },
+      {
+        "area_id": "Moelltal_November_2019",
+        "model": "slope_rule",
+        "feature_set": "slope_only",
+        "n_pos": 32,
+        "n_bg": 96,
+        "auc": 0.5049,
+        "ap": 0.2372,
+        "capture_top20": 0.125
+      },
+      {
+        "area_id": "Nordhaelfte_Oesterreich_Juni_2013",
+        "model": "hgb",
+        "feature_set": "slope_only",
+        "n_pos": 102,
+        "n_bg": 306,
+        "auc": 0.6337,
+        "ap": 0.3132,
+        "capture_top20": 0.2745
+      },
+      {
+        "area_id": "Nordhaelfte_Oesterreich_Juni_2013",
+        "model": "hgb",
+        "feature_set": "terrain_geology",
+        "n_pos": 102,
+        "n_bg": 306,
+        "auc": 0.7579,
+        "ap": 0.4507,
+        "capture_top20": 0.5294
+      },
+      {
+        "area_id": "Nordhaelfte_Oesterreich_Juni_2013",
+        "model": "hgb",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 102,
+        "n_bg": 306,
+        "auc": 0.7915,
+        "ap": 0.5586,
+        "capture_top20": 0.6176
+      },
+      {
+        "area_id": "Nordhaelfte_Oesterreich_Juni_2013",
+        "model": "lr",
+        "feature_set": "terrain_geology",
+        "n_pos": 102,
+        "n_bg": 306,
+        "auc": 0.7255,
+        "ap": 0.4122,
+        "capture_top20": 0.451
+      },
+      {
+        "area_id": "Nordhaelfte_Oesterreich_Juni_2013",
+        "model": "lr",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 102,
+        "n_bg": 306,
+        "auc": 0.7462,
+        "ap": 0.5147,
+        "capture_top20": 0.5294
+      },
+      {
+        "area_id": "Nordhaelfte_Oesterreich_Juni_2013",
+        "model": "slope_rule",
+        "feature_set": "slope_only",
+        "n_pos": 102,
+        "n_bg": 306,
+        "auc": 0.6171,
+        "ap": 0.2868,
+        "capture_top20": 0.2157
+      },
+      {
+        "area_id": "Oberkaernten_Ende_Oktober_Anfang_November 2018",
+        "model": "hgb",
+        "feature_set": "slope_only",
+        "n_pos": 106,
+        "n_bg": 318,
+        "auc": 0.5381,
+        "ap": 0.2614,
+        "capture_top20": 0.1226
+      },
+      {
+        "area_id": "Oberkaernten_Ende_Oktober_Anfang_November 2018",
+        "model": "hgb",
+        "feature_set": "terrain_geology",
+        "n_pos": 106,
+        "n_bg": 318,
+        "auc": 0.7157,
+        "ap": 0.4616,
+        "capture_top20": 0.4434
+      },
+      {
+        "area_id": "Oberkaernten_Ende_Oktober_Anfang_November 2018",
+        "model": "hgb",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 106,
+        "n_bg": 318,
+        "auc": 0.8138,
+        "ap": 0.5969,
+        "capture_top20": 0.6415
+      },
+      {
+        "area_id": "Oberkaernten_Ende_Oktober_Anfang_November 2018",
+        "model": "lr",
+        "feature_set": "terrain_geology",
+        "n_pos": 106,
+        "n_bg": 318,
+        "auc": 0.6506,
+        "ap": 0.3112,
+        "capture_top20": 0.3019
+      },
+      {
+        "area_id": "Oberkaernten_Ende_Oktober_Anfang_November 2018",
+        "model": "lr",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 106,
+        "n_bg": 318,
+        "auc": 0.7666,
+        "ap": 0.4529,
+        "capture_top20": 0.5472
+      },
+      {
+        "area_id": "Oberkaernten_Ende_Oktober_Anfang_November 2018",
+        "model": "slope_rule",
+        "feature_set": "slope_only",
+        "n_pos": 106,
+        "n_bg": 318,
+        "auc": 0.43,
+        "ap": 0.2084,
+        "capture_top20": 0.1132
+      },
+      {
+        "area_id": "Oesterreich_Sept_2024",
+        "model": "hgb",
+        "feature_set": "slope_only",
+        "n_pos": 87,
+        "n_bg": 261,
+        "auc": 0.5362,
+        "ap": 0.2594,
+        "capture_top20": 0.1379
+      },
+      {
+        "area_id": "Oesterreich_Sept_2024",
+        "model": "hgb",
+        "feature_set": "terrain_geology",
+        "n_pos": 87,
+        "n_bg": 261,
+        "auc": 0.7469,
+        "ap": 0.4389,
+        "capture_top20": 0.5632
+      },
+      {
+        "area_id": "Oesterreich_Sept_2024",
+        "model": "hgb",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 87,
+        "n_bg": 261,
+        "auc": 0.7967,
+        "ap": 0.52,
+        "capture_top20": 0.6207
+      },
+      {
+        "area_id": "Oesterreich_Sept_2024",
+        "model": "lr",
+        "feature_set": "terrain_geology",
+        "n_pos": 87,
+        "n_bg": 261,
+        "auc": 0.7488,
+        "ap": 0.452,
+        "capture_top20": 0.5747
+      },
+      {
+        "area_id": "Oesterreich_Sept_2024",
+        "model": "lr",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 87,
+        "n_bg": 261,
+        "auc": 0.8214,
+        "ap": 0.5889,
+        "capture_top20": 0.6897
+      },
+      {
+        "area_id": "Oesterreich_Sept_2024",
+        "model": "slope_rule",
+        "feature_set": "slope_only",
+        "n_pos": 87,
+        "n_bg": 261,
+        "auc": 0.5674,
+        "ap": 0.2542,
+        "capture_top20": 0.069
+      },
+      {
+        "area_id": "Sellrain_Juni_2015",
+        "model": "hgb",
+        "feature_set": "slope_only",
+        "n_pos": 74,
+        "n_bg": 222,
+        "auc": 0.5563,
+        "ap": 0.2804,
+        "capture_top20": 0.2027
+      },
+      {
+        "area_id": "Sellrain_Juni_2015",
+        "model": "hgb",
+        "feature_set": "terrain_geology",
+        "n_pos": 74,
+        "n_bg": 222,
+        "auc": 0.7952,
+        "ap": 0.5893,
+        "capture_top20": 0.5946
+      },
+      {
+        "area_id": "Sellrain_Juni_2015",
+        "model": "hgb",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 74,
+        "n_bg": 222,
+        "auc": 0.8435,
+        "ap": 0.6706,
+        "capture_top20": 0.7027
+      },
+      {
+        "area_id": "Sellrain_Juni_2015",
+        "model": "lr",
+        "feature_set": "terrain_geology",
+        "n_pos": 74,
+        "n_bg": 222,
+        "auc": 0.714,
+        "ap": 0.4571,
+        "capture_top20": 0.5135
+      },
+      {
+        "area_id": "Sellrain_Juni_2015",
+        "model": "lr",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 74,
+        "n_bg": 222,
+        "auc": 0.7134,
+        "ap": 0.508,
+        "capture_top20": 0.3919
+      },
+      {
+        "area_id": "Sellrain_Juni_2015",
+        "model": "slope_rule",
+        "feature_set": "slope_only",
+        "n_pos": 74,
+        "n_bg": 222,
+        "auc": 0.5403,
+        "ap": 0.26,
+        "capture_top20": 0.1622
+      },
+      {
+        "area_id": "Stanz_im_Muerztal_25_Juli_2016",
+        "model": "hgb",
+        "feature_set": "slope_only",
+        "n_pos": 46,
+        "n_bg": 138,
+        "auc": 0.5626,
+        "ap": 0.2818,
+        "capture_top20": 0.1957
+      },
+      {
+        "area_id": "Stanz_im_Muerztal_25_Juli_2016",
+        "model": "hgb",
+        "feature_set": "terrain_geology",
+        "n_pos": 46,
+        "n_bg": 138,
+        "auc": 0.6402,
+        "ap": 0.3888,
+        "capture_top20": 0.3261
+      },
+      {
+        "area_id": "Stanz_im_Muerztal_25_Juli_2016",
+        "model": "hgb",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 46,
+        "n_bg": 138,
+        "auc": 0.5819,
+        "ap": 0.2756,
+        "capture_top20": 0.1957
+      },
+      {
+        "area_id": "Stanz_im_Muerztal_25_Juli_2016",
+        "model": "lr",
+        "feature_set": "terrain_geology",
+        "n_pos": 46,
+        "n_bg": 138,
+        "auc": 0.6547,
+        "ap": 0.3765,
+        "capture_top20": 0.3913
+      },
+      {
+        "area_id": "Stanz_im_Muerztal_25_Juli_2016",
+        "model": "lr",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 46,
+        "n_bg": 138,
+        "auc": 0.6037,
+        "ap": 0.2838,
+        "capture_top20": 0.1304
+      },
+      {
+        "area_id": "Stanz_im_Muerztal_25_Juli_2016",
+        "model": "slope_rule",
+        "feature_set": "slope_only",
+        "n_pos": 46,
+        "n_bg": 138,
+        "auc": 0.5865,
+        "ap": 0.3156,
+        "capture_top20": 0.3696
+      },
+      {
+        "area_id": "Suedwechsel_Juni_2018",
+        "model": "hgb",
+        "feature_set": "slope_only",
+        "n_pos": 15,
+        "n_bg": 45,
+        "auc": 0.5667,
+        "ap": 0.4241,
+        "capture_top20": 0.4667
+      },
+      {
+        "area_id": "Suedwechsel_Juni_2018",
+        "model": "hgb",
+        "feature_set": "terrain_geology",
+        "n_pos": 15,
+        "n_bg": 45,
+        "auc": 0.8533,
+        "ap": 0.6302,
+        "capture_top20": 0.7333
+      },
+      {
+        "area_id": "Suedwechsel_Juni_2018",
+        "model": "hgb",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 15,
+        "n_bg": 45,
+        "auc": 0.8756,
+        "ap": 0.6343,
+        "capture_top20": 0.7333
+      },
+      {
+        "area_id": "Suedwechsel_Juni_2018",
+        "model": "lr",
+        "feature_set": "terrain_geology",
+        "n_pos": 15,
+        "n_bg": 45,
+        "auc": 0.8281,
+        "ap": 0.5272,
+        "capture_top20": 0.6667
+      },
+      {
+        "area_id": "Suedwechsel_Juni_2018",
+        "model": "lr",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 15,
+        "n_bg": 45,
+        "auc": 0.8948,
+        "ap": 0.6021,
+        "capture_top20": 1.0
+      },
+      {
+        "area_id": "Suedwechsel_Juni_2018",
+        "model": "slope_rule",
+        "feature_set": "slope_only",
+        "n_pos": 15,
+        "n_bg": 45,
+        "auc": 0.7037,
+        "ap": 0.5593,
+        "capture_top20": 0.6
+      },
+      {
+        "area_id": "Vorarlberg_Tirol_August_2005",
+        "model": "hgb",
+        "feature_set": "slope_only",
+        "n_pos": 1068,
+        "n_bg": 3204,
+        "auc": 0.6165,
+        "ap": 0.3126,
+        "capture_top20": 0.2865
+      },
+      {
+        "area_id": "Vorarlberg_Tirol_August_2005",
+        "model": "hgb",
+        "feature_set": "terrain_geology",
+        "n_pos": 1068,
+        "n_bg": 3204,
+        "auc": 0.6962,
+        "ap": 0.3854,
+        "capture_top20": 0.3933
+      },
+      {
+        "area_id": "Vorarlberg_Tirol_August_2005",
+        "model": "hgb",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 1068,
+        "n_bg": 3204,
+        "auc": 0.7337,
+        "ap": 0.4625,
+        "capture_top20": 0.4897
+      },
+      {
+        "area_id": "Vorarlberg_Tirol_August_2005",
+        "model": "lr",
+        "feature_set": "terrain_geology",
+        "n_pos": 1068,
+        "n_bg": 3204,
+        "auc": 0.6431,
+        "ap": 0.315,
+        "capture_top20": 0.2875
+      },
+      {
+        "area_id": "Vorarlberg_Tirol_August_2005",
+        "model": "lr",
+        "feature_set": "terrain_geology_landcover",
+        "n_pos": 1068,
+        "n_bg": 3204,
+        "auc": 0.6867,
+        "ap": 0.362,
+        "capture_top20": 0.3848
+      },
+      {
+        "area_id": "Vorarlberg_Tirol_August_2005",
+        "model": "slope_rule",
+        "feature_set": "slope_only",
+        "n_pos": 1068,
+        "n_bg": 3204,
+        "auc": 0.5727,
+        "ap": 0.2563,
+        "capture_top20": 0.1227
+      }
+    ]
+  }
+}

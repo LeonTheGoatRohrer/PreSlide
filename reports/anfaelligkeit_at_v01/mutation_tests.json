@@ -1,0 +1,123 @@
+{
+ "run_at_utc": "2026-10-18T13:10:33.641287+00:00",
+ "all_caught": true,
+ "clean_tests_pass": true,
+ "mutations": [
+  {
+   "mutation": "spatial purge disabled",
+   "file": "preslide/anfaelligkeit_at_v01/experiment.py",
+   "test": "test_held_out_area_never_in_training_and_purged",
+   "caught": true
+  },
+  {
+   "mutation": "half of the held-out area leaks into training",
+   "file": "preslide/anfaelligkeit_at_v01/experiment.py",
+   "test": "test_held_out_area_never_in_training_and_purged",
+   "caught": true
+  },
+  {
+   "mutation": "infrastructure distance allowed as feature",
+   "file": "preslide/anfaelligkeit_at_v01/experiment.py",
+   "test": "test_no_features_from_neighbouring_events_or_reporting",
+   "caught": true
+  },
+  {
+   "mutation": "inventory-count feature allowed",
+   "file": "preslide/anfaelligkeit_at_v01/experiment.py",
+   "test": "test_no_features_from_neighbouring_events_or_reporting",
+   "caught": true
+  },
+  {
+   "mutation": "feature whitelist not enforced in training",
+   "file": "preslide/anfaelligkeit_at_v01/experiment.py",
+   "test": "test_score_models_refuses_a_leaking_feature_set",
+   "caught": true
+  },
+  {
+   "mutation": "aspect as linear degrees",
+   "file": "preslide/anfaelligkeit_at_v01/terrain.py",
+   "test": "test_aspect_features_are_circular",
+   "caught": true
+  },
+  {
+   "mutation": "lon/lat swapped before projecting",
+   "file": "preslide/anfaelligkeit_at_v01/inventory.py",
+   "test": "test_projected_distances_match_geodesic",
+   "caught": true
+  },
+  {
+   "mutation": "inventory buffer ignored",
+   "file": "preslide/anfaelligkeit_at_v01/inventory.py",
+   "test": "test_background_buffer_separation_and_region",
+   "caught": true
+  },
+  {
+   "mutation": "background separation ignored",
+   "file": "preslide/anfaelligkeit_at_v01/inventory.py",
+   "test": "test_background_buffer_separation_and_region",
+   "caught": true
+  },
+  {
+   "mutation": "block cache identity not checked",
+   "file": "preslide/anfaelligkeit_at_v01/terrain.py",
+   "test": "test_block_cache_identity_and_checksum",
+   "caught": true
+  },
+  {
+   "mutation": "block cache checksum not checked",
+   "file": "preslide/anfaelligkeit_at_v01/terrain.py",
+   "test": "test_block_cache_identity_and_checksum",
+   "caught": true
+  },
+  {
+   "mutation": "block identity ignores the DEM variant",
+   "file": "preslide/anfaelligkeit_at_v01/terrain.py",
+   "test": "test_block_cache_identity_and_checksum",
+   "caught": true
+  },
+  {
+   "mutation": "SRTM admits year-2000 events",
+   "file": "preslide/anfaelligkeit_at_v01/inventory.py",
+   "test": "test_dem_provenance_year_rule",
+   "caught": true
+  },
+  {
+   "mutation": "CORINE vintage after the event",
+   "file": "preslide/anfaelligkeit_at_v01/context.py",
+   "test": "test_corine_vintage_strictly_before_event_year",
+   "caught": true
+  },
+  {
+   "mutation": "duplicates not merged",
+   "file": "preslide/anfaelligkeit_at_v01/inventory.py",
+   "test": "test_deduplication_and_priority",
+   "caught": true
+  },
+  {
+   "mutation": "V0.7 per-vertex assignment (nearest sample only)",
+   "file": "preslide/anfaelligkeit_at_v01/infrastructure.py",
+   "test": "test_nearest_vertex_distance_is_exact_for_clustered_samples",
+   "caught": true
+  },
+  {
+   "mutation": "missing geology coded as zero",
+   "file": "preslide/anfaelligkeit_at_v01/context.py",
+   "test": "test_missing_class_is_missing_not_zero",
+   "caught": true
+  }
+ ],
+ "clean_runs": {
+  "test_aspect_features_are_circular": true,
+  "test_background_buffer_separation_and_region": true,
+  "test_block_cache_identity_and_checksum": true,
+  "test_corine_vintage_strictly_before_event_year": true,
+  "test_deduplication_and_priority": true,
+  "test_dem_provenance_year_rule": true,
+  "test_held_out_area_never_in_training_and_purged": true,
+  "test_missing_class_is_missing_not_zero": true,
+  "test_nearest_vertex_distance_is_exact_for_clustered_samples": true,
+  "test_no_features_from_neighbouring_events_or_reporting": true,
+  "test_projected_distances_match_geodesic": true,
+  "test_score_models_refuses_a_leaking_feature_set": true
+ }
+}

@@ -1,0 +1,49 @@
+area_id,model,feature_set,n_pos,n_bg,auc,ap,capture_top20
+Gasen_Haslau_August_2005,hgb,slope_only,71,213,0.5384,0.2583,0.2113
+Gasen_Haslau_August_2005,hgb,terrain_geology,71,213,0.7689,0.5209,0.5493
+Gasen_Haslau_August_2005,lr,terrain_geology,71,213,0.8438,0.6772,0.6761
+Gasen_Haslau_August_2005,slope_rule,slope_only,71,213,0.6824,0.4165,0.4789
+Kaernten_Steiermark_August_2023,hgb,slope_only,19,57,0.6404,0.3596,0.4737
+Kaernten_Steiermark_August_2023,hgb,terrain_geology,19,57,0.7295,0.5395,0.4211
+Kaernten_Steiermark_August_2023,lr,terrain_geology,19,57,0.7858,0.4863,0.8421
+Kaernten_Steiermark_August_2023,slope_rule,slope_only,19,57,0.7248,0.4519,0.6316
+Klingfurth_Juni_2009,hgb,slope_only,58,174,0.5201,0.2631,0.1552
+Klingfurth_Juni_2009,hgb,terrain_geology,58,174,0.5326,0.2593,0.1379
+Klingfurth_Juni_2009,lr,terrain_geology,58,174,0.4743,0.2753,0.2414
+Klingfurth_Juni_2009,slope_rule,slope_only,58,174,0.4534,0.2215,0.0862
+Mautern_Aflenz_Juli 2024,hgb,slope_only,10,30,0.5683,0.302,0.3
+Mautern_Aflenz_Juli 2024,hgb,terrain_geology,10,30,0.6967,0.4566,0.4
+Mautern_Aflenz_Juli 2024,lr,terrain_geology,10,30,0.7833,0.5246,0.6
+Mautern_Aflenz_Juli 2024,slope_rule,slope_only,10,30,0.3133,0.1947,0.0
+Moelltal_November_2019,hgb,slope_only,32,96,0.6927,0.3592,0.3438
+Moelltal_November_2019,hgb,terrain_geology,32,96,0.8851,0.6656,0.8438
+Moelltal_November_2019,lr,terrain_geology,32,96,0.8363,0.5056,0.7812
+Moelltal_November_2019,slope_rule,slope_only,32,96,0.5049,0.2372,0.125
+Nordhaelfte_Oesterreich_Juni_2013,hgb,slope_only,102,306,0.6339,0.3376,0.3431
+Nordhaelfte_Oesterreich_Juni_2013,hgb,terrain_geology,102,306,0.7516,0.4396,0.5098
+Nordhaelfte_Oesterreich_Juni_2013,lr,terrain_geology,102,306,0.7207,0.3952,0.4216
+Nordhaelfte_Oesterreich_Juni_2013,slope_rule,slope_only,102,306,0.6171,0.2868,0.2157
+Oberkaernten_Ende_Oktober_Anfang_November 2018,hgb,slope_only,106,318,0.5661,0.2748,0.2264
+Oberkaernten_Ende_Oktober_Anfang_November 2018,hgb,terrain_geology,106,318,0.7102,0.4353,0.4528
+Oberkaernten_Ende_Oktober_Anfang_November 2018,lr,terrain_geology,106,318,0.663,0.3194,0.2358
+Oberkaernten_Ende_Oktober_Anfang_November 2018,slope_rule,slope_only,106,318,0.43,0.2084,0.1132
+Oesterreich_Sept_2024,hgb,slope_only,87,261,0.5546,0.2713,0.1724
+Oesterreich_Sept_2024,hgb,terrain_geology,87,261,0.7759,0.4473,0.5862
+Oesterreich_Sept_2024,lr,terrain_geology,87,261,0.7543,0.4744,0.5977
+Oesterreich_Sept_2024,slope_rule,slope_only,87,261,0.5674,0.2542,0.069
+Sellrain_Juni_2015,hgb,slope_only,74,222,0.5939,0.3168,0.3108
+Sellrain_Juni_2015,hgb,terrain_geology,74,222,0.8168,0.6096,0.6351
+Sellrain_Juni_2015,lr,terrain_geology,74,222,0.778,0.5722,0.6081
+Sellrain_Juni_2015,slope_rule,slope_only,74,222,0.5403,0.26,0.1622
+Stanz_im_Muerztal_25_Juli_2016,hgb,slope_only,46,138,0.5566,0.2825,0.2174
+Stanz_im_Muerztal_25_Juli_2016,hgb,terrain_geology,46,138,0.6014,0.3203,0.2826
+Stanz_im_Muerztal_25_Juli_2016,lr,terrain_geology,46,138,0.6306,0.3476,0.3696
+Stanz_im_Muerztal_25_Juli_2016,slope_rule,slope_only,46,138,0.5865,0.3156,0.3696
+Suedwechsel_Juni_2018,hgb,slope_only,15,45,0.6341,0.4263,0.4667
+Suedwechsel_Juni_2018,hgb,terrain_geology,15,45,0.7896,0.5105,0.6
+Suedwechsel_Juni_2018,lr,terrain_geology,15,45,0.8415,0.5324,0.8
+Suedwechsel_Juni_2018,slope_rule,slope_only,15,45,0.7037,0.5593,0.6
+Vorarlberg_Tirol_August_2005,hgb,slope_only,1068,3204,0.6074,0.3073,0.2875
+Vorarlberg_Tirol_August_2005,hgb,terrain_geology,1068,3204,0.6812,0.3755,0.3661
+Vorarlberg_Tirol_August_2005,lr,terrain_geology,1068,3204,0.6408,0.3151,0.2987
+Vorarlberg_Tirol_August_2005,slope_rule,slope_only,1068,3204,0.5727,0.2563,0.1227

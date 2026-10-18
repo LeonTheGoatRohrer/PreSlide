@@ -5,12 +5,15 @@
 import pandas as pd
 
 from ..common import read_json
-from .paths import DATA, REPORT, load_meta
+from .paths import DATA, REPORT, load, load_meta
 
 NAMES = {'hgb:terrain_geology': 'Gradient Boosting, Gelände + Geologie', 'lr:terrain_geology': 'Logistische Regression, Gelände + Geologie',
          'hgb:slope_only': 'Gradient Boosting, nur Neigung (Basislinie)', 'slope_rule:slope_only': 'Neigung als Rohwert (ohne Training)',
          'hgb:terrain_geology_landcover': 'Gradient Boosting, + Landbedeckung', 'lr:terrain_geology_landcover': 'Logistische Regression, + Landbedeckung',
          'lr:slope_only': 'Logistische Regression, nur Neigung'}
+FEATURE_DE = {'aspect': 'Exposition', 'roughness_tri': 'Rauigkeit', 'elevation': 'Höhe', 'relative_position_500m': 'Hangposition 500 m',
+              'tpi_500m': 'TPI 500 m', 'tpi_150m': 'TPI 150 m', 'slope': 'Neigung', 'plan_curvature': 'Plankrümmung',
+              'profile_curvature': 'Profilkrümmung', 'log10_catchment_m2': 'Einzugsgebiet', 'twi': 'TWI', 'geology': 'Geologie'}
 
 
 def f(x, d=3):
@@ -34,7 +37,16 @@ def model_table(summary: dict, ref='hgb:slope_only') -> list:
     return lines
 
 
+def year_text(years: list, n_unknown: int) -> str:
+    known = ', '.join(map(str, years)) if years and len(years) <= 3 else (f'{years[0]}–{years[-1]}' if years else '')
+    if n_unknown:
+        return (known + f' + {n_unknown} undatiert') if known else 'undatiert'
+    return known
+
+
 def area_rows(variant: str, counts: dict) -> list:
+    samples = load(DATA / f'samples_{variant}.parquet')
+    unknown = samples[(samples.label == 1) & samples.year.isna()].area_id.value_counts()
     t = pd.read_csv(REPORT / f'area_table_{variant}.csv')
     w = t.pivot_table(index='area_id', columns=['model', 'feature_set'], values='auc')
     r = read_json(REPORT / f'results_{variant}.json')
@@ -44,8 +56,7 @@ def area_rows(variant: str, counts: dict) -> list:
     n = t[(t.model == 'hgb') & (t.feature_set == 'terrain_geology')].set_index('area_id')
     for a in sorted(w.index, key=lambda a: -n.loc[a, 'n_pos']):
         m, s = w.loc[a, ('hgb', 'terrain_geology')], w.loc[a, ('hgb', 'slope_only')]
-        yrs = counts['areas'][a]['years']
-        ytxt = ', '.join(map(str, yrs)) if yrs and len(yrs) <= 3 else (f'{yrs[0]}–{yrs[-1]}' if yrs else 'unbekannt')
+        ytxt = year_text(counts['areas'][a]['years'], int(unknown.get(a, 0)))
         lines.append(f"| {a} | {ytxt} | {int(n.loc[a, 'n_pos'])} | {int(n.loc[a, 'n_bg'])} | {f(m)} | {f(s)} | {f(m - s, 3)} | "
                      f"{f(w.loc[a, ('slope_rule', 'slope_only')])} | {f(w.loc[a, ('lr', 'terrain_geology')])} | {f(dist.get(a))} |")
     return lines
@@ -64,7 +75,7 @@ def run():
     training_only = {a: v for a, v in cs['areas'].items() if v['status'] != 'evaluation'}
     L = []
     L += ['# Murenanfälligkeit Österreich aus allen Inventardaten (anfaelligkeit_at_v01)', '',
-          '**Stand 18.10.2026. Vorab registriert** (`config/anfaelligkeit_at_v01.json`, `PREREGISTRATION.json`, Amendment 1) bevor ein '
+          '**Stand 18.10.2026. Vorab registriert** (`config/anfaelligkeit_at_v01.json`, `PREREGISTRATION.json`; Amendment 1: Skadi = SRTM, Amendment 2: exakte OSM-Abstände und CORINE-Kachelabfrage, beide vor jedem Modell) bevor ein '
           'Geländewert, eine Stichprobe oder ein Modell dieser Version entstand. Alle Zahlen stammen aus `results_srtm.json` / '
           '`results_skadi.json` und den Gebietstabellen in diesem Ordner.', '',
           '> Die Werte sind eine **relative Anfälligkeit**: eine Rangfolge von Hangzellen innerhalb eines Gebiets. Sie sind **keine '
@@ -120,11 +131,13 @@ def run():
     imp = r['permutation_importance_mean']
     L += ['### Worauf sich das Modell stützt (beschreibend)', '',
           'Mittlerer AUC-Verlust im zurückgehaltenen Gebiet, wenn ein Merkmal zufällig vertauscht wird: '
-          + ', '.join(f'{k} {f(v)}' for k, v in list(imp.items())[:6]) + '. Das Modell stützt sich auf diese Merkmale; das ist keine Ursache.', '']
+          + ', '.join(f'{FEATURE_DE.get(k, k)} {f(v)}' for k, v in list(imp.items())[:6]) + '. Das Modell stützt sich auf diese Merkmale; das ist keine Ursache.', '']
     L += ['## Meldebias-Kontrolle (wie V0.7, explorativ)', '',
           f"- Nur der Abstand zum nächsten Gebäude oder zur nächsten öffentlichen Straße (OSM 2026) als Rangfolge: AUC {ci(rb['distance_only_auc'])}. "
           'Werte über 0,5 heißen: gemeldete Hangmuren liegen näher an Infrastruktur als der Zufallshintergrund (Sichtbarkeit, Erhebungswege, '
-          'oder echte Nähe von Siedlungen zu Hängen). Der Abstand ist nie ein Modellmerkmal.']
+          'oder echte Nähe von Siedlungen zu Hängen). Der Abstand ist nie ein Modellmerkmal. Die Abstände sind exakt (Amendment 2): der '
+          'V0.7-Algorithmus ordnet jeden OSM-Knoten nur der nächstgelegenen Probe zu und überschätzt deshalb Abstände dicht beieinander '
+          'liegender Proben; V0.7 selbst wurde nicht geändert (offener Punkt).']
     far = rb['far_from_infrastructure_200m']
     if 'summary' in far:
         s = far['summary']
@@ -137,7 +150,8 @@ def run():
           'deshalb ist Landbedeckung nur eine Zusatzanalyse.', '']
     L += ['## Landbedeckung (CORINE passend zum Ereignisjahr, explorativ)', '']
     if 'summary' in lc:
-        L += [f"Nur Gebiete mit bekanntem Jahr ≥ 2002 und einem Kartenstand vor dem Ereignisjahr ({len(lc['evaluation_areas'])} Prüfgebiete; "
+        L += [f"Nur Gebiete mit bekanntem Jahr ≥ 2002 und einem Kartenstand vor dem Ereignisjahr ({len(lc['evaluation_areas'])} Prüfgebiete, "
+              f"{'also alle SRTM-Prüfgebiete, daher dieselben Proben wie oben' if len(lc['evaluation_areas']) == r['n_evaluation_areas'] else 'Teilmenge'}; "
               + ', '.join(f'{a}: {v}' for a, v in lc['vintages'].items() if a in lc['evaluation_areas']) + '). Gleiche Proben, gepaart:', '']
         L += model_table(lc['summary']) + ['']
         L += [f"Zusatz durch Landbedeckung: Gradient Boosting {ci(lc['hgb_landcover_minus_terrain_geology'])}, logistische Regression "
@@ -149,7 +163,8 @@ def run():
           'Entscheidung des Nutzers vom 18.10.2026: Es zählt die Herkunft der Höhendaten, nicht das Dateidatum. SRTM wurde im Februar 2000 '
           'aufgenommen und liegt damit vor jedem Ereignis ab 2001. Lücken in SRTMGL1 v3 sind aus späteren Quellen gefüllt (kleiner Anteil steiler '
           'Zellen). SRTM ist ein Oberflächenmodell (Wald, Gebäude) und glatter als ein Laserscan-Geländemodell; Hangmuren sind meist kleiner als '
-          'eine 30-m-Zelle.',
+          'eine 30-m-Zelle. Amendment 1: Die seit V0 verwendeten Skadi-Kacheln sind über Österreich praktisch SRTM (99,3–99,99 % '
+          'identische Zellen); auch alle früheren Talwacht-Geländemerkmale beruhen also auf SRTM-Höhen.',
           f"Beschreibend: Gebiete mit Ereignisjahr ≥ 2017 ({', '.join(dd['areas_year_ge_2017']) or 'keine'}) mittlere Differenz Modell − Neigung "
           f"{f(dd['mean_auc_diff_late'])}, übrige {f(dd['mean_auc_diff_other'])}.", '']
     if has_skadi:
@@ -177,4 +192,4 @@ def run():
         L += ['## Tests', '', f"`tests/test_anfaelligkeit_at_v01.py`; {len(m['mutations'])} eingebaute Fehler, davon "
               f"{sum(x['caught'] for x in m['mutations'])} von den Tests erkannt (`mutation_tests.json`).", '']
     (REPORT / 'summary.md').write_text('\n'.join(L), encoding='utf-8')
-    print('\n'.join(L[:20]))
+    print(f"wrote {REPORT / 'summary.md'} ({len(L)} lines)")

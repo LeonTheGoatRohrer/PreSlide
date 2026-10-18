@@ -35,12 +35,9 @@ MUTATIONS = [
     ('duplicates not merged', PKG + 'inventory.py', '        if not index.near(x, y):\n            index.add(x, y)\n            keep[i] = True',
      '        if True:\n            index.add(x, y)\n            keep[i] = True', 'test_deduplication_and_priority'),
     ('V0.7 per-vertex assignment (nearest sample only)', PKG + 'infrastructure.py',
-     "        d, _ = tree.query(self.samples, k=1, distance_upper_bound=self.cap)
-        self.best = np.minimum(self.best, d)",
-     "        pts = tree.data
-        d, i = cKDTree(self.samples).query(pts, distance_upper_bound=self.cap)
-        ok = np.isfinite(d)
-        np.minimum.at(self.best, i[ok], d[ok])",
+     '        d, _ = tree.query(self.samples, k=1, distance_upper_bound=self.cap)\n        self.best = np.minimum(self.best, d)',
+     '        d, i = cKDTree(self.samples).query(tree.data, distance_upper_bound=self.cap)\n        ok = np.isfinite(d)\n'
+     '        np.minimum.at(self.best, i[ok], d[ok])',
      'test_nearest_vertex_distance_is_exact_for_clustered_samples'),
     ('missing geology coded as zero', PKG + 'context.py', 'out[classes.isna()] = np.nan', 'pass', 'test_missing_class_is_missing_not_zero'),
 ]

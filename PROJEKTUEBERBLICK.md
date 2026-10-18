@@ -1,6 +1,6 @@
 # Talwacht — Ziel, Projektstand und Orientierung
 
-**Stand: 15. Oktober 2026 (nach V0.9; V0.6–V0.8 und Pipeline B eingemergt). Diese Datei zu Beginn jeder Session vollständig lesen.**
+**Stand: 18. Oktober 2026 (nach V0.9; dazu anfaelligkeit_at_v01 auf Branch `claude/anfaelligkeit-at-v01`, nicht in main). Diese Datei zu Beginn jeder Session vollständig lesen.**
 Danach `PROJECT_STATE.md` für den technischen Arbeitsstand lesen. Bei Widersprüchen die gespeicherten Artefakte prüfen; keine Ergebnisse erfinden oder historische Experimente überschreiben.
 
 ## Was ist Talwacht?
@@ -142,6 +142,18 @@ Vorab registriert (`config/v09.json`), bevor eine V0.9-Auswahl, Prüfung, Datena
 - **Ergebnis (explorativ):** Medien: Gelände allein **0,770** (deutlich über Zufall), Gelände + Wetter 0,752, **Wetterzusatznutzen −0,019 [−0,121; +0,082]**. Kärnten und gemeinsam ebenfalls kein Nutzen. Von 72 Vergleichen zeigt nur Gradient Boosting bei den Medien einen positiven Zusatznutzen mit Intervall über null; bei so vielen Vergleichen ist das kein Beleg.
 - Bericht `reports/v09/summary.md`, Nachweis `reports/v09/verification.json` (PASS). Rohdaten, Meldungs-URLs und Probenvorhersagen bleiben lokal.
 
+## Murenanfälligkeit aus allen Inventardaten: anfaelligkeit_at_v01 (18.10.2026, abgeschlossen, Branch `claude/anfaelligkeit-at-v01`)
+
+Neue, statische Frage: **In welcher Umgebung gehen oft Hangmuren ab?** Positive sind alle genau verorteten reinen Hangmuren des GeoSphere-Inventars (2 686 → 2 375 nach Zusammenfassen < 30 m), Hintergrund drei Zufallspunkte je Positiv im selben Gebiet (feste 5-km-Zellen, ≥ 100 m von jedem Inventarpunkt, Neigung ≥ 5°). Geprüft wird an **ganzen, nie gesehenen Gebieten** (Ereignisdokumentationen, sonst feste 50-km-Kacheln; 1 km Puffer zum Training). Registriert vor jedem Geländewert (`config/anfaelligkeit_at_v01.json`), Amendments 1–2 vor jedem Modell.
+
+- **Hauptergebnis (SRTM-Höhen vom Februar 2000, also nur Ereignisse ab 2001; 1 770 Positive, 12 Gebiete):** Gradient Boosting mit Gelände + Geologie AUC **0,728 [0,673; 0,780]**, nur Neigung 0,592; **Differenz +0,136 [+0,095; +0,175]**: besser als die Neigung allein, in 11 von 12 Gebieten (Klingfurth gleich).
+- **Alle Daten (Sensitivität, 2 362 Positive inkl. undatierter Luftbildkartierungen und Thiersee 1970, 26 Gebiete):** +0,092 [+0,055; +0,128]; Thiersee 1970 schlechter als die Neigung.
+- **Meldebias:** Der Abstand zu Gebäude/Straße allein trennt mit 0,710. Auf Punkten ≥ 200 m von Infrastruktur bleibt das Modell bei 0,697 und +0,176 über der Neigung: Die Geländeform trägt mehr als nur Sichtbarkeit. Landbedeckung (CORINE passend zum Jahr) bringt +0,038 [+0,015; +0,061] (Gradient Boosting), teilweise Orthofoto-Sichtbarkeit.
+- **Befunde nebenbei:** (1) Die seit V0 genutzten Skadi-Höhen sind über Österreich praktisch SRTM, kein Laserscan-DGM. (2) Der V0.7-Abstandsalgorithmus überschätzt Abstände dicht beieinander liegender Proben; V0.7 ist dadurch möglicherweise verzerrt (nicht korrigiert, offener Punkt).
+- **Demo:** Vorarlberg/Tirol 2005 (Regel: meiste Positive), 9-km-Block mit 150 Hangmuren; Rasterebene aus dem Modell ohne dieses Gebiet im Training (lokal `data/anfaelligkeit_at_v01/web/`). Werte sind **relative Anfälligkeit, keine Wahrscheinlichkeit**.
+
+Bericht `reports/anfaelligkeit_at_v01/summary.md`, Nachweis `verification.json` (PASS), 14 Tests, 17 eingebaute Fehler alle erkannt.
+
 ## Webdemonstration: drei Seiten (15.10.2026)
 
 Die lokale Oberfläche führt über **Projekt → Vorgehen → Ergebnisse**. Direkte Routen: `/#/projekt`, `/#/vorgehen`, `/#/ergebnisse`; alte Abschnittslinks werden weiter zugeordnet. Der Einstieg erklärt den retrospektiven Prototyp, die Vorgehensseite zeigt die Schrittfolge und das reale Baseline-Beispiel, die Ergebnisse trennen V0.4-Test und explorative V0.5. Karten, Wetterkurven, Modellvergleiche und historische Analysen bleiben in aufklappbaren Bereichen erreichbar.
@@ -192,6 +204,7 @@ Ein **getrenntes System** (`preslide/satellite/`, Ausgaben nur unter `data/satel
 | `reports/current_state_audit.md` | Ergänzender Gesamtcheck des aktuellen Projektbestands |
 | `reports/baseline/` | Eingefrorene V0.3-Baseline: Manifest, Status, Fehleranalyse je Ereignis |
 | `archive/v0.3-baseline/` | Schreibgeschützte Kopie aller Baseline-Ausgaben mit Prüfsummen |
+| `config/anfaelligkeit_at_v01.json`, `reports/anfaelligkeit_at_v01/`, `preslide/anfaelligkeit_at_v01/` | Statische Murenanfälligkeit aus allen Inventardaten, Leave-one-area-out |
 | `config/v09.json`, `reports/v09/`, `preslide/v09/` | V0.9: Registrierung, Prozessprüfung, ungesehene Episoden, einmalige Bewertung, Verifikation |
 | `config/v05.json`, `reports/v05/`, `preslide/v05/` | V0.5: Registrierung, Kohorten-Freeze, CV-Ergebnisse, Bericht, Verifikation |
 | `config/v04.json`, `reports/v04/` | V0.4: Präregistrierung, Änderung 1, Freeze, Test, Bericht, Verifikation |

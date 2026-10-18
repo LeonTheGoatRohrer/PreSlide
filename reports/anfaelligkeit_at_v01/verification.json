@@ -1,0 +1,65 @@
+{
+ "all_pass": true,
+ "checks": {
+  "registration_config_and_inventory_unchanged": {
+   "pass": true,
+   "detail": ""
+  },
+  "srtm_area_metrics_recomputed": {
+   "pass": true,
+   "detail": "48 rows, max |diff| 0.00e+00"
+  },
+  "srtm_primary_recomputed": {
+   "pass": true,
+   "detail": ""
+  },
+  "srtm_each_area_scored_completely": {
+   "pass": true,
+   "detail": ""
+  },
+  "srtm_held_out_area_never_in_training": {
+   "pass": true,
+   "detail": "[]"
+  },
+  "srtm_no_forbidden_features": {
+   "pass": true,
+   "detail": ""
+  },
+  "srtm_background_ratio_1_to_3": {
+   "pass": true,
+   "detail": ""
+  },
+  "skadi_area_metrics_recomputed": {
+   "pass": true,
+   "detail": "104 rows, max |diff| 0.00e+00"
+  },
+  "skadi_primary_recomputed": {
+   "pass": true,
+   "detail": ""
+  },
+  "skadi_each_area_scored_completely": {
+   "pass": true,
+   "detail": ""
+  },
+  "skadi_held_out_area_never_in_training": {
+   "pass": true,
+   "detail": "[]"
+  },
+  "skadi_no_forbidden_features": {
+   "pass": true,
+   "detail": ""
+  },
+  "skadi_background_ratio_1_to_3": {
+   "pass": true,
+   "detail": ""
+  },
+  "demo_layer_from_fold_without_demo_area": {
+   "pass": true,
+   "detail": ""
+  },
+  "mutation_tests_all_caught": {
+   "pass": true,
+   "detail": "17 mutations"
+  }
+ }
+}
