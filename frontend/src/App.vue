@@ -10,6 +10,7 @@ const BefundePage = defineAsyncComponent(() => import('./BefundePage.vue'))
 const MethodikPage = defineAsyncComponent(() => import('./MethodikPage.vue'))
 const ForschungPage = defineAsyncComponent(() => import('./ForschungPage.vue'))
 const HangkartePage = defineAsyncComponent(() => import('./HangkartePage.vue'))
+const HangCheckPage = defineAsyncComponent(() => import('./HangCheckPage.vue'))
 const route = ref(resolveRoute(location.hash))
 const initialCase = ref(''), heading = ref(null)
 const current = computed(() => activeNav(route.value.page))
@@ -36,6 +37,7 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', changed))
   </nav>
   <main id="inhalt" ref="heading" tabindex="-1" class="site-main">
     <StartPage v-if="route.page==='start'"/>
+    <HangCheckPage v-else-if="route.page==='hangcheck'"/>
     <PruefgebietePage v-else-if="route.page==='pruefgebiete'"/>
     <BefundePage v-else-if="route.page==='befunde'"/>
     <MethodikPage v-else-if="route.page==='methodik'"/>

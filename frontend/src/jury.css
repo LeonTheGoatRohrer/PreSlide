@@ -35,6 +35,7 @@
 .start-copy h1 span{color:var(--blue)}
 .start-lead{font-size:18px;line-height:1.65;max-width:560px;margin:0 0 30px}
 .start-actions{display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center}
+.start-actions .button-check{background:#fff;color:var(--blue)}.start-actions .button-check:hover{background:var(--blue);color:#fff}
 .hang-profile{margin:0;min-width:0}
 .hang-profile svg{width:100%;height:auto;display:block}
 .hp-rain line{stroke:var(--blue);stroke-width:1.4;opacity:.35}

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import {mainNav,researchPages,pages,resolveRoute,activeNav,isResearch,pageTitle} from '../src/navigation.js'
 
 test('jury entry first, research area last, start page as safe default',()=>{
-  assert.deepEqual(mainNav.map(p=>p.id),['start','pruefgebiete','befunde','methodik','forschung'])
+  assert.deepEqual(mainNav.map(p=>p.id),['start','hangcheck','pruefgebiete','befunde','methodik','forschung'])
   assert.deepEqual(researchPages.map(p=>p.id),['projekt','vorgehen','ergebnisse','hangkarte'])
   for(const {id} of pages) assert.deepEqual(resolveRoute('#/'+id),{page:id,section:''})
   for(const hash of ['', '#', '#/', '#/unbekannt']) assert.deepEqual(resolveRoute(hash),{page:'start',section:''})
@@ -12,7 +12,7 @@ test('jury entry first, research area last, start page as safe default',()=>{
 
 test('research pages are highlighted under "Forschung" and keep their own addresses',()=>{
   for(const {id} of researchPages){ assert.equal(activeNav(id),'forschung'); assert.equal(isResearch(id),true) }
-  for(const id of ['start','pruefgebiete','befunde','methodik']){ assert.equal(activeNav(id),id); assert.equal(isResearch(id),false) }
+  for(const id of ['start','hangcheck','pruefgebiete','befunde','methodik']){ assert.equal(activeNav(id),id); assert.equal(isResearch(id),false) }
   assert.deepEqual(resolveRoute('#/forschung/vorgehen'),{page:'vorgehen',section:''})
   assert.deepEqual(resolveRoute('#/forschung'),{page:'forschung',section:''})
 })

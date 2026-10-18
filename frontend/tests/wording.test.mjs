@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs'
 
 // Jury-facing pages describe model values as Prüfstufe, Rangfolge or Szenario. These words would
 // suggest calibrated hazard statements that a case-control design cannot make.
-const juryFiles=['StartPage.vue','BefundePage.vue','MethodikPage.vue','ForschungPage.vue','ExtremwetterSection.vue','HangProfile.vue','IntervalPlot.vue','App.vue','navigation.js','sources.js']
+const juryFiles=['StartPage.vue','BefundePage.vue','MethodikPage.vue','ForschungPage.vue','ExtremwetterSection.vue','HangProfile.vue','IntervalPlot.vue','App.vue','navigation.js','sources.js','HangCheckPage.vue','hangcheck.js']
 const banned=/wahrscheinlich|risik|vorhersag|prognos|gefährdet/i
 
 test('jury pages avoid probability, risk and forecast wording',()=>{

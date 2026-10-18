@@ -1,6 +1,7 @@
 // Jury-facing entry pages first; the earlier three pages stay intact as the research area.
 export const mainNav = [
   {id:'start',label:'Start'},
+  {id:'hangcheck',label:'Hang-Check'},
   {id:'pruefgebiete',label:'Demo'},
   {id:'befunde',label:'Ergebnisse'},
   {id:'methodik',label:'Methodik & Grenzen',short:'Methodik'},
@@ -14,7 +15,7 @@ export const researchPages = [
   {id:'hangkarte',label:'Hangkarte'},
 ]
 export const pages = [...mainNav, ...researchPages]
-export const pageTitles = {pruefgebiete:'Demo: Prüfgebiete',forschung:'Forschungsbereich'}
+export const pageTitles = {pruefgebiete:'Demo: Prüfgebiete',hangcheck:'Hang-Check bei Starkregen',forschung:'Forschungsbereich'}
 // Hash routes work in the existing FastAPI static deployment, without a new server route.
 const legacy = {experiment:['vorgehen','beispiel'],wetter:['vorgehen','beispiel'],warum:['vorgehen',''],methodik:['vorgehen','quellen'],v04:['ergebnisse','v04'],v05:['ergebnisse','v05'],benchmarks:['ergebnisse','vergleich'],einzelfaelle:['ergebnisse','historie'],ergebnisse:['ergebnisse','historie']}
 export function resolveRoute(hash) {

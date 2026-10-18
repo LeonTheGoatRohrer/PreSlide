@@ -32,6 +32,7 @@ const chain = [
       <p class="start-lead">Starkregen löst Rutschungen und Muren aus. Danach stehen viele Hänge gleichzeitig zur Begutachtung an. Talwacht soll helfen, die Reihenfolge zu begründen: Welche Hänge ähneln früher betroffenen Hängen am stärksten, und wo könnte abgehendes Material Straßen oder Häuser erreichen?</p>
       <div class="start-actions">
         <a class="button-primary" href="#/pruefgebiete">Demo öffnen: Prüfgebiete <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
+        <a class="button-primary button-check" href="#/hangcheck">Hang-Check für meinen Ort <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16m-6-6 6 6-6 6"/></svg></a>
         <a class="text-link" href="#/befunde">Ergebnisse in zwei Minuten</a>
       </div>
     </div>
