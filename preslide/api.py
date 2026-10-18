@@ -133,5 +133,9 @@ def satellite_contact_sheet(name:str):
 dist=ROOT/'frontend/dist'
 if dist.exists():
     app.mount('/assets',StaticFiles(directory=dist/'assets'),name='assets')
+    if (dist/'media').exists():  # generated illustrations from frontend/public/media (labelled on the page)
+        app.mount('/media',StaticFiles(directory=dist/'media'),name='media')
+    @app.get('/favicon.svg')
+    def favicon(): return FileResponse(dist/'favicon.svg',media_type='image/svg+xml')
     @app.get('/')
-    def index(): return FileResponse(dist/'index.html')
+    def index(): return FileResponse(dist/'index.html',headers={'Cache-Control':'no-cache'})  # always pick up a new build
