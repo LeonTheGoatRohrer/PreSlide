@@ -39,6 +39,9 @@ Grundsätze in dieser Reihenfolge:
      `origin/claude/hangcheck-v01` an jeder Meilenstein-Grenze erneut prüfen und hineinmergen, sobald er da ist.
      Bis dahin den Hang-Check-Bereich gegen die bestehende Hangkarte (`/api/hangkarte`) bauen und die Umstellung
      auf `/api/hangcheck` als letzten Schritt von Meilenstein 2 einplanen.
+   Danach in jedem Fall `git merge origin/claude/meisterprompt-hangcheck`: Nur dieser Branch enthält die Bilder in
+   `frontend/public/media/` und diesen Prompt (der Hang-Check-Branch wurde davor abgezweigt). Prüfen, dass
+   `frontend/public/media/tal.webp` danach vorhanden ist.
    Der Hang-Check wird in einer parallelen Session gebaut (`MEISTERPROMPT_HANGCHECK.md`). Seine Logik, API und Tests
    übernimmst du unverändert; du gestaltest nur Oberfläche und Einbettung.
 4. Im Worktree fehlen `data/`, `models/`, `.venv/`, `frontend/node_modules`: Junctions zum Hauptcheckout
