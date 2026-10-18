@@ -221,3 +221,34 @@ def test_cross_validation_scores_every_sample_out_of_fold():
 def test_interpretation_rule(d5, d20, ci, dpga, prox, shake):
     r = S.interpretation(d5, d20, ci, dpga)
     assert r['spatial_proximity_share_large'] is prox and r['largely_explained_by_modelled_shaking'] is shake
+
+
+# ---------------------------------------------------------------- Iburi Phase 1 helpers
+
+@pytest.mark.parametrize('p90,expected', [
+    ({'a': 17.47, 'b': 93.54, 'c': 87.11}, (100, False)),  # maximum, rounded up
+    ({'a': 90.0}, (90, False)),                            # exact multiple stays
+    ({'a': 90.0000001}, (100, False)),                     # any excess rounds up
+    ({'a': 12.0}, (60, False)),                            # floor
+    ({'a': 301.0}, (300, True)),                           # cap is a gate finding, flagged
+])
+def test_buffer_value_rule(p90, expected):
+    assert P.buffer_value(p90) == expected
+
+
+def test_equivalent_radius_of_circles():
+    radii = np.arange(1, 101, dtype=float)
+    assert P.equivalent_radius_p90(np.pi * radii ** 2) == pytest.approx(np.quantile(radii, 0.9))
+
+
+def test_intersects_any_counts_touching_not_disjoint():
+    from shapely.geometry import box
+    old = [box(0, 0, 10, 10)]
+    geoms = [box(5, 5, 6, 6), box(10, 0, 12, 2), box(20, 20, 21, 21)]
+    assert P.intersects_any(geoms, old).tolist() == [True, True, False]
+    assert P.intersects_any(geoms, []).tolist() == [False, False, False]
+
+
+def test_split_by_style_keeps_majority_style():
+    f = [{'properties': {'c': 'red'}}] * 3 + [{'properties': {'c': 'black'}}]
+    assert P.split_by_style(f) == ([0, 1, 2], [3])

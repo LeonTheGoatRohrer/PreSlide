@@ -4,6 +4,7 @@
   python scripts/run_susceptibility_v02.py gsi_inspect      layer-level metadata only (no terrain, no sample)
   python scripts/run_susceptibility_v02.py shakemap gorkha_2015
   python scripts/run_susceptibility_v02.py pga gorkha_2015 --limit 1|5|20|0(all)
+  python scripts/run_susceptibility_v02.py iburi            ShakeMap coverage, old-landslide counts, buffer statistic
 
 Downloads are restricted to the two URLs released by the user for this session. Raw files go to their own folders
 under data/susceptibility_v02/raw and are never overwritten. All writes pass the v02 guard.
@@ -11,6 +12,7 @@ under data/susceptibility_v02/raw and are never overwritten. All writes pass the
 import argparse
 import collections
 import json
+import math
 import re
 import sys
 import xml.etree.ElementTree as ET
@@ -19,6 +21,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import numpy as np
+import shapefile
 import shapely
 from pyproj import CRS, Transformer
 from shapely.geometry import LineString, Polygon, shape
@@ -426,9 +429,142 @@ def pga(dataset, limit=0):
     return out, summary
 
 
+# ---------------------------------------------------------------- Iburi Phase 1 (coverage, old landslides, buffer)
+
+ZENODO_IBURI = V01_RAW / 'candidates' / 'iburi_2018' / 'extracted'
+IBURI_EPSG = 32654
+
+
+def gsi_files():
+    files = {}
+    for p in (GSI_DIR / 'extracted').rglob('*'):
+        role = gsi_role(p.name) if p.is_file() else None
+        if role:
+            files[role] = p
+    return files
+
+
+def split_by_style(features):
+    """(main-style indices, other indices): the most frequent property set is the inventory style."""
+    keys = [json.dumps(f['properties'], sort_keys=True) for f in features]
+    main = collections.Counter(keys).most_common(1)[0][0]
+    return [i for i, k in enumerate(keys) if k == main], [i for i, k in enumerate(keys) if k != main]
+
+
+def intersects_any(geoms, others):
+    """Boolean per geometry: intersects at least one of `others` (STRtree, exact predicate)."""
+    if not len(others):
+        return np.zeros(len(geoms), bool)
+    tree = shapely.STRtree(others)
+    hit = np.zeros(len(geoms), bool)
+    idx, _ = tree.query(np.asarray(geoms, dtype=object), predicate='intersects')
+    hit[np.unique(idx)] = True
+    return hit
+
+
+def equivalent_radius_p90(areas_m2):
+    """90th percentile of sqrt(area / pi) (registered buffer statistic)."""
+    return float(np.quantile(np.sqrt(np.asarray(areas_m2, float) / np.pi), 0.9))
+
+
+def buffer_value(p90_by_inventory, step_m=10, floor_m=60, cap_m=300):
+    """Registered rule: maximum over inventories, rounded up to step_m, floor floor_m, cap cap_m.
+
+    Returns (value_m, cap_exceeded). Exceeding the cap is a gate finding, never silently clipped."""
+    top = max(p90_by_inventory.values())
+    value = max(floor_m, math.ceil(round(top, 9) / step_m) * step_m)
+    return (min(value, cap_m), value > cap_m)
+
+
+def zenodo_layer(name, epsg):
+    # Geometry only; the DBF declares code page 'ANSI 932', which pyshp cannot resolve, so cp932 is given explicitly.
+    shp = next(readable(ZENODO_IBURI).rglob(f'{name}.shp'))
+    with shapefile.Reader(str(shp), encoding='cp932', encodingErrors='replace') as r:
+        n_total, bbox = len(r), list(r.bbox)
+        raw = [shape(s.__geo_interface__) for s in r.shapes() if s.shapeType != shapefile.NULL]
+    t = Transformer.from_crs(layer_crs(shp), CRS.from_epsg(epsg), always_xy=True)
+    geoms = [shapely.make_valid(shapely.transform(g, lambda c: np.column_stack(t.transform(c[:, 0], c[:, 1]))))
+             for g in raw]
+    return geoms, {'file': shp.name, 'crs': layer_crs(shp).to_string(), 'n_total': n_total,
+                   'n_null': n_total - len(geoms), 'bbox_native': bbox}
+
+
+def iburi_phase1(epsg=IBURI_EPSG):
+    """ShakeMap coverage of the GSI extent, coverage of the Zenodo old-landslide layer, positives after the registered
+    old-landslide rule and the Iburi buffer statistic. Counts and polygon areas only: no terrain value, no sample."""
+    cfg = config()
+    ib = cfg['registry']['datasets']['iburi_2018']
+    if ib['role'] != 'development' or ib.get('working_crs') != f'EPSG:{epsg}':
+        raise RuntimeError('Iburi is not registered as a development inventory in EPSG:%d (Amendment 1)' % epsg)
+    files = gsi_files()
+    ext = _feature_collection(files['extent'])['features'][0]['geometry']['coordinates']
+    extent_ll = extent_polygon(ext)
+    extent = lonlat_to_utm(extent_ll, epsg)
+    feats = _feature_collection(files['landslides'])['features']
+    main_i, other_i = split_by_style(feats)
+    polys = [shapely.make_valid(lonlat_to_utm(shape(feats[i]['geometry']), epsg)) for i in main_i]
+    old, old_meta = zenodo_layer('old_landslides', epsg)
+    react, react_meta = zenodo_layer('reactivated_landslides', epsg)
+
+    # ShakeMap coverage of the extent (grid is a lon/lat rectangle: all vertices inside -> extent inside).
+    prov = read_json(RAW / 'shakemap_iburi_2018' / 'provenance.json')
+    gpath = RAW / 'shakemap_iburi_2018' / 'grid.xml'
+    if file_digest(gpath, 'sha256') != prov['sha256']:
+        raise RuntimeError(f'{gpath} changed since download (frozen)')
+    values, lon0, lat_top, dlon, dlat, units = read_grid(gpath)
+    lon, lat = np.asarray(extent_ll.exterior.coords).T
+    at_vertices = bilinear(values, lon0, lat_top, dlon, dlat, lon, lat)
+    coverage = {'grid_sha256': prov['sha256'], 'shakemap_version': prov['grid_header']['shakemap_version'],
+                'process_timestamp': prov['grid_header']['process_timestamp'],
+                'point_source': prov['grid_header']['event'].get('point_source'),
+                'grid_lonlat_bbox': [lon0, lat_top - dlat * (values.shape[0] - 1), lon0 + dlon * (values.shape[1] - 1), lat_top],
+                'extent_vertices': len(lon), 'extent_vertices_inside_grid_with_value': int(np.isfinite(at_vertices).sum()),
+                'extent_covered': bool(np.isfinite(at_vertices).all())}
+
+    # Coverage of the Zenodo old-landslide mapping (no extent file exists): its bounding box against the GSI extent.
+    ob = old_meta['bbox_native']
+    box_ll = Polygon([(ob[0], ob[1]), (ob[2], ob[1]), (ob[2], ob[3]), (ob[0], ob[3])])
+    box = lonlat_to_utm(box_ll.segmentize(0.01), epsg)
+    outside = extent.difference(box)
+    old_hit = intersects_any(polys, old)
+    outside_box = np.array([not box.contains(p.representative_point()) for p in polys])
+    positives = [p for p, h in zip(polys, old_hit) if not h]
+    areas = np.array([p.area for p in positives])
+    react_in_old = intersects_any(react, old)
+    result = {
+        'version': 'susceptibility_v02', 'computed_at_utc': datetime.now(timezone.utc).isoformat(),
+        'scope': 'Iburi Phase 1: ShakeMap coverage, old-landslide coverage and counts, buffer statistic. Polygon counts and '
+                 'areas only; no terrain value, no sample, no model.',
+        'working_crs': f'EPSG:{epsg}',
+        'shakemap_coverage': coverage,
+        'old_landslides': {
+            'layer': old_meta, 'reactivated_layer': react_meta,
+            'reactivated_intersecting_old': int(react_in_old.sum()),
+            'old_inside_or_touching_gsi_extent': int(intersects_any(old, [extent]).sum()),
+            'old_bbox_lonlat': ob,
+            'gsi_extent_area_km2': extent.area / 1e6,
+            'gsi_extent_area_outside_old_bbox_km2': outside.area / 1e6,
+            'gsi_extent_share_outside_old_bbox': outside.area / extent.area,
+            'note': 'The Zenodo record has no extent for its old-landslide mapping; its bounding box is an upper bound of '
+                    'the mapped area. Inside the box, absence of old landslides is not proof of coverage.'},
+        'gsi_polygons': {
+            'main_style': len(polys), 'deviating_style_exclusion_only': len(other_i),
+            'intersecting_old_landslides_not_positive': int(old_hit.sum()),
+            'positives_after_old_landslide_rule': len(positives),
+            'main_style_outside_old_bbox': int(outside_box.sum()),
+            'positives_outside_old_bbox': int((outside_box & ~old_hit).sum())},
+        'buffer_statistic': {
+            'rule': cfg['sampling']['background_rule']['exclusion_buffer_rule'],
+            'iburi_positive_p90_equivalent_radius_m': equivalent_radius_p90(areas),
+            'iburi_positive_area_m2_quantiles': {str(q): float(np.quantile(areas, q)) for q in (0.1, 0.5, 0.9)}},
+    }
+    write_json(guard(REPORT) / 'phase1_iburi_extent_counts.json', result)
+    return result
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('stage', choices=['gsi_fetch', 'gsi_inspect', 'shakemap', 'pga'])
+    ap.add_argument('stage', choices=['gsi_fetch', 'gsi_inspect', 'shakemap', 'pga', 'iburi'])
     ap.add_argument('dataset', nargs='?')
     ap.add_argument('--limit', type=int, default=0)
     a = ap.parse_args()
@@ -437,6 +573,8 @@ def main():
         res = gsi_fetch()
     elif a.stage == 'gsi_inspect':
         res = gsi_inspect()
+    elif a.stage == 'iburi':
+        res = iburi_phase1()
     elif a.stage == 'shakemap':
         res = shakemap_fetch(a.dataset)
     else:

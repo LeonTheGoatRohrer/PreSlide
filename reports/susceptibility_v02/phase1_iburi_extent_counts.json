@@ -1,0 +1,76 @@
+{
+  "version": "susceptibility_v02",
+  "computed_at_utc": "2026-10-18T07:07:22.730597+00:00",
+  "scope": "Iburi Phase 1: ShakeMap coverage, old-landslide coverage and counts, buffer statistic. Polygon counts and areas only; no terrain value, no sample, no model.",
+  "working_crs": "EPSG:32654",
+  "shakemap_coverage": {
+    "grid_sha256": "e1ff18e322e1e5807a7659a866c024b746917ac313f81d2c2d81393e922aad27",
+    "shakemap_version": "1",
+    "process_timestamp": "2020-06-05T21:31:12",
+    "point_source": "True",
+    "grid_lonlat_bbox": [
+      139.55,
+      40.85,
+      144.45,
+      44.4667
+    ],
+    "extent_vertices": 1802,
+    "extent_vertices_inside_grid_with_value": 1802,
+    "extent_covered": true
+  },
+  "old_landslides": {
+    "layer": {
+      "file": "old_landslides.shp",
+      "crs": "EPSG:4612",
+      "n_total": 1649,
+      "n_null": 0,
+      "bbox_native": [
+        141.746911893669,
+        42.58092033280718,
+        142.22670568122234,
+        42.99205967391486
+      ]
+    },
+    "reactivated_layer": {
+      "file": "reactivated_landslides.shp",
+      "crs": "EPSG:4612",
+      "n_total": 110,
+      "n_null": 0,
+      "bbox_native": [
+        141.9245730367163,
+        42.6987910159554,
+        142.066564,
+        42.876380999999974
+      ]
+    },
+    "reactivated_intersecting_old": 110,
+    "old_inside_or_touching_gsi_extent": 543,
+    "old_bbox_lonlat": [
+      141.746911893669,
+      42.58092033280718,
+      142.22670568122234,
+      42.99205967391486
+    ],
+    "gsi_extent_area_km2": 1357.5633191956356,
+    "gsi_extent_area_outside_old_bbox_km2": 253.07117184591073,
+    "gsi_extent_share_outside_old_bbox": 0.1864157408111593,
+    "note": "The Zenodo record has no extent for its old-landslide mapping; its bounding box is an upper bound of the mapped area. Inside the box, absence of old landslides is not proof of coverage."
+  },
+  "gsi_polygons": {
+    "main_style": 3306,
+    "deviating_style_exclusion_only": 1,
+    "intersecting_old_landslides_not_positive": 129,
+    "positives_after_old_landslide_rule": 3177,
+    "main_style_outside_old_bbox": 2,
+    "positives_outside_old_bbox": 2
+  },
+  "buffer_statistic": {
+    "rule": "rule of susceptibility_v01: max over all development inventories of v02 of the 90th percentile of sqrt(area/pi) of valid positive polygons, rounded up to 10 m, floor 60 m, cap 300 m (exceeding the cap is a gate finding); written by v02 Amendment 1 after Phase 1, before any terrain value of a new inventory",
+    "iburi_positive_p90_equivalent_radius_m": 87.11441993171627,
+    "iburi_positive_area_m2_quantiles": {
+      "0.1": 689.6371007538947,
+      "0.5": 3372.480240735224,
+      "0.9": 23841.340509653815
+    }
+  }
+}

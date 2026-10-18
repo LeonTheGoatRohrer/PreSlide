@@ -171,3 +171,22 @@ Explorativ, ein Ereignis, keine Übertragbarkeitsaussage. Bericht: `SENSITIVITY_
 5. H1/H2 für den Erdbebenarm.
 
 Der Regenarm wartet weiter auf einen Umriss für RER2023.
+
+---
+
+## Nachtrag 2, 18.10.2026: Iburi-ShakeMap, Altrutschungen, Puffer – Phase-1-Gate Erdbeben erfüllt
+
+Der Nutzer hat den Download der Iburi-ShakeMap freigegeben. Zahlen: `phase1_iburi_extent_counts.json` (nur Anzahlen und Polygonflächen; kein Geländewert, keine Stichprobe).
+
+- **ShakeMap Iburi:** `us2000h8ty`, atlas, Version 1, process_timestamp 2020-06-05T21:31:12, `grid.xml` 14.484.026 B (= Registrierung), SHA-256 `e1ff18e3…`. Alle 1.802 Stützpunkte des GSI-Bereichs liegen im Gitter und haben einen Wert. Das Produkt rechnet mit einer Punktquelle (465 Stationen); auch das ist ein Modellwert, keine Messung am Hang.
+- **Altrutschungen (Zenodo, andere Kartierung):** Für diese Kartierung gibt es keinen Umriss. Ihr Begrenzungsrechteck lässt 253 km² (18,6 %) des GSI-Bereichs offen. Dort liegen nur 2 der 3.306 GSI-Polygone. 129 GSI-Polygone berühren Altrutschungen; sie sind keine Positiven, sondern nur Ausschlussfläche. Damit bleiben **3.177 Positive**. Alle 110 reaktivierten Rutschungen liegen in der Altrutschungsschicht. Die registrierte Regel bleibt unverändert. Die Grenze wird dokumentiert: Im offenen Teil kann Hintergrund auf nicht kartierten Altnarben liegen, und innerhalb des Rechtecks ist die Vollständigkeit angenommen, nicht belegt.
+- **Puffer (Amendment 2, registrierte Regel):** Das 90. Perzentil des Äquivalenzradius beträgt Gorkha 17,47 m, Far-Western Nepal 93,54 m (beide aus v01 Amendment 1, identische Positivdefinition) und Iburi 87,11 m. Das Maximum, auf 10 m aufgerundet, ergibt **100 m** (Untergrenze 60 m, Obergrenze 300 m nicht erreicht). RER2023 ist nicht enthalten; sein vorläufiger v01-Wert (26,1 m) läge darunter.
+- Die Stufenprüfung des Amendment-Skripts wurde vor Amendment 2 präzisiert. Gesperrt sind v02-Stichproben, v02-Geländeblöcke und Modelle. PGA-Merkmal und Vorhersagen der Gorkha-Sensitivität beruhen auf den v01-Stichproben und hängen von keinem Stichprobenparameter ab.
+
+**Phase-1-Gate:**
+
+- **Erdbeben erfüllt:** Beide Inventare haben eine Lizenz am Original und einen unabhängigen Umriss, und beide ShakeMaps decken den ganzen Umriss ab.
+- **Regen nicht erfüllt:** RER2023 bleibt `pending_extent`. Dieser Arm wird weder modelliert noch ersetzt.
+- Die Bonferroni-Korrektur bleibt wie registriert über 4 Tests. H1/H2-Regen werden als „nicht durchführbar“ berichtet, nicht gestrichen.
+
+**Nächster Schritt (Phase 2):** Iburi-Geländeblöcke mit dem v01-Code in EPSG:32654 rechnen. Zuerst die DEM-Abdeckung prüfen; das braucht NASADEM-Kacheln um 42–43° N, 141–142° E, also einen neuen Download, der freigegeben werden muss. Danach PGA- und Interpolationstests für Iburi, dann die Ziehung (Phase 3).

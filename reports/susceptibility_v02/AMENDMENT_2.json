@@ -1,0 +1,39 @@
+{
+ "id": 2,
+ "before": "samples",
+ "title": "Exclusion buffer value after Phase 1 (registered rule) and Iburi exclusion layers",
+ "basis": "Polygon areas and counts only (phase1_iburi_extent_counts.json; v01 Amendment 1 buffer_derivation). No v02 sample, no v02 terrain block, no terrain value of Iburi, no model. Existing v02 outputs are the PGA feature and the predictions of the registered Gorkha sensitivity on read-only v01 samples; they do not depend on the buffer.",
+ "set": {
+  "sampling.background_rule.exclusion_buffer_m": 100
+ },
+ "add": {
+  "registry.datasets.iburi_2018.exclusion_layers": {
+   "value": "GSI slope-failure/deposit polygons (all 3,307 incl. the deviating-style feature) and Zenodo old_landslides.shp (1,649; the 110 reactivated_landslides all intersect it), buffered by exclusion_buffer_m; GSI cloud-obscured polygons (10) unbuffered. Positives: 3,177 GSI main-style polygons that do not intersect old_landslides.shp (129 do and are exclusion only).",
+   "reason": "Makes the registered exclusion_geometry rule concrete for the GSI-based Iburi inventory (Amendment 1)."
+  },
+  "registry.datasets.iburi_2018.old_landslide_coverage_note": {
+   "value": "The Zenodo old-landslide mapping has no extent. Its bounding box leaves 253.1 km2 (18.6 %) of the GSI extent uncovered, where 2 of 3306 GSI polygons lie; there the old-landslide rule cannot act and background is not excluded from unmapped old scars. Inside the box, coverage is assumed, not proven. The registered rule is kept; no extent or positive is changed because of this.",
+   "reason": "Documents a limitation found in Phase 1 before any sample."
+  }
+ },
+ "buffer_derivation": {
+  "rule": "max over the v02 development inventories of the 90th percentile of sqrt(area/pi) of valid positive polygons, rounded up to 10 m, floor 60 m, cap 300 m",
+  "p90_equivalent_radius_m": {
+   "gorkha_2015": 17.47,
+   "far_western_nepal": 93.54,
+   "iburi_2018": 87.11
+  },
+  "sources": {
+   "gorkha_2015": "v01 Amendment 1 buffer_derivation (identical positive definition: Source20170209.shp)",
+   "far_western_nepal": "v01 Amendment 1 buffer_derivation (identical positive_filter)",
+   "iburi_2018": "reports/susceptibility_v02/phase1_iburi_extent_counts.json (3,177 positives, EPSG:32654)"
+  },
+  "rer2023": "pending_extent, not a development inventory; v01 Phase 1 gave a provisional p90 of 26.1 m over all its polygons, below this value, so promoting it later would not raise the maximum; to be confirmed by the amendment that promotes it",
+  "result_m": 100,
+  "cap_exceeded": false
+ },
+ "phase1_gate": "earthquake arm met: gorkha_2015 and iburi_2018 have licences recorded at the original and independent extents; ShakeMap grid.xml for both events covers the whole extent (Gorkha 132/132, Iburi 1,802/1,802 extent vertices). Rain arm not met (rer2023 pending_extent); it is not modelled and not replaced.",
+ "written_at_utc": "2026-10-18T07:08:27.439830+00:00",
+ "config_sha256": "f6883194f18d67d580066076206a227a10e4e547a0620483b2fa1955e542d4fe",
+ "preconditions": "registration present; nothing from stage 'samples' on existed"
+}
