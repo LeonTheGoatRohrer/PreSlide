@@ -73,3 +73,9 @@ test('flow-path request carries only position and radius; infrastructure text li
   assert.ok(page.includes('Szenario, ungeprüft') && page.includes('im Szenario liegen'))
   assert.doesNotMatch(page, /wird getroffen|getroffen werden/)
 })
+
+test('flow notice and OSM attribution are shown wherever a flow path is shown', () => {
+  // Heavy-rain view and the single asked point both render the API notice and "heutiger OpenStreetMap-Stand (… ODbL)".
+  assert.equal((page.match(/\{\{ flows\.hinweis \}\}/g) || []).length, 2)
+  assert.equal((page.match(/\{\{ flows\.osm\.hinweis \}\}/g) || []).length, 2)
+})

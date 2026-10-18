@@ -260,6 +260,10 @@ onBeforeUnmount(() => { clearTimeout(timer); clearInterval(phaseTimer); seq++ })
                   </div>
                 </dl>
                 <p class="cp-small">Reichweiten aus der Literatur (Hürlimann, McArdell &amp; Rickli 2015): Median und größte beobachtete Reichweite von 178 Hangmuren. Keine Menge, keine Schutzbauten.</p>
+                <template v-if="!rain">
+                  <p class="cp-small">{{ flows.hinweis }}</p>
+                  <p v-if="flows.osm" class="cp-small">Straßen und Gebäude: {{ flows.osm.hinweis }}<template v-if="flows.osm.stand">, Stand {{ flows.osm.stand.slice(0, 10) }}</template>.</p>
+                </template>
               </div>
             </li>
           </ol>
