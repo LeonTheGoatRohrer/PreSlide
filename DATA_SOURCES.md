@@ -105,6 +105,7 @@ No new data source. V0.5 queries the same V0.4 endpoints (INCA v1, SPARTACUS v2,
 
 - **OpenStreetMap, Austria extract** — provider OpenStreetMap contributors via Geofabrik GmbH; `https://download.geofabrik.de/europe/austria-261014.osm.pbf` (812,633,484 bytes, snapshot 2026-10-14, retrieved 2026-10-15; SHA-256 in `data/v07/source.json`). Licence ODbL 1.0, attribution "(c) OpenStreetMap contributors"; used only for local non-commercial research, the PBF and per-sample distance table stay in the ignored `data/`. Used for the nearest building-outline and public-road vertex distance (cap 5 km) of the V0.5 cohort samples (V0.7). Limits: 2026 snapshot for events since 2016, OSM completeness varies, nearest-vertex distances, multipolygon buildings ignored. New dependency `osmium` (pyosmium 4.3.1) only for reading the PBF.
 - **INCA v1 hourly** (V0.8): the same endpoint as V0.4, requested for case-crossover referent times (event time ± 28 / 56 days); responses cached in `data/v08/cache/http/`. The GeoSphere inventory `geosphere_natural_hazards.json` (already in `data/raw/`) is used again only to block referent times near dated inventory landslides.
+
 ## Pipeline B (satellite discovery, 2026-10-14): Sentinel-2 L2A via Earth Search
 
 - Provider: ESA/Copernicus Sentinel-2 Level-2A surface reflectance, hosted as cloud-optimised GeoTIFFs on AWS (`sentinel-cogs` bucket, Element 84), catalogued by the Earth Search STAC API.
@@ -123,6 +124,7 @@ No new data source. V0.5 queries the same V0.4 endpoints (INCA v1, SPARTACUS v2,
 - **BMLUK/WLV Ereignisse, non-slide records** — same OGC endpoint as the WLV entry above, CQL filter `Wasser: Murgang%`, `Wasser: Murartig%`, `Steinschlag%`; 8,088 records retrieved 2026-10-15 (`data/v09/raw/wlv_non_slide.json`, SHA-256 `bb32f17c…`). CC BY 4.0. Used only to flag media events with a conflicting process record within 200 m and 1 day (6 media events excluded). The cached WLV Rutschung records (`data/raw/wlv_slides.json`) are added to the V0.9 matching exclusions (radius 250 m).
 - **Public online reports (process audit of media events)** — for each of the 40 unseen media events, public news, fire-brigade, municipal and authority pages were searched on 2026-10-15 (municipality, date, process terms; GeoSphere monthly overviews not counted). URLs, publisher, publication date, retrieval time and a one-sentence own-words paraphrase are stored locally in `data/v09/audit/process_audit.json` (not committed). The pages remain the property of their publishers; nothing is redistributed. Outcome: 8 slide confirmed, 7 other process (mostly flooding), 1 ambiguous, 24 not found.
 - Weather, terrain, land cover and geology: the V0.4 endpoints above, new responses cached in `data/v09/cache/http/` (INCA v1 before its announced December 2026 retirement).
+
 ## susceptibility_v01 (2026-10-17; registration `reports/susceptibility_v01/PREREGISTRATION.json`)
 
 Raw files under `data/susceptibility_v01/raw/<dataset>/` with `provenance.json` (URL, size, md5, SHA-256, archive members). Aggregate audits (no record-level rows) in `reports/susceptibility_v01/phase1_audit_*.json`. Metadata probes in `reports/susceptibility_v01/phase0_evidence.json`.
@@ -167,6 +169,7 @@ No new download. v02 reads the v01 raw files (Gorkha, Far-Western Nepal, RER2023
 - **USGS ShakeMap Gorkha** `https://earthquake.usgs.gov/product/shakemap/us20002926/atlas/1594162031303/download/grid.xml` → `data/susceptibility_v02/raw/shakemap_gorkha_2015/grid.xml`, 14,875,206 B (= registration), md5 = ETag verified, SHA-256 `3ffbe249…3291c`; shakemap_version 1, originator atlas, code 4.0.2, process_timestamp 2020-06-03T05:37:03, map_status automatic; grid 558 × 479 nodes, 80.85–90.1333 E, 23.9833–31.95 N, spacing 1/60° (header value 0.0167 is rounded; spacing is taken from the corner coordinates). PGA units %g. Covers the whole Gorkha mapping extent (132/132 vertices). Public domain (USGS). PGA at the 48,074 v01 Gorkha samples: `reports/susceptibility_v02/phase1_pga_gorkha_2015.json` (0 outside the grid).
 - **USGS ShakeMap Iburi** `https://earthquake.usgs.gov/product/shakemap/us2000h8ty/atlas/1594401324136/download/grid.xml` → `data/susceptibility_v02/raw/shakemap_iburi_2018/grid.xml`, 14,484,026 B (= registration), md5 = ETag verified, SHA-256 `e1ff18e3…aad27`; shakemap_version 1, atlas, code 4.0.2, process_timestamp 2020-06-05T21:31:12, point source, 465 stations; grid 589 × 435, 139.55–144.45 E, 40.85–44.4667 N, spacing 1/120°. Covers the whole GSI extent (1,802/1,802 vertices). Released by the user in a second step of the same session. Iburi counts: `reports/susceptibility_v02/phase1_iburi_extent_counts.json`.
 - **NASADEM Hokkaido** (Planetary Computer, anonymous SAS token, as v01; released by the user 2026-10-18): `NASADEM_HGT_n42e141` 6,614,260 B (md5 = ETag verified), `n42e142` 13,492,880 B, `n43e141` 9,620,927 B, `n43e142` 17,154,443 B (size from HEAD; no single-part ETag), SHA-256 in `data/susceptibility_v02/dem/nasadem/*/provenance.json`; STAC datetime 2000-02-20. Gorkha and Far-Western Nepal v02 blocks reuse the v01 tiles read-only (no new download).
+
 ## wirkungskette_v01 (2026-10-18)
 
 | Provider / dataset | Endpoint | Licence / attribution | Use | Limitation |
@@ -177,6 +180,7 @@ No new download. v02 reads the v01 raw files (Gorkha, Far-Western Nepal, RER2023
 | Literature (runout scenarios, not data) | Hürlimann, McArdell & Rickli (2015) Geomorphology 232:20–32, doi:10.1016/j.geomorph.2014.11.030; Horton et al. (2013) NHESS 13:869–885 | — | fixed reaches 45 m / 467 m; energy-line angles 11° / 7°; v_max 15 m/s | values copied from the papers (checked in the full text); never fitted to the demo events |
 
 Not used (documented alternatives): GIP Austria road graph (data.gv.at, CC BY 4.0) and BEV address/building products; see `reports/wirkungskette_v01/AUDIT.md`.
+
 ## extremwetter_v01 (2026-10-18)
 
 | Provider / dataset | Endpoint | Licence | Use | Rule / limitation |
