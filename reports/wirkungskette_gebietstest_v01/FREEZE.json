@@ -1,0 +1,11 @@
+{
+  "frozen_at_utc": "2026-10-18T13:02:16.098531+00:00",
+  "test_results_sha256": "e180920d61864cd874a761d810355e6cec489816184812da044dc972763e4bb1",
+  "test_results_computed_at_utc": "2026-10-18T12:59:56.766666+00:00",
+  "events_parquet_sha256": "ae255b5ece3245c66ae034fc220c84434b4c77aad66416916c730602195f6eb1",
+  "config_sha256": "062f10110260b29b28ee3869e40527fa0c967a85b26abc4702a9d59f2d5c1381",
+  "code_commit_of_run": "f39c9d1 (test code) + 12dfa1d (amendment 1, no code change)",
+  "gebiete_py_sha256_at_freeze": "af0fe4497b10f27c760690b1c3e98dc7fec0c99eacb22e2ddd7297c85e48f2fa",
+  "model_sha256": "fbce46ad7f25e43e9ca954b177f4a5dea2e40680fa5fa035217cfcba15e753b4",
+  "statement": "The registered test has been scored once. test_results.json is write-once (run() refuses a second full run). From now on the five areas are seen data and may not steer selection of features, models, thresholds or areas for this test."
+}

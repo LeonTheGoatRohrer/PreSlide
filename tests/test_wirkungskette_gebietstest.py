@@ -1,4 +1,4 @@
-"""wirkungskette_v02 tests: feature fidelity to frozen V0.4, capture metric, bootstrap, land-cover vintage, area rule,
+"""wirkungskette_gebietstest_v01 tests (registered as wirkungskette_v02): feature fidelity to frozen V0.4, capture metric, bootstrap, land-cover vintage, area rule,
 registration guard. Synthetic geometries/arrays are unit-test fixtures only; they never enter data/ or reports/."""
 import json
 import math
@@ -10,15 +10,15 @@ from shapely.geometry import box
 
 from preslide.terrain import PROJECT
 from preslide.wirkungskette import gebiete as G
-from preslide.wirkungskette.paths import CONFIG_V02, REPORT_V02
+from preslide.wirkungskette.paths import CONFIG_GT, REPORT_GT
 
 
 # ---------- registration ----------
 
 def test_config_matches_registration():
-    reg = json.loads((REPORT_V02 / 'PREREGISTRATION.json').read_text(encoding='utf-8'))
+    reg = json.loads((REPORT_GT / 'PREREGISTRATION.json').read_text(encoding='utf-8'))
     import hashlib
-    assert hashlib.sha256(CONFIG_V02.read_bytes()).hexdigest() == reg['config_sha256']
+    assert hashlib.sha256(CONFIG_GT.read_bytes()).hexdigest() == reg['config_sha256']
     assert G.config()['version'] == 'wirkungskette_v02'
 
 
@@ -138,7 +138,7 @@ def test_dem_rect_reproduces_v04_window():
 
 
 def test_srtm_tile_is_cached_with_provenance_when_present():
-    d = G.DATA_V02 / 'cache/srtm'
+    d = G.DATA_GT / 'cache/srtm'
     tiles = sorted(d.glob('*.json')) if d.exists() else []
     if not tiles:
         pytest.skip('no SRTM tile cached yet')
@@ -152,3 +152,43 @@ def test_bootstrap_resamples_whole_areas():
     a, b = frame(60, 1.0, 1.0, 500000), frame(60, 0.0, 0.0, 600000)
     lo, hi = G.bootstrap({'a': a, 'b': b}, 400, 5)['cap_model_20']
     assert lo == 0.0 and hi == 1.0
+
+
+# ---------- demo areas ----------
+
+def test_demo_config_overrides_only_own_blocks():
+    from preslide.wirkungskette.paths import config as demo_config
+    base, mb = demo_config('stanz'), demo_config('mittelberg')
+    assert mb['demo']['id'] == 'mittelberg_2005' and mb['terrain']['dem'] == 'srtm'
+    assert mb['review_points']['land_cover_vintage'] == 'CLC2000'
+    assert mb['runout'] == base['runout'] and mb['infrastructure'] == base['infrastructure']
+    assert mb['review_points']['classes'] == base['review_points']['classes']
+    assert mb['review_points']['model_sha256'] == base['review_points']['model_sha256']
+    with pytest.raises(ValueError):
+        demo_config('nirgendwo')
+
+
+def test_demo_caches_are_separate_and_identities_differ():
+    from preslide.wirkungskette import build as B
+    from preslide.wirkungskette.paths import config as demo_config
+    s, m = demo_config('stanz'), demo_config('mittelberg')
+    assert B.paths(10000, s)['dir'] != B.paths(10000, m)['dir']
+    assert B.terrain_identity(s, 10000) != B.terrain_identity(m, 10000)
+    assert B.paths(10000)['dir'] == B.paths(10000, s)['dir']           # v01 default unchanged
+
+
+def test_demo_centre_follows_registered_rule():
+    import json as _json
+    from preslide.wirkungskette.paths import config as demo_config
+    areas = _json.loads((REPORT_GT / 'areas.json').read_text(encoding='utf-8'))
+    biggest = max(areas, key=lambda a: a['targets'])
+    top = max(biggest['municipalities'], key=lambda m: m['n_targets'])
+    mb = demo_config('mittelberg')['demo']
+    assert mb['campaign'] == biggest['campaign'] and top['name'] == 'Mittelberg'
+
+
+def test_full_run_is_written_once():
+    if not (REPORT_GT / 'test_results.json').exists():
+        pytest.skip('test not yet scored')
+    with pytest.raises(RuntimeError, match='scored once'):
+        G.run('full', 'srtm')

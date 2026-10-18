@@ -5,9 +5,10 @@ from fastapi.responses import Response
 from . import analysis
 from . import build as B
 from . import store
-from .paths import config
+from .paths import DEMOS, config
 
 router = APIRouter(prefix='/api/wirkungskette')
+GEBIET = Query('stanz', description='Demogebiet: ' + ', '.join(DEMOS))
 
 
 def _guarded(fn, *args):
@@ -19,58 +20,57 @@ def _guarded(fn, *args):
         raise HTTPException(422, str(error)) from error
 
 
+def _stored(gebiet, key, loader):
+    def load():
+        cfg = config(gebiet)
+        r = float(cfg['radius_m']['max'])
+        p = B.paths(r, cfg)
+        if not store.exists(p[key]):
+            raise FileNotFoundError(f'Demogebiet nicht vorbereitet: python -m preslide.wirkungskette build --gebiet {gebiet}')
+        return loader(p[key], B.terrain_identity(cfg, r))
+    return _guarded(load)
+
+
+@router.get('/gebiete')
+def gebiete():
+    out = []
+    for g in DEMOS:
+        cfg = config(g)
+        out.append({'id': g, 'name': cfg['demo']['name'], 'stichtag': cfg['demo']['reference_day'],
+                    'bereit': store.exists(B.paths(float(cfg['radius_m']['max']), cfg)['cells'])})
+    return out
+
+
 @router.get('')
-def wirkungskette(radius_m: float = Query(3000), modus: str = Query('pruefpunkte'), anriss: str | None = Query(None)):
-    return _guarded(analysis.analyse, radius_m, modus, anriss)
+def wirkungskette(radius_m: float = Query(3000), modus: str = Query('pruefpunkte'), anriss: str | None = Query(None), gebiet: str = GEBIET):
+    return _guarded(analysis.analyse, radius_m, modus, anriss, gebiet)
 
 
 @router.get('/relief')
-def relief():
-    def load():
-        cfg = config()
-        r = float(cfg['radius_m']['max'])
-        p = B.paths(r)
-        if not store.exists(p['relief_meta']):
-            raise FileNotFoundError('Demogebiet nicht vorbereitet: python -m preslide.wirkungskette build')
-        ident = B.terrain_identity(cfg, r)
-        return store.load_json(p['relief_meta'], ident)
-    return _guarded(load)
+def relief(gebiet: str = GEBIET):
+    return _stored(gebiet, 'relief_meta', store.load_json)
 
 
 @router.get('/hoehenlinien')
-def hoehenlinien():
-    def load():
-        cfg = config()
-        r = float(cfg['radius_m']['max'])
-        p = B.paths(r)
-        if not store.exists(p['contours']):
-            raise FileNotFoundError('Demogebiet nicht vorbereitet: python -m preslide.wirkungskette build')
-        return store.load_json(p['contours'], B.terrain_identity(cfg, r))
-    return _guarded(load)
+def hoehenlinien(gebiet: str = GEBIET):
+    return _stored(gebiet, 'contours', store.load_json)
 
 
 @router.get('/relief.png')
-def relief_png():
-    def load():
-        cfg = config()
-        r = float(cfg['radius_m']['max'])
-        p = B.paths(r)
-        if not store.exists(p['relief']):
-            raise FileNotFoundError('Demogebiet nicht vorbereitet: python -m preslide.wirkungskette build')
-        return store.load_bytes(p['relief'], B.terrain_identity(cfg, r))
-    return Response(_guarded(load), media_type='image/png', headers={'Cache-Control': 'private, max-age=3600'})
+def relief_png(gebiet: str = GEBIET):
+    return Response(_stored(gebiet, 'relief', store.load_bytes), media_type='image/png', headers={'Cache-Control': 'private, max-age=3600'})
 
 
 @router.get('/pruefstufen')
-def pruefstufen_meta(radius_m: float = Query(3000)):
-    return {'ecken': _guarded(analysis.class_image, radius_m)[1]}
+def pruefstufen_meta(radius_m: float = Query(3000), gebiet: str = GEBIET):
+    return {'ecken': _guarded(analysis.class_image, radius_m, gebiet)[1]}
 
 
 @router.get('/pruefstufen.png')
-def pruefstufen_png(radius_m: float = Query(3000)):
-    return Response(_guarded(analysis.class_image, radius_m)[0], media_type='image/png')
+def pruefstufen_png(radius_m: float = Query(3000), gebiet: str = GEBIET):
+    return Response(_guarded(analysis.class_image, radius_m, gebiet)[0], media_type='image/png')
 
 
 @router.get('/kontext')
-def kontext(radius_m: float = Query(3000)):
-    return _guarded(analysis.context_layer, radius_m)
+def kontext(radius_m: float = Query(3000), gebiet: str = GEBIET):
+    return _guarded(analysis.context_layer, radius_m, gebiet)

@@ -1,0 +1,9 @@
+{
+  "amendment": 2,
+  "written_at_utc": "2026-10-18T13:02:16.056771+00:00",
+  "results_seen": true,
+  "change": "namespace move only (announced in amendment 1 before results): config/wirkungskette_v02.json -> config/wirkungskette_gebietstest_v01.json (byte-identical), reports/wirkungskette_v02/ -> reports/wirkungskette_gebietstest_v01/, data/wirkungskette_v02/ -> data/wirkungskette_gebietstest_v01/, tests/test_wirkungskette_v02.py -> tests/test_wirkungskette_gebietstest.py, CLI v02-* -> gt-*",
+  "reason": "the name wirkungskette_v02 was registered earlier by the runout cross-check session (branch claude/wirkungskette-v02)",
+  "config_sha256": "062f10110260b29b28ee3869e40527fa0c967a85b26abc4702a9d59f2d5c1381",
+  "no_change": "rules, metric, data, code logic and results unchanged; the JSON fields \"version\": \"wirkungskette_v02\" inside the frozen files are kept"
+}

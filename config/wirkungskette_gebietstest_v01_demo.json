@@ -1,0 +1,26 @@
+{
+  "version": "wirkungskette_gebietstest_v01_demo",
+  "base": "config/wirkungskette_v01.json (runout scenarios, corridor, infrastructure, classes and model unchanged)",
+  "rule": "config/wirkungskette_gebietstest_v01.json demo_rule: campaign with the most precisely located pure Hangmuren (Vorarlberg_Tirol_August_2005, 1 176) and its municipality with the most of them (Mittelberg, LAU 80228, 120); centre = representative point of the LAU 2021 polygon",
+  "demo": {
+    "id": "mittelberg_2005",
+    "name": "Mittelberg im Kleinwalsertal (Vorarlberg)",
+    "centre_longitude": 10.13894,
+    "centre_latitude": 47.33207,
+    "centre_source": "representative point of LAU 2021 unit 80228 (Mittelberg), reports/wirkungskette_gebietstest_v01/areas.json",
+    "reference_day": "2005-08-22",
+    "reference_rule": "campaign Vorarlberg_Tirol_August_2005 (inventory: 'grossregionales Event August 2005'); terrain SRTM February 2000 and CORINE 2000 are pre-event; infrastructure is today's OpenStreetMap state",
+    "events_source": "inventory_campaign",
+    "campaign": "Vorarlberg_Tirol_August_2005",
+    "kennzeichnung_de": "Gebiet des vorab registrierten Gebietstests (wirkungskette_gebietstest_v01) (Vorarlberg/Tirol, August 2005). Für das V0.4-Modell vor dem Test ungesehen; nach dem Test gesehen. Gelände SRTM 2000, Landbedeckung CORINE 2000.",
+    "sealed_test_note": "Demo built only after reports/wirkungskette_gebietstest_v01/test_results.json was frozen."
+  },
+  "terrain": {
+    "dem": "srtm",
+    "dem_note": "SRTM 1″, Februar 2000 (Radar-Oberflächenmodell inkl. Wald und Gebäuden; über Österreich praktisch identisch mit den Skadi-Kacheln des V0.4-Trainings)"
+  },
+  "review_points": {
+    "land_cover_vintage": "CLC2000",
+    "land_cover_service": ["https://image.discomap.eea.europa.eu/arcgis/rest/services/Corine/CLC2000/MapServer/0/query", "code_00"]
+  }
+}

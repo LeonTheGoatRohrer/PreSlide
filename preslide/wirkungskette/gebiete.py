@@ -1,6 +1,6 @@
-"""wirkungskette_v02: pre-registered test of the review classes on unseen Hangmuren areas.
+"""wirkungskette_gebietstest_v01 (registered as wirkungskette_v02, renamed by amendment 2): pre-registered test of the review classes on unseen Hangmuren areas.
 
-Design: config/wirkungskette_v02.json, registered in reports/wirkungskette_v02/PREREGISTRATION.json before any
+Design: config/wirkungskette_gebietstest_v01.json, registered in reports/wirkungskette_gebietstest_v01/PREREGISTRATION.json before any
 computation. Areas = LAU 2021 municipalities with >= 5 precisely located pure Hangmuren of a 2000-2015 campaign;
 terrain = SRTM 1" (February 2000, primary) or Skadi (sensitivity, provenance not pre-event); frozen V0.4 static
 model vs slope alone; capture of target events in the top 5 % / 20 % of the assessable area.
@@ -33,7 +33,7 @@ from ..v04 import terrain as T4
 from ..v04.models import add_one_hot
 from . import build as B
 from . import sources, store
-from .paths import CONFIG_V02, DATA_V02, REPORT_V02, guard, sha
+from .paths import CONFIG_GT, DATA_GT, REPORT_GT, guard, sha
 
 SKADI_DIRS = (ROOT / 'data/raw/terrain', ROOT / 'data/v04/cache/terrain_tiles')
 
@@ -42,12 +42,12 @@ SKADI_DIRS = (ROOT / 'data/raw/terrain', ROOT / 'data/v04/cache/terrain_tiles')
 
 def config():
     """Registered configuration; refuses to run if it changed after registration (amendments need a new hash entry)."""
-    reg = read_json(REPORT_V02 / 'PREREGISTRATION.json')
-    actual = hashlib.sha256(CONFIG_V02.read_bytes()).hexdigest()
+    reg = read_json(REPORT_GT / 'PREREGISTRATION.json')
+    actual = hashlib.sha256(CONFIG_GT.read_bytes()).hexdigest()
     allowed = {reg['config_sha256'], *[a['config_sha256'] for a in reg.get('amendments', [])]}
     if actual not in allowed:
-        raise RuntimeError('config/wirkungskette_v02.json changed after registration; write an amendment first')
-    return read_json(CONFIG_V02)
+        raise RuntimeError('config/wirkungskette_gebietstest_v01.json changed after registration; write an amendment first')
+    return read_json(CONFIG_GT)
 
 
 # ---------- inventory targets and areas ----------
@@ -75,7 +75,7 @@ def selected_campaigns(t, cfg):
 @lru_cache(maxsize=1)
 def lau_austria():
     """Austrian LAU 2021 municipalities projected to EPSG:31287 (cached GISCO file, SHA recorded on first use)."""
-    path = DATA_V02 / 'cache/gisco/LAU_RG_01M_2021_4326.geojson'
+    path = DATA_GT / 'cache/gisco/LAU_RG_01M_2021_4326.geojson'
     meta = path.with_name(path.name + '.meta.json')
     if not meta.exists():
         headers = path.with_name('LAU_RG_01M_2021_4326.headers.txt').read_text(encoding='latin-1')
@@ -120,7 +120,7 @@ def area_of(campaign_targets, lau, min_points):
 def srtm_tile(lat, lon):
     """SRTMGL1 tile from the ESA STEP mirror (acquisition February 2000), cached with URL/date/SHA manifest."""
     name = f'N{lat:02d}E{lon:03d}'
-    d = guard(DATA_V02 / 'cache/srtm')
+    d = guard(DATA_GT / 'cache/srtm')
     hgt, manifest = d / f'{name}.hgt', d / f'{name}.json'
     if not manifest.exists():
         url = f'https://step.esa.int/auxdata/dem/SRTMGL1/{name}.SRTMGL1.hgt.zip'
@@ -231,7 +231,7 @@ def land_cover_vintage(year):
 
 
 def component_identity(cfg, campaign, index, dem_name):
-    return store.identity({'cfg': hashlib.sha256(CONFIG_V02.read_bytes()).hexdigest(), 'campaign': campaign,
+    return store.identity({'cfg': hashlib.sha256(CONFIG_GT.read_bytes()).hexdigest(), 'campaign': campaign,
                            'component': index, 'dem': dem_name, 'algorithm': 1})
 
 
@@ -239,7 +239,7 @@ def compute_component(cfg, campaign, year, index, polygon, events, dem_name, bun
     """Grid cells (90 m) inside the component plus target events, with static features, slope and model score."""
     t = cfg['terrain']
     res = float(t['resolution_m'])
-    path = guard(DATA_V02 / dem_name) / f'{campaign}_c{index}.parquet'
+    path = guard(DATA_GT / dem_name) / f'{campaign}_c{index}.parquet'
     ident = component_identity(cfg, campaign, index, dem_name)
     if store.exists(path):
         return store.load_parquet(path, ident)
@@ -358,7 +358,7 @@ def area_audit():
                     'components': [{'area_km2': round(c.area / 1e6, 1), 'bbox_km': [round((c.bounds[2] - c.bounds[0]) / 1000, 1),
                                                                               round((c.bounds[3] - c.bounds[1]) / 1000, 1)]}
                                    for c in a['components']]})
-    write_json(guard(REPORT_V02) / 'areas.json', out)
+    write_json(guard(REPORT_GT) / 'areas.json', out)
     return out
 
 
@@ -406,7 +406,7 @@ def run(mode='pilot', dem_name='srtm'):
     if mode == 'pilot':
         camps = camps.sort_values('n').head(1)
     out_name = {'full': 'test_results.json', 'pilot': f'pilot_{dem_name}.json'}[mode] if dem_name == 'srtm' else f'sensitivity_{dem_name}.json'
-    target_path = guard(REPORT_V02) / out_name
+    target_path = guard(REPORT_GT) / out_name
     if mode == 'full' and target_path.exists():
         raise RuntimeError(f'{out_name} exists: the registered test is scored once; it is not rerun')
     bundle = B.model_bundle(B.config())
@@ -418,7 +418,7 @@ def run(mode='pilot', dem_name='srtm'):
         per_area[r.campaign] = ev
     u = cfg['uncertainty']
     result = {'version': cfg['version'], 'mode': mode, 'dem': dem_name, 'computed_at_utc': datetime.now(timezone.utc).isoformat(),
-              'config_sha256': hashlib.sha256(CONFIG_V02.read_bytes()).hexdigest(), 'areas': summaries,
+              'config_sha256': hashlib.sha256(CONFIG_GT.read_bytes()).hexdigest(), 'areas': summaries,
               'area_weighted': {f'capture_{m}_{k}': round(float(np.mean([s[f'capture_{m}_{k}'] for s in summaries])), 4)
                                 for m in ('model', 'slope') for k in ('05', '20')},
               'event_pooled': {f'capture_{m}_{k}': round(float(pd.concat(per_area.values())[f'cap_{m}_{k}'].mean()), 4)
@@ -427,7 +427,7 @@ def run(mode='pilot', dem_name='srtm'):
     if len(per_area) > 1:
         result['bootstrap_95'] = bootstrap(per_area, u['draws'], u['seed'])
     write_json(target_path, result)
-    events_path = guard(DATA_V02 / 'results') / out_name.replace('.json', '_events.parquet')
+    events_path = guard(DATA_GT / 'results') / out_name.replace('.json', '_events.parquet')
     pd.concat([ev.assign(campaign=a) for a, ev in per_area.items()]).to_parquet(events_path, index=False)
     return result
 

@@ -1,0 +1,511 @@
+{
+  "version": "wirkungskette_v02",
+  "mode": "full",
+  "dem": "srtm",
+  "computed_at_utc": "2026-10-18T12:59:56.766666+00:00",
+  "config_sha256": "062f10110260b29b28ee3869e40527fa0c967a85b26abc4702a9d59f2d5c1381",
+  "areas": [
+    {
+      "campaign": "Vorarlberg_Tirol_August_2005",
+      "year": 2005,
+      "targets_total": 1176,
+      "targets_in_area": 1144,
+      "targets_outside_area": 32,
+      "municipalities": [
+        {
+          "lau_id": "80421",
+          "name": "Übersaxen",
+          "n_targets": 8,
+          "area_km2": 5.58
+        },
+        {
+          "lau_id": "80422",
+          "name": "Viktorsberg",
+          "n_targets": 9,
+          "area_km2": 12.81
+        },
+        {
+          "lau_id": "80424",
+          "name": "Zwischenwasser",
+          "n_targets": 14,
+          "area_km2": 22.64
+        },
+        {
+          "lau_id": "70606",
+          "name": "Galtür",
+          "n_targets": 7,
+          "area_km2": 121.77
+        },
+        {
+          "lau_id": "70609",
+          "name": "Kappl",
+          "n_targets": 6,
+          "area_km2": 96.91
+        },
+        {
+          "lau_id": "80113",
+          "name": "Lech",
+          "n_targets": 72,
+          "area_km2": 89.25
+        },
+        {
+          "lau_id": "80116",
+          "name": "Nenzing",
+          "n_targets": 14,
+          "area_km2": 109.08
+        },
+        {
+          "lau_id": "80109",
+          "name": "Fontanella",
+          "n_targets": 21,
+          "area_km2": 30.76
+        },
+        {
+          "lau_id": "80112",
+          "name": "Klösterle",
+          "n_targets": 7,
+          "area_km2": 61.72
+        },
+        {
+          "lau_id": "80102",
+          "name": "Blons",
+          "n_targets": 9,
+          "area_km2": 15.07
+        },
+        {
+          "lau_id": "80120",
+          "name": "St. Gallenkirch",
+          "n_targets": 8,
+          "area_km2": 128.03
+        },
+        {
+          "lau_id": "80121",
+          "name": "St. Gerold",
+          "n_targets": 12,
+          "area_km2": 12.46
+        },
+        {
+          "lau_id": "80124",
+          "name": "Sonntag",
+          "n_targets": 21,
+          "area_km2": 81.7
+        },
+        {
+          "lau_id": "80128",
+          "name": "Tschagguns",
+          "n_targets": 20,
+          "area_km2": 57.17
+        },
+        {
+          "lau_id": "80202",
+          "name": "Andelsbuch",
+          "n_targets": 5,
+          "area_km2": 19.17
+        },
+        {
+          "lau_id": "80203",
+          "name": "Au",
+          "n_targets": 74,
+          "area_km2": 45.6
+        },
+        {
+          "lau_id": "80204",
+          "name": "Bezau",
+          "n_targets": 59,
+          "area_km2": 34.58
+        },
+        {
+          "lau_id": "70801",
+          "name": "Bach",
+          "n_targets": 6,
+          "area_km2": 57.24
+        },
+        {
+          "lau_id": "80206",
+          "name": "Bizau",
+          "n_targets": 65,
+          "area_km2": 20.95
+        },
+        {
+          "lau_id": "80209",
+          "name": "Damüls",
+          "n_targets": 14,
+          "area_km2": 20.92
+        },
+        {
+          "lau_id": "80211",
+          "name": "Egg",
+          "n_targets": 26,
+          "area_km2": 65.05
+        },
+        {
+          "lau_id": "80403",
+          "name": "Dünserberg",
+          "n_targets": 5,
+          "area_km2": 5.61
+        },
+        {
+          "lau_id": "80405",
+          "name": "Frastanz",
+          "n_targets": 16,
+          "area_km2": 32.75
+        },
+        {
+          "lau_id": "80406",
+          "name": "Fraxern",
+          "n_targets": 8,
+          "area_km2": 8.47
+        },
+        {
+          "lau_id": "80216",
+          "name": "Hittisau",
+          "n_targets": 20,
+          "area_km2": 46.55
+        },
+        {
+          "lau_id": "80411",
+          "name": "Laterns",
+          "n_targets": 94,
+          "area_km2": 43.84
+        },
+        {
+          "lau_id": "70817",
+          "name": "Holzgau",
+          "n_targets": 6,
+          "area_km2": 35.96
+        },
+        {
+          "lau_id": "70819",
+          "name": "Kaisers",
+          "n_targets": 7,
+          "area_km2": 75.18
+        },
+        {
+          "lau_id": "80227",
+          "name": "Mellau",
+          "n_targets": 15,
+          "area_km2": 40.93
+        },
+        {
+          "lau_id": "80228",
+          "name": "Mittelberg",
+          "n_targets": 120,
+          "area_km2": 96.15
+        },
+        {
+          "lau_id": "80232",
+          "name": "Schnepfau",
+          "n_targets": 45,
+          "area_km2": 15.98
+        },
+        {
+          "lau_id": "80233",
+          "name": "Schoppernau",
+          "n_targets": 67,
+          "area_km2": 47.36
+        },
+        {
+          "lau_id": "80234",
+          "name": "Schröcken",
+          "n_targets": 33,
+          "area_km2": 23.72
+        },
+        {
+          "lau_id": "70621",
+          "name": "Sankt Anton am Arlberg",
+          "n_targets": 17,
+          "area_km2": 165.99
+        },
+        {
+          "lau_id": "70829",
+          "name": "Schattwald",
+          "n_targets": 8,
+          "area_km2": 16.1
+        },
+        {
+          "lau_id": "70831",
+          "name": "Steeg",
+          "n_targets": 96,
+          "area_km2": 68.14
+        },
+        {
+          "lau_id": "80236",
+          "name": "Schwarzenberg",
+          "n_targets": 5,
+          "area_km2": 26.21
+        },
+        {
+          "lau_id": "80237",
+          "name": "Sibratsgfäll",
+          "n_targets": 12,
+          "area_km2": 29.84
+        },
+        {
+          "lau_id": "80239",
+          "name": "Warth",
+          "n_targets": 44,
+          "area_km2": 19.07
+        },
+        {
+          "lau_id": "80301",
+          "name": "Dornbirn",
+          "n_targets": 49,
+          "area_km2": 120.68
+        }
+      ],
+      "area_km2": 2027.0,
+      "components": 4,
+      "grid_cells": 250277,
+      "grid_assessable": 237513,
+      "grid_not_assessable_by_reason": {
+        "slope_below_minimum": 12285,
+        "no_geology": 467,
+        "catchment_truncated": 12
+      },
+      "targets_not_assessable_by_reason": {},
+      "v04_training_events_inside": 3,
+      "capture_model_05": 0.0385,
+      "cutoff_model_05": 3.5027,
+      "capture_model_20": 0.2885,
+      "cutoff_model_20": 1.5714,
+      "capture_slope_05": 0.0052,
+      "cutoff_slope_05": 45.6142,
+      "capture_slope_20": 0.125,
+      "cutoff_slope_20": 36.0027,
+      "targets_not_assessable_share": 0.0
+    },
+    {
+      "campaign": "Nordhaelfte_Oesterreich_Juni_2013",
+      "year": 2013,
+      "targets_total": 105,
+      "targets_in_area": 84,
+      "targets_outside_area": 21,
+      "municipalities": [
+        {
+          "lau_id": "70530",
+          "name": "Wildschönau",
+          "n_targets": 24,
+          "area_km2": 97.08
+        },
+        {
+          "lau_id": "70501",
+          "name": "Alpbach",
+          "n_targets": 10,
+          "area_km2": 58.18
+        },
+        {
+          "lau_id": "70914",
+          "name": "Hainzenberg",
+          "n_targets": 6,
+          "area_km2": 20.96
+        },
+        {
+          "lau_id": "70934",
+          "name": "Tux",
+          "n_targets": 7,
+          "area_km2": 110.32
+        },
+        {
+          "lau_id": "70908",
+          "name": "Finkenberg",
+          "n_targets": 6,
+          "area_km2": 171.84
+        },
+        {
+          "lau_id": "70912",
+          "name": "Gerlos",
+          "n_targets": 25,
+          "area_km2": 118.16
+        },
+        {
+          "lau_id": "70913",
+          "name": "Gerlosberg",
+          "n_targets": 6,
+          "area_km2": 16.15
+        }
+      ],
+      "area_km2": 592.7,
+      "components": 3,
+      "grid_cells": 73155,
+      "grid_assessable": 71786,
+      "grid_not_assessable_by_reason": {
+        "slope_below_minimum": 1274,
+        "no_geology": 95
+      },
+      "targets_not_assessable_by_reason": {},
+      "v04_training_events_inside": 0,
+      "capture_model_05": 0.0595,
+      "cutoff_model_05": 3.3156,
+      "capture_model_20": 0.3571,
+      "cutoff_model_20": 1.3404,
+      "capture_slope_05": 0.0,
+      "cutoff_slope_05": 44.7644,
+      "capture_slope_20": 0.0714,
+      "cutoff_slope_20": 34.8502,
+      "targets_not_assessable_share": 0.0
+    },
+    {
+      "campaign": "Sellrain_Juni_2015",
+      "year": 2015,
+      "targets_total": 92,
+      "targets_in_area": 86,
+      "targets_outside_area": 6,
+      "municipalities": [
+        {
+          "lau_id": "70352",
+          "name": "Sellrain",
+          "n_targets": 86,
+          "area_km2": 62.17
+        }
+      ],
+      "area_km2": 62.2,
+      "components": 1,
+      "grid_cells": 7675,
+      "grid_assessable": 7600,
+      "grid_not_assessable_by_reason": {
+        "slope_below_minimum": 70,
+        "catchment_truncated": 5
+      },
+      "targets_not_assessable_by_reason": {},
+      "v04_training_events_inside": 0,
+      "capture_model_05": 0.2442,
+      "cutoff_model_05": 2.8194,
+      "capture_model_20": 0.6279,
+      "cutoff_model_20": 1.3409,
+      "capture_slope_05": 0.0233,
+      "cutoff_slope_05": 41.0263,
+      "capture_slope_20": 0.314,
+      "cutoff_slope_20": 33.7186,
+      "targets_not_assessable_share": 0.0
+    },
+    {
+      "campaign": "Gasen_Haslau_August_2005",
+      "year": 2005,
+      "targets_total": 76,
+      "targets_in_area": 74,
+      "targets_outside_area": 2,
+      "municipalities": [
+        {
+          "lau_id": "61757",
+          "name": "Birkfeld",
+          "n_targets": 44,
+          "area_km2": 89.83
+        },
+        {
+          "lau_id": "61711",
+          "name": "Gasen",
+          "n_targets": 30,
+          "area_km2": 34.39
+        }
+      ],
+      "area_km2": 124.2,
+      "components": 1,
+      "grid_cells": 15332,
+      "grid_assessable": 14515,
+      "grid_not_assessable_by_reason": {
+        "slope_below_minimum": 794,
+        "catchment_truncated": 23
+      },
+      "targets_not_assessable_by_reason": {},
+      "v04_training_events_inside": 4,
+      "capture_model_05": 0.2703,
+      "cutoff_model_05": 2.2958,
+      "capture_model_20": 0.7568,
+      "cutoff_model_20": 0.9961,
+      "capture_slope_05": 0.2162,
+      "cutoff_slope_05": 32.1198,
+      "capture_slope_20": 0.527,
+      "cutoff_slope_20": 26.0458,
+      "targets_not_assessable_share": 0.0
+    },
+    {
+      "campaign": "Klingfurth_Juni_2009",
+      "year": 2009,
+      "targets_total": 73,
+      "targets_in_area": 73,
+      "targets_outside_area": 0,
+      "municipalities": [
+        {
+          "lau_id": "32310",
+          "name": "Hochwolkersdorf",
+          "n_targets": 8,
+          "area_km2": 23.52
+        },
+        {
+          "lau_id": "32333",
+          "name": "Walpersbach",
+          "n_targets": 20,
+          "area_km2": 16.34
+        },
+        {
+          "lau_id": "32325",
+          "name": "Bromberg",
+          "n_targets": 45,
+          "area_km2": 31.4
+        }
+      ],
+      "area_km2": 71.3,
+      "components": 1,
+      "grid_cells": 8805,
+      "grid_assessable": 7362,
+      "grid_not_assessable_by_reason": {
+        "slope_below_minimum": 1443
+      },
+      "targets_not_assessable_by_reason": {
+        "slope_below_minimum": 9
+      },
+      "v04_training_events_inside": 0,
+      "capture_model_05": 0.1096,
+      "cutoff_model_05": 1.4058,
+      "capture_model_20": 0.2603,
+      "cutoff_model_20": 0.2199,
+      "capture_slope_05": 0.0137,
+      "cutoff_slope_05": 22.4271,
+      "capture_slope_20": 0.1096,
+      "cutoff_slope_20": 17.2933,
+      "targets_not_assessable_share": 0.1233
+    }
+  ],
+  "area_weighted": {
+    "capture_model_05": 0.1444,
+    "capture_model_20": 0.4581,
+    "capture_slope_05": 0.0517,
+    "capture_slope_20": 0.2294
+  },
+  "event_pooled": {
+    "capture_model_05": 0.0671,
+    "capture_model_20": 0.3347,
+    "capture_slope_05": 0.0171,
+    "capture_slope_20": 0.1526
+  },
+  "chance": {
+    "05": 0.05,
+    "20": 0.2
+  },
+  "bootstrap_95": {
+    "cap_model_05": [
+      0.0554222777269808,
+      0.22664972027604785
+    ],
+    "cap_model_20": [
+      0.2747313195083451,
+      0.6407477206880553
+    ],
+    "cap_slope_05": [
+      0.002240344830123836,
+      0.13841314657047157
+    ],
+    "cap_slope_20": [
+      0.09319367096259863,
+      0.40844438806761535
+    ],
+    "diff_05": [
+      0.028031597881570385,
+      0.15784156518764406
+    ],
+    "diff_20": [
+      0.12748669884952973,
+      0.3051359844603468
+    ]
+  }
+}

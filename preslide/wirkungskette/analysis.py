@@ -24,10 +24,10 @@ NOTICE = ('Prüfstufen sind eine relative Rangfolge der Hangzellen innerhalb des
           'räumliche Überlagerung, keine Schadensaussage.')
 
 
-@lru_cache(maxsize=2)
-def _window(radius_max_m):
-    cfg = config()
-    p = B.paths(radius_max_m)
+@lru_cache(maxsize=4)
+def _window(radius_max_m, gebiet):
+    cfg = config(gebiet)
+    p = B.paths(radius_max_m, cfg)
     for key in ('terrain', 'cells', 'osm', 'relief_meta'):
         if not store.exists(p[key]):
             raise FileNotFoundError('Demogebiet nicht vorbereitet: python -m preslide.wirkungskette build')
@@ -40,8 +40,8 @@ def _window(radius_max_m):
             'relief': store.load_json(p['relief_meta'], B.terrain_identity(cfg, radius_max_m))}
 
 
-def window(radius_max_m=None):
-    return _window(float(radius_max_m or config()['radius_m']['max']))
+def window(radius_max_m=None, gebiet='stanz'):
+    return _window(float(radius_max_m or config(gebiet)['radius_m']['max']), gebiet)
 
 
 def classes_in_radius(w, radius_m):
@@ -187,8 +187,8 @@ def exploratory_events(w, ok, radius_m):
 
 
 @lru_cache(maxsize=32)
-def _analyse(radius_m, mode):
-    w = window()
+def _analyse(radius_m, mode, gebiet):
+    w = window(gebiet=gebiet)
     cfg = w['cfg']
     radius_m = core.validate_radius(radius_m, cfg)
     grid, ok = classes_in_radius(w, radius_m)
@@ -200,7 +200,8 @@ def _analyse(radius_m, mode):
         'version': cfg['version'], 'hinweis': NOTICE, 'ebenen': LAYER_TAGS,
         'demo': {'name': cfg['demo']['name'], 'stichtag': cfg['demo']['reference_day'],
                  'zentrum': [cfg['demo']['centre_longitude'], cfg['demo']['centre_latitude']],
-                 'kennzeichnung': 'Versiegeltes, bereits einmal ausgewertetes V0.4-Testereignis (25.07.2016); hier nur Demonstration, nichts wurde daran angepasst.'},
+                 'kennzeichnung': cfg['demo'].get('kennzeichnung_de', 'Versiegeltes, bereits einmal ausgewertetes V0.4-Testereignis (25.07.2016); hier nur Demonstration, nichts wurde daran angepasst.'),
+                 'gebiet': gebiet, 'gelaende': cfg['terrain'].get('dem_note', 'Skadi 1″ (über Österreich praktisch SRTM, Februar 2000)')},
         'umkreis_m': radius_m, 'umkreis_grenzen_m': [cfg['radius_m']['min'], cfg['radius_m']['max']],
         'umkreis_begruendung': 'Die Kontrollhänge im V0.4-Design lagen 750 m bis 10 km vom Ereignis entfernt; darüber hinaus hat das Modell nie Hänge verglichen.',
         'modus': mode,
@@ -210,16 +211,15 @@ def _analyse(radius_m, mode):
                         'nicht_bewertbar_nach_grund': grid.reason[grid.reason != ''].value_counts().to_dict(),
                         'zellgroesse_m': rp['cell_m'], 'modell': 'V0.4 Gelände (bedingte logistische Regression, nur Entwicklungsdaten)',
                         'bezug': 'relativ innerhalb dieses Umkreises; dieselbe Farbe bedeutet bei anderem Umkreis etwas anderes',
-                        'schwaechen': ['V0.4-Test, Gelände allein: lokale AUC 0,702 (11 unabhängige Testeinheiten).',
-                                       'Stanz-Sturm allein, pro Ereignis: Gelände 0,455 gegen gematchte Kontrollen, also keine Trennung.',
-                                       'Pilot mudslide_cascade_v01: Für reine Hangmuren trennt eine Geländevorauswahl kaum (lokale AUC 0,539 [0,406; 0,669]).']},
+                        'schwaechen': weaknesses(gebiet)},
         'anrisspunkte': chains,
         'korridor': cfg['runout']['corridor']['label'] + ' – ' + 'benannte Darstellungsannahme, nicht kalibriert',
         'fehlende_groessen': ['Ausgangsvolumen', 'Material und Korngröße', 'Wassergehalt', 'Materialaufnahme unterwegs',
                               'Schutzbauten und Hindernisse', 'Fließtiefe und Druck'],
-        'auslaufpruefung': 'Keine unabhängigen Auslauf- oder Ablagerungsgeometrien im Inventar; für die Stanz-Ereignisse sind alle Schadensfelder leer. Das Auslaufszenario ist eine unvalidierte Illustration.',
+        'auslaufpruefung': ('Keine unabhängigen Auslauf- oder Ablagerungsgeometrien im Inventar; für die Stanz-Ereignisse sind alle Schadensfelder leer. Das Auslaufszenario ist eine unvalidierte Illustration.'
+                            if gebiet == 'stanz' else 'Keine unabhängigen Auslauf- oder Ablagerungsgeometrien im Inventar. Das Auslaufszenario ist eine unvalidierte Illustration.'),
         'explorativ_dokumentierte_ereignisse': exploratory_events(w, ok, radius_m),
-        'quellen': {'gelaende': 'Mapzen/AWS Skadi 1″ (u. a. österreichisches DGM, EU-DEM), 30 m in EPSG:31287, Objektstand vor dem Stichtag',
+        'quellen': {'gelaende': ('Mapzen/AWS Skadi 1″ (über Österreich praktisch SRTMGL1, Aufnahme Februar 2000), 30 m in EPSG:31287' if gebiet == 'stanz' else 'SRTMGL1 1″ (Aufnahme Februar 2000, ESA-Spiegel), 30 m in EPSG:31287'),
                     'landbedeckung': 'Copernicus CORINE Land Cover 2012', 'geologie': 'GeoSphere Austria 1:500 000 (CC BY 4.0)',
                     'infrastruktur': '© OpenStreetMap-Mitwirkende (ODbL), heutiger Stand über Overpass API'},
         'identitaet': {'konfiguration_sha256': config_sha(), 'modell_sha256': rp['model_sha256']},
@@ -227,9 +227,29 @@ def _analyse(radius_m, mode):
     return result
 
 
-def analyse(radius_m, mode='pruefpunkte', anriss=None):
+def weaknesses(gebiet):
+    common = ['Pilot mudslide_cascade_v01: Für reine Hangmuren trennt eine Geländevorauswahl kaum (lokale AUC 0,539 [0,406; 0,669]).']
+    if gebiet == 'stanz':
+        return ['V0.4-Test, Gelände allein: lokale AUC 0,702 (11 unabhängige Testeinheiten).',
+                'Stanz-Sturm allein, pro Ereignis: Gelände 0,455 gegen gematchte Kontrollen, also keine Trennung.'] + common
+    from .paths import REPORT_GT
+    from ..common import read_json
+    path = REPORT_GT / 'test_results.json'
+    if not path.exists():
+        return ['Das Ergebnis des vorab registrierten Gebietstests liegt noch nicht vor.'] + common
+    r = read_json(path)
+    aw, b = r['area_weighted'], r.get('bootstrap_95', {})
+    pct = lambda v: f'{v * 100:.1f}'.replace('.', ',') + ' %'
+    iv = lambda k: f" [{pct(b[k][0])}; {pct(b[k][1])}]" if k in b else ''
+    return [f"Vorab registrierter Test an {len(r['areas'])} ungesehenen Gebieten (SRTM 2000): In den obersten 20 % der Fläche lagen "
+            f"im Mittel {pct(aw['capture_model_20'])}{iv('cap_model_20')} der dokumentierten Hangmuren, mit Neigung allein "
+            f"{pct(aw['capture_slope_20'])}{iv('cap_slope_20')}; zufällig wären es 20 %.",
+            'Gelände ist SRTM (Radar-Oberflächenmodell 2000, inklusive Wald und Gebäuden); dieselbe Höhenquelle wie im V0.4-Training.'] + common
+
+
+def analyse(radius_m, mode='pruefpunkte', anriss=None, gebiet='stanz'):
     """API view: all release points as a short list, full chain (route, profile, corridors, hits) for one."""
-    full = _analyse(core.validate_radius(radius_m, config()), mode)
+    full = _analyse(core.validate_radius(radius_m, config(gebiet)), mode, gebiet)
     chains = full['anrisspunkte']
     if not chains:
         raise ValueError('Keine Anrisspunkte in diesem Umkreis')
@@ -252,9 +272,9 @@ NOT_ASSESSABLE_RGBA = (120, 130, 140, 90)
 
 
 @lru_cache(maxsize=16)
-def class_image(radius_m):
+def class_image(radius_m, gebiet='stanz'):
     """PNG of the review classes on the 90 m grid inside the radius, plus its four lon/lat corners."""
-    w = window()
+    w = window(gebiet=gebiet)
     cfg = w['cfg']
     radius_m = core.validate_radius(radius_m, cfg)
     grid, ok = classes_in_radius(w, radius_m)
@@ -279,9 +299,9 @@ def class_image(radius_m):
 
 
 @lru_cache(maxsize=16)
-def context_layer(radius_m):
+def context_layer(radius_m, gebiet='stanz'):
     """Roads, tracks, rail and building points inside the radius as GeoJSON (context, not an analysis result)."""
-    w = window()
+    w = window(gebiet=gebiet)
     cfg = w['cfg']
     radius_m = core.validate_radius(radius_m, cfg)
     cx, cy = PROJECT.transform(cfg['demo']['centre_longitude'], cfg['demo']['centre_latitude'])

@@ -12,6 +12,8 @@ const API = '/api/wirkungskette'
 const radiusInput = ref(RADIUS.initial)          // slider position (live label)
 const radius = ref(RADIUS.initial)               // committed radius (request)
 const mode = ref('pruefpunkte')
+const gebiet = ref('stanz')
+const gebiete = ref([])
 const anriss = ref(null)
 const scenario = ref('reach_467m')
 const data = shallowRef(null), error = ref(''), loading = ref(true)
@@ -37,7 +39,7 @@ async function load() {
   controller?.abort()
   controller = new AbortController()
   loading.value = true; error.value = ''
-  const q = new URLSearchParams({radius_m: radius.value, modus: mode.value})
+  const q = new URLSearchParams({radius_m: radius.value, modus: mode.value, gebiet: gebiet.value})
   if (anriss.value) q.set('anriss', anriss.value)
   try {
     const r = await fetch(`${API}?${q}`, {signal: controller.signal})
@@ -57,6 +59,12 @@ async function load() {
 function commitRadius() { radius.value = clampRadius(radiusInput.value); radiusInput.value = radius.value }
 watch(radius, () => { anriss.value = null; fitNext = 'radius'; load(); refreshRaster(); refreshContext() })
 watch(mode, () => { anriss.value = null; fitNext = 'radius'; load() })
+watch(gebiet, async () => {
+  anriss.value = null; fitNext = 'radius'; contoursLoaded = false
+  setData('hoehenlinien', empty)
+  await loadRelief()
+  load(); refreshRaster(); refreshContext(); applyVisibility()
+})
 function chooseRelease(id) { if (id !== anriss.value) { anriss.value = id; load() } }
 
 // ---------- map ----------
@@ -96,10 +104,10 @@ function pt(c, props = {}) { return {type: 'Feature', properties: props, geometr
 async function refreshRaster() {
   if (!ready) return
   try {
-    const r = await fetch(`${API}/pruefstufen?radius_m=${radius.value}`)
+    const r = await fetch(`${API}/pruefstufen?radius_m=${radius.value}&gebiet=${gebiet.value}`)
     if (!r.ok) return
     const {ecken} = await r.json()
-    const url = `${API}/pruefstufen.png?radius_m=${radius.value}`
+    const url = `${API}/pruefstufen.png?radius_m=${radius.value}&gebiet=${gebiet.value}`
     const src = map.getSource('pruefstufen')
     if (src) src.updateImage({url, coordinates: ecken})
     else map.addSource('pruefstufen', {type: 'image', url, coordinates: ecken})
@@ -110,7 +118,7 @@ async function refreshRaster() {
 async function refreshContext() {
   if (!ready) return
   try {
-    const r = await fetch(`${API}/kontext?radius_m=${radius.value}`)
+    const r = await fetch(`${API}/kontext?radius_m=${radius.value}&gebiet=${gebiet.value}`)
     if (r.ok) setData('kontext', await r.json())
   } catch { mapNote.value = 'Die Infrastruktur-Grundlage konnte nicht geladen werden.' }
 }
@@ -118,7 +126,7 @@ async function loadContours() {
   if (contoursLoaded || !ready) return
   contoursLoaded = true
   try {
-    const r = await fetch(`${API}/hoehenlinien`)
+    const r = await fetch(`${API}/hoehenlinien?gebiet=${gebiet.value}`)
     if (r.ok) setData('hoehenlinien', await r.json())
     else contoursLoaded = false
   } catch { contoursLoaded = false }
@@ -151,9 +159,23 @@ function applyVisibility() {
 }
 watch(show, applyVisibility, {deep: true})
 
+async function fetchRelief() {
+  const r = await fetch(`${API}/relief?gebiet=${gebiet.value}`).catch(() => null)
+  return r && r.ok ? await r.json() : null
+}
+async function loadRelief() {
+  reliefMeta = await fetchRelief()
+  if (!ready) return
+  const src = map.getSource('relief')
+  if (reliefMeta && src) src.updateImage({url: `${API}/relief.png?gebiet=${gebiet.value}`, coordinates: reliefMeta.corners})
+  else if (reliefMeta) {
+    map.addSource('relief', {type: 'image', url: `${API}/relief.png?gebiet=${gebiet.value}`, coordinates: reliefMeta.corners})
+    map.addLayer({id: 'relief', type: 'raster', source: 'relief', paint: {'raster-opacity': .55, 'raster-contrast': .15, 'raster-fade-duration': 0}}, 'hoehenlinien')
+  }
+  mapNote.value = reliefMeta ? '' : 'Das Geländerelief ist nicht verfügbar.'
+}
 async function initMap() {
-  const r = await fetch(`${API}/relief`).catch(() => null)
-  reliefMeta = r && r.ok ? await r.json() : null
+  reliefMeta = await fetchRelief()
   if (disposed) return
   map = new maplibregl.Map({
     container: mapBox.value, center: centre(), zoom: 12, minZoom: 10, maxZoom: 17, attributionControl: false,
@@ -163,11 +185,11 @@ async function initMap() {
   })
   map.addControl(new maplibregl.NavigationControl({showCompass: false}), 'top-right')
   map.addControl(new maplibregl.ScaleControl({unit: 'metric'}), 'bottom-left')
-  map.addControl(new maplibregl.AttributionControl({compact: true, customAttribution: 'Gelände: Mapzen/AWS Skadi (u. a. österr. DGM, EU-DEM) · Infrastruktur © OpenStreetMap-Mitwirkende (ODbL)'}), 'bottom-right')
+  map.addControl(new maplibregl.AttributionControl({compact: true, customAttribution: 'Gelände: NASA/USGS SRTM 1″ (über Mapzen/AWS Skadi bzw. ESA) · Landbedeckung: Copernicus CORINE · Infrastruktur © OpenStreetMap-Mitwirkende (ODbL)'}), 'bottom-right')
   map.on('error', e => { if (!mapNote.value) mapNote.value = 'Eine Kartenebene konnte nicht geladen werden; die Tabellen bleiben gültig.'; console.warn(e?.error) })
   map.on('load', () => {
     if (reliefMeta) {
-      map.addSource('relief', {type: 'image', url: `${API}/relief.png`, coordinates: reliefMeta.corners})
+      map.addSource('relief', {type: 'image', url: `${API}/relief.png?gebiet=${gebiet.value}`, coordinates: reliefMeta.corners})
       map.addLayer({id: 'relief', type: 'raster', source: 'relief', paint: {'raster-opacity': .55, 'raster-contrast': .15, 'raster-fade-duration': 0}})
     } else mapNote.value = 'Das Geländerelief ist nicht verfügbar.'
     for (const id of ['hoehenlinien', 'kontext', 'radius', 'korridore', 'route', 'stopps', 'treffer', 'ereignisse', 'anrisse']) map.addSource(id, {type: 'geojson', data: empty})
@@ -192,7 +214,10 @@ async function initMap() {
     refreshRaster(); refreshContext(); draw(); fitRadius(); applyVisibility()
   })
 }
-onMounted(() => { load(); initMap() })
+onMounted(() => {
+  fetch(`${API}/gebiete`).then(r => (r.ok ? r.json() : [])).then(v => { gebiete.value = v }).catch(() => {})
+  load(); initMap()
+})
 onBeforeUnmount(() => { disposed = true; controller?.abort(); map?.remove() })
 
 const releaseOptions = computed(() => data.value?.anrisspunkte || [])
@@ -202,10 +227,10 @@ function statusClass(s) { return s === 'gestoppt' ? 'ok' : 'open' }
 <template>
   <section class="wk" aria-labelledby="wk-title">
     <header class="wk-head">
-      <p class="wk-kicker">Demogebiet · {{ data?.demo.name || 'Stanz im Mürztal' }} · Stichtag 25.07.2016</p>
+      <p class="wk-kicker">Demogebiet · {{ data?.demo.name || 'Stanz im Mürztal' }} · Stichtag {{ data ? new Date(data.demo.stichtag + 'T12:00:00').toLocaleDateString('de-AT', {month: 'long', year: 'numeric'}) : 'Juli 2016' }}</p>
       <h2 id="wk-title">Wirkungskette: Prüfpunkt, Auslauf, Infrastruktur</h2>
       <p class="wk-lead">Wo lohnt ein genauer Blick auf den Hang, wohin könnte Material von dort abfließen, und welche Gebäude, Straßen und Bahnstrecken liegen auf diesem Weg? Jede Ebene sagt, welche Art von Aussage sie macht.</p>
-      <p class="wk-seal">{{ data?.demo.kennzeichnung || 'Versiegeltes, bereits einmal ausgewertetes V0.4-Testereignis; hier nur Demonstration.' }}</p>
+      <p class="wk-seal">{{ data?.demo.kennzeichnung || 'Versiegeltes, bereits einmal ausgewertetes V0.4-Testereignis; hier nur Demonstration.' }}<template v-if="data?.demo.gelaende"> Gelände: {{ data.demo.gelaende }}.</template></p>
     </header>
 
     <!-- Signature: the chain itself, filled with the live numbers of the current selection -->
@@ -231,6 +256,12 @@ function statusClass(s) { return s === 'gestoppt' ? 'ok' : 'open' }
     </ol>
 
     <div class="wk-controls">
+      <div v-if="gebiete.length > 1" class="wk-control wk-area">
+        <label for="wk-gebiet">Demogebiet</label>
+        <select id="wk-gebiet" v-model="gebiet">
+          <option v-for="g in gebiete" :key="g.id" :value="g.id" :disabled="!g.bereit">{{ g.name }} ({{ g.stichtag.slice(0, 4) }}){{ g.bereit ? '' : ' – nicht vorbereitet' }}</option>
+        </select>
+      </div>
       <div class="wk-control wk-radius">
         <label for="wk-radius">Umkreis <output for="wk-radius">{{ meters(radiusInput) }}</output></label>
         <input id="wk-radius" type="range" :min="RADIUS.min" :max="RADIUS.max" :step="RADIUS.step" v-model.number="radiusInput"
@@ -335,7 +366,7 @@ function statusClass(s) { return s === 'gestoppt' ? 'ok' : 'open' }
       <section class="wk-expl" aria-labelledby="wk-expl-h">
         <span class="wk-tag" data-kind="Befund">Befund · explorativ</span>
         <h3 id="wk-expl-h">Wo liegen die dokumentierten Ereignisse in den Prüfstufen?</h3>
-        <p class="wk-note">{{ count(expl.bewertbar) }} von {{ count(expl.gesamt) }} Ereignissen des 25.07.2016 sind bewertbar. Wären die Stufen hilfreich, lägen die Ereignisse häufiger in Stufe 1 als die Fläche. Gesehene Daten, nur beschreibend, keine Trefferquote.</p>
+        <p class="wk-note">{{ count(expl.bewertbar) }} von {{ count(expl.gesamt) }} dokumentierten Ereignissen im Umkreis sind bewertbar. Wären die Stufen hilfreich, lägen die Ereignisse häufiger in Stufe 1 als die Fläche. Gesehene Daten, nur beschreibend, keine Trefferquote.</p>
         <table class="wk-share">
           <thead><tr><th scope="col">Stufe</th><th scope="col">Fläche</th><th scope="col">alle Ereignisse</th><th scope="col">Hangmuren</th></tr></thead>
           <tbody>
@@ -347,7 +378,7 @@ function statusClass(s) { return s === 'gestoppt' ? 'ok' : 'open' }
             </tr>
           </tbody>
         </table>
-        <p class="wk-finding">Im Demogebiet konzentriert die Stufe 1 die dokumentierten Ereignisse nicht: {{ percent(expl.gruppen.alle.anteil_je_stufe[1]) }} der Ereignisse und {{ percent(expl.gruppen.hangmuren.anteil_je_stufe[1]) }} der Hangmuren liegen dort, bei {{ percent(expl.flaechenanteil_je_stufe[1]) }} der Fläche.</p>
+        <p class="wk-finding">In Stufe 1 liegen {{ percent(expl.gruppen.alle.anteil_je_stufe[1]) }} der Ereignisse und {{ percent(expl.gruppen.hangmuren.anteil_je_stufe[1]) }} der Hangmuren, bei {{ percent(expl.flaechenanteil_je_stufe[1]) }} der Fläche. Nur ein deutlich höherer Ereignisanteil als Flächenanteil hieße, dass die Stufe die Ereignisse bündelt; der geprüfte Vergleich steht im Gebietstest.</p>
       </section>
 
       <section class="wk-limits" aria-labelledby="wk-lim-h">
@@ -385,7 +416,7 @@ function statusClass(s) { return s === 'gestoppt' ? 'ok' : 'open' }
 .wk-chain h3{font-size:12px;font-weight:600;margin:8px 0 6px;letter-spacing:0;text-transform:none;color:var(--muted)}
 .wk-chain-main{font-size:21px;letter-spacing:-.5px;line-height:1.25;margin:0 0 6px;font-variant-numeric:tabular-nums}
 .wk-chain-sub{font-size:12px;color:var(--muted);margin:0;line-height:1.5}
-.wk-controls{display:grid;grid-template-columns:minmax(0,1.3fr) auto minmax(0,1fr);gap:18px 28px;align-items:end;margin-bottom:14px}
+.wk-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px 28px;align-items:end;margin-bottom:14px}
 .wk-control{border:0;padding:0;margin:0;min-width:0}
 .wk-control>label,.wk-control legend{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;padding:0}
 .wk-radius output{color:var(--ink);font-weight:600;margin-left:6px}
@@ -397,6 +428,7 @@ function statusClass(s) { return s === 'gestoppt' ? 'ok' : 'open' }
 .wk-seg label.on{background:var(--blue);color:#fff}
 .wk-seg input{position:absolute;opacity:0;width:1px;height:1px}
 .wk-seg label:focus-within{outline:3px solid var(--blue);outline-offset:2px}
+.wk-area select{font-weight:600}
 .wk-control select{width:100%;min-height:44px;border:1px solid #bcbcc4;background:#fff;padding:0 10px;font-size:13px}
 .wk-stage{display:grid;grid-template-columns:minmax(0,1fr) 330px;border:1px solid var(--line);margin-bottom:18px}
 .wk-mapcol{min-width:0;border-right:1px solid var(--line)}

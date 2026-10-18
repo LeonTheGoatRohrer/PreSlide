@@ -19,7 +19,7 @@ from ..v04 import terrain as T4
 from ..v04.models import STATIC, add_one_hot
 from ..common import read_json
 from . import core, sources, store
-from .paths import DATA, config, guard, sha
+from .paths import DATA, DATA_GT, config, guard, sha
 
 REASONS = ['outside_austria', 'terrain_not_computable', 'elevation_out_of_range', 'slope_below_minimum',
            'catchment_truncated', 'no_land_cover', 'no_geology']
@@ -45,8 +45,10 @@ def window_radius_m(cfg, radius_max_m):
     return radius_max_m + t['window_extra_m'] + t['catchment_margin_m']
 
 
-def paths(radius_max_m):
-    d = DATA / f'demo_r{int(float(radius_max_m))}'
+def paths(radius_max_m, cfg=None):
+    demo = (cfg or {}).get('demo', {}).get('id', 'stanz_muerztal_2016')
+    r = int(float(radius_max_m))
+    d = DATA / f'demo_r{r}' if demo == 'stanz_muerztal_2016' else DATA_GT / f'demo_{demo}_r{r}'
     return {'dir': d, 'terrain': d / 'terrain.npz', 'cells': d / 'cells.parquet', 'relief': d / 'relief.png',
             'relief_meta': d / 'relief.json', 'contours': d / 'contours.json', 'osm': d / 'infrastructure.parquet'}
 
@@ -54,12 +56,21 @@ def paths(radius_max_m):
 # ---------- terrain ----------
 
 def build_terrain(cfg, radius_max_m):
-    p, ident = paths(radius_max_m), terrain_identity(cfg, radius_max_m)
+    p, ident = paths(radius_max_m, cfg), terrain_identity(cfg, radius_max_m)
     if store.exists(p['terrain']):
         return store.load_npz(p['terrain'], ident)
     d, t = cfg['demo'], cfg['terrain']
-    dem, left, top, srcs = T4.dem_window(d['centre_longitude'], d['centre_latitude'], window_radius_m(cfg, radius_max_m),
-                                         t['resolution_m'], t['crs'], d['reference_day'])
+    if t.get('dem', 'skadi') == 'srtm':
+        from . import gebiete as G
+        px, py = PROJECT.transform(d['centre_longitude'], d['centre_latitude'])
+        radius = window_radius_m(cfg, radius_max_m)
+        n = math.ceil(2 * radius / t['resolution_m'])
+        left, top = px - radius, py + radius
+        dem = G.dem_rect(G.srtm_tile, left, top, n, n, float(t['resolution_m']), t['crs'])
+        srcs = [{'dem': 'SRTMGL1 v3 (February 2000), ESA STEP mirror'}]
+    else:
+        dem, left, top, srcs = T4.dem_window(d['centre_longitude'], d['centre_latitude'], window_radius_m(cfg, radius_max_m),
+                                             t['resolution_m'], t['crs'], d['reference_day'])
     filled, outlet, iterations = T4.fill_depressions(dem.astype(float))
     _, edge = T4.flow_accumulation(filled, outlet, t['resolution_m'])
     guard(p['dir'])
@@ -84,7 +95,16 @@ def model_bundle(cfg):
 
 
 def demo_events(cfg, radius_max_m):
-    """Documented V0.4 positives of the reference day inside the window (frozen V0.4 dataset, read only)."""
+    """Documented events inside the window: V0.4 positives of the reference day, or the registered campaign's
+    precisely located pure Hangmuren (inventory, read only)."""
+    if cfg['demo'].get('events_source') == 'inventory_campaign':
+        from . import gebiete as G
+        t = G.targets(G.config())
+        t = t[t.campaign == cfg['demo']['campaign']]
+        cx, cy = PROJECT.transform(cfg['demo']['centre_longitude'], cfg['demo']['centre_latitude'])
+        t = t[core.distance_m(t.x, t.y, cx, cy) <= radius_max_m]
+        return pd.DataFrame({'event_group_id': t.event_id, 'process_type': 'Hangmure', 'x': t.x, 'y': t.y,
+                             'longitude': t.lon, 'latitude': t.lat}).reset_index(drop=True)
     data = pd.read_parquet(ROOT / 'data/v04/run_c6d67a854ba7/dataset.parquet')
     pos = data[(data.label == 1) & (data.event_day == cfg['demo']['reference_day'])].copy()
     cx, cy = PROJECT.transform(cfg['demo']['centre_longitude'], cfg['demo']['centre_latitude'])
@@ -108,7 +128,7 @@ def eligibility(frame, cfg):
 
 
 def build_cells(cfg, radius_max_m, terrain):
-    p, ident = paths(radius_max_m), cells_identity(cfg, radius_max_m)
+    p, ident = paths(radius_max_m, cfg), cells_identity(cfg, radius_max_m)
     if store.exists(p['cells']):
         return store.load_parquet(p['cells'], ident)
     d, t, rp = cfg['demo'], cfg['terrain'], cfg['review_points']
@@ -130,17 +150,23 @@ def build_cells(cfg, radius_max_m, terrain):
     frame['slope'] = slope[frame.row, frame.col].astype(float)
     frame['aspect'] = aspect[frame.row, frame.col].astype(float)
     frame['aspect_sin'], frame['aspect_cos'] = np.sin(np.deg2rad(frame.aspect)), np.cos(np.deg2rad(frame.aspect))
-    tcfg = {'terrain_resolution_m': res, 'terrain_crs': t['crs'], 'control_max_distance_m': radius_max_m}
-    feats, meta = T4.static_features({'longitude': d['centre_longitude'], 'latitude': d['centre_latitude'], 'event_day': d['reference_day']},
-                                     frame[['sample_id', 'x', 'y']], tcfg, margin_m=t['catchment_margin_m'])
-    if not np.allclose(feats.static_dem_elevation_check.to_numpy(), frame.elevation.to_numpy(), equal_nan=True):
-        raise RuntimeError('DEM window of the V0.4 feature code differs from the demo window')
-    frame = frame.merge(feats.drop(columns='static_dem_elevation_check'), on='sample_id')
+    if t.get('dem', 'skadi') == 'srtm':
+        from . import gebiete as G      # same formulas as V0.4 static_features (tested for identity) on the SRTM window
+        feats, meta = G.static_features_from_dem(dem, left, top, res, frame.x, frame.y)
+        frame = pd.concat([frame, feats.set_index(frame.index)], axis=1)
+    else:
+        tcfg = {'terrain_resolution_m': res, 'terrain_crs': t['crs'], 'control_max_distance_m': radius_max_m}
+        feats, meta = T4.static_features({'longitude': d['centre_longitude'], 'latitude': d['centre_latitude'], 'event_day': d['reference_day']},
+                                         frame[['sample_id', 'x', 'y']], tcfg, margin_m=t['catchment_margin_m'])
+        if not np.allclose(feats.static_dem_elevation_check.to_numpy(), frame.elevation.to_numpy(), equal_nan=True):
+            raise RuntimeError('DEM window of the V0.4 feature code differs from the demo window')
+        frame = frame.merge(feats.drop(columns='static_dem_elevation_check'), on='sample_id')
     frame['inside_austria'] = core_inside_austria(frame.longitude.to_numpy(), frame.latitude.to_numpy())
     v4 = read_json(ROOT / 'config/v04.json')['features']
     pad = 0.003
     bounds = (frame.longitude.min() - pad, frame.latitude.min() - pad, frame.longitude.max() + pad, frame.latitude.max() + pad)
-    geoms, codes = sources.land_cover_polygons(bounds, rp['land_cover_vintage'], tiles=max(1, math.ceil(radius_max_m / 2500)))
+    service = tuple(rp['land_cover_service']) if rp.get('land_cover_service') else None
+    geoms, codes = sources.land_cover_polygons(bounds, rp['land_cover_vintage'], tiles=max(1, math.ceil(radius_max_m / 2500)), service=service)
     lc = sources.land_cover_at(frame.longitude, frame.latitude, geoms, codes, v4['land_cover']['classes'])
     geo = sources.geology_at(frame.longitude, frame.latitude, v4['geology']['classes'])
     frame = add_one_hot(pd.concat([frame, lc, geo], axis=1))
@@ -177,7 +203,7 @@ def corners_lonlat(left, top, res, shape_rc):
 
 
 def build_relief(cfg, radius_max_m, terrain):
-    p, ident = paths(radius_max_m), terrain_identity(cfg, radius_max_m)
+    p, ident = paths(radius_max_m, cfg), terrain_identity(cfg, radius_max_m)
     if store.exists(p['relief']) and store.exists(p['relief_meta']) and store.exists(p['contours']):
         return store.load_json(p['relief_meta'], ident)
     dem, res = terrain['dem'], float(terrain['resolution'])
@@ -270,7 +296,7 @@ def parse_osm(elements):
 
 
 def build_osm(cfg, radius_max_m):
-    p, ident = paths(radius_max_m), osm_identity(cfg, radius_max_m)
+    p, ident = paths(radius_max_m, cfg), osm_identity(cfg, radius_max_m)
     if store.exists(p['osm']):
         return store.load_parquet(p['osm'], ident)
     inf = cfg['infrastructure']
@@ -289,8 +315,8 @@ def osm_features(frame):
             for g, t, n, k, o in zip(frame.geometry_wkb, frame.typ, frame.name, frame.klasse, frame.osm_id)]
 
 
-def build(radius_max_m=None):
-    cfg = config()
+def build(radius_max_m=None, gebiet='stanz'):
+    cfg = config(gebiet)
     radius_max_m = float(radius_max_m or cfg['radius_m']['max'])
     terrain = build_terrain(cfg, radius_max_m)
     cells = build_cells(cfg, radius_max_m, terrain)
