@@ -1,0 +1,239 @@
+{
+  "version": "susceptibility_v02",
+  "checked_at_utc": "2026-10-18T06:29:28.678829+00:00",
+  "scope": "Layer-level and metadata check of the GSI D1-No.991 archive: files, geometry types, counts, fields, CRS; extent closure and area; counts of polygons inside the extent. No terrain value, no sample, no per-landslide statistic beyond counts, no model.",
+  "archive": {
+    "url": "https://www.gsi.go.jp/common/000204728.zip",
+    "page": "https://www.gsi.go.jp/BOUSAI/H30-hokkaidoiburi-east-earthquake-index.html",
+    "sha256": "5353f2247a07f59a48d4ad3ec23853355ad5f3373998b32a5acf0bdf6319451e",
+    "size_bytes": 1179719,
+    "last_modified": "Mon, 01 Dec 2025 14:42:22 GMT",
+    "verified_at_utc": "2026-10-18T06:26:35.398156+00:00"
+  },
+  "layers": {
+    "国土地理院技術資料 D1-No_991 平成30年北海道胆振東部地震に伴う斜面崩壊・堆積分布図（北海道厚真町周辺）GeoJSON/国土地理院技術資料 D1-No_991 平成30年北海道胆振東部地震に伴う斜面崩壊・堆積分布図（北海道厚真町周辺）_免責事項.txt": {
+      "bytes": 629,
+      "sha256": "718e773616732f82b2d0cd590ca3a9db5466b44903926ae2d72ed348e1c4f39a",
+      "role": "disclaimer",
+      "name_mentions_extent_words": [],
+      "format": "text (cp932)",
+      "mentions_extent_words": [
+        "判読",
+        "範囲"
+      ],
+      "text": "免責事項\r\n\r\n1.この情報は、国土地理院が9月6日から11日にかけて撮影した空中写真から、平成30年北海道胆振東部地震によって生じたと考えられる斜面崩壊・堆積範囲を判読したものです。現地踏査は実施していないことから、実際に斜面崩壊等のあった箇所でもプロットできていない場合や、平成30年北海道胆振東部地震による斜面崩壊等以外の箇所をプロットしている場合があり得ます。\r\n\r\n2.斜面崩壊・堆積範囲は、斜面崩壊等で土砂が移動、堆積し裸地化した範囲を一括りでプロットしています。\r\n\r\n3.斜面崩壊・堆積した範囲を把握するための資料で、人家等に被害の無い範囲もプロットしています。\r\n\r\n4.道路、河川上の土砂は撤去されている可能性があります。\r\n\r\n(c)国土地理院\r\n"
+    },
+    "国土地理院技術資料 D1-No_991 平成30年北海道胆振東部地震に伴う斜面崩壊・堆積分布図（北海道厚真町周辺）GeoJSON/国土地理院技術資料 D1-No_991 平成30年北海道胆振東部地震に伴う斜面崩壊・堆積分布図（北海道厚真町周辺）_判読範囲.geojson": {
+      "bytes": 127857,
+      "sha256": "801750af8c1744b6226d293b8593f165769331e602a3ff97b5b2a9ccfd520e66",
+      "role": "extent",
+      "name_mentions_extent_words": [
+        "判読",
+        "判読範囲",
+        "範囲"
+      ],
+      "format": "GeoJSON",
+      "top_level_keys": [
+        "features",
+        "type"
+      ],
+      "name": null,
+      "crs_member": null,
+      "n_features": 1,
+      "geometry_types": {
+        "LineString": 1
+      },
+      "fields": {
+        "_color": {
+          "distinct": 1,
+          "values": {
+            "\"#000000\"": 1
+          }
+        },
+        "_opacity": {
+          "distinct": 1,
+          "values": {
+            "1": 1
+          }
+        },
+        "_weight": {
+          "distinct": 1,
+          "values": {
+            "1": 1
+          }
+        }
+      },
+      "bbox": [
+        141.683089,
+        42.542315,
+        142.124956,
+        42.953179
+      ]
+    },
+    "国土地理院技術資料 D1-No_991 平成30年北海道胆振東部地震に伴う斜面崩壊・堆積分布図（北海道厚真町周辺）GeoJSON/国土地理院技術資料 D1-No_991 平成30年北海道胆振東部地震に伴う斜面崩壊・堆積分布図（北海道厚真町周辺）_斜面崩壊・堆積範囲.geojson": {
+      "bytes": 6030114,
+      "sha256": "9128c332fdfb07a4fba29d4229378cfd1bdd71d22f2d4f6b1c372af6fcac0ff3",
+      "role": "landslides",
+      "name_mentions_extent_words": [
+        "範囲"
+      ],
+      "format": "GeoJSON",
+      "top_level_keys": [
+        "crs",
+        "features",
+        "type"
+      ],
+      "name": null,
+      "crs_member": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "n_features": 3307,
+      "geometry_types": {
+        "Polygon": 3307
+      },
+      "fields": {
+        "_color": {
+          "distinct": 2,
+          "values": {
+            "\"#FF0000\"": 3306,
+            "\"#000000\"": 1
+          }
+        },
+        "_opacity": {
+          "distinct": 2,
+          "values": {
+            "1": 3306,
+            "0": 1
+          }
+        },
+        "_weight": {
+          "distinct": 2,
+          "values": {
+            "1": 3306,
+            "3": 1
+          }
+        },
+        "_fillColor": {
+          "distinct": 2,
+          "values": {
+            "\"#FF0000\"": 3306,
+            "\"#ff0000\"": 1
+          }
+        },
+        "_fillOpacity": {
+          "distinct": 1,
+          "values": {
+            "0.5": 3307
+          }
+        }
+      },
+      "bbox": [
+        141.779423,
+        42.557316,
+        142.1236950000001,
+        42.941896
+      ]
+    },
+    "国土地理院技術資料 D1-No_991 平成30年北海道胆振東部地震に伴う斜面崩壊・堆積分布図（北海道厚真町周辺）GeoJSON/国土地理院技術資料 D1-No_991 平成30年北海道胆振東部地震に伴う斜面崩壊・堆積分布図（北海道厚真町周辺）_雲による未判読範囲.geojson": {
+      "bytes": 44133,
+      "sha256": "e29a05ff75555ed4f138cf4b373644adcb2c35573e28b09514dd1089210806f3",
+      "role": "obscured",
+      "name_mentions_extent_words": [
+        "判読",
+        "判読範囲",
+        "範囲"
+      ],
+      "format": "GeoJSON",
+      "top_level_keys": [
+        "features",
+        "type"
+      ],
+      "name": null,
+      "crs_member": null,
+      "n_features": 10,
+      "geometry_types": {
+        "Polygon": 10
+      },
+      "fields": {
+        "_color": {
+          "distinct": 1,
+          "values": {
+            "\"#000000\"": 10
+          }
+        },
+        "_opacity": {
+          "distinct": 1,
+          "values": {
+            "1": 10
+          }
+        },
+        "_weight": {
+          "distinct": 1,
+          "values": {
+            "1": 10
+          }
+        },
+        "_fillColor": {
+          "distinct": 1,
+          "values": {
+            "\"#0000FF\"": 10
+          }
+        },
+        "_fillOpacity": {
+          "distinct": 1,
+          "values": {
+            "0.298": 10
+          }
+        }
+      },
+      "bbox": [
+        142.052751,
+        42.793795,
+        142.094625,
+        42.84479
+      ]
+    }
+  },
+  "contains_interpretation_extent_as_data": true,
+  "extent_check": {
+    "working_crs": "EPSG:32654",
+    "extent": {
+      "vertices": 1802,
+      "closed": true,
+      "simple_ring": true,
+      "polygon_valid": true,
+      "area_km2": 1357.5633191956356
+    },
+    "obscured_by_cloud": {
+      "polygons": 10,
+      "area_km2": 1.6541454814550678,
+      "inside_extent": 10
+    },
+    "slope_failure_deposit_polygons": {
+      "n_total": 3307,
+      "style_groups": {
+        "{\"_color\": \"#FF0000\", \"_fillColor\": \"#FF0000\", \"_fillOpacity\": 0.5, \"_opacity\": 1, \"_weight\": 1}": 3306,
+        "{\"_color\": \"#000000\", \"_fillColor\": \"#ff0000\", \"_fillOpacity\": 0.5, \"_opacity\": 0, \"_weight\": 3}": 1
+      },
+      "n_main_style": 3306,
+      "main_style_inside_extent": 3306,
+      "main_style_invalid_geometry": 1,
+      "deviating_style_features": [
+        {
+          "properties": {
+            "_color": "#000000",
+            "_opacity": 0,
+            "_weight": 3,
+            "_fillColor": "#ff0000",
+            "_fillOpacity": 0.5
+          },
+          "area_m2": 829.9011184315914,
+          "inside_extent": true
+        }
+      ]
+    }
+  }
+}

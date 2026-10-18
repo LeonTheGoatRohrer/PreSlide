@@ -1,0 +1,418 @@
+{
+  "design": "leave-one-inventory-out over the development inventories (train on one, test on the other); both directions reported",
+  "statistic": "unweighted mean over held-out inventories of the per-inventory ROC AUC; paired differences use the same resamples",
+  "primary_model": "hist_gradient_boosting",
+  "per_held_out_inventory": {
+    "far_western_nepal": {
+      "trained_on": [
+        "gorkha_2015"
+      ],
+      "n_positives": 1557,
+      "n_background": 1557,
+      "independent_units_5km_blocks": 303,
+      "largest_block_positive_share": 0.025048169556840076,
+      "metrics": {
+        "slope_only": {
+          "roc_auc": 0.6568916806813161,
+          "average_precision_at_1_to_1": 0.6251259462478587,
+          "boyce": 0.9900260633848431,
+          "threshold": 0.5936255546390279,
+          "recall_top_area": 0.34617854849068724,
+          "precision": 0.6333725029377203,
+          "f1": 0.4476744186046512,
+          "balanced_accuracy": 0.5728965960179833,
+          "confusion_matrix_tn_fp_fn_tp": [
+            1245,
+            312,
+            1018,
+            539
+          ]
+        },
+        "elevation_only": {
+          "roc_auc": 0.4711704532001457,
+          "average_precision_at_1_to_1": 0.47806404896485843,
+          "boyce": -0.07236466596755961,
+          "threshold": 0.5065852787093478,
+          "recall_top_area": 0.1689145793192036,
+          "precision": 0.4573913043478261,
+          "f1": 0.24671669793621015,
+          "balanced_accuracy": 0.4842646114322415,
+          "confusion_matrix_tn_fp_fn_tp": [
+            1245,
+            312,
+            1294,
+            263
+          ]
+        },
+        "simple_logistic": {
+          "roc_auc": 0.6544835122134731,
+          "average_precision_at_1_to_1": 0.627912692138876,
+          "boyce": 0.9937536218843005,
+          "threshold": 0.6190266069142215,
+          "recall_top_area": 0.37508028259473347,
+          "precision": 0.6517857142857143,
+          "f1": 0.4761516510395434,
+          "balanced_accuracy": 0.5873474630700064,
+          "confusion_matrix_tn_fp_fn_tp": [
+            1245,
+            312,
+            973,
+            584
+          ]
+        },
+        "hist_gradient_boosting": {
+          "roc_auc": 0.679730918729883,
+          "average_precision_at_1_to_1": 0.6510405053291719,
+          "boyce": 0.9906173012241466,
+          "threshold": 0.7126546841217448,
+          "recall_top_area": 0.4007707129094412,
+          "precision": 0.6666666666666666,
+          "f1": 0.5006016847172081,
+          "balanced_accuracy": 0.6001926782273603,
+          "confusion_matrix_tn_fp_fn_tp": [
+            1245,
+            312,
+            933,
+            624
+          ]
+        },
+        "random_forest": {
+          "roc_auc": 0.6766351146272516,
+          "average_precision_at_1_to_1": 0.6480548133979452,
+          "boyce": 0.9941962556718207,
+          "threshold": 0.6704293715543715,
+          "recall_top_area": 0.4020552344251766,
+          "precision": 0.6673773987206824,
+          "f1": 0.5018036072144288,
+          "balanced_accuracy": 0.600834938985228,
+          "confusion_matrix_tn_fp_fn_tp": [
+            1245,
+            312,
+            931,
+            626
+          ]
+        },
+        "logistic_regression": {
+          "roc_auc": 0.672226326586089,
+          "average_precision_at_1_to_1": 0.6476835151704274,
+          "boyce": 0.9936458570107779,
+          "threshold": 0.5995220142594402,
+          "recall_top_area": 0.4059087989723828,
+          "precision": 0.6694915254237288,
+          "f1": 0.5053978408636546,
+          "balanced_accuracy": 0.6027617212588311,
+          "confusion_matrix_tn_fp_fn_tp": [
+            1245,
+            312,
+            925,
+            632
+          ]
+        },
+        "small_mlp": {
+          "roc_auc": 0.6736399602516078,
+          "average_precision_at_1_to_1": 0.6393162100673784,
+          "boyce": 0.977172327238643,
+          "threshold": 0.6965836430555316,
+          "recall_top_area": 0.3988439306358382,
+          "precision": 0.6655948553054662,
+          "f1": 0.49879518072289153,
+          "balanced_accuracy": 0.5992292870905588,
+          "confusion_matrix_tn_fp_fn_tp": [
+            1245,
+            312,
+            936,
+            621
+          ]
+        }
+      },
+      "auc_interval_95": {
+        "slope_only": [
+          0.6336504813876764,
+          0.6795950443478923
+        ],
+        "elevation_only": [
+          0.4397874349300191,
+          0.5031946751177057
+        ],
+        "simple_logistic": [
+          0.6318069694383713,
+          0.6770626913126818
+        ],
+        "hist_gradient_boosting": [
+          0.6544371769590381,
+          0.7036463738912441
+        ],
+        "random_forest": [
+          0.6515374200488208,
+          0.7003013779041589
+        ],
+        "logistic_regression": [
+          0.6461411638827635,
+          0.6963753239794384
+        ],
+        "small_mlp": [
+          0.6486659164547934,
+          0.6968926578391194
+        ]
+      },
+      "primary_null_auc_95": 0.5933568292696005,
+      "primary_null_p": 0.001996007984031936
+    },
+    "gorkha_2015": {
+      "trained_on": [
+        "far_western_nepal"
+      ],
+      "n_positives": 24037,
+      "n_background": 24037,
+      "independent_units_5km_blocks": 1260,
+      "largest_block_positive_share": 0.025169530307442692,
+      "metrics": {
+        "slope_only": {
+          "roc_auc": 0.7611428520662602,
+          "average_precision_at_1_to_1": 0.7144352366139506,
+          "boyce": 0.9385206755969714,
+          "threshold": 0.5847527169061932,
+          "recall_top_area": 0.5622581852976661,
+          "precision": 0.7375975549855373,
+          "f1": 0.6381019830028328,
+          "balanced_accuracy": 0.6811166118900029,
+          "confusion_matrix_tn_fp_fn_tp": [
+            19229,
+            4808,
+            10522,
+            13515
+          ]
+        },
+        "elevation_only": {
+          "roc_auc": 0.5644367363582218,
+          "average_precision_at_1_to_1": 0.48560608487960605,
+          "boyce": -0.7662341862648228,
+          "threshold": 0.5639208198314178,
+          "recall_top_area": 0.03914798019719599,
+          "precision": 0.16368064011132372,
+          "f1": 0.06318404619619956,
+          "balanced_accuracy": 0.4195615093397679,
+          "confusion_matrix_tn_fp_fn_tp": [
+            19229,
+            4808,
+            23096,
+            941
+          ]
+        },
+        "simple_logistic": {
+          "roc_auc": 0.7606788454879755,
+          "average_precision_at_1_to_1": 0.71224071152536,
+          "boyce": 0.920768782760629,
+          "threshold": 0.5912710431274234,
+          "recall_top_area": 0.5580979323542872,
+          "precision": 0.736157603029139,
+          "f1": 0.6348793185044961,
+          "balanced_accuracy": 0.6790364854183135,
+          "confusion_matrix_tn_fp_fn_tp": [
+            19229,
+            4808,
+            10622,
+            13415
+          ]
+        },
+        "hist_gradient_boosting": {
+          "roc_auc": 0.7511528908637473,
+          "average_precision_at_1_to_1": 0.7280380641872152,
+          "boyce": 0.9999184624344787,
+          "threshold": 0.6253364104532652,
+          "recall_top_area": 0.5154553396846528,
+          "precision": 0.7204326084428422,
+          "f1": 0.6009457984721717,
+          "balanced_accuracy": 0.6577151890834962,
+          "confusion_matrix_tn_fp_fn_tp": [
+            19229,
+            4808,
+            11647,
+            12390
+          ]
+        },
+        "random_forest": {
+          "roc_auc": 0.7785447079357655,
+          "average_precision_at_1_to_1": 0.7537890905555568,
+          "boyce": 0.9999534071054165,
+          "threshold": 0.5750325773756114,
+          "recall_top_area": 0.5627158131214378,
+          "precision": 0.7377549907276099,
+          "f1": 0.6384555474263058,
+          "balanced_accuracy": 0.6813454258018887,
+          "confusion_matrix_tn_fp_fn_tp": [
+            19229,
+            4808,
+            10511,
+            13526
+          ]
+        },
+        "logistic_regression": {
+          "roc_auc": 0.7654536690584708,
+          "average_precision_at_1_to_1": 0.7126914675280265,
+          "boyce": 0.9765870704717529,
+          "threshold": 0.6399474590715268,
+          "recall_top_area": 0.5573490868244789,
+          "precision": 0.7358967316671244,
+          "f1": 0.6342976184839734,
+          "balanced_accuracy": 0.6786620626534093,
+          "confusion_matrix_tn_fp_fn_tp": [
+            19229,
+            4808,
+            10640,
+            13397
+          ]
+        },
+        "small_mlp": {
+          "roc_auc": 0.7363073301682054,
+          "average_precision_at_1_to_1": 0.7175702774091273,
+          "boyce": 0.9998136284216655,
+          "threshold": 0.5998687023397621,
+          "recall_top_area": 0.5099222032699589,
+          "precision": 0.7182537357163785,
+          "f1": 0.5964186657583572,
+          "balanced_accuracy": 0.6549486208761492,
+          "confusion_matrix_tn_fp_fn_tp": [
+            19229,
+            4808,
+            11780,
+            12257
+          ]
+        }
+      },
+      "auc_interval_95": {
+        "slope_only": [
+          0.7496227434226408,
+          0.7729673018136196
+        ],
+        "elevation_only": [
+          0.5399968379843031,
+          0.5895042032115906
+        ],
+        "simple_logistic": [
+          0.748695511256355,
+          0.772916521112127
+        ],
+        "hist_gradient_boosting": [
+          0.739172725541507,
+          0.7630622860958193
+        ],
+        "random_forest": [
+          0.7666945668973193,
+          0.7904508427857668
+        ],
+        "logistic_regression": [
+          0.7521564400586248,
+          0.7794726947794145
+        ],
+        "small_mlp": [
+          0.7220639713380144,
+          0.7495014644588529
+        ]
+      },
+      "primary_null_auc_95": 0.7032514731465711,
+      "primary_null_p": 0.001996007984031936
+    }
+  },
+  "mean_auc": {
+    "slope_only": {
+      "point": 0.7090172663737881,
+      "interval_95": [
+        0.6958083455304137,
+        0.7219501365567667
+      ]
+    },
+    "elevation_only": {
+      "point": 0.5178035947791837,
+      "interval_95": [
+        0.49798232324387465,
+        0.5387258195919604
+      ]
+    },
+    "simple_logistic": {
+      "point": 0.7075811788507242,
+      "interval_95": [
+        0.6946030528035243,
+        0.7213066106549878
+      ]
+    },
+    "hist_gradient_boosting": {
+      "point": 0.7154419047968151,
+      "interval_95": [
+        0.7017032211024066,
+        0.7294644631432846
+      ]
+    },
+    "random_forest": {
+      "point": 0.7275899112815085,
+      "interval_95": [
+        0.7138689647423091,
+        0.7416825659356625
+      ]
+    },
+    "logistic_regression": {
+      "point": 0.7188399978222799,
+      "interval_95": [
+        0.7046182952749607,
+        0.7331554380056229
+      ]
+    },
+    "small_mlp": {
+      "point": 0.7049736452099066,
+      "interval_95": [
+        0.6912043412770327,
+        0.7188163710620474
+      ]
+    }
+  },
+  "primary_minus_other_mean_auc": {
+    "slope_only": {
+      "point": 0.006424638423026985,
+      "interval_95": [
+        -0.005455915777461837,
+        0.017328011355010085
+      ]
+    },
+    "elevation_only": {
+      "point": 0.19763831001763144,
+      "interval_95": [
+        0.1728134762934863,
+        0.2216422659279615
+      ]
+    },
+    "simple_logistic": {
+      "point": 0.007860725946090885,
+      "interval_95": [
+        -0.004584424726994688,
+        0.01973464459825242
+      ]
+    },
+    "random_forest": {
+      "point": -0.012148006484693386,
+      "interval_95": [
+        -0.015487090517278677,
+        -0.008942715022214739
+      ]
+    },
+    "logistic_regression": {
+      "point": -0.003398093025464788,
+      "interval_95": [
+        -0.014306976588454576,
+        0.00698169427919463
+      ]
+    },
+    "small_mlp": {
+      "point": 0.010468259586908557,
+      "interval_95": [
+        0.0046099052345101536,
+        0.016757768520745144
+      ]
+    }
+  },
+  "comparisons_counted": 14,
+  "phase4_gate": {
+    "rule": "lower bound of the 95 % interval of [mean AUC(primary model) - mean AUC(slope_only)] > 0",
+    "lower_bound": -0.005455915777461837,
+    "passed": false
+  }
+}

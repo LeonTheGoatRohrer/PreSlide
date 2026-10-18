@@ -1,0 +1,297 @@
+{
+  "version": "susceptibility_v02",
+  "analysis": "sensitivity_gorkha_20km",
+  "status": "EXPLORATORY (Gorkha is seen data in susceptibility_v01); pre-registered, not a gate, not confirmatory",
+  "pilot": false,
+  "computed_at_utc": "2026-10-18T06:53:24.976990+00:00",
+  "registered_design": {
+    "type": "pre-registered sensitivity, exploratory (Gorkha is seen data)",
+    "question": "How much of the v01 within-Gorkha advantage (5 km block CV, +0.122 over slope) is spatial proximity to the strong-shaking zone?",
+    "design": "spatial block CV inside gorkha_2015 with 20 km blocks, 5 folds (seed seeds.folds), training samples closer than 1000 m to any test sample removed; the same CV with 5 km blocks is rerun in v02 with the same code and samples for a paired comparison",
+    "models": [
+      "EQ_TERRAIN vs slope_only",
+      "EQ_TERRAIN_PGA vs slope_pga_logistic"
+    ],
+    "bootstrap": "20 km blocks, 2000 resamples (seed seeds.bootstrap)",
+    "min_blocks": "at least 25 20 km blocks with positives, otherwise the interval is reported as unstable",
+    "interpretation_fixed_in_advance": "If the 20 km EQ_TERRAIN minus slope difference is below half of the v02 5 km difference, or its 95 percent interval includes 0, the report states that a large share of the within-Gorkha advantage reflects spatial proximity (shaking proxy). If PGA removes most of the 5 km advantage (EQ_TERRAIN_PGA vs slope_pga_logistic less than half of EQ_TERRAIN vs slope_only), the report states that the advantage is largely explained by modelled shaking.",
+    "not_a_gate": true
+  },
+  "inputs": {
+    "samples": "data/susceptibility_v01/samples/gorkha_2015.parquet",
+    "samples_sha256": "b14548972daad65db576a2cc661d51d71d91bcbdca9ae3c4784d37926c6a58eb",
+    "n_samples": 48074,
+    "n_positives": 24037,
+    "n_background": 24037,
+    "pga_feature": "data/susceptibility_v02/features/gorkha_2015_pga.parquet",
+    "pga_nan": 0,
+    "shakemap": "3ffbe2492aed02029ddd3a08c8a0aa4f3206085acdd46c07423bb261cd43291c"
+  },
+  "models": {
+    "EQ_TERRAIN": {
+      "family": "hist_gradient_boosting",
+      "features": [
+        "elevation_m",
+        "slope_deg",
+        "aspect_sin",
+        "aspect_cos",
+        "profile_curvature",
+        "plan_curvature",
+        "tri_m",
+        "tpi_m",
+        "relief_1km_m",
+        "log10_catchment_m2",
+        "twi",
+        "drainage_distance_m"
+      ]
+    },
+    "EQ_TERRAIN_PGA": {
+      "family": "hist_gradient_boosting",
+      "features": [
+        "elevation_m",
+        "slope_deg",
+        "aspect_sin",
+        "aspect_cos",
+        "profile_curvature",
+        "plan_curvature",
+        "tri_m",
+        "tpi_m",
+        "relief_1km_m",
+        "log10_catchment_m2",
+        "twi",
+        "drainage_distance_m",
+        "log10_pga_pctg"
+      ]
+    },
+    "slope_only": {
+      "family": "logistic_regression",
+      "features": [
+        "slope_deg"
+      ]
+    },
+    "slope_pga_logistic": {
+      "family": "logistic_regression",
+      "features": [
+        "slope_deg",
+        "log10_pga_pctg"
+      ]
+    }
+  },
+  "hyperparameters": {
+    "hist_gradient_boosting": {
+      "max_iter": 300,
+      "learning_rate": 0.05,
+      "max_leaf_nodes": 31,
+      "min_samples_leaf": 40,
+      "l2_regularization": 1.0,
+      "early_stopping": false,
+      "random_state": "seeds.folds"
+    },
+    "logistic_regression": {
+      "C": 1.0,
+      "max_iter": 2000
+    }
+  },
+  "seeds": {
+    "folds": 302,
+    "bootstrap": 303
+  },
+  "n_resamples": 2000,
+  "per_block_size": {
+    "5km": {
+      "block_size_m": 5000,
+      "folds": 5,
+      "purge_m": 1000,
+      "blocks_with_samples": 1260,
+      "blocks_with_positives": 575,
+      "interval_stable": true,
+      "samples_per_fold": [
+        9389,
+        9328,
+        8572,
+        11284,
+        9501
+      ],
+      "positives_per_fold": [
+        4576,
+        4691,
+        3692,
+        6526,
+        4552
+      ],
+      "purged_training_samples_per_fold": [
+        3742,
+        3868,
+        3322,
+        4305,
+        3925
+      ],
+      "auc": {
+        "EQ_TERRAIN": {
+          "point": 0.8810687806638547,
+          "interval_95": [
+            0.8685409184656596,
+            0.8919231728973126
+          ]
+        },
+        "EQ_TERRAIN_PGA": {
+          "point": 0.9277404961840934,
+          "interval_95": [
+            0.9203543538618862,
+            0.9346785042516248
+          ]
+        },
+        "slope_only": {
+          "point": 0.7567696719530045,
+          "interval_95": [
+            0.7442759492222848,
+            0.7683877968085986
+          ]
+        },
+        "slope_pga_logistic": {
+          "point": 0.865442201146511,
+          "interval_95": [
+            0.855721210753945,
+            0.875133320565244
+          ]
+        }
+      },
+      "differences": {
+        "EQ_TERRAIN - slope_only": {
+          "point": 0.12429910871085026,
+          "interval_95": [
+            0.11294707295973248,
+            0.13561502668586603
+          ]
+        },
+        "EQ_TERRAIN_PGA - slope_pga_logistic": {
+          "point": 0.06229829503758233,
+          "interval_95": [
+            0.0548057037591071,
+            0.06931770217455602
+          ]
+        }
+      },
+      "largest_block_positive_share": 0.025169530307442692
+    },
+    "20km": {
+      "block_size_m": 20000,
+      "folds": 5,
+      "purge_m": 1000,
+      "blocks_with_samples": 100,
+      "blocks_with_positives": 76,
+      "interval_stable": true,
+      "samples_per_fold": [
+        7144,
+        11834,
+        9620,
+        11014,
+        8462
+      ],
+      "positives_per_fold": [
+        2977,
+        6804,
+        4572,
+        6225,
+        3459
+      ],
+      "purged_training_samples_per_fold": [
+        710,
+        1027,
+        802,
+        1319,
+        823
+      ],
+      "auc": {
+        "EQ_TERRAIN": {
+          "point": 0.8762968094030695,
+          "interval_95": [
+            0.8503091642773287,
+            0.8967579421726446
+          ]
+        },
+        "EQ_TERRAIN_PGA": {
+          "point": 0.9223005963738259,
+          "interval_95": [
+            0.9048512981522205,
+            0.937091063768815
+          ]
+        },
+        "slope_only": {
+          "point": 0.7559736594667487,
+          "interval_95": [
+            0.7295216528864491,
+            0.7818871207930738
+          ]
+        },
+        "slope_pga_logistic": {
+          "point": 0.8669222193090086,
+          "interval_95": [
+            0.841311293561174,
+            0.8891565155053602
+          ]
+        }
+      },
+      "differences": {
+        "EQ_TERRAIN - slope_only": {
+          "point": 0.12032314993632087,
+          "interval_95": [
+            0.09567095305671007,
+            0.1421290711185115
+          ]
+        },
+        "EQ_TERRAIN_PGA - slope_pga_logistic": {
+          "point": 0.0553783770648173,
+          "interval_95": [
+            0.04090336129882892,
+            0.0713126702363062
+          ]
+        }
+      },
+      "largest_block_positive_share": 0.14664891625410825
+    }
+  },
+  "interpretation_rule": "If the 20 km EQ_TERRAIN minus slope difference is below half of the v02 5 km difference, or its 95 percent interval includes 0, the report states that a large share of the within-Gorkha advantage reflects spatial proximity (shaking proxy). If PGA removes most of the 5 km advantage (EQ_TERRAIN_PGA vs slope_pga_logistic less than half of EQ_TERRAIN vs slope_only), the report states that the advantage is largely explained by modelled shaking.",
+  "interpretation_inputs": {
+    "d5_EQ_TERRAIN_minus_slope": 0.12429910871085026,
+    "d20_EQ_TERRAIN_minus_slope": 0.12032314993632087,
+    "d20_interval_95": [
+      0.09567095305671007,
+      0.1421290711185115
+    ],
+    "d5_EQ_TERRAIN_PGA_minus_slope_pga": 0.06229829503758233,
+    "ratio_d20_to_d5": 0.9680129743827977,
+    "ratio_pga_to_terrain_5km": 0.5011966351464612
+  },
+  "interpretation": {
+    "spatial_proximity_share_large": false,
+    "largely_explained_by_modelled_shaking": false,
+    "conditions": {
+      "d20_below_half_d5": false,
+      "d20_interval_includes_0": false,
+      "pga_difference_5km_below_half_terrain_difference_5km": false
+    }
+  },
+  "additional_descriptive": {
+    "quantity": "d20 - 0.5 * d5 (EQ_TERRAIN - slope_only), 20 km blocks resampled jointly for both CVs; not part of the registered rule",
+    "point": 0.05817359558089574,
+    "interval_95": [
+      0.04534825082130484,
+      0.07032927615413792
+    ]
+  },
+  "independent_units": {
+    "5km_blocks_with_samples": 1260,
+    "20km_blocks_with_samples": 100,
+    "events": 1,
+    "note": "one earthquake; blocks are spatial resampling units, not independent events"
+  },
+  "counted_comparisons": [
+    "AUC of 4 models x 2 block sizes",
+    "EQ_TERRAIN - slope_only at 5 km and 20 km",
+    "EQ_TERRAIN_PGA - slope_pga_logistic at 5 km and 20 km",
+    "rule: d20 vs d5/2 and d20 interval vs 0",
+    "rule: PGA difference vs terrain difference at 5 km",
+    "additional descriptive d20 - d5/2"
+  ]
+}

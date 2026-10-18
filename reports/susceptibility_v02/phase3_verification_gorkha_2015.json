@@ -1,0 +1,14 @@
+{
+  "ratio_1_to_1": true,
+  "background_min_distance_to_known_m": 100.14418244858044,
+  "background_buffer_respected": true,
+  "background_pairs_closer_than_min_separation": 0,
+  "background_elevation_le_0": 0,
+  "all_samples_in_mapping_extent": true,
+  "unique_cells": true,
+  "cell_centres_on_grid": true,
+  "background_in_obscured": 0,
+  "pga_nan": 0,
+  "rerun_identical": true,
+  "status": "PASS"
+}

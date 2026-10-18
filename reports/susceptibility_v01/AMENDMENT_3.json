@@ -1,0 +1,67 @@
+{
+ "id": 3,
+ "before": "models",
+ "title": "Phase 4-5 evaluation and model details (fixed before any model sees the samples)",
+ "basis": "Design choices only. Samples exist (Phase 3); no model, score or metric has been computed on them.",
+ "add": {
+  "evaluation": {
+   "value": {
+    "primary_design": "leave-one-inventory-out over the development inventories (train on one, test on the other); both directions reported",
+    "primary_statistic": "unweighted mean over held-out inventories of the per-inventory ROC AUC; paired differences use the same resamples",
+    "bootstrap": "resample 5 km blocks with replacement independently within each held-out inventory, 2000 resamples, seed seeds.bootstrap; percentile 95 % interval",
+    "null": "500 permutations of labels within 5 km blocks of the held-out inventory (seed seeds.permutation); one-sided p = (1 + #null >= observed) / (1 + n)",
+    "phase4_gate": "lower bound of the 95 % interval of [mean AUC(primary model) - mean AUC(slope_only)] > 0",
+    "secondary_design": "spatial block CV inside each inventory: 5 folds of 5 km blocks (seed seeds.folds); training samples closer than 1000 m to any test sample removed",
+    "threshold_metrics": "threshold = 80th percentile of held-out background scores; recall in the top 20 % area, precision, F1, balanced accuracy and confusion matrix at that threshold",
+    "boyce": "continuous Boyce index (Hirzel et al. 2006): 101 moving windows of width 0.1 on min-max scaled held-out scores, Spearman correlation of predicted-to-expected ratio",
+    "dominance": "report without the largest block if it holds more than 20 percent of held-out positives",
+    "counted_comparisons": "every model and baseline evaluated is listed in the report; none is dropped"
+   },
+   "reason": "The registration fixed metrics and the gate in words; the exact statistic, resampling and thresholds are fixed here before any model output exists."
+  },
+  "model_spec": {
+   "value": {
+    "primary_model": "hist_gradient_boosting",
+    "features": "all features_terrain",
+    "hist_gradient_boosting": {
+     "max_iter": 300,
+     "learning_rate": 0.05,
+     "max_leaf_nodes": 31,
+     "min_samples_leaf": 40,
+     "l2_regularization": 1.0,
+     "early_stopping": false,
+     "random_state": "seeds.folds"
+    },
+    "random_forest": {
+     "n_estimators": 300,
+     "min_samples_leaf": 5,
+     "max_features": "sqrt",
+     "n_jobs": -1,
+     "random_state": "seeds.folds"
+    },
+    "logistic_regression": {
+     "C": 1.0,
+     "max_iter": 2000
+    },
+    "small_mlp": {
+     "hidden_layer_sizes": [
+      32,
+      16
+     ],
+     "alpha": 0.001,
+     "max_iter": 500,
+     "early_stopping": false,
+     "random_state": "seeds.folds"
+    },
+    "preprocessing": "logistic regression and MLP: median imputation plus standard scaling fitted on the training fold only; tree models take NaN natively",
+    "baselines": "slope_only, elevation_only: logistic regression on the single feature fitted on the training fold (orientation learned from training data); simple_logistic: slope, elevation, profile and plan curvature; random: 0.5 and the permutation null",
+    "tuning": "none; the parameters above are fixed (no grid search, so no selection on any held-out data)",
+    "lightgbm_xgboost": "not added; scikit-learn HistGradientBoosting is the gradient-boosting benchmark (no new dependency)"
+   },
+   "reason": "Fixed hyperparameters remove any possibility of selecting on held-out inventories."
+  }
+ },
+ "written_at_utc": "2026-10-17T22:07:03.972342+00:00",
+ "config_sha256": "c76289a73f86f8870e76bb20641da2ca4c1c54db6938d7b32e9d709eb5d64569",
+ "preconditions": "registration present; nothing from stage 'models' on existed"
+}

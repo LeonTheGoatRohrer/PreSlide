@@ -1,0 +1,262 @@
+{
+  "version": "susceptibility_v02",
+  "status": "REGISTERED_PHASE0",
+  "parent_version": "susceptibility_v01 (stopped at the Phase 4 gate; all v01 results are seen)",
+  "decisions": "reports/susceptibility_v02/DECISIONS.md",
+  "nature": "Trigger-specific presence-background susceptibility ranking (relative index, not a probability). Not a warning system, not a map product.",
+  "namespace": {
+    "data": "data/susceptibility_v02",
+    "models": "models/susceptibility_v02",
+    "reports": "reports/susceptibility_v02",
+    "package": "preslide/susceptibility (v01 code reused read-only; v02 rules in preslide/susceptibility/v02.py)"
+  },
+  "seeds": {"sampling": 301, "folds": 302, "bootstrap": 303, "permutation": 304},
+
+  "hypothesis": {
+    "source": "susceptibility_v01 Phase 4 cause analysis (exploratory, seen data): TPI median +7.3 m / univariate AUC 0.568 in Gorkha (earthquake) versus -4.6 m / 0.461 in Far-Western Nepal (monsoon); TWI AUC 0.347 versus 0.455.",
+    "statement": "Terrain susceptibility differs between earthquake- and rain-triggered landslides. A terrain model transfers to a new inventory of the same trigger better than slope alone, and better than a terrain model trained on the other trigger.",
+    "seen_data_rule": "Gorkha 2015 and Far-Western Nepal generated the hypothesis. Confirmatory tests therefore only use the two inventories never modelled in v01 (Iburi 2018, RER2023) as test sets. Results with Gorkha or Far-Western Nepal as test set are secondary and labelled 'test inventory seen in v01'."
+  },
+
+  "registry": {
+    "allowed_roles": ["development", "pending_extent", "excluded", "sealed_not_used"],
+    "role_meaning": {
+      "development": "may be sampled, trained on and tested on",
+      "pending_extent": "registered for its trigger but blocked until an independent mapping extent is documented (Phase 1); never sampled before",
+      "excluded": "checked and not usable in v02; never sampled",
+      "sealed_not_used": "sealed blind test of susceptibility_v01; v02 never reads it"
+    },
+    "datasets": {
+      "gorkha_2015": {
+        "role": "development",
+        "trigger_class": "earthquake",
+        "seen_in_v01": true,
+        "provider": "USGS (Roback et al.), doi 10.5066/F7DZ06F9",
+        "license": "CC0-1.0",
+        "license_verified_at_original": true,
+        "event_date": "2015-04-25",
+        "earliest_event_date": "2015-04-25",
+        "positive_geometry": "Source20170209.shp (source areas); Full20170209.shp only for background exclusion (as v01 Amendment 1)",
+        "mapping_extent": {"status": "available", "source": "MappingExtent20170209.shp (published with the inventory)", "obscured": "ObscuredAreas20170209.shp"},
+        "raw_data": "data/susceptibility_v01/raw/gorkha_2015 (read-only reuse, SHA-256 in v01 provenance)",
+        "shakemap_event_id": "us20002926"
+      },
+      "iburi_2018": {
+        "role": "pending_extent",
+        "trigger_class": "earthquake",
+        "seen_in_v01": false,
+        "provider": "Zhang, Li, Wang, Iio (Shimane University), Zenodo doi 10.5281/zenodo.2577300 (concept 10.5281/zenodo.2577273)",
+        "license": "CC-BY-4.0",
+        "license_verified_at_original": true,
+        "event_date": "2018-09-06",
+        "earliest_event_date": "2018-09-06",
+        "event_time_utc": "2018-09-05T18:07:59Z",
+        "positive_geometry": "landslide_inventory.shp (5,625 polygons, JGD2000 / UTM 54N, EPSG:3100); no source areas, so the top-elevation-third rule applies. Polygons intersecting old_landslides.shp (pre-2018 landslide bodies, incl. the 110 reactivated) are not positives (pre-DEM morphology, same logic as the Far-Western Nepal date rule) and are background exclusion only.",
+        "mapping_extent": {
+          "status": "missing",
+          "checked": "Archive contains landslide_inventory, old_landslides, reactivated_landslides, 4 AMeDAS rain-gauge points and 3 standard-deviational ellipses. The ellipses are statistics of the landslide distribution (ArcGIS standard deviational ellipse, 1-3 SD) and are not a mapping extent. The record description mentions a 'study area' without a file.",
+          "acceptable_sources_in_order": [
+            "a mapping-extent file or explicit study-area boundary from the authors of the Zenodo record",
+            "the interpretation extent (hanrei hani) of GSI technical document D1-No.991, if the GSI archive itself contains it as data; then the GSI slope-failure polygons replace the Zenodo polygons (inventory and extent must come from the same mapping)"
+          ]
+        },
+        "raw_data": "data/susceptibility_v01/raw/candidates/iburi_2018 (downloaded in v01 as unregistered candidate, md5 2bcd2b370a82be7858b794f92cbb54c5, SHA-256 891542a6abe6e2b5596663485b77c4575d0ded1c03740cde7c112257b183e4a3)",
+        "shakemap_event_id": "us2000h8ty"
+      },
+      "far_western_nepal": {
+        "role": "development",
+        "trigger_class": "rain",
+        "seen_in_v01": true,
+        "provider": "Zenodo 10.5281/zenodo.4290099 (version record 4290100)",
+        "license": "CC-BY-4.0",
+        "license_verified_at_original": true,
+        "event_date": null,
+        "earliest_event_date": "2001-01-01",
+        "positive_geometry": "positive_filter of v01 Amendment 1 unchanged (polygon with dated points, minimum year >= 2001); top-elevation-third rule",
+        "mapping_extent": {"status": "available", "source": "LandslideInventory_FarWesternNepal_AOI.shp (published with the inventory)", "obscured": null},
+        "raw_data": "data/susceptibility_v01/raw/far_western_nepal (read-only reuse)"
+      },
+      "rer2023": {
+        "role": "pending_extent",
+        "trigger_class": "rain",
+        "seen_in_v01": false,
+        "seen_note": "v01 Phase 1 audited attributes, counts and polygon-area quantiles only; no terrain value, sample or model.",
+        "provider": "Zenodo 10.5281/zenodo.13742643 (Pizziolo et al. 2024); article ESSD 17, 1055, 2025; corresponding author A. Corsini (UNIMORE)",
+        "license": "CC-BY-4.0",
+        "license_verified_at_original": true,
+        "event_date": "2023-05-01",
+        "earliest_event_date": "2023-05-01",
+        "positive_geometry": "RER2023_V1.shp all ClassNew classes (DS1, DS2, DF1, DF2, ES, EF, RS1, RS2: slide and flow types); Phase 1 confirms from the article that no class is a fall or topple, otherwise that class is excluded and counted. Top-elevation-third rule; small-polygon rule of v01 Amendment 1.",
+        "mapping_extent": {
+          "status": "missing",
+          "checked": "Zenodo record holds only RER2023_V1.shp; the article states the area was 'segmented based on the administrative boundaries of the municipalities' and 'more than 6000 km2', without a boundary file or municipality list. The Region's INSPIRE layer of areas under safeguard measures after the May 2023 landslides is derived from the landslides and is not a mapping extent.",
+          "acceptable_sources_in_order": [
+            "a mapping-extent file from the authors or Regione Emilia-Romagna",
+            "an official list of the mapped municipalities published by the authors or the Region, combined with official ISTAT municipal boundaries of 2023"
+          ]
+        },
+        "raw_data": "data/susceptibility_v01/raw/rer2023 (read-only reuse, md5 3f17160d5e160b21cba86d6a696ae867 per v01 phase0 evidence)"
+      },
+      "wenchuan_fan2019": {
+        "role": "excluded",
+        "trigger_class": "earthquake",
+        "seen_in_v01": false,
+        "provider": "Zenodo 10.5281/zenodo.1484667 (Fan et al. 2019, ESSD)",
+        "license": "CC-BY-4.0",
+        "reason": "Checked as an earthquake alternative: DF_Catchments.shp holds 252 debris-flow catchments with string ids (e.g. 'B45') that do not match the integer CID 1-43 of the 2008 landslide layer; the 42 mapped catchments (471 km2 per article) are not published as an extent. Selecting catchments by overlap with landslides would derive the extent from the polygons. Not a fallback in v02."
+      },
+      "iffi_suedtirol": {
+        "role": "sealed_not_used",
+        "trigger_class": "unknown",
+        "license": "CC-BY-SA-3.0 (stricter reading, see susceptibility_v01 DECISIONS.md)",
+        "reason": "Sealed blind test of susceptibility_v01. v02 never opens data/susceptibility_v01/sealed, has no blind-test phase and cannot unseal it."
+      }
+    }
+  },
+
+  "mapping_extent_rule": {
+    "requirement": "Background is drawn only inside a mapping extent that was defined independently of the landslide polygons.",
+    "allowed": ["extent file published with the inventory or provided by its authors/provider", "explicit administrative or catchment units named by the authors/provider as the mapped area, with official boundaries"],
+    "forbidden": ["convex or concave hull of the landslides", "buffer around the landslides", "standard-deviational ellipses or density contours of the landslides", "any unit selected because it contains landslides", "extent drawn from post-event imagery footprints guessed by the analyst"],
+    "documentation": "Phase 1 writes the source, file hash and area of every extent; if none is obtained, the dataset stays pending_extent and is not modelled."
+  },
+
+  "dem": {
+    "primary": "NASADEM_HGT_v001",
+    "source": "as susceptibility_v01 (Planetary Computer, anonymous token, 1 arc-second)",
+    "acquisition_end": "2000-02-22",
+    "rule": "acquisition_end must be before the earliest event date of every development or pending dataset",
+    "coverage_note": "NASADEM covers 60N-56S; Hokkaido (about 42.7N) and Emilia-Romagna (about 44N) are inside",
+    "working_grid_m": 30,
+    "working_crs": "UTM zone of the inventory centroid (Gorkha 45N, Far-Western Nepal 44N, Iburi 54N, RER2023 32N)"
+  },
+
+  "ground_motion": {
+    "source": "USGS ShakeMap grid.xml, preferred shakemap product of the USGS event (public, no account)",
+    "events": {
+      "gorkha_2015": {"event_id": "us20002926", "seen_at_registration": "product source atlas, version 1, updateTime 1594162031303, grid.xml 14,875,206 B"},
+      "iburi_2018": {"event_id": "us2000h8ty", "seen_at_registration": "product source atlas, version 1, updateTime 1594401324136, grid.xml 14,484,026 B"}
+    },
+    "feature": "log10_pga_pctg: log10 of PGA in percent g, bilinear at the 30 m cell centre",
+    "coverage_rule": "cells outside the grid are NaN, counted, never filled; Phase 1 gate requires grid coverage of the whole mapping extent",
+    "freeze": "product version, updateTime and SHA-256 of grid.xml recorded at download in Phase 1; never updated afterwards",
+    "caveat": "ShakeMap is a modelled estimate (about 1 km), not a measurement; its fields come from stations and ground-motion models, not from landslide data",
+    "rain_trigger": "no rain or soil-moisture feature in v02 (rain inventories have one event or year-only dates; v01 Gate 7 logic unchanged)"
+  },
+
+  "features_terrain": ["elevation_m", "slope_deg", "aspect_sin", "aspect_cos", "profile_curvature", "plan_curvature", "tri_m", "tpi_m", "relief_1km_m", "log10_catchment_m2", "twi", "drainage_distance_m"],
+  "terrain_parameters": {
+    "rule": "identical to the 'terrain' block of susceptibility_v01 Amendment 2 (tpi_radius_m 300, relief_radius_m 1000, channel_threshold_m2 1e6, block_core_m 15000, block_margin_m 3000, bilinear NASADEM resampling, D8 hydrology with truncation to NaN)",
+    "reference": "reports/susceptibility_v01/AMENDMENT_2.json",
+    "reuse_of_v01_blocks": "Gorkha and Far-Western Nepal terrain blocks of v01 may be reused if their SHA-256 sidecars verify; new inventories are computed with the same code"
+  },
+
+  "sampling": {
+    "cell_m": 30,
+    "positive_rule": "one cell per valid positive polygon, uniform random (seeded) among cells whose centre lies in the source area if available, otherwise in the top third by elevation of the polygon cells; if no cell centre lies in the polygon, the cell containing its representative point (v01 Amendment 1)",
+    "background_rule": {
+      "extent": "inside the independent mapping extent, outside obscured areas",
+      "design": "area-uniform random cells (seeded), not matched on terrain",
+      "min_separation_m": 90,
+      "exclusion_geometry": "union of all mapped landslide polygons of the inventory (positive or not, incl. old landslides), buffered by exclusion_buffer_m",
+      "exclusion_buffer_m": null,
+      "exclusion_buffer_rule": "rule of susceptibility_v01: max over all development inventories of v02 of the 90th percentile of sqrt(area/pi) of valid positive polygons, rounded up to 10 m, floor 60 m, cap 300 m (exceeding the cap is a gate finding); written by v02 Amendment 1 after Phase 1, before any terrain value of a new inventory"
+    },
+    "class_ratio_positive_to_background": [1, 1],
+    "max_positives_per_inventory": null,
+    "ratio_note": "Sampling parameter, not a frequency; PR-AUC only at this ratio."
+  },
+
+  "trigger_arms": {
+    "earthquake": {
+      "inventories": ["gorkha_2015", "iburi_2018"],
+      "confirmatory_train": "gorkha_2015",
+      "confirmatory_test": "iburi_2018",
+      "primary_model": "EQ_TERRAIN_PGA",
+      "models": {
+        "EQ_TERRAIN_PGA": "hist_gradient_boosting on features_terrain + log10_pga_pctg",
+        "EQ_TERRAIN": "hist_gradient_boosting on features_terrain"
+      },
+      "baselines": {"slope_pga_logistic": "logistic regression on slope_deg and log10_pga_pctg", "slope_only": "logistic regression on slope_deg", "pga_only": "logistic regression on log10_pga_pctg"}
+    },
+    "rain": {
+      "inventories": ["far_western_nepal", "rer2023"],
+      "confirmatory_train": "far_western_nepal",
+      "confirmatory_test": "rer2023",
+      "primary_model": "R_TERRAIN",
+      "models": {"R_TERRAIN": "hist_gradient_boosting on features_terrain"},
+      "baselines": {"slope_only": "logistic regression on slope_deg"}
+    },
+    "cross_trigger_reference": {
+      "for_iburi_2018": "EQ_TERRAIN architecture trained on far_western_nepal",
+      "for_rer2023": "R_TERRAIN architecture trained on gorkha_2015",
+      "use": "only for hypothesis H2; never a deployable model"
+    },
+    "rule": "A trigger arm never trains on an inventory of the other trigger (except the H2 cross-trigger reference). The sealed dataset is never in any arm."
+  },
+
+  "model_spec": {
+    "hist_gradient_boosting": {"max_iter": 300, "learning_rate": 0.05, "max_leaf_nodes": 31, "min_samples_leaf": 40, "l2_regularization": 1.0, "early_stopping": false, "random_state": "seeds.folds"},
+    "logistic_regression": {"C": 1.0, "max_iter": 2000, "preprocessing": "median imputation plus standard scaling fitted on the training data only"},
+    "tuning": "none; identical to susceptibility_v01 Amendment 3; no other model family is evaluated in v02",
+    "nan_policy": "HGB takes NaN natively; logistic models impute inside the training data only"
+  },
+
+  "evaluation": {
+    "design": "leave-one-inventory-out within each trigger: both directions are computed (train A test B, train B test A); the direction with the unseen inventory as test is confirmatory, the other is secondary",
+    "statistic": "ROC AUC on the held-out inventory; paired differences on the same block-bootstrap resamples",
+    "bootstrap": "5 km blocks of the test inventory resampled with replacement, 2000 resamples, seed seeds.bootstrap",
+    "null": "500 permutations of labels within 5 km blocks of the test inventory (seed seeds.permutation)",
+    "multiplicity": "4 confirmatory tests (H1-EQ, H1-RAIN, H2-EQ, H2-RAIN), Bonferroni: a test passes if the 0.625th percentile of its paired bootstrap difference is above 0 (one-sided alpha 0.025/4). The ordinary 95 percent interval is reported next to it.",
+    "secondary_metrics": ["average_precision_at_1_to_1", "continuous_boyce_index", "recall_in_top_20_percent_area", "balanced_accuracy_at_background_80th_percentile", "confusion_matrix"],
+    "dominance": "report without the largest 5 km block if it holds more than 20 percent of held-out positives",
+    "independent_units": "number of 5 km blocks with at least one sample, stated next to every number; each inventory is one event (Iburi, RER2023, Gorkha) or one region (Far-Western Nepal)",
+    "counted_comparisons": "every model, baseline and direction evaluated is listed in the report; none is dropped"
+  },
+
+  "hypotheses": {
+    "H1_EQ": {"type": "confirmatory", "test": "AUC(EQ_TERRAIN_PGA, gorkha_2015 -> iburi_2018) - AUC(slope_pga_logistic, same) > 0", "meaning": "terrain adds to slope and shaking in a new earthquake"},
+    "H1_RAIN": {"type": "confirmatory", "test": "AUC(R_TERRAIN, far_western_nepal -> rer2023) - AUC(slope_only, same) > 0", "meaning": "terrain adds to slope in a new rain event"},
+    "H2_EQ": {"type": "confirmatory", "test": "AUC(EQ_TERRAIN, gorkha_2015 -> iburi_2018) - AUC(EQ_TERRAIN architecture, far_western_nepal -> iburi_2018) > 0", "meaning": "same-trigger training beats other-trigger training"},
+    "H2_RAIN": {"type": "confirmatory", "test": "AUC(R_TERRAIN, far_western_nepal -> rer2023) - AUC(R_TERRAIN architecture, gorkha_2015 -> rer2023) > 0", "meaning": "same-trigger training beats other-trigger training"},
+    "H3_TPI_sign": {"type": "secondary, directional from v01", "test": "univariate TPI AUC > 0.5 on iburi_2018 and < 0.5 on rer2023, each 95 percent interval excluding 0.5"},
+    "H4_PGA_increment": {"type": "secondary", "test": "AUC(EQ_TERRAIN_PGA) - AUC(EQ_TERRAIN), gorkha_2015 -> iburi_2018"},
+    "reverse_directions": {"type": "secondary, test inventory seen in v01", "test": "the same contrasts with iburi_2018 -> gorkha_2015 and rer2023 -> far_western_nepal"},
+    "conclusion_rule": "The trigger-specific hypothesis is supported for a trigger only if H1 and H2 of that trigger both pass. Supported for both triggers -> 'trigger-specific terrain susceptibility supported'; for one trigger -> stated for that trigger only; otherwise 'not supported'. No other model, feature set or split may replace a failed test."
+  },
+
+  "sensitivity_gorkha_20km": {
+    "type": "pre-registered sensitivity, exploratory (Gorkha is seen data)",
+    "question": "How much of the v01 within-Gorkha advantage (5 km block CV, +0.122 over slope) is spatial proximity to the strong-shaking zone?",
+    "design": "spatial block CV inside gorkha_2015 with 20 km blocks, 5 folds (seed seeds.folds), training samples closer than 1000 m to any test sample removed; the same CV with 5 km blocks is rerun in v02 with the same code and samples for a paired comparison",
+    "models": ["EQ_TERRAIN vs slope_only", "EQ_TERRAIN_PGA vs slope_pga_logistic"],
+    "bootstrap": "20 km blocks, 2000 resamples (seed seeds.bootstrap)",
+    "min_blocks": "at least 25 20 km blocks with positives, otherwise the interval is reported as unstable",
+    "interpretation_fixed_in_advance": "If the 20 km EQ_TERRAIN minus slope difference is below half of the v02 5 km difference, or its 95 percent interval includes 0, the report states that a large share of the within-Gorkha advantage reflects spatial proximity (shaking proxy). If PGA removes most of the 5 km advantage (EQ_TERRAIN_PGA vs slope_pga_logistic less than half of EQ_TERRAIN vs slope_only), the report states that the advantage is largely explained by modelled shaking.",
+    "not_a_gate": true
+  },
+
+  "gates": {
+    "phase0": "this registration with SHA-256, decisions and gates committed before any v02 download, sample, feature or model",
+    "phase1": "per trigger: both inventories have the licence recorded from the original record and an independent mapping extent per mapping_extent_rule; for earthquake additionally ShakeMap grid.xml for both events covering the whole extent. A trigger that fails is not modelled (no substitute inventory without a new version). If both triggers fail, v02 ends after Phase 1.",
+    "phase1_status_at_registration": "NOT MET for either trigger: iburi_2018 and rer2023 lack an independent mapping extent (see DECISIONS.md). Procurement needs the user (author or provider request).",
+    "phase2": "CRS, circular aspect, PGA interpolation and no-leakage tests pass and each fails on an injected bug",
+    "phase3": "buffer, extent and minimum-separation tests pass; every draw reproducible from the seed",
+    "phase4": "confirmatory tests H1/H2 per trigger with the Bonferroni rule above; failure leads to cause analysis, never to a new model choice"
+  },
+
+  "forbidden": [
+    "opening data/susceptibility_v01/sealed or any Suedtirol data",
+    "changing model family, hyperparameters, features or splits after any v02 model output",
+    "using Gorkha or Far-Western Nepal results as confirmation",
+    "deriving a mapping extent from landslide polygons",
+    "random pixel or random polygon splits"
+  ],
+
+  "open_items": [
+    {"item": "Iburi mapping extent", "resolved_by": "Phase 1: author request (Zhang/Wang, Shimane University) or GSI D1-No.991 archive check; user sends any request"},
+    {"item": "RER2023 mapping extent", "resolved_by": "Phase 1: request to A. Corsini (UNIMORE) or Regione Emilia-Romagna; user sends any request"},
+    {"item": "buffer value", "resolved_by": "v02 Amendment 1 after Phase 1"},
+    {"item": "ShakeMap versions and hashes", "resolved_by": "Phase 1 download record"}
+  ]
+}

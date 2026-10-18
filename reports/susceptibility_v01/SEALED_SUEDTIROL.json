@@ -1,0 +1,12 @@
+{
+  "sealed_at_utc": "2026-10-17T21:12:41.817159+00:00",
+  "url": "https://geoservices1.civis.bz.it/geoserver/p_bz-Geology/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=p_bz-Geology%3AIdroGEO-Landslides-Events-Areas&CQL_FILTER=MOVEMENT_CODE+IN+%282%2C5%2C7%29&outputFormat=SHAPE-ZIP",
+  "filter": "MOVEMENT_CODE IN (2,5,7)",
+  "server_hits": 3523,
+  "hits_at_registration": 3523,
+  "hits_match_registration": true,
+  "file": "iffi_suedtirol_subset.zip",
+  "size_bytes": 2139013,
+  "sha256": "fb5408044a433b008677a31d021ea42a71608fef2b2776b0ff4a3402fab6f090",
+  "rule": "not opened, parsed or plotted before the Phase 15 approval; no model, feature or threshold uses it"
+}

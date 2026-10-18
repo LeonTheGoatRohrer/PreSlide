@@ -1,0 +1,114 @@
+{
+ "baseline_summary": "30 passed, 1 skipped in 1.67s",
+ "mutants": [
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "other trigger allowed in arm",
+   "tests_failed": true,
+   "summary": "2 failed, 28 passed, 1 skipped in 2.50s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "sealed/excluded allowed in arm",
+   "tests_failed": true,
+   "summary": "2 failed, 28 passed, 1 skipped in 2.61s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "seen confirmatory test allowed",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 2.55s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "extent not required",
+   "tests_failed": true,
+   "summary": "2 failed, 28 passed, 1 skipped in 2.43s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "licence verification ignored",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 2.42s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "DEM same day allowed",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 2.53s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "single inventory allowed",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 2.49s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "ShakeMap not required",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 2.57s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "sealed registration not required",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 2.51s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "multiplicity not checked",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 2.49s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "Bonferroni ignored",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 2.39s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "training includes held-out",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 2.64s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "training role not checked",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 2.60s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "training trigger not checked",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 2.45s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "cross-trigger uses own trigger",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 3.85s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "config hash not checked",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 4.21s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "guard allows any path",
+   "tests_failed": true,
+   "summary": "3 failed, 27 passed, 1 skipped in 3.46s"
+  },
+  {
+   "file": "preslide/susceptibility/v02.py",
+   "mutant": "sealed folder readable",
+   "tests_failed": true,
+   "summary": "1 failed, 29 passed, 1 skipped in 2.75s"
+  }
+ ],
+ "status": "PASS"
+}

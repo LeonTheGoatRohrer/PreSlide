@@ -1,0 +1,542 @@
+{
+  "version": "susceptibility_v02",
+  "phase": 4,
+  "scored_at_utc": "2026-10-18T12:35:43.969881+00:00",
+  "confirmatory_direction": "gorkha_2015 -> iburi_2018",
+  "bonferroni": {
+    "n_confirmatory_tests": 4,
+    "lower_percentile": 0.625
+  },
+  "hypotheses": {
+    "H1_EQ": {
+      "registered": "AUC(EQ_TERRAIN_PGA, gorkha_2015 -> iburi_2018) - AUC(slope_pga_logistic, same) > 0",
+      "models": [
+        "EQ_TERRAIN_PGA",
+        "slope_pga_logistic"
+      ],
+      "point": -0.014906974695860997,
+      "interval_95": [
+        -0.04037141422945559,
+        0.008496862273568316
+      ],
+      "lower_bound_bonferroni": -0.0473951766725508,
+      "lower_percentile": 0.625,
+      "passed": false
+    },
+    "H2_EQ": {
+      "registered": "AUC(EQ_TERRAIN, gorkha_2015 -> iburi_2018) - AUC(EQ_TERRAIN architecture, far_western_nepal -> iburi_2018) > 0",
+      "models": [
+        "EQ_TERRAIN",
+        "EQ_TERRAIN_from_far_western_nepal"
+      ],
+      "point": 0.05315476192245383,
+      "interval_95": [
+        0.030609660022191815,
+        0.07329366294960792
+      ],
+      "lower_bound_bonferroni": 0.022694933024583256,
+      "lower_percentile": 0.625,
+      "passed": true
+    },
+    "H1_RAIN": {
+      "registered": "AUC(R_TERRAIN, far_western_nepal -> rer2023) - AUC(slope_only, same) > 0",
+      "status": "not feasible: rer2023 has role 'pending_extent' (no independent mapping extent); the rain arm is not modelled and not replaced (Phase 1 gate)"
+    },
+    "H2_RAIN": {
+      "registered": "AUC(R_TERRAIN, far_western_nepal -> rer2023) - AUC(R_TERRAIN architecture, gorkha_2015 -> rer2023) > 0",
+      "status": "not feasible: rer2023 has role 'pending_extent' (no independent mapping extent); the rain arm is not modelled and not replaced (Phase 1 gate)"
+    },
+    "H3_TPI_sign": {
+      "registered": "univariate TPI AUC > 0.5 on iburi_2018 and < 0.5 on rer2023, each 95 percent interval excluding 0.5",
+      "iburi_2018": {
+        "point": 0.5739919901550816,
+        "interval_95": [
+          0.5311723948650687,
+          0.607069024556051
+        ]
+      },
+      "iburi_condition_met": true,
+      "rer2023": "not feasible: rer2023 has role 'pending_extent' (no independent mapping extent); the rain arm is not modelled and not replaced (Phase 1 gate)"
+    },
+    "H4_PGA_increment": {
+      "registered": "AUC(EQ_TERRAIN_PGA) - AUC(EQ_TERRAIN), gorkha_2015 -> iburi_2018",
+      "models": [
+        "EQ_TERRAIN_PGA",
+        "EQ_TERRAIN"
+      ],
+      "point": 0.005611082329724959,
+      "interval_95": [
+        -0.030260866892096387,
+        0.04469375064441645
+      ],
+      "lower_bound_bonferroni": -0.039821070923010383,
+      "lower_percentile": 0.625
+    }
+  },
+  "conclusion": {
+    "earthquake": "not supported for earthquakes",
+    "rain": "not tested (not feasible)",
+    "overall": "not supported (earthquake arm failed; rain arm not testable)",
+    "rule": "The trigger-specific hypothesis is supported for a trigger only if H1 and H2 of that trigger both pass. Supported for both triggers -> 'trigger-specific terrain susceptibility supported'; for one trigger -> stated for that trigger only; otherwise 'not supported'. No other model, feature set or split may replace a failed test."
+  },
+  "confirmatory": {
+    "train": "gorkha_2015",
+    "test": "iburi_2018",
+    "cross_trigger_train": "far_western_nepal",
+    "n_positives": 3177,
+    "n_background": 3177,
+    "independent_units_5km_blocks": 69,
+    "largest_block_positive_share": 0.11772112055398175,
+    "metrics": {
+      "EQ_TERRAIN_PGA": {
+        "roc_auc": 0.8256513782519127,
+        "average_precision_at_1_to_1": 0.7785118980572404,
+        "boyce": -0.49064851079024674,
+        "threshold": 0.002207884673818291,
+        "recall_top_area": 0.677683349071451,
+        "precision": 0.7719612764431696,
+        "f1": 0.7217566208514917,
+        "balanced_accuracy": 0.7387472458293988,
+        "confusion_matrix_tn_fp_fn_tp": [
+          2541,
+          636,
+          1024,
+          2153
+        ]
+      },
+      "EQ_TERRAIN": {
+        "roc_auc": 0.8200402959221877,
+        "average_precision_at_1_to_1": 0.742636127650383,
+        "boyce": -0.5561762466540644,
+        "threshold": 0.0011969338066451954,
+        "recall_top_area": 0.6430594900849859,
+        "precision": 0.7625979843225084,
+        "f1": 0.6977459016393441,
+        "balanced_accuracy": 0.7214353163361662,
+        "confusion_matrix_tn_fp_fn_tp": [
+          2541,
+          636,
+          1134,
+          2043
+        ]
+      },
+      "slope_pga_logistic": {
+        "roc_auc": 0.8405583529477737,
+        "average_precision_at_1_to_1": 0.8105885932668964,
+        "boyce": 0.8439355349463352,
+        "threshold": 0.1411898551290242,
+        "recall_top_area": 0.7110481586402266,
+        "precision": 0.7803108808290156,
+        "f1": 0.7440711462450593,
+        "balanced_accuracy": 0.7554296506137865,
+        "confusion_matrix_tn_fp_fn_tp": [
+          2541,
+          636,
+          918,
+          2259
+        ]
+      },
+      "slope_only": {
+        "roc_auc": 0.8414876796347369,
+        "average_precision_at_1_to_1": 0.7753996470831853,
+        "boyce": 0.30852937275992365,
+        "threshold": 0.14613204514791778,
+        "recall_top_area": 0.7031790997796663,
+        "precision": 0.778397212543554,
+        "f1": 0.7388787828675376,
+        "balanced_accuracy": 0.7514951211835064,
+        "confusion_matrix_tn_fp_fn_tp": [
+          2541,
+          636,
+          943,
+          2234
+        ]
+      },
+      "pga_only": {
+        "roc_auc": 0.6811312699704924,
+        "average_precision_at_1_to_1": 0.6003689279238068,
+        "boyce": 0.7838555620267909,
+        "threshold": 0.5973818349524801,
+        "recall_top_area": 0.3802329241422726,
+        "precision": 0.6550976138828634,
+        "f1": 0.48117904799840666,
+        "balanced_accuracy": 0.5900220333648096,
+        "confusion_matrix_tn_fp_fn_tp": [
+          2541,
+          636,
+          1969,
+          1208
+        ]
+      },
+      "EQ_TERRAIN_from_far_western_nepal": {
+        "roc_auc": 0.7668855339997339,
+        "average_precision_at_1_to_1": 0.7165062916789025,
+        "boyce": -0.12096194838134389,
+        "threshold": 0.03608516086761857,
+        "recall_top_area": 0.553666981429021,
+        "precision": 0.734446764091858,
+        "f1": 0.6313711414213926,
+        "balanced_accuracy": 0.6767390620081838,
+        "confusion_matrix_tn_fp_fn_tp": [
+          2541,
+          636,
+          1418,
+          1759
+        ]
+      }
+    },
+    "auc_interval_95": {
+      "EQ_TERRAIN_PGA": [
+        0.7775872654663012,
+        0.8692126390819958
+      ],
+      "EQ_TERRAIN": [
+        0.7643340603611827,
+        0.866866647042308
+      ],
+      "slope_pga_logistic": [
+        0.7840230296711157,
+        0.8914452222747915
+      ],
+      "slope_only": [
+        0.7973720796108469,
+        0.8800239257177537
+      ],
+      "pga_only": [
+        0.5903642587467864,
+        0.7701874063909602
+      ],
+      "EQ_TERRAIN_from_far_western_nepal": [
+        0.7231749519383479,
+        0.8045215096358288
+      ]
+    },
+    "univariate_tpi_auc": {
+      "point": 0.5739919901550816,
+      "interval_95": [
+        0.5311723948650687,
+        0.607069024556051
+      ]
+    },
+    "contrasts": {
+      "H1 terrain+PGA - slope+PGA": {
+        "models": [
+          "EQ_TERRAIN_PGA",
+          "slope_pga_logistic"
+        ],
+        "point": -0.014906974695860997,
+        "interval_95": [
+          -0.04037141422945559,
+          0.008496862273568316
+        ],
+        "lower_bound_bonferroni": -0.0473951766725508,
+        "lower_percentile": 0.625
+      },
+      "H2 same-trigger - other-trigger terrain": {
+        "models": [
+          "EQ_TERRAIN",
+          "EQ_TERRAIN_from_far_western_nepal"
+        ],
+        "point": 0.05315476192245383,
+        "interval_95": [
+          0.030609660022191815,
+          0.07329366294960792
+        ],
+        "lower_bound_bonferroni": 0.022694933024583256,
+        "lower_percentile": 0.625
+      },
+      "H4 PGA increment": {
+        "models": [
+          "EQ_TERRAIN_PGA",
+          "EQ_TERRAIN"
+        ],
+        "point": 0.005611082329724959,
+        "interval_95": [
+          -0.030260866892096387,
+          0.04469375064441645
+        ],
+        "lower_bound_bonferroni": -0.039821070923010383,
+        "lower_percentile": 0.625
+      },
+      "terrain - slope": {
+        "models": [
+          "EQ_TERRAIN",
+          "slope_only"
+        ],
+        "point": -0.021447383712549173,
+        "interval_95": [
+          -0.042188087874356905,
+          -0.003580686485323943
+        ],
+        "lower_bound_bonferroni": -0.046860537121264666,
+        "lower_percentile": 0.625
+      },
+      "terrain+PGA - PGA only": {
+        "models": [
+          "EQ_TERRAIN_PGA",
+          "pga_only"
+        ],
+        "point": 0.14452010828142026,
+        "interval_95": [
+          0.08033774103283965,
+          0.2115895116335789
+        ],
+        "lower_bound_bonferroni": 0.06145890503405963,
+        "lower_percentile": 0.625
+      }
+    },
+    "null": {
+      "EQ_TERRAIN_PGA": {
+        "null_auc_95": 0.7922696565226398,
+        "p": 0.001996007984031936
+      },
+      "EQ_TERRAIN": {
+        "null_auc_95": 0.7870050852399639,
+        "p": 0.001996007984031936
+      }
+    }
+  },
+  "reverse_secondary_test_inventory_seen_in_v01": {
+    "train": "iburi_2018",
+    "test": "gorkha_2015",
+    "cross_trigger_train": "far_western_nepal",
+    "n_positives": 24036,
+    "n_background": 24036,
+    "independent_units_5km_blocks": 1262,
+    "largest_block_positive_share": 0.025170577467132634,
+    "metrics": {
+      "EQ_TERRAIN_PGA": {
+        "roc_auc": 0.7964996853820617,
+        "average_precision_at_1_to_1": 0.7369139712110313,
+        "boyce": 0.9997320908561443,
+        "threshold": 0.8889299067537894,
+        "recall_top_area": 0.5640289565651523,
+        "precision": 0.7382378566761054,
+        "f1": 0.6394811320754716,
+        "balanced_accuracy": 0.6820186387086038,
+        "confusion_matrix_tn_fp_fn_tp": [
+          19229,
+          4807,
+          10479,
+          13557
+        ]
+      },
+      "EQ_TERRAIN": {
+        "roc_auc": 0.5016205124207515,
+        "average_precision_at_1_to_1": 0.4926830315317275,
+        "boyce": -0.8943528752417219,
+        "threshold": 0.15129382101709798,
+        "recall_top_area": 0.21684140455982692,
+        "precision": 0.5202115979638686,
+        "f1": 0.30609308471590074,
+        "balanced_accuracy": 0.5084248627059411,
+        "confusion_matrix_tn_fp_fn_tp": [
+          19229,
+          4807,
+          18824,
+          5212
+        ]
+      },
+      "slope_pga_logistic": {
+        "roc_auc": 0.8545842567069681,
+        "average_precision_at_1_to_1": 0.8221042942693799,
+        "boyce": 0.9956755843827434,
+        "threshold": 0.9950359926781168,
+        "recall_top_area": 0.7443834248627059,
+        "precision": 0.7882285563240672,
+        "f1": 0.7656788274312614,
+        "balanced_accuracy": 0.7721958728573806,
+        "confusion_matrix_tn_fp_fn_tp": [
+          19229,
+          4807,
+          6144,
+          17892
+        ]
+      },
+      "slope_only": {
+        "roc_auc": 0.7669720205776097,
+        "average_precision_at_1_to_1": 0.719317813795435,
+        "boyce": 0.9860920209668026,
+        "threshold": 0.9955508481578995,
+        "recall_top_area": 0.5763854218671992,
+        "precision": 0.7424039440544451,
+        "f1": 0.6489448907417382,
+        "balanced_accuracy": 0.6881968713596271,
+        "confusion_matrix_tn_fp_fn_tp": [
+          19229,
+          4807,
+          10182,
+          13854
+        ]
+      },
+      "pga_only": {
+        "roc_auc": 0.7917988150630327,
+        "average_precision_at_1_to_1": 0.7091582013475832,
+        "boyce": 0.9394408852649969,
+        "threshold": 0.6611802531931138,
+        "recall_top_area": 0.5604925944416709,
+        "precision": 0.7370206247606543,
+        "f1": 0.6367481980385207,
+        "balanced_accuracy": 0.6802504576468631,
+        "confusion_matrix_tn_fp_fn_tp": [
+          19229,
+          4807,
+          10564,
+          13472
+        ]
+      },
+      "EQ_TERRAIN_from_far_western_nepal": {
+        "roc_auc": 0.7326147954248802,
+        "average_precision_at_1_to_1": 0.6944660785577603,
+        "boyce": 0.9999301106581246,
+        "threshold": 0.645164690329082,
+        "recall_top_area": 0.4737477117656848,
+        "precision": 0.7031616648141287,
+        "f1": 0.566094954014417,
+        "balanced_accuracy": 0.63687801630887,
+        "confusion_matrix_tn_fp_fn_tp": [
+          19229,
+          4807,
+          12649,
+          11387
+        ]
+      }
+    },
+    "auc_interval_95": {
+      "EQ_TERRAIN_PGA": [
+        0.783066997026262,
+        0.8090296756579485
+      ],
+      "EQ_TERRAIN": [
+        0.4871186233670831,
+        0.5162451378030464
+      ],
+      "slope_pga_logistic": [
+        0.8452181670900889,
+        0.8636526216383261
+      ],
+      "slope_only": [
+        0.7561104779552624,
+        0.7782097860783869
+      ],
+      "pga_only": [
+        0.7731194283852347,
+        0.8100513744496757
+      ],
+      "EQ_TERRAIN_from_far_western_nepal": [
+        0.7212649996405139,
+        0.7437824392699072
+      ]
+    },
+    "univariate_tpi_auc": {
+      "point": 0.5656085198767555,
+      "interval_95": [
+        0.5517284782261648,
+        0.5806023232887466
+      ]
+    },
+    "contrasts": {
+      "H1 terrain+PGA - slope+PGA": {
+        "models": [
+          "EQ_TERRAIN_PGA",
+          "slope_pga_logistic"
+        ],
+        "point": -0.05808457132490641,
+        "interval_95": [
+          -0.0680135457479725,
+          -0.048506979798221314
+        ],
+        "lower_bound_bonferroni": -0.07050481511249647,
+        "lower_percentile": 0.625
+      },
+      "H2 same-trigger - other-trigger terrain": {
+        "models": [
+          "EQ_TERRAIN",
+          "EQ_TERRAIN_from_far_western_nepal"
+        ],
+        "point": -0.23099428300412872,
+        "interval_95": [
+          -0.2516408352276615,
+          -0.21023905389005598
+        ],
+        "lower_bound_bonferroni": -0.25663061474786614,
+        "lower_percentile": 0.625
+      },
+      "H4 PGA increment": {
+        "models": [
+          "EQ_TERRAIN_PGA",
+          "EQ_TERRAIN"
+        ],
+        "point": 0.2948791729613103,
+        "interval_95": [
+          0.27634018964698803,
+          0.31356209852385414
+        ],
+        "lower_bound_bonferroni": 0.2708281112556902,
+        "lower_percentile": 0.625
+      },
+      "terrain - slope": {
+        "models": [
+          "EQ_TERRAIN",
+          "slope_only"
+        ],
+        "point": -0.26535150815685826,
+        "interval_95": [
+          -0.28229779585525483,
+          -0.24831557626549935
+        ],
+        "lower_bound_bonferroni": -0.2867321969182987,
+        "lower_percentile": 0.625
+      },
+      "terrain+PGA - PGA only": {
+        "models": [
+          "EQ_TERRAIN_PGA",
+          "pga_only"
+        ],
+        "point": 0.0047008703190289935,
+        "interval_95": [
+          -0.010727248586829002,
+          0.01895209244527229
+        ],
+        "lower_bound_bonferroni": -0.013983147807820092,
+        "lower_percentile": 0.625
+      }
+    },
+    "null": {
+      "EQ_TERRAIN_PGA": {
+        "null_auc_95": 0.7768136774995742,
+        "p": 0.001996007984031936
+      },
+      "EQ_TERRAIN": {
+        "null_auc_95": 0.49654977566690683,
+        "p": 0.001996007984031936
+      }
+    }
+  },
+  "counted_comparisons": {
+    "models_per_direction": [
+      "EQ_TERRAIN_PGA",
+      "EQ_TERRAIN",
+      "slope_pga_logistic",
+      "slope_only",
+      "pga_only",
+      "EQ_TERRAIN cross-trigger reference"
+    ],
+    "directions": [
+      "gorkha_2015 -> iburi_2018 (confirmatory)",
+      "iburi_2018 -> gorkha_2015 (secondary, seen)"
+    ],
+    "contrasts_per_direction": [
+      "H1 terrain+PGA - slope+PGA",
+      "H2 same-trigger - other-trigger terrain",
+      "H4 PGA increment",
+      "terrain - slope",
+      "terrain+PGA - PGA only"
+    ],
+    "secondary": [
+      "univariate TPI AUC",
+      "permutation null for EQ_TERRAIN_PGA and EQ_TERRAIN",
+      "secondary metrics for every model"
+    ]
+  }
+}

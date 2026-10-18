@@ -1,0 +1,44 @@
+{
+  "dataset": "iburi_2018",
+  "limit": 0,
+  "crs": "EPSG:32654",
+  "seed": [
+    301,
+    2
+  ],
+  "positives": 3177,
+  "background": 3177,
+  "known_landslide_polygons": 5066,
+  "background_draws": 20000,
+  "allowed_area_km2": 1123.4160333248624,
+  "excluded_area_km2": 322.4349117094142,
+  "blocks_5km": 69,
+  "counts": {
+    "gsi_main_style": 3306,
+    "gsi_deviating_style_exclusion_only": 1,
+    "known_not_positive_intersects_old_landslide": 129,
+    "positive_inside_cell": 2956,
+    "positive_containing_cell": 221,
+    "background_candidates_rejected_no_elevation": 0,
+    "background_candidates_rejected_elevation_le_0": 434,
+    "background_candidates_rejected_exact_buffer": 1,
+    "dropped_missing_elevation_or_slope_positive": 0,
+    "dropped_missing_elevation_or_slope_background": 0,
+    "positives_with_elevation_le_0": 0,
+    "pga_nan": 0
+  },
+  "nan_by_feature": {
+    "elevation_m": 0,
+    "slope_deg": 0,
+    "aspect_sin": 0,
+    "aspect_cos": 0,
+    "profile_curvature": 0,
+    "plan_curvature": 0,
+    "tri_m": 0,
+    "tpi_m": 0,
+    "relief_1km_m": 0,
+    "log10_catchment_m2": 14,
+    "twi": 14,
+    "drainage_distance_m": 0
+  }
+}

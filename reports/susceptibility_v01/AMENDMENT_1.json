@@ -1,0 +1,118 @@
+{
+ "id": 1,
+ "title": "Phase 1 consequences: buffer value, RER2023 suspended, Far-Western Nepal dated positives, small-polygon rule",
+ "basis": "Inventory geometry and attributes only (reports/susceptibility_v01/phase1_audit_*.json, PHASE1_GATE.md). No terrain value, sample, feature or model existed.",
+ "set": {
+  "sampling.background_rule.exclusion_buffer_m": 100
+ },
+ "correct": {
+  "registry.allowed_roles": {
+   "from": [
+    "development",
+    "sealed_blind_test"
+   ],
+   "to": [
+    "development",
+    "sealed_blind_test",
+    "suspended"
+   ],
+   "reason": "A registered inventory that fails the Phase 1 gate is kept in the registry but cannot be trained on."
+  },
+  "registry.datasets.rer2023.role": {
+   "from": "development",
+   "to": "suspended",
+   "reason": "Phase 1 gate: the record contains no mapping-extent file and the ESSD article gives only 'more than 6000 km2' segmented by municipalities. A hull around the landslides would place background only where landslides are. Background cannot be drawn without an extent, so RER2023 is suspended until the extent is obtained from the authors or the Region."
+  },
+  "registry.datasets.rer2023.mapping_extent_layer": {
+   "from": "none_in_record_derive_from_polygon_hull_phase1_check",
+   "to": "missing",
+   "reason": "Checked in Phase 1: no extent in the record or article."
+  },
+  "registry.datasets.far_western_nepal.earliest_event_date": {
+   "from": "2002-01-01",
+   "to": "2001-01-01",
+   "reason": "The registered value came from the imagery period. The dated point layer reaches back to 1992 (2,436 of 8,778 points before 2000), i.e. before the DEM. Positives are restricted (positive_filter) so that every positive polygon has a dated activation in 2001 or later."
+  },
+  "registry.datasets.gorkha_2015.license_verified_at_original": {
+   "from": false,
+   "to": true,
+   "reason": "USGS data page: 'This work is marked with CC0 1.0 Universal'."
+  },
+  "registry.datasets.gorkha_2015.download_status": {
+   "from": "pending_phase1_browser_required",
+   "to": "downloaded_manually_by_user",
+   "reason": "Roback_Nepal_final_files.zip (129,058,612 B = listed 123.08 MB) downloaded by the user after the ScienceBase human check; SHA-256 in data provenance."
+  },
+  "registry.datasets.gorkha_2015.mapping_extent_layer": {
+   "from": "Extent of mapping",
+   "to": "MappingExtent20170209.shp",
+   "reason": "File name from the archive."
+  },
+  "registry.datasets.gorkha_2015.obscured_layer": {
+   "from": "Obscured areas",
+   "to": "ObscuredAreas20170209.shp",
+   "reason": "File name from the archive."
+  },
+  "arms.MODEL_Q": {
+   "from": [
+    "gorkha_2015",
+    "rer2023"
+   ],
+   "to": [
+    "gorkha_2015"
+   ],
+   "reason": "RER2023 suspended."
+  },
+  "arms.MODEL_D": {
+   "from": [
+    "gorkha_2015",
+    "rer2023",
+    "far_western_nepal"
+   ],
+   "to": [
+    "gorkha_2015",
+    "far_western_nepal"
+   ],
+   "reason": "RER2023 suspended."
+  },
+  "sampling.positive_rule.min_polygon_area_m2": {
+   "from": 900,
+   "to": 0,
+   "reason": "Audit: 22,103 of 24,795 Gorkha source areas (89 %) and 5,617 of 26,350 Far-Western Nepal polygons are smaller than one 30 m cell. Excluding them would keep mainly large failures (size bias). A small polygon is located by the cell that contains it instead (cell_choice)."
+  },
+  "sampling.positive_rule.cell_choice": {
+   "from": "uniform random (seeded) among cells whose centre lies in the source-area polygon if available, otherwise in the top third by elevation of the polygon cells",
+   "to": "uniform random (seeded) among cells whose centre lies in the source-area polygon if available, otherwise in the top third by elevation of the polygon cells; if no cell centre lies in the polygon (polygon smaller than a cell), the cell containing the polygon's representative point",
+   "reason": "Same as min_polygon_area_m2."
+  },
+  "south_tyrol_blind_test.positive_subset.min_polygon_area_m2": {
+   "from": 900,
+   "to": 0,
+   "reason": "The blind test must use the same positive rule as development; decided from development inventories only, no Suedtirol geometry was opened."
+  }
+ },
+ "add": {
+  "registry.datasets.far_western_nepal.positive_filter": {
+   "value": "Polygon intersects at least one point of LandslideInventory_FarWesternNepal_Points_Dated1992_2018.shp and the minimum Year of those points is >= 2001. All other polygons (undated, or any dated activation before 2001) are known landslides used only for background exclusion.",
+   "reason": "DEM-date rule (SRTM, February 2000). Linking result: 3,246 polygons carry dated points, 1,587 have a minimum year >= 2001. Remaining limitation: a 2001+ date can be a reactivation of an older scar."
+  },
+  "registry.datasets.gorkha_2015.positive_geometry": {
+   "value": "Source20170209.shp (source areas); Full20170209.shp (full areas incl. runout) only for background exclusion",
+   "reason": "Plan section 4: learn where failures start."
+  },
+  "sampling.background_rule.exclusion_geometry": {
+   "value": "union of all mapped landslide polygons of the inventory (Gorkha full areas incl. runout; Far-Western Nepal all polygons regardless of date), buffered by exclusion_buffer_m; plus obscured areas where available",
+   "reason": "Background must not lie on any known landslide, positive or not."
+  }
+ },
+ "buffer_derivation": {
+  "rule": "max over development inventories of the 90th percentile of sqrt(area/pi) of valid positive polygons, rounded up to 10 m, floor 60 m, cap 300 m",
+  "gorkha_2015_source_areas_p90_radius_m": 17.47,
+  "far_western_nepal_positive_subset_p90_radius_m": 93.54,
+  "rer2023": "suspended, not used",
+  "result_m": 100
+ },
+ "written_at_utc": "2026-10-17T21:15:47.898684+00:00",
+ "config_sha256": "c76289a73f86f8870e76bb20641da2ca4c1c54db6938d7b32e9d709eb5d64569",
+ "preconditions": "registration present; no samples, features or models existed"
+}

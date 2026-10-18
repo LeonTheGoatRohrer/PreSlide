@@ -1,0 +1,246 @@
+{
+  "version": "susceptibility_v01",
+  "status": "REGISTERED_PHASE0",
+  "plan": "reports/weiterentwicklung_2026-10-17/ANFAELLIGKEITSSYSTEM_PLAN.md",
+  "nature": "Presence-background susceptibility ranking (relative index, not a probability). Not a warning system.",
+  "namespace": {
+    "data": "data/susceptibility_v01",
+    "models": "models/susceptibility_v01",
+    "reports": "reports/susceptibility_v01",
+    "package": "preslide/susceptibility"
+  },
+  "seeds": {"sampling": 101, "folds": 102, "bootstrap": 103, "permutation": 104, "background_redraws": [201, 202, 203, 204, 205]},
+
+  "registry": {
+    "allowed_roles": ["development", "sealed_blind_test"],
+    "datasets": {
+      "gorkha_2015": {
+        "role": "development",
+        "provider": "USGS (Roback et al.)",
+        "doi": "10.5066/F7DZ06F9",
+        "geometry": "polygon",
+        "source_area_available": true,
+        "mapping_complete": true,
+        "mapping_extent_layer": "Extent of mapping",
+        "obscured_layer": "Obscured areas",
+        "quality": "gold",
+        "negative_policy": "inside_mapping_extent",
+        "trigger_class": "earthquake",
+        "date_resolution": "event",
+        "earliest_event_date": "2015-04-25",
+        "license": "CC0-1.0",
+        "license_verified_at_original": false,
+        "download_status": "pending_phase1_browser_required"
+      },
+      "far_western_nepal": {
+        "role": "development",
+        "provider": "Zenodo 10.5281/zenodo.4290099 (concept DOI); version record 4290100",
+        "geometry": "polygon",
+        "source_area_available": false,
+        "mapping_complete": true,
+        "mapping_extent_layer": "LandslideInventory_FarWesternNepal_AOI.shp",
+        "obscured_layer": null,
+        "quality": "silver",
+        "negative_policy": "inside_mapping_extent",
+        "trigger_class": "rain",
+        "date_resolution": "year_partial",
+        "earliest_event_date": "2002-01-01",
+        "license": "CC-BY-4.0",
+        "license_verified_at_original": true,
+        "download_status": "pending_phase1"
+      },
+      "rer2023": {
+        "role": "development",
+        "provider": "Zenodo 10.5281/zenodo.13742643 (Emilia-Romagna, Cavalli/Marchesini et al.)",
+        "geometry": "polygon",
+        "source_area_available": false,
+        "mapping_complete": true,
+        "mapping_extent_layer": "none_in_record_derive_from_polygon_hull_phase1_check",
+        "obscured_layer": null,
+        "quality": "gold",
+        "negative_policy": "inside_mapping_extent",
+        "trigger_class": "rain",
+        "date_resolution": "event",
+        "earliest_event_date": "2023-05-01",
+        "license": "CC-BY-4.0",
+        "license_verified_at_original": true,
+        "download_status": "pending_phase1"
+      },
+      "iffi_suedtirol": {
+        "role": "sealed_blind_test",
+        "provider": "Autonome Provinz Bozen / ISPRA IFFI, WFS geoservices1.civis.bz.it, layer p_bz-Geology:IdroGEO-Landslides-Events-Areas",
+        "geometry": "polygon",
+        "source_area_available": false,
+        "mapping_complete": false,
+        "mapping_extent_layer": null,
+        "obscured_layer": null,
+        "quality": "silver",
+        "negative_policy": "presence_background",
+        "trigger_class": "unknown",
+        "date_resolution": "none",
+        "earliest_event_date": null,
+        "license": "CC-BY-SA-3.0 (stricter reading; open-data portal record states CC0, see DECISIONS.md)",
+        "license_verified_at_original": true,
+        "train_allowed": false,
+        "tuning_allowed": false,
+        "feature_selection_allowed": false,
+        "threshold_selection_allowed": false,
+        "download_status": "inspected_schema_and_counts_only"
+      }
+    }
+  },
+
+  "dem": {
+    "primary": "NASADEM_HGT_v001",
+    "source": "Microsoft Planetary Computer STAC collection nasadem (anonymous SAS token), 1 arc-second, EGM96 heights",
+    "acquisition_start": "2000-02-11",
+    "acquisition_end": "2000-02-22",
+    "acquisition_note": "SRTM flown on Space Shuttle Endeavour 11-22 February 2000 (USGS EROS page). NASADEM is SRTM-derived; void filling uses other elevation data of unrecorded date and the hosted copy has no source-flag layer.",
+    "rule": "dem acquisition_end must not be later than the earliest event date of any development dataset; violations fail registry validation",
+    "rejected": {"copernicus_glo30": "TanDEM-X data acquired 2011-2015 (Copernicus Data Space page); post-dates Far-Western Nepal events 2002-2011 and cannot be shown to pre-date Gorkha April 2015 per tile."},
+    "sensitivity_only": {"copernicus_glo30": "Only for RER2023 (May 2023), as an explicitly labelled sensitivity comparison, never for model selection."},
+    "working_grid_m": 30,
+    "working_crs": "local UTM zone of the inventory centroid (Gorkha 44N/45N by tile, Far-Western Nepal 44N, RER2023 32N, Suedtirol 32N)"
+  },
+
+  "triggers": {
+    "earthquake_ground_motion": {
+      "source": "USGS ShakeMap grid.xml (PGA), event us20002926 for Gorkha",
+      "use": "exploratory feature set terrain+PGA for earthquake inventories only; primary models use terrain features only",
+      "caveat": "ShakeMap is a modelled estimate (about 1 km), not a measurement"
+    },
+    "model_b_precipitation": {"source": "CHIRPS v2.0 daily 0.05 degree (public HTTPS)", "retrieved_in_phase": "none before Gate 7"},
+    "model_b_soil_moisture": {"source": "ERA5-Land soil moisture via Open-Meteo archive API (free non-commercial)", "retrieved_in_phase": "none before Gate 7"},
+    "resolution_caveat": "Rain and soil moisture fields have 5-11 km cells and do not distinguish slopes inside one area; only time/event contrasts are informative."
+  },
+
+  "features_terrain": ["elevation_m", "slope_deg", "aspect_sin", "aspect_cos", "profile_curvature", "plan_curvature", "tri_m", "tpi_m", "relief_1km_m", "flow_accumulation_cells", "twi", "drainage_distance_m", "catchment_area_m2"],
+  "feature_rules": {
+    "aspect": "circular: sin and cos only; angular differences via circular distance",
+    "no_post_event_imagery": true,
+    "vegetation_landcover_not_in_v01": true,
+    "feature_selection_data": "development folds only",
+    "sentinel2_after_terrain_baseline": true
+  },
+
+  "sampling": {
+    "cell_m": 30,
+    "positive_rule": {
+      "unit": "one cell per valid landslide polygon",
+      "cell_choice": "uniform random (seeded) among cells whose centre lies in the source-area polygon if available, otherwise in the top third by elevation of the polygon cells",
+      "min_polygon_area_m2": 900,
+      "exclusion_counting": "polygons below the minimum area, invalid geometries and non-landslide process classes are excluded and counted by reason"
+    },
+    "background_rule": {
+      "extent": "inside the mapping extent, outside obscured areas",
+      "design": "area-uniform random cells (seeded), not matched on terrain",
+      "min_separation_m": 90,
+      "exclusion_buffer_m": null,
+      "exclusion_buffer_rule": {
+        "statistic": "for each development inventory: 90th percentile of equivalent radius sqrt(area/pi) over valid positive polygons",
+        "global_value": "maximum over the development inventories, rounded up to the next 10 m, floor 60 m",
+        "cap_m": 300,
+        "inputs_allowed": "inventory geometry only; no terrain, no model score, no Suedtirol data",
+        "frozen_by": "Amendment 1 (written after Phase 1 download, before any terrain feature or model)"
+      }
+    },
+    "class_ratio_positive_to_background": [1, 1],
+    "ratio_note": "Sampling parameter, not a frequency in the landscape. PR-AUC is only reported at this ratio."
+  },
+
+  "splits": {
+    "block_size_m": 5000,
+    "gap_between_train_and_test_blocks_m": 1000,
+    "primary": "leave-one-inventory-out over the development inventories (cross-region), blocks as bootstrap units",
+    "secondary": "spatial block cross-validation within each inventory, 5 km blocks with 1 km gap",
+    "forbidden": "random pixel or random polygon splits"
+  },
+
+  "metrics": {
+    "primary": "roc_auc",
+    "secondary": ["average_precision_at_fixed_ratio", "continuous_boyce_index", "recall_in_top_20_percent_area", "balanced_accuracy_at_background_80th_percentile", "confusion_matrix"],
+    "top_area_fraction": 0.2,
+    "forbidden": ["accuracy_as_headline", "brier_score_before_calibration_shown", "probability_wording"],
+    "intervals": {"scheme": "block bootstrap over 5 km blocks", "n_resamples": 2000, "level": 0.95},
+    "null_reference": {"scheme": "permutation of presence labels within blocks", "n_permutations": 500},
+    "report_with_every_number": ["independent_units", "ratio", "interval", "baselines"],
+    "paired_differences": "model minus baseline and arm minus arm get their own block-bootstrap interval; better only if the interval excludes zero, otherwise 'no established benefit'",
+    "dominance_check": "report without the largest single block or cluster when it holds more than 20 percent of positives"
+  },
+
+  "baselines": {
+    "random": "AUC 0.5 reference plus the permutation null",
+    "slope_only": "AUC of slope_deg as score",
+    "elevation_only": "AUC of elevation_m as score",
+    "simple_logistic": "logistic regression on slope_deg, elevation_m, profile_curvature, plan_curvature",
+    "distance_to_known_landslide": "negative distance to the nearest other known landslide polygon; baseline for the neighbourhood test only",
+    "elsus_v2": "external European reference raster; optional, not registered as available (access untested)"
+  },
+
+  "models": {
+    "benchmark": ["lightgbm_or_xgboost", "logistic_regression", "random_forest", "small_mlp"],
+    "gradient_boosting_library": "scikit-learn HistGradientBoosting unless xgboost/lightgbm is added with justification in requirements-lock.txt",
+    "hyperparameter_selection": "development folds only, fixed grid recorded in the run configuration"
+  },
+
+  "arms": {
+    "MODEL_Q": ["gorkha_2015", "rer2023"],
+    "MODEL_D": ["gorkha_2015", "rer2023", "far_western_nepal"],
+    "MODEL_D_matched": "MODEL_D downsampled to the positive count of MODEL_Q with the same trigger-class composition",
+    "details": "Amendment required before Phase 6 (hold-out targets and downsampling procedure)"
+  },
+
+  "south_tyrol_blind_test": {
+    "dataset": "iffi_suedtirol",
+    "layer": "p_bz-Geology:IdroGEO-Landslides-Events-Areas",
+    "crs": "EPSG:25832",
+    "positive_subset": {
+      "geometry": "polygon features only (Events-Areas); identification points, linear events, deep-seated gravitational deformation and geomorphology elements are not used",
+      "field": "MOVEMENT_CODE",
+      "include_codes": [2, 5, 7],
+      "include_meaning": {"2": "Gleitung rotational/translational", "5": "Schnelles Fliessen (Mure)", "7": "Komplexe Rutschung"},
+      "exclude_codes": [1, 3, 4, 6, 9, 10, 11],
+      "exclude_meaning": {"1": "Fallen/Kippen", "9": "Gebiet mit Fallen/Kippen", "3": "Laterale Zergleitung", "4": "Langsames Fliessen", "6": "Einsturz", "10": "diffuse Einsturz-Bewegungen", "11": "diffus verteilte Oberflaechenrutschungen"},
+      "exclusion_reason": "rockfall, collapse, creep and diffuse area classes are not slope-failure processes comparable to the training inventories",
+      "min_polygon_area_m2": 900,
+      "date_available": false,
+      "temporal_evaluation": "none; IFFI Suedtirol has no event date field"
+    },
+    "expected_counts_at_registration": {"events_areas_total": 10463, "include_codes_total": 3523, "source": "attribute-only WFS query 2026-10-17, no geometry inspected"},
+    "background": {
+      "extent": "province of Suedtirol (administrative boundary from an open source recorded in DATA_SOURCES.md at Phase 15), no slope or land-cover mask",
+      "design": "area-uniform random cells, seeded, 30 m grid",
+      "buffer_m": "same global value as the development inventories (Amendment 1); never re-derived from Suedtirol",
+      "min_separation_m": 90,
+      "ratio": [1, 1],
+      "known_limitation": "IFFI is not a complete systematic map: background cells may contain undocumented landslides, so AUC measures separation of documented landslides from background, not completeness"
+    },
+    "secondary_variant": {"name": "steep_only", "rule": "slope_deg >= 10 for presences and background", "status": "pre-registered, counted as a second comparison, not the headline"},
+    "background_redraws": "5 additional seeded redraws, reported as spread; the first draw is the headline",
+    "metrics": "primary roc_auc with 5 km block bootstrap; also average precision at ratio 1:1, continuous Boyce index, recall in top 20 percent area",
+    "execution": "exactly once, by the Phase 15 script, only after explicit written approval of the user and a frozen model manifest",
+    "after_execution": "Suedtirol data count as seen; further analyses are exploratory and labelled so"
+  },
+
+  "gates": {
+    "phase1": "licences recorded from the original record; mapping extent available for each development inventory",
+    "phase2": "CRS, circular aspect and no-leakage tests pass and each was shown to fail on an injected bug",
+    "phase3": "buffer and minimum-separation tests pass; every positive/background draw reproducible from the seed",
+    "phase4": "model beats slope_only on the primary leave-one-inventory-out design: lower bound of the 95 percent paired block-bootstrap interval of the AUC difference is above 0; otherwise cause analysis instead of extension",
+    "phase5": "independent units and intervals are reported for every headline number",
+    "phase7_model_b": {
+      "min_independent_dated_events": 15,
+      "event_independence": "day-resolved date and at least 7 days or at least 100 km apart",
+      "min_landslides_per_event": 30,
+      "note": "Chosen before seeing any data as a design decision, not derived. Pilot inventories (Gorkha, RER2023: one event each; Far-Western Nepal: year resolution) are not expected to pass; if the gate fails Model B is dropped."
+    }
+  },
+
+  "open_items": [
+    {"item": "buffer value", "resolved_by": "Amendment 1 after Phase 1 download, before terrain and models"},
+    {"item": "Gorkha download", "resolved_by": "built-in browser (ScienceBase blocks scripts); no workaround"},
+    {"item": "arm hold-out targets and downsampling", "resolved_by": "Amendment before Phase 6"},
+    {"item": "neighbourhood test procedure", "resolved_by": "Amendment before Phase 12"},
+    {"item": "Suedtirol province boundary source", "resolved_by": "DATA_SOURCES.md before Phase 15"}
+  ]
+}

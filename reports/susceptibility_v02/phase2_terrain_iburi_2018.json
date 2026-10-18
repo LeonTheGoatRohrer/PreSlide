@@ -1,0 +1,40 @@
+{
+  "dataset": "iburi_2018",
+  "crs": "EPSG:32654",
+  "blocks": 10,
+  "extent_inside_blocks": true,
+  "cells_in_extent": 1508335,
+  "extent_area_from_cells_km2": 1357.5015,
+  "extent_area_km2": 1357.5633191956356,
+  "elevation_m_quantiles": {
+    "0": -8.378257751464844,
+    "0.01": 0.0,
+    "0.5": 63.330902099609375,
+    "0.99": 340.1719665527344,
+    "1": 472.3009033203125
+  },
+  "share_elevation_le_0": 0.026599528619305392,
+  "slope_deg_quantiles": {
+    "0.5": 4.607354164123535,
+    "0.9": 17.685304641723633,
+    "0.99": 26.728187561035156,
+    "1": 53.63017272949219
+  },
+  "aspect_unit_circle_max_error": 1.1920928955078125e-07,
+  "nan_share_in_extent": {
+    "elevation_m": 0.0,
+    "slope_deg": 0.0,
+    "aspect_sin": 0.0,
+    "aspect_cos": 0.0,
+    "profile_curvature": 0.0,
+    "plan_curvature": 0.0,
+    "tri_m": 0.0,
+    "tpi_m": 0.0,
+    "relief_1km_m": 0.0,
+    "log10_catchment_m2": 0.0052561267888101785,
+    "twi": 0.0052561267888101785,
+    "drainage_distance_m": 0.0
+  },
+  "meridian_convergence_deg_max": 0.7636766453123239,
+  "note": "Extent-wide distributions only; no value at any landslide polygon, no sample."
+}
