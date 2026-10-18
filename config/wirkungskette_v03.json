@@ -29,6 +29,7 @@
     "area_centre": "arithmetic mean of the EPSG:31287 coordinates of the 24 v02 primary events (around Gasen)",
     "area_radius_rule": "largest distance of a v02 primary event from area_centre, rounded up to the next 100 m",
     "area_note": "only cells of the cached 10 km demo window exist; the area circle may be cut by that window and this is reported",
+    "area_amended": {"rule": "cells within 2000 m (planar, EPSG:31287) of at least one v02 primary event, inside the cached 10 km window", "buffer_m": 2000, "supersedes": ["area_centre", "area_radius_rule"]},
     "frames": [
       {"id": "bewertbar", "rank": "primaer", "cells": "kind == 'grid' and reason == '' (assessable 90 m cells: slope at least the v01 minimum, catchment not truncated)"},
       {"id": "alle_rasterzellen", "rank": "sekundaer", "cells": "kind == 'grid', any reason (adds flat cells and cells with truncated catchment)", "reason": "the v02 events were not slope-filtered; shows how much the slope filter alone changes the reference"}
@@ -68,6 +69,9 @@
     "OpenStreetMap is today's state (2026)",
     "3 independent event units; any interval from them is coarse",
     "the reference area is defined from the event positions; it describes infrastructure density around these events, not in Austria"
+  ],
+  "amendments": [
+    {"id": 1, "date": "2026-10-18", "what": "reference area changed from the centroid circle (area_centre/area_radius_rule) to the union of 2000 m buffers around the 24 v02 primary events", "reason": "the registered centroid circle has radius 7400 m because two Breitenau events lie 6-8 km west of the Gasen cluster; it covers 12082 of 36569 assessable cells (a third of the 10 km window) and reaches 5.5 km beyond the window edge, so it is not 'the same area'. 2000 m keeps the reference inside the local valley systems of both event groups (same order as the 2 km v01 pilot radius)", "seen_before_amendment": "pilot run (1 and 5 reference points per frame): area centre and radius, cell counts of the circle and the inventory exclusion, end status and inventory distance of one reference point. No reference metric, share, interval or comparison was printed or inspected", "unchanged": "everything else: frames, 250 m inventory exclusion, sample size 500, seed, chain, hit rule, context rule, metrics, comparisons, uncertainty and wording rules"}
   ],
   "outputs": {
     "report": "reports/wirkungskette_v03/nullreferenz.md",
