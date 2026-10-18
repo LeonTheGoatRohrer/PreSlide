@@ -300,3 +300,34 @@ Ein transienter GDAL-Speicherfehler beim Lesen trat zweimal auf, jeweils vor dem
 **Phase-3-Gate erfüllt:** Puffer-, Umriss- und Mindestabstandsprüfungen bestehen, und jede Ziehung ist aus dem Seed reproduzierbar. Tests: `test_susceptibility_v02_sampling.py` (8). Die Mutationsprüfung umfasst 45 eingebaute Fehler, alle erkannt.
 
 **Nächster Schritt (Phase 4):** bestätigende Tests H1-EQ und H2-EQ (Gorkha → Iburi) mit den registrierten Modellen, Seeds und Bonferroni-Regel über 4 Tests; H1/H2-Regen als „nicht durchführbar“ berichten. Bisher hat kein Modell eine v02-Stichprobe gesehen.
+
+---
+
+## Nachtrag 5, 18.10.2026: Phase 4 – bestätigender Test (einmal gerechnet)
+
+Code: `preslide/susceptibility/v02_evaluate.py`. Die Modelle, Hyperparameter und Seeds sind die registrierten; es gibt keine weitere Modellfamilie.
+
+Vorgehen:
+
+- Vor der Wertung lief ein Pilot nur auf gesehenen Daten (Gorkha → Far-Western Nepal, ohne Ausgaben). Ein Test stellt sicher, dass der Pilot Iburi nicht liest.
+- Die Wertung ist write-once; eine zweite verweigert der Code (getestet).
+- Mutationsprüfung: 52 von 52 eingebauten Fehlern erkannt.
+
+| Test | Ergebnis |
+|---|---|
+| H1-EQ | −0,015 [−0,040; +0,009], Bonferroni-Untergrenze −0,047 → **nicht bestanden** |
+| H2-EQ | +0,053 [+0,031; +0,073], Untergrenze +0,023 → bestanden |
+| H1/H2-Regen | nicht durchführbar (RER2023 `pending_extent`) |
+
+**Schluss nach der registrierten Regel:** Auslöserspezifische Geländeanfälligkeit ist für Erdbeben nicht belegt; Regen ist nicht getestet.
+
+Sekundär:
+
+- Neigung allein erreicht auf Iburi 0,841. Das Geländemodell liegt mit −0,021 [−0,042; −0,004] darunter.
+- PGA-Zuwachs: kein Nutzen belegt.
+- TPI-Vorzeichen auf Iburi > 0,5 (0,574).
+- In der Gegenrichtung erreicht das Iburi-Geländemodell auf Gorkha 0,502.
+
+**Ursachenanalyse (explorativ):** Die Geländewerte überlappen kaum. Nur 31 % der Iburi-Stichproben liegen im Höhenbereich von Gorkha, umgekehrt 4 %. Baummodelle extrapolieren nicht; die Neigung überträgt, weil ihre Richtung stabil ist.
+
+Bericht: `PHASE4_RESULTS.md`. v02 ist damit abgeschlossen. Eine Erweiterung, etwa auf Erdbebeninventare mit ähnlicher Landschaft oder auf ein Modell mit stabiler Extrapolation, wäre eine neue Version mit eigener Vorregistrierung. Iburi ist jetzt gesehen.

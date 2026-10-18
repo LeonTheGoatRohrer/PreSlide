@@ -9,11 +9,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TESTS = ['tests/test_susceptibility_v02_pga.py', 'tests/test_susceptibility_v02_terrain.py',
-         'tests/test_susceptibility_v02_sampling.py']
+         'tests/test_susceptibility_v02_sampling.py', 'tests/test_susceptibility_v02_phase4.py']
 P1 = 'preslide/susceptibility/v02_phase1.py'
 SE = 'preslide/susceptibility/v02_sensitivity.py'
 TE = 'preslide/susceptibility/v02_terrain.py'
 SA = 'preslide/susceptibility/v02_sampling.py'
+EV = 'preslide/susceptibility/v02_evaluate.py'
 MUTANTS = [
     (P1, 'grid spacing from rounded header', "dlon, dlat = (lon[0, -1] - lon0) / (nlon - 1), (lat_top - lat[-1, 0]) / (nlat - 1)",
      "dlon, dlat = float(spec['nominal_lon_spacing']), float(spec['nominal_lat_spacing'])"),
@@ -57,6 +58,15 @@ MUTANTS = [
     (TE, 'v01 inventories downloadable', "if dataset not in NEW_INVENTORIES:\n        raise ValueError(f'{dataset}: v01 tiles",
      "if False:\n        raise ValueError(f'{dataset}: v01 tiles"),
     (TE, 'wrong central meridian', "(6 * zone - 183)", "(6 * zone - 180)"),
+    (EV, 'either hypothesis suffices', "'supported': bool(p1 and p2)}", "'supported': bool(p1 or p2)}"),
+    (EV, 'zero lower bound passes', "p1, p2 = h1['lower_bound_bonferroni'] > 0, h2['lower_bound_bonferroni'] > 0",
+     "p1, p2 = h1['lower_bound_bonferroni'] >= 0, h2['lower_bound_bonferroni'] >= 0"),
+    (EV, 'no Bonferroni', "np.percentile(d, lower_pct)", "np.percentile(d, 2.5)"),
+    (EV, 'second scoring allowed', "if not pilot and (PREDICTIONS.exists() or RESULT.exists()):", "if False:"),
+    (EV, 'train/test overlap allowed', "if set(train.dataset) & set(test.dataset):", "if False:"),
+    (EV, 'pilot reads confirmatory test', "direction(cfg, 'gorkha_2015', 'far_western_nepal', 'far_western_nepal', 99",
+     "direction(cfg, 'gorkha_2015', 'iburi_2018', 'far_western_nepal', 99"),
+    (EV, 'PGA in terrain model', "'EQ_TERRAIN': ('hist_gradient_boosting', terrain),", "'EQ_TERRAIN': ('hist_gradient_boosting', terrain + [PGA]),"),
     (SA, 'sea cells accepted', "return np.isfinite(z) & (z > 0)", "return np.isfinite(z)"),
     (SA, 'zero elevation accepted', "return np.isfinite(z) & (z > 0)", "return np.isfinite(z) & (z >= 0)"),
     (SA, 'sea rejections not counted', "counts['background_candidates_rejected_elevation_le_0'] += int((np.isfinite(z) & (z <= 0)).sum())", "pass"),

@@ -2,6 +2,8 @@
 
 Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then this file.
 
+2026-10-18 (Phase 4 scored once, v02 closed): **trigger-specific terrain susceptibility not supported for earthquakes.** Gorkha -> Iburi: H1-EQ terrain+PGA 0.826 vs slope+PGA 0.841, -0.015 [-0.040, 0.009], Bonferroni bound -0.047 -> failed; H2-EQ Gorkha- vs FWN-trained terrain +0.053 (bound +0.023) -> passed; rain arm not testable (RER2023 no extent). Slope alone 0.841 beats the terrain model on Iburi (-0.021). Exploratory cause: little overlap of terrain ranges (31 % of Iburi samples inside Gorkha's elevation range); reverse Iburi -> Gorkha terrain AUC 0.502. Iburi is now seen. See `reports/susceptibility_v02/PHASE4_RESULTS.md`.
+
 2026-10-18 (Phase 3 done, no model yet): **v02 samples drawn and verified** (`data/susceptibility_v02/samples/`): Iburi 3,177+3,177 (69 blocks), Gorkha 24,036+24,036 (1,262), Far-Western Nepal 1,551+1,551 (305); all PASS incl. identical seeded rerun. Amendment 3: background <= 0 m excluded (434 Iburi candidates rejected). First draw discarded before any model: GEOS buffer simplification (1 % of distance) let one background cell each in Iburi/Gorkha sit at 99.7 m < 100 m; v02 adds an exact distance check (v01 passed by chance). Next: Phase 4 H1-EQ/H2-EQ (Gorkha -> Iburi).
 
 2026-10-18 (Phase 2 done, stopped before sampling): **terrain blocks for Iburi (10, EPSG:32654), Gorkha (168) and Far-Western Nepal (42) in `data/susceptibility_v02/terrain/`.** Found a v01 bug: `terrain.dem_window` merged NASADEM on a lattice starting at the requested bounds, shifting every block by up to 0.5 arc-second (<= 15 m); v01 blocks differ from correctly located ones by 4.1 m elevation / 1.6 deg slope on average (Gorkha, p99 19.7 m / 8.7 deg). v01 left unchanged and documented; v02 snaps the merge to the tile lattice and recomputed all three inventories. Open decision before Phase 3: 2.6 % of the Iburi extent is sea (NASADEM 0 m) -> proposed amendment to exclude background cells <= 0 m.
@@ -87,7 +89,8 @@ Few independent units (11 test); Stanz dominance; reporting/placement bias in la
 - Phase 1 Erdbeben abgeschlossen: Iburi-ShakeMap, Altrutschungszählung, Amendment 2 (Puffer 100 m). Tests: v01 52, v02 31, v02_pga 32 bestanden, 0 übersprungen; Mutationsprüfung 27/27.
 - Phase 2 abgeschlossen: `preslide/susceptibility/v02_terrain.py` (Kachelraster-Korrektur), 4 NASADEM-Kacheln Hokkaido, Blöcke Iburi/Gorkha/Far-Western Nepal, Vergleich mit v01 (`phase2_terrain_v01_comparison_*.json`). Tests: v01 52, v02 31, v02_pga 32, v02_terrain 9 bestanden, 0 übersprungen; Mutationsprüfung 36/36.
 - Phase 3 abgeschlossen: `preslide/susceptibility/v02_sampling.py` (v01-Ziehungsfunktionen, v02-Blöcke, Meerregel, exakte Pufferprüfung), Amendment 3. Tests: v01 52, v02 31, v02_pga 32, v02_terrain 9, v02_sampling 8 bestanden, 0 übersprungen; Mutationsprüfung 45/45.
-- Nächste Schritte: Phase 4: H1-EQ (EQ_TERRAIN_PGA − slope_pga_logistic) und H2-EQ (EQ_TERRAIN Gorkha − EQ_TERRAIN FWN) auf Iburi, Bonferroni 0,625. Perzentil; Gegenrichtung und H3/H4 sekundär; Regen „nicht durchführbar“.
+- Phase 4 einmal gerechnet (`preslide/susceptibility/v02_evaluate.py`, write-once): H1-EQ nicht bestanden, H2-EQ bestanden → nicht belegt; Regen nicht testbar. Tests: v01 52, v02 31, v02_pga 32, v02_terrain 9, v02_sampling 8, v02_phase4 9 bestanden, 0 übersprungen; Mutationsprüfung 52/52.
+- Nächste Schritte: keine weitere v02-Auswertung. Eine Fortsetzung (ähnliche Landschaften, extrapolationsstabile Modelle oder ein Regeninventar mit Umriss) wäre eine neue Version mit eigener Vorregistrierung.
 
 ## satellite_nn_v01 (Stand 17.10.2026, M0 teilweise)
 
