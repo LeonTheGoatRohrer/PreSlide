@@ -146,6 +146,17 @@ Vorab registriert (`config/v09.json`), bevor eine V0.9-Auswahl, Prüfung, Datena
 - **Bestand:** Medien 24 Gruppen / 14 Einheiten, Kärnten 21 / 16, zusammen 45 / 30. Viele Kandidaten fallen weg, weil sie über Tagesketten mit gesehenen V0.4-Stürmen verbunden sind.
 - **Ergebnis (explorativ):** Medien: Gelände allein **0,770** (deutlich über Zufall), Gelände + Wetter 0,752, **Wetterzusatznutzen −0,019 [−0,121; +0,082]**. Kärnten und gemeinsam ebenfalls kein Nutzen. Von 72 Vergleichen zeigt nur Gradient Boosting bei den Medien einen positiven Zusatznutzen mit Intervall über null; bei so vielen Vergleichen ist das kein Beleg.
 - Bericht `reports/v09/summary.md`, Nachweis `reports/v09/verification.json` (PASS). Rohdaten, Meldungs-URLs und Probenvorhersagen bleiben lokal.
+## Extremwetter am Ereignisort: Case-Crossover (18.10.2026, explorativ)
+
+V0.4 vergleicht Hänge am selben Tag und kann daher nicht zeigen, ob Extremwetter **mehr** Ereignisse auslöst. `extremwetter_v01` vergleicht deshalb denselben Ort an verschiedenen Tagen: SPARTACUS-Tagesregen vor dem Ereignis gegen dieselben Kalendertage (±15) der Jahre 1991–2025. Das Design wurde vor jedem Ergebnis registriert (`config/extremwetter_v01.json`); die Primärfenster enden um 07:00 des Vortags.
+
+- 422 Ereignisse, **35 unabhängige Episoden**. Alle waren schon gesehen, daher **explorativ**.
+- Extrem nasse Fenster sind stark überrepräsentiert: 3 Tage über dem örtlichen 95. Perzentil in **24,6 %** der Episoden statt 5 %. Ratenverhältnis 6,2 [2,5; 11,7]. Das bleibt so ohne den Stanz-Sturm und mit anderen Referenzzeiträumen; der Placebotest ist unauffällig.
+- Der vorab festgelegte Mittelwerttest (3 Tage: 0,587 [0,481; 0,691]) ist **knapp nicht erfüllt**. Grund sind zwei Muster: tagelanger Vorregen oder Gewitter erst am Ereignistag, das das strikte Fenster nicht sieht.
+- Meldebias (vollständigere Erfassung nach Unwettern) kann den Zusammenhang verstärken. Es ist ein Zusammenhang, keine Kausalität.
+- Ein Bestätigungsplan für neue Sturmepisoden ist vorab eingefroren, aber noch nicht ausgeführt.
+
+Bericht: `reports/extremwetter_v01/summary.md`; Web-API `GET /api/extremwetter`.
 
 ## Webdemonstration: drei Seiten (15.10.2026)
 

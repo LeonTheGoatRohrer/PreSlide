@@ -1,0 +1,109 @@
+{
+  "version": "extremwetter_v01",
+  "registered_on": "2026-10-18",
+  "registered_before": "any percentile rank, exceedance share, interval or null value of this study was computed or viewed. Seen before registration: SPARTACUS metadata (period, licence), one raw SPARTACUS series for a single point (request-size probe, values not analysed), cohort counts per year/process/episode.",
+  "status": "EXPLORATORY: all 423 events were already used in V0.4/V0.5. Nothing in this study is a confirmation; the confirmation plan for unseen events is reports/extremwetter_v01/CONFIRMATION_PLAN.md.",
+  "question": "Was precipitation before the documented event day at the event location more extreme than on comparable days without a documented event at the same location? (case-crossover, same place, different days)",
+
+  "cohort": {
+    "source": "data/v04/run_c6d67a854ba7/dataset.parquet (frozen V0.4 run, read only)",
+    "rows": "label == 1 (one positive per event group), date tier A (all rows of this run are tier A)",
+    "expected_events": 423,
+    "subgroups": {"rule": "preslide.pruefgebiete.overview.process_class", "Hangmure": 102, "Hangmure gemischt": 51, "Lockergesteinsrutschung": 270},
+    "independence_unit": "temporal episode: single linkage over local event days with gap <= 3 days (preslide.v04.units.temporal_episodes)",
+    "stanz_episode": "the temporal episode containing local day 2016-07-25"
+  },
+
+  "weather": {
+    "provider": "GeoSphere Austria",
+    "resource": "spartacus-v2-1d-1km",
+    "endpoint": "https://dataset.api.hub.geosphere.at/v1/timeseries/historical/spartacus-v2-1d-1km",
+    "licence": "CC BY 4.0, (c) GeoSphere Austria",
+    "parameter": "RR",
+    "day_semantics": "RR labelled day D = station-based sum 07:00 CET D -> 07:00 CET D+1 (06:00 UTC D+1), provider metadata",
+    "request_period": ["1960-09-01", "2026-10-16"],
+    "points_per_request": 30,
+    "location": "event coordinate (latitude/longitude of the V0.4 positive); nearest 1 km cell returned by the API; offset must be <= 800 m (EPSG:31287)",
+    "plausibility": "every value used must be finite and in [0, 500] mm; otherwise the run fails (no clipping, no filling)",
+    "cache": "raw responses cached under data/extremwetter_v01/cache/http with URL + SHA-256 sidecar"
+  },
+
+  "exposure": {
+    "variable": "precipitation sum over k consecutive SPARTACUS days",
+    "windows_days": [1, 3, 7, 14, 30],
+    "primary_window_days": 3,
+    "window_end": {
+      "primary": {"last_label_offset_days": -2, "meaning": "last SPARTACUS day = event day - 2, i.e. precipitation measured up to 07:00 CET of the day before the event day. Strictly before t0 for every event (t0 >= local midnight of the event day); this is the V0.4 daily admissibility rule (D+1 06:00 UTC < t0) applied with the earliest possible t0."},
+      "secondary_previous_day": {"last_label_offset_days": -1, "flag": "MAY_CONTAIN_POST_T0", "meaning": "includes 00:00-07:00 local of the event day; rain after the event may be included"},
+      "secondary_event_day": {"last_label_offset_days": 0, "flag": "CONTAINS_POST_T0", "meaning": "includes the whole event day until 07:00 of the next day; contains rain after the event. Descriptive only, never evidence of a pre-event signal"}
+    },
+    "placebo": {"window_days": 3, "last_label_offset_days": -62, "meaning": "3-day window ending 60 days before the primary window end, outside every primary window; expected percentile rank 0.5 unless year-level wetness or a trend biases the reference"}
+  },
+
+  "reference": {
+    "design": "time-stratified, same 1 km cell, same calendar window in other years (bidirectional)",
+    "anchor_rule": "for each reference year Y != event year: anchor day = (event day with year set to Y; 29 Feb -> 28 Feb) + offset, offset in [-15, +15] days (31 anchors per year). Year boundaries handled by date arithmetic (a 5 January event uses 21 Dec of Y-1 to 20 Jan of Y).",
+    "reference_window": "each anchor gets exactly the same window definition (length k, same last-label offset) as the event",
+    "years": {"primary": [1991, 2025], "sensitivity_full_series": [1961, 2025], "sensitivity_recent": [2011, 2025]},
+    "event_year_excluded": "the whole event year is excluded so that no reference window shares the triggering storm or its season",
+    "documented_event_exclusion": {
+      "inventory": "data/raw/geosphere_natural_hazards.json (GeoSphere Naturgefahren, local snapshot), all quality levels",
+      "process_groups": ["Gleiten/Rutschen", "Fliessen", "Massenbewegung (unklarer Typ)"],
+      "dated_records": "records with Date_Anfan and Date_End_a, converted to local (Europe/Vienna) days, interval length <= 31 days; longer or missing intervals are counted and ignored (too vague to place a day)",
+      "radius_m": 10000,
+      "distance": "EPSG:31287 metres",
+      "days": 3,
+      "rule": "an anchor day r is excluded if a dated record within radius_m has a day interval intersecting [r - days, r + days]"
+    },
+    "outside_series": "anchors whose window reaches outside the downloaded series are dropped and counted",
+    "minimum_reference_windows": 200,
+    "below_minimum": "the event is excluded from that analysis and counted by reason"
+  },
+
+  "statistics": {
+    "percentile_rank": "PR = (#reference < x + 0.5 * #reference == x) / #reference (mid-rank, ties split). Smallest value -> 0 (if strictly smallest), largest -> 1 (if strictly largest). Exchangeable case => E[PR] = 0.5.",
+    "exceedance": "x > Q_p of the event's own reference windows (numpy quantile, linear), p in [0.95, 0.99]; null expectation per event q_i = share of its reference windows > Q_p (about 1 - p)",
+    "rate_ratio": "case-crossover odds ratio for 'window above Q_p': [s / (1 - s)] / [q / (1 - q)] with s = weighted exceedance share of events and q = weighted null expectation. Interpreted as how many times more documented events followed such windows than other days; subject to reporting bias",
+    "weighting": {"primary": "each temporal episode weight 1 (events of an episode share 1/n_e)", "sensitivity": "each event weight 1"},
+    "bootstrap": {"unit": "temporal episode (whole episodes resampled with replacement)", "draws": 2000, "seed": 20261018, "interval": "percentile 95 %"},
+    "null": {
+      "method": "pseudo-case Monte Carlo: for each episode one common (reference year, offset) cell is drawn uniformly from the cells valid for all its events; that reference window replaces each event's case window and is ranked against the remaining (leave-one-out) reference windows of the same event. Preserves episode dependence and the spatial correlation within a storm.",
+      "draws": 5000, "seed": 20261019,
+      "p_value": "one-sided, H1 = more extreme (larger) than reference: (1 + #null >= observed) / (1 + draws)"
+    },
+    "effective_sample_size": "number of temporal episodes in the analysed set, reported next to every number"
+  },
+
+  "hypotheses": {
+    "primary": "episode-weighted mean PR of the 3-day primary window (end offset -2, reference 1991-2025) > 0.5",
+    "claim_rule": "an increase is described (still exploratory) only if the one-sided null p < 0.05 AND the 95 % episode-bootstrap interval excludes 0.5",
+    "secondary_registered": ["mean PR for windows 1, 7, 14, 30 days (Holm correction over the 5 primary-end windows reported)", "exceedance shares above Q95 and Q99 and their rate ratios for all 5 windows"],
+    "multiplicity": "every cell of the comparison table below is computed and reported; no cell is dropped after viewing"
+  },
+
+  "comparisons": {
+    "for_every_window": [
+      "primary (episodes weighted, all events, reference 1991-2025, end -2)",
+      "events weighted",
+      "without the Stanz episode",
+      "subgroup Hangmure",
+      "subgroup Hangmure gemischt",
+      "subgroup Lockergesteinsrutschung",
+      "reference 1961-2025",
+      "reference 2011-2025",
+      "end -1 (MAY_CONTAIN_POST_T0)",
+      "end 0 (CONTAINS_POST_T0)"
+    ],
+    "plus": ["placebo 3-day window ending at offset -62 (primary settings)"],
+    "count": "10 settings x 5 windows + 1 placebo = 51 rows, each with mean PR, exceedance Q95/Q99 shares, rate ratios, bootstrap intervals, null p and effective sample size"
+  },
+
+  "reporting_bias": "documented events are more completely recorded after large storms (field campaigns, media attention); this inflates the association between extreme rain and documented events. Discussed in the report; not corrected.",
+
+  "outputs": {
+    "data": "data/extremwetter_v01/ (cache, per-event checkpoints, local only)",
+    "report": "reports/extremwetter_v01/ (summary.md German, figures, comparisons.json aggregate only)",
+    "web": "data/extremwetter_v01/web/results.json (aggregates only), GET /api/extremwetter",
+    "no_record_level_output_in_git": true
+  }
+}

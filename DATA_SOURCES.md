@@ -177,3 +177,11 @@ No new download. v02 reads the v01 raw files (Gorkha, Far-Western Nepal, RER2023
 | Literature (runout scenarios, not data) | Hürlimann, McArdell & Rickli (2015) Geomorphology 232:20–32, doi:10.1016/j.geomorph.2014.11.030; Horton et al. (2013) NHESS 13:869–885 | — | fixed reaches 45 m / 467 m; energy-line angles 11° / 7°; v_max 15 m/s | values copied from the papers (checked in the full text); never fitted to the demo events |
 
 Not used (documented alternatives): GIP Austria road graph (data.gv.at, CC BY 4.0) and BEV address/building products; see `reports/wirkungskette_v01/AUDIT.md`.
+## extremwetter_v01 (2026-10-18)
+
+| Provider / dataset | Endpoint | Licence | Use | Rule / limitation |
+|---|---|---|---|---|
+| GeoSphere Austria, SPARTACUS v2 1 d 1 km (`spartacus-v2-1d-1km`), parameter RR | `dataset.api.hub.geosphere.at/v1/timeseries/historical/spartacus-v2-1d-1km` (metadata: `.../metadata`) | CC BY 4.0, © GeoSphere Austria | daily precipitation 1961-01-01 → 2026-10-16 at the nearest 1 km cell of each of the 423 V0.4 positives (case-crossover exposure and reference days) | RR of day D = station-based sum 07:00 CET D → 07:00 CET D+1; primary windows end with D = event day − 2 (strictly before t0). Station-derived grid: convective cells between stations can be missed; long-term homogeneity is the provider's design goal, not verified here |
+| GeoSphere Naturgefahren (Test), local snapshot (see above) | – | see above | dated records (Gleiten/Rutschen, Fließen, unclear type; interval ≤ 31 days) within 10 km exclude reference days ±3 days | no new download; incomplete before ~2000, so older reference days are less thoroughly cleaned |
+
+Raw responses: `data/extremwetter_v01/cache/http/` (15 requests × 30 points, URL + SHA-256 sidecar, local only). Grid-cell offsets checked ≤ 800 m (EPSG:31287).

@@ -8,6 +8,7 @@ from .common import read_json
 from .sources import ROOT
 
 app=FastAPI(title='Talwacht – lokaler Forschungsprototyp',docs_url=None,redoc_url=None)
+from .extremwetter.routes import router as extremwetter_router; app.include_router(extremwetter_router)  # GET /api/extremwetter
 
 @lru_cache(maxsize=1)
 def demo_directory():

@@ -1,0 +1,14 @@
+{
+  "version": "extremwetter_v01",
+  "registered_on": "2026-10-18",
+  "config": "config/extremwetter_v01.json",
+  "config_sha256": "98e33aa7ea3c56afe35695be9ba2d33ba1b755eb7e482a34dcc9880f3f0b2a88",
+  "statement": "Design fixed before any percentile rank, exceedance share, interval or null value was computed. Later changes only as dated amendments (AMENDMENT_<n>.json) with reason; the config file itself is never edited.",
+  "status": "exploratory (all 423 events seen in V0.4/V0.5)",
+  "seen_before_registration": [
+    "SPARTACUS metadata: RR 1961-01-01 to 2026-10-17, CC BY 4.0, day = 07:00 CET D to 07:00 CET D+1",
+    "one raw SPARTACUS point series (request-size probe; values not analysed)",
+    "cohort counts per year, process class, time quality and temporal episode (36 episodes, Stanz episode 243 events)",
+    "GeoSphere Naturgefahren inventory: counts of dated records per process group"
+  ]
+}
