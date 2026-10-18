@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, defineAsyncComponent} from 'vue'
+import {computed, ref, onMounted, defineAsyncComponent} from 'vue'
 import {useResource} from '../useResource.js'
 import {fmt} from '../metricDefinitions.js'
 import {openCheck} from '../session.js'
@@ -21,6 +21,12 @@ const primary = computed(() => v04.value?.test.primary)
 // Signature: the illustration gives way to the real map. Headline and search leave (250 ms), the image
 // zooms and loses focus and colour (500 ms), then the Hang-Check flies in over real terrain.
 const leaving = ref(false)
+// Optional hero clip (generated from the same illustration): only on wide screens, never with reduced
+// motion or data saver; the still image stays underneath and the page is complete without it.
+const clip = ref(false), clipPlaying = ref(false)
+onMounted(() => {
+  clip.value = !reducedMotion() && !navigator.connection?.saveData && window.matchMedia('(min-width: 901px)').matches
+})
 const webgl = () => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')) } catch { return false } }
 function arrive(place) {
   if (reducedMotion() || !webgl()) return openCheck(place)
@@ -57,8 +63,11 @@ const limits = [
       <img src="/media/tal.webp" width="2400" height="1029" fetchpriority="high" decoding="async"
            alt="KI-generierte Illustration: Alpental zur blauen Stunde vor einem Gewitter, Dorf mit Kirche, Bach und Straße.">
     </picture>
+    <video v-if="clip" class="hero-video" :class="{on: clipPlaying}" muted playsinline loop autoplay preload="auto" poster="/media/tal.webp" aria-hidden="true" @playing="clipPlaying = true">
+      <source src="/media/tal-clip.webm" type="video/webm"><source src="/media/tal-clip.mp4" type="video/mp4">
+    </video>
     <div class="hero-shade" aria-hidden="true"></div>
-    <RainCanvas/>
+    <RainCanvas v-if="!clipPlaying"/>
     <div class="hero-copy wrap">
       <p class="eyebrow hero-eyebrow">Hang-Check bei Starkregen · Österreich</p>
       <h1 id="hero-title">Wo zuerst hinschauen, wenn der Starkregen kommt.</h1>
@@ -164,6 +173,9 @@ const limits = [
 <style>
 .hero{position:relative;min-height:100svh;display:flex;align-items:flex-start;overflow:hidden;background:var(--slate-900);color:#fff;isolation:isolate}
 .hero-img,.hero-img img{position:absolute;inset:0;width:100%;height:100%}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 62%;opacity:0;transition:opacity .8s ease,transform .5s var(--ease),filter .5s var(--ease)}
+.hero-video.on{opacity:1}
+.hero.leaving .hero-video{transform:scale(1.08);filter:blur(8px) saturate(.45)}
 .hero-img img{object-fit:cover;object-position:50% 62%;transform-origin:50% 60%}
 .hero-shade{position:absolute;inset:0;z-index:1;background:
   linear-gradient(90deg,rgb(14 24 34 / .62) 0%,rgb(14 24 34 / .28) 46%,rgb(14 24 34 / 0) 70%),
