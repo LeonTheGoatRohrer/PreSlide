@@ -1,4 +1,4 @@
-"""Prove the susceptibility_v02 PGA / GSI / sensitivity tests can fail: inject one bug at a time, run the tests, restore.
+"""Prove the susceptibility_v02 PGA / GSI / sensitivity / terrain tests can fail: inject one bug at a time, run the tests, restore.
 
 python scripts/mutation_check_susceptibility_v02_pga.py   (writes reports/susceptibility_v02/mutation_check_pga.json)
 """
@@ -8,9 +8,10 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TESTS = ['tests/test_susceptibility_v02_pga.py']
+TESTS = ['tests/test_susceptibility_v02_pga.py', 'tests/test_susceptibility_v02_terrain.py']
 P1 = 'preslide/susceptibility/v02_phase1.py'
 SE = 'preslide/susceptibility/v02_sensitivity.py'
+TE = 'preslide/susceptibility/v02_terrain.py'
 MUTANTS = [
     (P1, 'grid spacing from rounded header', "dlon, dlat = (lon[0, -1] - lon0) / (nlon - 1), (lat_top - lat[-1, 0]) / (nlat - 1)",
      "dlon, dlat = float(spec['nominal_lon_spacing']), float(spec['nominal_lat_spacing'])"),
@@ -40,6 +41,20 @@ MUTANTS = [
      "top = sum(p90_by_inventory.values()) / len(p90_by_inventory)"),
     (P1, 'radius from area without pi', "np.sqrt(np.asarray(areas_m2, float) / np.pi)", "np.sqrt(np.asarray(areas_m2, float))"),
     (P1, 'touching old landslides ignored', "predicate='intersects'", "predicate='contains_properly'"),
+    (TE, 'merge bounds not snapped', "bounds = snap_to_lattice((lon0 - pad, lat0 - pad, lon1 + pad, lat1 + pad), ref.c, ref.f, res)",
+     "bounds = (lon0 - pad, lat0 - pad, lon1 + pad, lat1 + pad)"),
+    (TE, 'snap rounds inward', "x0 + math.floor((west - x0) / res) * res", "x0 + math.ceil((west - x0) / res) * res"),
+    (TE, 'tile checksum not verified', "if file_digest(f, 'sha256') != read_json(folder / 'provenance.json')['files'][0]['sha256']:",
+     "if False:"),
+    (TE, 'terrain parameters not checked', "if t[k] != v or f'{k} {v:g}' not in rule:", "if False:"),
+    (TE, 'disjoint blocks kept', "for b in block_grid(extent.bounds, t['block_core_m'], res_m) if shapely.box(*b[2:]).intersects(extent)]",
+     "for b in block_grid(extent.bounds, t['block_core_m'], res_m)]"),
+    (TE, 'window shape swapped', "shape = (round((top - bottom) / res_m), round((right - left) / res_m))",
+     "shape = (round((right - left) / res_m), round((top - bottom) / res_m))"),
+    (TE, 'unsupported inventory accepted', "if dataset not in SUPPORTED:", "if False:"),
+    (TE, 'v01 inventories downloadable', "if dataset not in NEW_INVENTORIES:\n        raise ValueError(f'{dataset}: v01 tiles",
+     "if False:\n        raise ValueError(f'{dataset}: v01 tiles"),
+    (TE, 'wrong central meridian', "(6 * zone - 183)", "(6 * zone - 180)"),
     (SE, 'PGA in terrain-only model', "'EQ_TERRAIN': ('hist_gradient_boosting', terrain),",
      "'EQ_TERRAIN': ('hist_gradient_boosting', terrain + [PGA]),"),
     (SE, 'block index truncated not floored', "int(math.floor(a / size_m))", "int(a / size_m)"),

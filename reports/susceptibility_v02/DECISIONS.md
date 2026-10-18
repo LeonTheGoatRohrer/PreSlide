@@ -190,3 +190,66 @@ Der Nutzer hat den Download der Iburi-ShakeMap freigegeben. Zahlen: `phase1_ibur
 - Die Bonferroni-Korrektur bleibt wie registriert über 4 Tests. H1/H2-Regen werden als „nicht durchführbar“ berichtet, nicht gestrichen.
 
 **Nächster Schritt (Phase 2):** Iburi-Geländeblöcke mit dem v01-Code in EPSG:32654 rechnen. Zuerst die DEM-Abdeckung prüfen; das braucht NASADEM-Kacheln um 42–43° N, 141–142° E, also einen neuen Download, der freigegeben werden muss. Danach PGA- und Interpolationstests für Iburi, dann die Ziehung (Phase 3).
+
+---
+
+## Nachtrag 3, 18.10.2026: Phase 2 – Geländeblöcke; Versatzfehler im v01-DEM-Fenster
+
+Der Nutzer hat den Download der NASADEM-Kacheln für den Iburi-Umriss freigegeben: n42e141, n42e142, n43e141 und n43e142 von Planetary Computer, wie in v01. Größe und SHA-256 stehen in `data/susceptibility_v02/dem/nasadem/*/provenance.json`. Die MD5-Prüfung war nur bei n42e141 möglich; die übrigen drei haben kein einteiliges ETag, wie bereits teils in v01. Code: `preslide/susceptibility/v02_terrain.py` (v01-Merkmalscode, Parameter aus v01 Amendment 2, gegen den registrierten Text geprüft).
+
+### Gefundener Fehler im v01-Code (v01 bleibt unverändert)
+
+`terrain.dem_window` in v01 übergibt `rasterio.merge` die angefragten Längen- und Breitengrenzen. Das Mosaik beginnt dann an diesen Grenzen statt auf dem Pixelraster der Kacheln, und die Kachelpixel werden mit ganzzahligem Versatz kopiert. Jeder Block ist deshalb um bis zu ein halbes NASADEM-Pixel verschoben (0,5 Bogensekunden, höchstens etwa 15 m), je Block unterschiedlich.
+
+Nachweis:
+
+- Ein synthetischer Kacheltest scheiterte mit dem alten Verfahren.
+- Auf echten Iburi-Fenstern ergaben sich Verschiebungen von bis zu 6 m und Höhenabweichungen von bis zu 3,8 m gegenüber direkter Reprojektion; nach der Korrektur ist die Abweichung 0.
+
+Wirkung auf die v01-Blöcke, gemessen am selben Raster:
+
+| Inventar | Blöcke | Höhe: mittlere / 99.-Perz. Abweichung | Neigung: mittlere / 99.-Perz. Abweichung |
+|---|---|---|---|
+| Gorkha | 168 | 4,1 m / 19,7 m | 1,6° / 8,7° |
+| Far-Western Nepal | 42 | 4,4 m / 18,5 m | 1,6° / 8,9° |
+
+Details: `phase2_terrain_v01_comparison_*.json`.
+
+**Folgen für v01:**
+
+- Die v01-Merkmale sind leicht unscharf. Das ist ein zufälliger Lageversatz von höchstens einer halben 30-m-Zelle und kein Informationsleck.
+- Positive und Hintergrund sind gleich betroffen. Die v01-Ergebnisse (Phase 4, Block-CV, Ursachenanalyse) und die explorative Gorkha-Sensitivität beruhen auf diesen Merkmalen. Ihre Schlussfolgerungen bleiben stehen, die AUC-Werte enthalten aber diese zusätzliche Unschärfe.
+- v01 wird nicht geändert; der Fehler ist hier dokumentiert.
+
+**Korrektur in v02:**
+
+- Die Grenzen werden nach außen auf das Kachelraster gerundet. Der Code prüft, dass alle Kacheln ein gemeinsames Raster haben und dass das Mosaik darauf liegt.
+- Damit verwirklicht v02 die registrierte bilineare Neuabtastung korrekt; eine Designänderung ist das nicht.
+- Damit Training und Test gleich behandelt sind, wurden die Blöcke von Gorkha (168) und Far-Western Nepal (42) im v02-Namensraum neu gerechnet. Die Registrierung erlaubt die Wiederverwendung der v01-Blöcke, verlangt sie aber nicht. Die v01-Kacheln wurden nur gelesen, nichts neu geladen.
+
+### Ergebnis Phase 2
+
+| Inventar | KBS | Blöcke | Umriss vollständig abgedeckt | Höhe im Umriss (min / Median / max) | NaN (Einzugsgebiet, TWI) |
+|---|---|---|---|---|---|
+| Iburi | EPSG:32654 | 10 | ja (1.357,5 km² aus Zellen, 1.357,6 km² Fläche) | −8 / 63 / 472 m | 0,5 % |
+| Gorkha | EPSG:32645 | 168 | ja | 148 / 1.795 / 7.946 m | 0,4 % |
+| Far-Western Nepal | EPSG:32644 | 42 | ja | 286 / 1.688 / 4.318 m | 0,4 % |
+
+- Die Meridiankonvergenz bleibt überall unter der registrierten 2°-Grenze (Iburi 0,76°, Gorkha 1,45°, Far-Western Nepal 0,29°).
+- Die Bedingung sin² + cos² der Exposition = 1 ist erfüllt.
+- Berichte: `phase2_terrain_*.json`. Sie enthalten nur Verteilungen über den ganzen Umriss, keinen Wert an einer Rutschung und keine Stichprobe.
+
+**Phase-2-Gate:** KBS-, Exposition-, PGA-Interpolations- und Leckagetests bestehen und schlagen bei eingebautem Fehler an. Das zeigen:
+
+- v01-Tests für Neigung und zirkuläre Exposition (52).
+- `test_susceptibility_v02_pga.py` (32).
+- `test_susceptibility_v02_terrain.py` (9): Kachelprüfsumme, Parameter, UTM-54N-Orientierung über ein synthetisches Kachelfenster und eine Kachelnaht, Rasterausrichtung, Blockabdeckung, DEM-Datum, Meridiankonvergenz.
+- `mutation_check_pga.json`: 36 von 36 Fehlern erkannt.
+
+**Gate erfüllt.**
+
+### Offene Entscheidung vor Phase 3 (nicht entschieden, keine Stichprobe gezogen)
+
+Etwa **2,6 % des Iburi-Umrisses (≈ 36 km²) haben eine NASADEM-Höhe von genau 0 m** im Süden, an der Pazifikküste. Das ist Meer, das NASADEM auf 0 setzt. Der GSI-Interpretationsbereich schließt dort offenbar Wasser ein. Area-gleichverteilter Hintergrund würde rund 2,6 % Meerzellen ziehen (flach, Höhe 0). Das wäre trivial „keine Rutschung“ und würde jede AUC einschließlich der Neigungs-Baseline aufblähen.
+
+Vorschlag: Ein Amendment vor der Ziehung schließt Hintergrundzellen mit NASADEM-Höhe ≤ 0 m aus, gezählt und berichtet, für alle Inventare gleich. Die Regel stammt aus dem DEM, nicht aus den Rutschungen. Für Gorkha und Far-Western Nepal ändert sie nichts (0 Zellen ≤ 0 m).

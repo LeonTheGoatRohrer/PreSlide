@@ -1,0 +1,40 @@
+{
+  "dataset": "gorkha_2015",
+  "crs": "EPSG:32645",
+  "blocks": 168,
+  "extent_inside_blocks": true,
+  "cells_in_extent": 31493791,
+  "extent_area_from_cells_km2": 28344.4119,
+  "extent_area_km2": 28344.85902795556,
+  "elevation_m_quantiles": {
+    "0": 148.0,
+    "0.01": 204.0,
+    "0.5": 1795.3858642578125,
+    "0.99": 6186.587890625,
+    "1": 7945.7109375
+  },
+  "share_elevation_le_0": 0.0,
+  "slope_deg_quantiles": {
+    "0.5": 26.545696258544922,
+    "0.9": 43.18549346923828,
+    "0.99": 58.850547790527344,
+    "1": 85.03263854980469
+  },
+  "aspect_unit_circle_max_error": 1.1920928955078125e-07,
+  "nan_share_in_extent": {
+    "elevation_m": 0.0,
+    "slope_deg": 0.0,
+    "aspect_sin": 0.0,
+    "aspect_cos": 0.0,
+    "profile_curvature": 0.0,
+    "plan_curvature": 0.0,
+    "tri_m": 0.0,
+    "tpi_m": 0.0,
+    "relief_1km_m": 0.0,
+    "log10_catchment_m2": 0.0036887588413855926,
+    "twi": 0.0036887588413855926,
+    "drainage_distance_m": 0.0
+  },
+  "meridian_convergence_deg_max": 1.4478057641094404,
+  "note": "Extent-wide distributions only; no value at any landslide polygon, no sample."
+}

@@ -1,0 +1,40 @@
+{
+  "dataset": "far_western_nepal",
+  "crs": "EPSG:32644",
+  "blocks": 42,
+  "extent_inside_blocks": true,
+  "cells_in_extent": 7120885,
+  "extent_area_from_cells_km2": 6408.7965,
+  "extent_area_km2": 6408.731491688468,
+  "elevation_m_quantiles": {
+    "0": 286.02044677734375,
+    "0.01": 492.64056396484375,
+    "0.5": 1688.228759765625,
+    "0.99": 3192.05322265625,
+    "1": 4317.82275390625
+  },
+  "share_elevation_le_0": 0.0,
+  "slope_deg_quantiles": {
+    "0.5": 28.43131446838379,
+    "0.9": 41.68320846557617,
+    "0.99": 53.663658142089844,
+    "1": 78.73688507080078
+  },
+  "aspect_unit_circle_max_error": 1.1920928955078125e-07,
+  "nan_share_in_extent": {
+    "elevation_m": 0.0,
+    "slope_deg": 0.0,
+    "aspect_sin": 0.0,
+    "aspect_cos": 0.0,
+    "profile_curvature": 0.0,
+    "plan_curvature": 0.0,
+    "tri_m": 0.0,
+    "tpi_m": 0.0,
+    "relief_1km_m": 0.0,
+    "log10_catchment_m2": 0.00416380829068297,
+    "twi": 0.00416380829068297,
+    "drainage_distance_m": 0.0
+  },
+  "meridian_convergence_deg_max": 0.29113137208578244,
+  "note": "Extent-wide distributions only; no value at any landslide polygon, no sample."
+}
