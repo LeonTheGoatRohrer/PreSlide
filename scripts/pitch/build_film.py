@@ -119,6 +119,12 @@ def build_segment(seg, idx):
     delay_s = seg.get('delay', VOICE_DELAY_S)
     length = (speech + delay_s + TAIL_S) if speech else vis
     k = min(1.0, length / vis)
+    if k < 0.999:
+        # speed every clip up before its fades (same mechanism as the |setpts= pre-filter), so video = narration length
+        seg['clips'] = [(f"{c[0]}{',' if '|' in c[0] else '|'}setpts=PTS/{1 / k:.5f}", *c[1:]) for c in seg['clips']]
+        lens = [clip_len(c[0], c[1], c[2]) for c in seg['clips']]
+        vis = sum(lens)
+        k = 1.0
     seg['length'] = length
     seg['speech'] = speech
     inputs, filters, labels = [], [], []
@@ -144,7 +150,8 @@ def build_segment(seg, idx):
         filters.append(chain)
         labels.append(f'[v{k}]')
     filters.append(''.join(labels) + f'concat=n={len(labels)}:v=1:a=0[vcat]')
-    filters.append(f'[vcat]setpts=PTS*{k:.5f}[vout]' if k < 0.999 else '[vcat]null[vout]')
+    # compress to the narration length, then guarantee frames until the end (-t trims the surplus)
+    filters.append('[vcat]null[vout]')
     if seg['voice']:
         inputs += ['-i', str(seg['voice'])]
         delay = int(delay_s * 1000)
