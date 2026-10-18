@@ -15,7 +15,7 @@ fs.mkdirSync(outDir, { recursive: true });
 const browser = await chromium.launch({
   executablePath: process.env.PW_CHROME,
   headless: true,
-  args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'],
+  args: ['--use-angle=d3d11', '--enable-gpu', '--ignore-gpu-blocklist', '--enable-unsafe-swiftshader'],
 });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -24,6 +24,15 @@ async function smoothScroll(page, totalPx, ms) {
   for (let i = 0; i < steps; i++) {
     await page.mouse.wheel(0, totalPx / steps);
     await sleep(40);
+  }
+}
+
+async function orbit(page, presses, gapMs) {
+  // MapLibre keyboard: Shift+Arrow rotates/tilts with an eased animation
+  await page.mouse.click(1500, 160);
+  for (let i = 0; i < presses; i++) {
+    await page.keyboard.press('Shift+ArrowRight');
+    await sleep(gapMs);
   }
 }
 
@@ -40,6 +49,16 @@ async function drag(page, x0, y0, dx, dy, ms, button = 'left', modifiers = []) {
   for (const m of modifiers) await page.keyboard.up(m);
 }
 
+const marks = {};
+function markFile() { return path.join(outDir, 'marks.json'); }
+async function waitReady(page, name, t0) {
+  // the classification is ready when the first review point is listed; record when that happened
+  await page.getByText(/Prüfpunkt 1/).first().waitFor({ timeout: 180000 });
+  marks[name] = (Date.now() - t0) / 1000;
+  const old = fs.existsSync(markFile()) ? JSON.parse(fs.readFileSync(markFile(), 'utf-8')) : {};
+  fs.writeFileSync(markFile(), JSON.stringify({ ...old, ...marks }, null, 1));
+}
+
 async function take(name, fn) {
   if (only.length && !only.includes(name)) return;
   const context = await browser.newContext({
@@ -48,6 +67,7 @@ async function take(name, fn) {
     locale: 'de-AT',
   });
   const page = await context.newPage();
+  page.t0 = Date.now();
   try {
     await fn(page);
   } finally {
@@ -70,12 +90,11 @@ await take('app_02_hangcheck_gastein', async (page) => {
   await page.goto(base + '/#/check?r=2000', { waitUntil: 'networkidle' });
   await sleep(2500);
   await page.getByRole('button', { name: 'Gasteiner Tal (Salzburg)' }).click();
-  await sleep(9000);
+  await waitReady(page, 'app_02_hangcheck_gastein', page.t0);
+  await sleep(4000);
   // slow 3D move: rotate and tilt the map (MapLibre: right-drag)
-  await drag(page, 1300, 600, 260, -90, 6000, 'right');
+  await orbit(page, 8, 900);
   await sleep(2500);
-  await drag(page, 1300, 600, -180, 0, 5000, 'right');
-  await sleep(3000);
 });
 
 await take('app_03_fliessweg', async (page) => {
@@ -92,7 +111,8 @@ await take('app_03_fliessweg', async (page) => {
 
 await take('app_04_starkregen', async (page) => {
   await page.goto(base + '/#/check?lon=13.11000&lat=47.11000&ort=Gasteiner+Tal+%28Salzburg%29&r=2000', { waitUntil: 'networkidle' });
-  await sleep(8000);
+  await waitReady(page, 'app_04_ready', page.t0);
+  await sleep(3000);
   const sw = page.getByRole('switch').first();
   if (await sw.count()) {
     await sw.click();
@@ -100,8 +120,8 @@ await take('app_04_starkregen', async (page) => {
     await page.getByText(/Starkregen oder Unwetter erwartet/).first().click();
   }
   await sleep(14000);
-  await drag(page, 1300, 600, 200, -60, 6000, 'right');
-  await sleep(2500);
+  await orbit(page, 5, 900);
+  await sleep(2000);
 });
 
 await take('app_05_belastbar', async (page) => {
