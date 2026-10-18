@@ -1,15 +1,16 @@
 <script setup>
-import {computed} from 'vue'
+import {computed, ref, defineAsyncComponent} from 'vue'
 import {useResource} from '../useResource.js'
 import {fmt} from '../metricDefinitions.js'
 import {openCheck} from '../session.js'
-import {vReveal} from '../ui/motion.js'
+import {vReveal, reducedMotion} from '../ui/motion.js'
 import PlaceSearch from '../ui/PlaceSearch.vue'
 import RainCanvas from '../ui/RainCanvas.vue'
 import CountUp from '../ui/CountUp.vue'
 import IntervalPlot from '../ui/IntervalPlot.vue'
 import StatusChip from '../ui/StatusChip.vue'
 import InfoTip from '../InfoTip.vue'
+const LiveExample = defineAsyncComponent(() => import('../map/LiveExample.vue'))
 
 const {data: v04, error: e04, loading: l04, reload: r04} = useResource('/api/results_v04')
 const {data: pg} = useResource('/api/pruefgebiete')
@@ -17,6 +18,15 @@ const n = v => Math.round(v).toLocaleString('de-AT')
 const signed = v => (v > 0 ? '+' : v < 0 ? '−' : '') + fmt(Math.abs(v))
 const range = (iv, f = fmt) => `[${f(iv[0])}; ${f(iv[1])}]`
 const primary = computed(() => v04.value?.test.primary)
+// Signature: the illustration gives way to the real map. Headline and search leave (250 ms), the image
+// zooms and loses focus and colour (500 ms), then the Hang-Check flies in over real terrain.
+const leaving = ref(false)
+const webgl = () => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')) } catch { return false } }
+function arrive(place) {
+  if (reducedMotion() || !webgl()) return openCheck(place)
+  leaving.value = true
+  setTimeout(() => openCheck(place, {fromHero: true}), 480)
+}
 const part = computed(() => v04.value?.counts.partition)
 const years = computed(() => {
   const list = (pg.value?.jahre || []).map(j => j.jahr)
@@ -41,7 +51,7 @@ const limits = [
 </script>
 
 <template>
-  <section class="hero" aria-labelledby="hero-title">
+  <section class="hero" :class="{leaving}" aria-labelledby="hero-title">
     <picture class="hero-img">
       <source media="(max-width: 900px)" srcset="/media/tal-1200.webp">
       <img src="/media/tal.webp" width="2400" height="1029" fetchpriority="high" decoding="async"
@@ -53,7 +63,7 @@ const limits = [
       <p class="eyebrow hero-eyebrow">Hang-Check bei Starkregen · Österreich</p>
       <h1 id="hero-title">Wo zuerst hinschauen, wenn der Starkregen kommt.</h1>
       <p class="hero-sub">Talwacht zeigt für deinen Ort die Hänge, die man bei Starkregen zuerst ansehen sollte, entwickelt und geprüft an {{ v04 ? n(v04.counts.complete_groups) + ' ' : '' }}dokumentierten Rutschungen in Österreich.</p>
-      <PlaceSearch class="hero-search" tone="dark" @select="openCheck"/>
+      <PlaceSearch class="hero-search" tone="dark" @select="arrive"/>
     </div>
     <span class="ai-credit">KI-generierte Illustration</span>
   </section>
@@ -78,6 +88,8 @@ const limits = [
       </div>
     </div>
   </section>
+
+  <LiveExample/>
 
   <section class="section basis" aria-labelledby="basis-title">
     <div class="wrap">
@@ -161,6 +173,11 @@ const limits = [
 .hero h1{max-width:15ch;font-size:clamp(2.6rem,5.3vw,5.4rem);color:#fff;text-shadow:0 2px 30px rgb(14 24 34 / .35)}
 .hero-sub{margin-top:24px;max-width:46ch;font-size:clamp(1.08rem,1.5vw,1.3rem);line-height:1.55;color:rgb(255 255 255 / .9)}
 .hero-search{margin-top:34px}
+.hero-img img,.hero-copy>*,.hero .rain{transition:transform .5s var(--ease),filter .5s var(--ease),opacity .25s ease}
+.hero.leaving .hero-img img{transform:scale(1.08);filter:blur(8px) saturate(.45)}
+.hero.leaving .hero-copy>*:not(.hero-search){opacity:0}
+.hero.leaving .hero-search{transform:translateY(-120px);opacity:0;transition:transform .35s var(--ease),opacity .3s ease}
+.hero.leaving .rain{opacity:0}
 
 .steps-grid{display:grid;grid-template-columns:5fr 7fr;gap:clamp(32px,6vw,88px);align-items:center}
 .steps-img{position:relative;margin:0;border-radius:var(--r-card);overflow:hidden;aspect-ratio:4/5;box-shadow:var(--shadow-lift)}

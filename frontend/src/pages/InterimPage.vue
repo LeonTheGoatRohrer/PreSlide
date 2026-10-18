@@ -4,7 +4,6 @@
 import {defineAsyncComponent, ref} from 'vue'
 import '../legacy.css'
 defineProps({which: {type: String, required: true}, anchor: {type: String, default: ''}})
-const HangkartePage = defineAsyncComponent(() => import('../HangkartePage.vue'))
 const MethodikPage = defineAsyncComponent(() => import('../MethodikPage.vue'))
 const PruefgebietePage = defineAsyncComponent(() => import('../PruefgebietePage.vue'))
 const BefundePage = defineAsyncComponent(() => import('../BefundePage.vue'))
@@ -17,8 +16,7 @@ function showCase(id) { initialCase.value = id; location.hash = '#/studien#basel
 <template>
   <div class="legacy interim">
     <main>
-      <HangkartePage v-if="which === 'check'"/>
-      <template v-else-if="which === 'so-funktionierts'"><MethodikPage/><div id="wirkungskette"><PruefgebietePage/></div></template>
+      <template v-if="which === 'so-funktionierts'"><MethodikPage/><div id="wirkungskette"><PruefgebietePage/></div></template>
       <BefundePage v-else-if="which === 'belastbar'"/>
       <template v-else-if="which === 'studien'">
         <div id="kernfrage"><ProjectPage/></div>

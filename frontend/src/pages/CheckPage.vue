@@ -1,0 +1,334 @@
+<script setup>
+// Hang-Check: pick a place, set the radius, switch on "Starkregen oder Unwetter erwartet", see where to look first.
+// The switch only selects this view; the request carries place and radius, nothing else.
+import {ref, computed, watch, onMounted, onBeforeUnmount, nextTick, defineAsyncComponent} from 'vue'
+import {RADIUS, clampRadius, readParams, requestBody, runCheck, normalize, km, coord} from '../check.js'
+import {checkHash, loadExamples} from '../places.js'
+import {takePendingPlace, takeArrival} from '../session.js'
+import PlaceSearch from '../ui/PlaceSearch.vue'
+import BottomSheet from '../ui/BottomSheet.vue'
+const TerrainMap = defineAsyncComponent(() => import('../map/TerrainMap.vue'))
+
+const props = defineProps({params: {type: Object, default: () => ({})}})
+const initial = readParams(props.params)
+const place = ref(takePendingPlace() ?? initial.place), radius = ref(initial.radius), rain = ref(initial.rain)
+const limits = ref(RADIUS), examples = ref([]), meta = ref(null)
+const status = ref('idle'), failure = ref(null), result = ref(null), phase = ref(0)
+const active = ref(null), base = ref('grau'), mapNote = ref(''), copied = ref(false)
+const arrival = takeArrival(), mapRef = ref(null), sheet = ref(null), listRef = ref(null)
+const webgl = (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')) } catch { return false } })()
+let seq = 0, timer = 0, phaseTimer = 0
+
+const FALLBACK_NOTICE = [
+  {titel: 'Nicht markiert heißt nicht sicher.', text: 'Die Einstufung ist relativ: In jedem Gebiet sind Hänge markiert, auch wenn dort nichts passiert. Auch nicht markierte Hänge können abgehen.'},
+  {titel: 'Talwacht ist keine Warnung.', text: 'Aktuelle Unwetterwarnungen geben GeoSphere Austria und die Landeswarnzentralen. Im Notfall: Euronotruf 112, Feuerwehr 122.'},
+  {titel: 'Grundlage ist nur das Gelände.', text: 'Berücksichtigt sind Höhenmodell Stand 2000, Landbedeckung 2018 und Geologie 1:500 000. Nicht berücksichtigt sind Wetter, der Untergrund im Detail und Schutzbauten.'},
+  {titel: 'Gelernt aus gemeldeten Ereignissen.', text: 'Ein Teil der Unterschiede kann daher von der Meldung kommen (zum Beispiel die Nähe zu Straßen), nicht vom Hang selbst.'},
+]
+const notice = computed(() => result.value?.raw.hinweise?.length ? result.value.raw.hinweise : meta.value?.hinweise?.length ? meta.value.hinweise : FALLBACK_NOTICE)
+const stage = computed(() => !place.value ? 1 : !rain.value ? 3 : status.value === 'ready' ? 4 : 3)
+const steps = ['Ort', 'Umkreis', 'Starkregen', 'Ergebnis']
+const PHASES = ['Gelände lesen', 'Landbedeckung und Geologie', 'Hänge einstufen']
+const counts = computed(() => result.value?.raw.zaehlung)
+const vintages = computed(() => result.value?.raw.datenstand ?? meta.value?.datenstand ?? null)
+const printDate = new Date().toLocaleDateString('de-AT', {day: '2-digit', month: '2-digit', year: 'numeric'})
+const snapshot = ref(null)
+
+function syncAddress() {
+  const h = checkHash(place.value, radius.value, rain.value)
+  if (location.hash !== h) history.replaceState(null, '', h)
+}
+async function compute() {
+  const body = requestBody(place.value, radius.value, rain.value)
+  if (!body) { status.value = 'idle'; result.value = null; return }
+  const mine = ++seq
+  status.value = 'loading'; failure.value = null; result.value = null; active.value = null
+  phase.value = 0; clearInterval(phaseTimer); phaseTimer = setInterval(() => { phase.value = Math.min(PHASES.length - 1, phase.value + 1) }, 1600)
+  const r = await runCheck(body)
+  if (mine !== seq) return
+  clearInterval(phaseTimer)
+  if (!r.ok) { status.value = 'error'; failure.value = r; return }
+  result.value = {raw: r.data, ...normalize(r.data, place.value)}
+  status.value = 'ready'
+  await nextTick()
+  sheet.value?.set('halb')
+  // Bring "Hier zuerst hinschauen" into view inside the panel.
+  const panel = document.querySelector('.bs-body'), t = document.getElementById('cp-erg')
+  if (panel && t) panel.scrollTo({top: t.getBoundingClientRect().top - panel.getBoundingClientRect().top + panel.scrollTop - 12, behavior: 'smooth'})
+}
+function schedule(delay = 0) { clearTimeout(timer); timer = setTimeout(compute, delay) }
+
+function choose(p) {
+  place.value = p
+  if (p.radius_m) radius.value = clampRadius(p.radius_m, limits.value)
+  failure.value = null
+}
+function pickOnMap(p) { choose({id: 'karte', name: 'Punkt auf der Karte', label: 'Punkt auf der Karte', region: '', longitude: p.longitude, latitude: p.latitude, radius_m: null}) }
+function reset() { place.value = null; rain.value = false; result.value = null; status.value = 'idle' }
+function selectPoint(nr) {
+  active.value = nr
+  mapRef.value?.flyToPoint(nr)
+  listRef.value?.querySelector(`[data-nr="${nr}"]`)?.scrollIntoView({block: 'nearest', behavior: 'smooth'})
+}
+async function copyLink() {
+  try { await navigator.clipboard.writeText(location.href); copied.value = true; setTimeout(() => { copied.value = false }, 1800) } catch { copied.value = false }
+}
+async function printList() {
+  snapshot.value = await mapRef.value?.snapshot?.() ?? null
+  await nextTick()
+  window.print()
+}
+const driverText = p => (p.treiber ?? []).map(t => typeof t === 'string' ? t : t.merkmal).filter(Boolean).slice(0, 3).join(' · ')
+
+watch([place, radius, rain], ([p, r, on], [p0, r0, on0]) => {
+  syncAddress()
+  if (!on) { seq++; clearInterval(phaseTimer); status.value = 'idle'; result.value = null; return }
+  schedule(p !== p0 || on !== on0 ? 0 : 350)
+})
+// Address changes from outside the page (search palette, back button) set a new place.
+watch(() => props.params, p => {
+  const next = readParams(p, limits.value), own = takePendingPlace()
+  const target = own ?? next.place
+  if (target && (!place.value || target.longitude !== place.value.longitude || target.latitude !== place.value.latitude)) place.value = target
+  if (next.radius !== radius.value && p.r != null) radius.value = next.radius
+  if (next.rain !== rain.value && (p.regen != null || !own)) rain.value = next.rain
+})
+onMounted(async () => {
+  syncAddress()
+  if (rain.value && place.value) compute()
+  try {
+    const e = await loadExamples()
+    examples.value = e.examples; meta.value = e.meta
+    if (e.meta?.radius_m) { limits.value = e.meta.radius_m; radius.value = clampRadius(radius.value, limits.value) }
+  } catch { examples.value = [] }
+})
+onBeforeUnmount(() => { clearTimeout(timer); clearInterval(phaseTimer); seq++ })
+</script>
+
+<template>
+  <div class="check" :class="{arriving: arrival}">
+    <h1 class="sr-only">Hang-Check</h1>
+    <div class="check-map">
+      <TerrainMap v-if="webgl" ref="mapRef" :centre="place" :radius-m="radius" :cells="result?.cells ?? null" :max-d="result?.maxD ?? 1"
+                  :points="result?.points ?? []" :active="active" :base="base" :arrival="arrival"
+                  @pick="pickOnMap" @hover="nr => (active = nr)" @select="selectPoint" @failed="m => (mapNote = m)"/>
+      <div v-else class="check-nogl"><p>Diese Ansicht braucht WebGL für die 3D-Karte. Ort, Umkreis und die Liste der Prüfpunkte funktionieren trotzdem.</p></div>
+      <div v-if="arrival" class="arrival" aria-hidden="true"><img src="/media/tal-1200.webp" alt=""><span class="ai-credit">KI-generierte Illustration</span></div>
+      <div class="map-tools" role="group" aria-label="Kartenhintergrund">
+        <button type="button" :aria-pressed="base === 'grau'" @click="base = 'grau'">Karte</button>
+        <button type="button" :aria-pressed="base === 'ortho'" @click="base = 'ortho'">Luftbild</button>
+      </div>
+      <p v-if="mapNote" class="map-note" role="status">{{ mapNote }}</p>
+    </div>
+
+    <BottomSheet ref="sheet" label="Hang-Check: Ort, Umkreis, Schalter und Ergebnis">
+      <header class="cp-head">
+        <p class="eyebrow">Hang-Check</p>
+        <ol class="cp-progress" aria-label="Fortschritt">
+          <li v-for="(s, i) in steps" :key="s" :class="{done: stage > i + 1, now: stage === i + 1}" :aria-current="stage === i + 1 ? 'step' : undefined"><span>{{ s }}</span></li>
+        </ol>
+      </header>
+
+      <section class="cp-step" aria-labelledby="cp-ort">
+        <h2 id="cp-ort" class="cp-title"><span class="cp-no">1</span>Ort</h2>
+        <div v-if="place" class="cp-place">
+          <div><strong>{{ place.name }}</strong><span v-if="place.region"> · {{ place.region }}</span><small v-if="!place.private" class="mono">{{ coord(place.latitude) }} N · {{ coord(place.longitude) }} O</small><small v-else>Standort wird nur im Browser verwendet und nicht gespeichert.</small></div>
+          <button type="button" class="cp-change" @click="reset">Ändern</button>
+        </div>
+        <template v-else>
+          <PlaceSearch compact @select="choose"/>
+          <p class="cp-hint">Oder direkt auf die Karte tippen.</p>
+          <div v-if="examples.length" class="cp-examples">
+            <span class="cp-small">Beispiele</span>
+            <button v-for="e in examples" :key="e.id" type="button" class="cp-chip" @click="choose(e)">{{ e.name }}</button>
+          </div>
+        </template>
+      </section>
+
+      <section class="cp-step" :class="{dim: !place}" aria-labelledby="cp-umkreis">
+        <h2 id="cp-umkreis" class="cp-title"><span class="cp-no">2</span>Umkreis <output class="cp-val mono" for="cp-radius">{{ km(radius) }}</output></h2>
+        <input id="cp-radius" v-model.number="radius" class="cp-range" type="range" :min="limits.min" :max="limits.max" :step="limits.step" :disabled="!place"
+               :aria-valuetext="km(radius)" :style="{'--p': (radius - limits.min) / (limits.max - limits.min) * 100 + '%'}">
+        <div class="cp-scale mono" aria-hidden="true"><span>{{ km(limits.min) }}</span><span>{{ km(limits.max) }}</span></div>
+      </section>
+
+      <section class="cp-step" :class="{dim: !place}" aria-labelledby="cp-regen">
+        <h2 id="cp-regen" class="sr-only">Starkregen</h2>
+        <label class="cp-switch" :class="{on: rain}">
+          <span class="cp-no">3</span>
+          <span class="cp-switch-text"><strong id="cp-sw-l">Starkregen oder Unwetter erwartet</strong><small id="cp-sw-d">Zeigt, welche Hänge man zuerst ansieht. Ruft kein Wetter ab.</small></span>
+          <input v-model="rain" type="checkbox" role="switch" :disabled="!place" :aria-checked="rain" aria-labelledby="cp-sw-l" aria-describedby="cp-sw-d">
+          <span class="cp-toggle" aria-hidden="true"></span>
+        </label>
+        <p v-if="place && !rain" class="cp-hint">Schalter aktivieren, um zu sehen, welche Hänge man bei Starkregen zuerst ansehen sollte.</p>
+      </section>
+
+      <section v-if="rain && place" class="cp-result" aria-labelledby="cp-erg" aria-live="polite">
+        <h2 id="cp-erg" class="cp-result-title">Hier zuerst hinschauen</h2>
+
+        <div v-if="status === 'loading'" class="cp-loading" role="status">
+          <ol class="cp-phases"><li v-for="(p, i) in PHASES" :key="p" :class="{done: i < phase, now: i === phase}">{{ p }}</li></ol>
+          <div class="skeleton" style="height:58px"></div><div class="skeleton" style="height:58px"></div><div class="skeleton" style="height:58px"></div>
+        </div>
+
+        <div v-else-if="status === 'error'" class="state" :class="{'state-error': failure.kind !== 'busy'}" role="alert">
+          <p>{{ failure.message }}</p>
+          <button v-if="failure.kind === 'busy' || failure.kind === 'offline' || failure.kind === 'error'" type="button" @click="compute">Noch einmal versuchen</button>
+          <button v-if="failure.kind === 'outside'" type="button" @click="reset">Anderen Ort wählen</button>
+        </div>
+
+        <template v-else-if="status === 'ready' && result">
+          <ul class="cp-legend" aria-label="Legende">
+            <li><i class="sw sw1"></i><span><strong>Prüfstufe 1</strong> auffälligste Hänge im Umkreis</span></li>
+            <li><i class="sw sw2"></i><span><strong>Prüfstufe 2</strong> die nächsten</span></li>
+            <li><i class="sw sw0"></i><span>ohne Markierung</span></li>
+          </ul>
+          <ol v-if="result.points.length" ref="listRef" class="cp-points">
+            <li v-for="p in result.points" :key="p.nr" :data-nr="p.nr" :class="{on: active === p.nr}">
+              <button type="button" @click="selectPoint(p.nr)" @mouseenter="active = p.nr" @mouseleave="active = null" @focus="active = p.nr" @blur="active = null">
+                <span class="cp-pin" aria-hidden="true">{{ p.nr }}</span>
+                <span class="cp-pt">
+                  <strong>Prüfpunkt {{ p.nr }}</strong>
+                  <span>{{ p.hoehe_m.toLocaleString('de-AT') }} m Höhe · {{ p.neigung_grad.toLocaleString('de-AT') }}° Neigung · {{ p.landbedeckung }}</span>
+                  <small v-if="driverText(p)">Auffällig durch: {{ driverText(p) }}</small>
+                  <small class="mono">{{ coord(p.latitude) }} N · {{ coord(p.longitude) }} O</small>
+                </span>
+              </button>
+            </li>
+          </ol>
+          <p v-else class="state">In diesem Umkreis gibt es keine Prüfpunkte der Stufe 1.</p>
+          <p v-if="counts" class="cp-counts">
+            {{ counts.bewertet.toLocaleString('de-AT') }} von {{ counts.zellen.toLocaleString('de-AT') }} Hangzellen bewertet<template v-if="result.raw.zellgroesse_m"> ({{ result.raw.zellgroesse_m }} m)</template>.
+            <template v-for="a in counts.ausgeschlossen ?? []" :key="a.grund"> {{ a.anzahl.toLocaleString('de-AT') }} {{ a.grund }}.</template>
+          </p>
+          <div class="cp-actions">
+            <button type="button" class="btn btn-quiet" @click="copyLink">{{ copied ? 'Link kopiert' : 'Link kopieren' }}</button>
+            <button type="button" class="btn btn-quiet" @click="printList">Prüfliste drucken</button>
+          </div>
+        </template>
+      </section>
+
+      <section class="cp-notice" aria-labelledby="cp-notice">
+        <h2 id="cp-notice" class="sr-only">Wichtige Hinweise</h2>
+        <div v-for="h in notice" :key="h.titel"><strong>{{ h.titel }}</strong><p>{{ h.text }}</p></div>
+        <p class="cp-small"><template v-if="vintages">Datenstand: {{ Object.values(vintages).join(' · ') }}. </template><a href="#/belastbar">Wie belastbar ist das?</a></p>
+      </section>
+    </BottomSheet>
+
+    <section class="print-sheet" aria-hidden="true">
+      <h1>Prüfliste Hang-Check</h1>
+      <p v-if="place">{{ place.name }}<template v-if="place.region"> ({{ place.region }})</template> · Umkreis {{ km(radius) }} · erstellt am {{ printDate }}</p>
+      <img v-if="snapshot" :src="snapshot" alt="">
+      <table v-if="result?.points.length">
+        <thead><tr><th>Nr.</th><th>Höhe</th><th>Neigung</th><th>Landbedeckung</th><th>Koordinaten (WGS84)</th><th>Gesehen</th></tr></thead>
+        <tbody><tr v-for="p in result.points" :key="p.nr"><td>{{ p.nr }}</td><td>{{ p.hoehe_m }} m</td><td>{{ p.neigung_grad }}°</td><td>{{ p.landbedeckung }}</td><td>{{ coord(p.latitude) }} N, {{ coord(p.longitude) }} O</td><td></td></tr></tbody>
+      </table>
+      <div class="print-notice"><div v-for="h in notice" :key="h.titel"><strong>{{ h.titel }}</strong> {{ h.text }}</div></div>
+      <p v-if="vintages">Datenstand: {{ Object.values(vintages).join(' · ') }}<template v-if="result?.raw.modell"> · Modell {{ result.raw.modell.variante }}</template></p>
+    </section>
+  </div>
+</template>
+
+<style>
+.check{position:fixed;inset:0;z-index:1}
+.check-map{position:absolute;inset:0}
+.check-nogl{position:absolute;inset:0;display:grid;place-items:center;padding:24px 24px 24px 460px;background:var(--paper-2);color:var(--ink-2)}
+.arrival{position:absolute;inset:0;z-index:5;pointer-events:none;animation:arrive 1.1s var(--ease) .15s forwards}
+.arrival img{width:100%;height:100%;object-fit:cover;filter:blur(8px) saturate(.45);transform:scale(1.08)}
+@keyframes arrive{to{opacity:0;visibility:hidden}}
+@media (prefers-reduced-motion:reduce){.arrival{display:none}}
+.map-tools{position:absolute;z-index:6;right:62px;top:96px;display:flex;background:var(--card);border-radius:12px;box-shadow:var(--shadow);padding:4px}
+.map-tools button{min-height:36px;padding:0 12px;border:0;border-radius:9px;background:none;font-weight:600;font-size:.92rem;color:var(--ink-2)}
+.map-tools button[aria-pressed=true]{background:var(--ink);color:#fff}
+.map-note{position:absolute;z-index:6;right:16px;bottom:44px;max-width:360px;padding:10px 14px;border-radius:12px;background:var(--card);box-shadow:var(--shadow);font-size:.9rem;color:var(--ink-2)}
+.check .maplibregl-ctrl-top-right{top:84px}
+
+.cp-head{margin-bottom:12px}
+.cp-head .eyebrow{margin-bottom:12px}
+.cp-progress{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;list-style:none;margin:0;padding:0}
+.cp-progress li{font:500 11px/1.2 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);padding-top:10px;border-top:3px solid var(--line-2);transition:border-color .3s}
+.cp-progress li.done{border-color:var(--moss);color:var(--ink)}
+.cp-progress li.now{border-color:var(--ink);color:var(--ink)}
+.cp-step{padding:18px 0;border-bottom:1px solid var(--line);transition:opacity .3s}
+.cp-step.dim{opacity:.45}
+.cp-title{display:flex;align-items:center;gap:10px;font:650 1.15rem/1.2 var(--f-display);font-stretch:112%;letter-spacing:-.01em;margin-bottom:12px}
+.cp-no{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font:600 13px/1 var(--f-mono);flex:none}
+.cp-val{margin-left:auto;font-size:.95rem;font-weight:500}
+.cp-place{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:var(--card);border-radius:14px;box-shadow:var(--shadow)}
+.cp-place div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cp-place small{font-size:.82rem;color:var(--ink-2)}
+.cp-change{min-height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line-2);background:none;font-weight:600}
+.cp-hint{margin-top:10px;font-size:.95rem;color:var(--ink-2)}
+.cp-small{font-size:.85rem;color:var(--ink-2)}
+.cp-examples{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px}
+.cp-chip{min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line-2);background:var(--card);font-weight:500;font-size:.92rem}
+.cp-chip:hover{border-color:var(--ink)}
+.cp-range{width:100%;height:44px;-webkit-appearance:none;appearance:none;background:none;margin:0}
+.cp-range::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--ink) var(--p),var(--line-2) var(--p))}
+.cp-range::-moz-range-track{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--ink) var(--p),var(--line-2) var(--p))}
+.cp-range::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;margin-top:-10px;border-radius:50%;background:var(--card);border:2px solid var(--ink);box-shadow:var(--shadow)}
+.cp-range::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--card);border:2px solid var(--ink)}
+.cp-scale{display:flex;justify-content:space-between;font-size:.8rem;color:var(--ink-2)}
+.cp-switch{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:16px;border-radius:16px;background:var(--card);box-shadow:var(--shadow);cursor:pointer;position:relative;transition:box-shadow .2s}
+.cp-switch.on{box-shadow:0 0 0 2px var(--ink),var(--shadow)}
+.cp-switch-text{display:flex;flex-direction:column;gap:2px}
+.cp-switch-text strong{font:650 1.12rem/1.2 var(--f-display);font-stretch:110%}
+.cp-switch-text small{font-size:.86rem;color:var(--ink-2)}
+.cp-switch input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+.cp-switch input:disabled{cursor:not-allowed}
+.cp-toggle{width:58px;height:34px;border-radius:17px;background:var(--line-2);position:relative;transition:background-color .25s}
+.cp-toggle::after{content:'';position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgb(19 32 43 / .3);transition:transform .25s var(--ease)}
+.cp-switch.on .cp-toggle{background:var(--ink)}
+.cp-switch.on .cp-toggle::after{transform:translateX(24px)}
+.cp-switch:has(input:focus-visible){outline:3px solid var(--moss);outline-offset:3px}
+.cp-result{padding:20px 0 6px}
+.cp-result-title{font-size:1.7rem;margin-bottom:14px}
+.cp-loading{display:grid;gap:10px}
+.cp-phases{list-style:none;margin:0 0 6px;padding:0;display:grid;gap:6px;font-size:.95rem;color:var(--ink-2)}
+.cp-phases li::before{content:'○ ';color:var(--line-2)}
+.cp-phases li.done::before{content:'● ';color:var(--moss)}
+.cp-phases li.now{color:var(--ink);font-weight:600}
+.cp-phases li.now::before{content:'◐ ';color:var(--ink)}
+.cp-legend{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:6px;font-size:.92rem;color:var(--ink-2)}
+.cp-legend li{display:flex;align-items:center;gap:10px}
+.cp-legend strong{color:var(--ink)}
+.sw{width:18px;height:14px;border-radius:3px;flex:none}
+.sw1{background:color-mix(in srgb,var(--stufe1) 70%,transparent);border:1px solid #8E2715}
+.sw2{background:color-mix(in srgb,var(--stufe2) 70%,transparent);border:1px solid #A8641C}
+.sw0{background:transparent;border:1px dashed var(--line-2)}
+.cp-points{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.cp-points button{display:flex;gap:14px;width:100%;text-align:left;padding:14px;border:0;border-radius:14px;background:var(--card);box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s}
+.cp-points li.on button{box-shadow:0 0 0 2px var(--stufe1),var(--shadow)}
+.cp-pin{display:grid;place-items:center;flex:none;width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;font:650 15px/1 var(--f-display)}
+.cp-points li.on .cp-pin{background:var(--stufe1)}
+.cp-pt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cp-pt span{font-size:.95rem}
+.cp-pt small{font-size:.8rem;color:var(--ink-2)}
+.cp-counts{margin-top:14px;font-size:.86rem;color:var(--ink-2)}
+.cp-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.cp-actions .btn{min-height:44px;padding:0 16px;font-size:.95rem}
+.cp-notice{margin-top:18px;padding:18px;border-radius:16px;background:var(--slate-900);color:var(--on-dark);display:grid;gap:12px}
+.cp-notice strong{color:#fff}
+.cp-notice p{font-size:.9rem;color:var(--on-dark-2)}
+.cp-notice a{color:var(--glacier)}
+.cp-notice .cp-small{color:var(--on-dark-2)}
+.print-sheet{display:none}
+@media (max-width:759px){
+  .map-tools{top:84px;right:58px}
+  .check-nogl{padding:24px 24px 50vh}
+  .cp-result-title{font-size:1.45rem}
+}
+@media print{
+  @page{margin:14mm}
+  body{background:#fff}
+  .check{position:static}
+  .check-map,.bs,.skip{display:none!important}
+  .print-sheet{display:block;color:#000;font-size:11pt}
+  .print-sheet h1{font-size:20pt;margin-bottom:6pt}
+  .print-sheet img{width:100%;max-height:90mm;object-fit:cover;margin:8pt 0;border:1px solid #999}
+  .print-sheet table{width:100%;border-collapse:collapse;margin:8pt 0}
+  .print-sheet th,.print-sheet td{border:1px solid #666;padding:4pt 6pt;text-align:left;font-size:10pt}
+  .print-sheet td:last-child{width:22mm}
+  .print-notice{display:grid;gap:4pt;margin:8pt 0;padding:8pt;border:1.5pt solid #000;font-size:9.5pt}
+}
+</style>

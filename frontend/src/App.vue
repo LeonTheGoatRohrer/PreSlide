@@ -7,6 +7,7 @@ import SiteFooter from './ui/SiteFooter.vue'
 import StartPage from './pages/StartPage.vue'
 const AboutPage = defineAsyncComponent(() => import('./pages/AboutPage.vue'))
 const InterimPage = defineAsyncComponent(() => import('./pages/InterimPage.vue'))
+const CheckPage = defineAsyncComponent(() => import('./pages/CheckPage.vue'))
 const SearchPalette = defineAsyncComponent(() => import('./ui/SearchPalette.vue'))
 
 const route = ref(resolveRoute(location.hash))
@@ -25,7 +26,8 @@ async function changed() {
   const samePage = next.page === lastPage
   const apply = () => { route.value = next }
   palette.value = false
-  if (!samePage && document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  // The map page has its own arrival; a cross-fade of the WebGL canvas would only blur it.
+  if (!samePage && next.page !== 'check' && lastPage !== 'check' && document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const t = document.startViewTransition(apply)
     t.ready.catch(() => {}); t.finished.catch(() => {})   // an interrupted transition is harmless
     await t.updateCallbackDone.catch(apply)
@@ -48,9 +50,10 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', changed))
 
 <template>
   <a class="skip" href="#inhalt" @click.prevent="main?.focus()">Zum Inhalt</a>
-  <NavBar :page="route.page" :hero="route.page === 'start'" :compact="false" @search="palette = true"/>
+  <NavBar :page="route.page" :hero="route.page === 'start'" :compact="isCheck" @search="palette = true"/>
   <main id="inhalt" ref="main" tabindex="-1" class="site-main">
     <StartPage v-if="route.page === 'start'"/>
+    <CheckPage v-else-if="isCheck" :params="route.params"/>
     <AboutPage v-else-if="route.page === 'ueber'"/>
     <InterimPage v-else :which="route.page" :anchor="route.anchor"/>
   </main>

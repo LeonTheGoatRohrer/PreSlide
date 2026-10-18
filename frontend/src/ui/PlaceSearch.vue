@@ -8,7 +8,7 @@ const id = 'ps-' + Math.random().toString(36).slice(2, 8)
 const query = ref(''), places = ref([]), examples = ref([]), open = ref(false), active = ref(-1)
 const busy = ref(false), message = ref(''), unavailable = ref(false), locating = ref(false)
 const input = ref(null), root = ref(null)
-let timer = 0, seq = 0
+let timer = 0, seq = 0, chosen = false
 
 const options = computed(() => query.value.trim().length >= 2 && !unavailable.value
   ? places.value.map(p => ({...p, kind: 'ort'}))
@@ -17,6 +17,7 @@ const heading = computed(() => query.value.trim().length >= 2 && !unavailable.va
 
 watch(query, q => {
   clearTimeout(timer); active.value = -1; message.value = ''
+  if (chosen) { chosen = false; busy.value = false; return }   // showing the chosen name is not a new search
   if (q.trim().length < 2) { places.value = []; busy.value = false; return }
   busy.value = true
   timer = setTimeout(async () => {
@@ -34,7 +35,7 @@ watch(query, q => {
 
 function choose(p) {
   if (!p) return
-  open.value = false; query.value = p.kind === 'beispiel' ? p.name : p.label
+  open.value = false; chosen = true; query.value = p.kind === 'beispiel' ? p.name : p.label
   emit('select', {...p})
 }
 function onKey(e) {
