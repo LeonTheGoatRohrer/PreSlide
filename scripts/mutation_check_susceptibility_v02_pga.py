@@ -8,10 +8,12 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TESTS = ['tests/test_susceptibility_v02_pga.py', 'tests/test_susceptibility_v02_terrain.py']
+TESTS = ['tests/test_susceptibility_v02_pga.py', 'tests/test_susceptibility_v02_terrain.py',
+         'tests/test_susceptibility_v02_sampling.py']
 P1 = 'preslide/susceptibility/v02_phase1.py'
 SE = 'preslide/susceptibility/v02_sensitivity.py'
 TE = 'preslide/susceptibility/v02_terrain.py'
+SA = 'preslide/susceptibility/v02_sampling.py'
 MUTANTS = [
     (P1, 'grid spacing from rounded header', "dlon, dlat = (lon[0, -1] - lon0) / (nlon - 1), (lat_top - lat[-1, 0]) / (nlat - 1)",
      "dlon, dlat = float(spec['nominal_lon_spacing']), float(spec['nominal_lat_spacing'])"),
@@ -55,6 +57,15 @@ MUTANTS = [
     (TE, 'v01 inventories downloadable', "if dataset not in NEW_INVENTORIES:\n        raise ValueError(f'{dataset}: v01 tiles",
      "if False:\n        raise ValueError(f'{dataset}: v01 tiles"),
     (TE, 'wrong central meridian', "(6 * zone - 183)", "(6 * zone - 180)"),
+    (SA, 'sea cells accepted', "return np.isfinite(z) & (z > 0)", "return np.isfinite(z)"),
+    (SA, 'zero elevation accepted', "return np.isfinite(z) & (z > 0)", "return np.isfinite(z) & (z >= 0)"),
+    (SA, 'sea rejections not counted', "counts['background_candidates_rejected_elevation_le_0'] += int((np.isfinite(z) & (z <= 0)).sum())", "pass"),
+    (SA, 'exact buffer check disabled', "        return ~near", "        return np.ones(len(pts), bool)"),
+    (SA, 'boundary candidates rejected', "near[idx[d >= buffer_m]] = False", "near[idx[d > buffer_m]] = False"),
+    (SA, 'only first rule applied', "        for a in accepts:", "        for a in accepts[:1]:"),
+    (SA, 'block index truncated', "int(math.floor(a / size_m))", "int(a / size_m)"),
+    (SA, 'pending inventory sampled', "if dataset not in SAMPLED:", "if False:"),
+    (SA, 'stream order changed', "SAMPLED = ('far_western_nepal', 'gorkha_2015', 'iburi_2018')", "SAMPLED = ('gorkha_2015', 'iburi_2018', 'far_western_nepal')"),
     (SE, 'PGA in terrain-only model', "'EQ_TERRAIN': ('hist_gradient_boosting', terrain),",
      "'EQ_TERRAIN': ('hist_gradient_boosting', terrain + [PGA]),"),
     (SE, 'block index truncated not floored', "int(math.floor(a / size_m))", "int(a / size_m)"),

@@ -253,3 +253,50 @@ Details: `phase2_terrain_v01_comparison_*.json`.
 Etwa **2,6 % des Iburi-Umrisses (≈ 36 km²) haben eine NASADEM-Höhe von genau 0 m** im Süden, an der Pazifikküste. Das ist Meer, das NASADEM auf 0 setzt. Der GSI-Interpretationsbereich schließt dort offenbar Wasser ein. Area-gleichverteilter Hintergrund würde rund 2,6 % Meerzellen ziehen (flach, Höhe 0). Das wäre trivial „keine Rutschung“ und würde jede AUC einschließlich der Neigungs-Baseline aufblähen.
 
 Vorschlag: Ein Amendment vor der Ziehung schließt Hintergrundzellen mit NASADEM-Höhe ≤ 0 m aus, gezählt und berichtet, für alle Inventare gleich. Die Regel stammt aus dem DEM, nicht aus den Rutschungen. Für Gorkha und Far-Western Nepal ändert sie nichts (0 Zellen ≤ 0 m).
+
+---
+
+## Nachtrag 4, 18.10.2026: Phase 3 – Ziehung (Amendment 3, Pufferfehler gefunden und behoben)
+
+**Amendment 3** (vom Nutzer freigegeben, vor jeder v02-Stichprobe):
+
+- Hintergrundzellen mit NASADEM-Höhe ≤ 0 m werden verworfen und gezählt, für alle Inventare gleich (Meer im Iburi-Umriss).
+- Außerdem schriftlich festgelegt:
+  - Zufallsströme: `default_rng([301, k])`, k = Index in (far_western_nepal, gorkha_2015, iburi_2018).
+  - Positiv- und Hintergrunddefinitionen, Quelle der Geländemerkmale (v02-Blöcke), 5-km-Blockkennung.
+  - log10 PGA für die Erdbebeninventare.
+- Die Stufenprüfung des Amendment-Skripts wurde getrennt: Gelände-Amendments müssen vor den Geländeblöcken stehen, Stichproben-Amendments vor Stichproben und Modellen.
+
+**Erste Ziehung verworfen (vor jedem Modell):**
+
+- Die Verifikation von Iburi und Gorkha schlug fehl: Je ein Hintergrundpunkt lag 99,67 m bzw. 99,75 m von einer bekannten Rutschung entfernt (Puffer 100 m).
+- Ursache: GEOS vereinfacht die Eingabe einer Pufferberechnung um 1 % des Abstands (voreingestellter Vereinfachungsfaktor). Ein gepuffertes Polygon kann deshalb Punkte verfehlen, die etwa 1 m innerhalb des wahren Abstands liegen. Nachweis: ein einzelnes gültiges Polygon mit 11 Stützpunkten; sein 100,48-m-Puffer enthält einen Punkt in 99,67 m nicht.
+- Die v01-Korrektur (umschreibender Radius) deckt das nicht ab. v01 hat die Prüfung nur zufällig bestanden (Minimum 100,67 m); v01 bleibt unverändert.
+- Korrektur in v02: Jede Hintergrundkandidatin wird zusätzlich exakt geprüft (STRtree `dwithin` plus genauer Abstand) und verworfen, wenn sie näher als 100 m an einer bekannten Rutschung liegt. Die Polygonzone bleibt Vorfilter. Die Regel selbst ist unverändert.
+- Neu gezogen wurde mit demselben Seed.
+- Die fehlgeschlagenen Verifikationen bleiben erhalten (`phase3_verification_*_first_draw_FAILED.json`). Far-Western Nepal hatte bestanden und ist bei der Neuziehung bytegleich (SHA-256 `f41de992…`).
+
+**Ergebnis** (`phase3_sampling_*.json`, `phase3_verification_*.json`, alle PASS einschließlich identischer Wiederholung aus dem Seed):
+
+| Inventar | Positive | Hintergrund | 5-km-Blöcke | Hintergrund-Mindestabstand | verworfen: ≤ 0 m / exakter Puffer |
+|---|---|---|---|---|---|
+| Far-Western Nepal | 1.551 | 1.551 | 305 | 100,51 m | 0 / 0 |
+| Iburi | 3.177 | 3.177 | 69 | 100,21 m | 434 / 1 |
+| Gorkha | 24.036 | 24.036 | 1.262 | 100,14 m | 0 / 1 |
+
+Weitere Kennwerte:
+
+- Kein Hintergrundpunkt liegt auf ≤ 0 m, in verdeckten Flächen oder außerhalb des Umrisses.
+- Alle Paare halten mindestens 90 m Abstand.
+- Keine PGA-NaN.
+- NaN nur bei Einzugsgebiet/TWI (abgeschnittene Einzugsgebiete): Iburi 14, Gorkha 148, Far-Western Nepal 8.
+- Gezählte Ausschlüsse bei den Positiven:
+  - Iburi: 129 berühren Altrutschungen.
+  - Gorkha: 747 doppelte Zellen, 11 außerhalb des Umrisses.
+  - Far-Western Nepal: 21 doppelt, 15 außerhalb.
+
+Ein transienter GDAL-Speicherfehler beim Lesen trat zweimal auf, jeweils vor dem Schreiben. Die Wiederholung war erfolgreich, das Ergebnis ist durch die Wiederholungsprüfung belegt. Der Leser hält jetzt das Höhenband je Block im Speicher.
+
+**Phase-3-Gate erfüllt:** Puffer-, Umriss- und Mindestabstandsprüfungen bestehen, und jede Ziehung ist aus dem Seed reproduzierbar. Tests: `test_susceptibility_v02_sampling.py` (8). Die Mutationsprüfung umfasst 45 eingebaute Fehler, alle erkannt.
+
+**Nächster Schritt (Phase 4):** bestätigende Tests H1-EQ und H2-EQ (Gorkha → Iburi) mit den registrierten Modellen, Seeds und Bonferroni-Regel über 4 Tests; H1/H2-Regen als „nicht durchführbar“ berichten. Bisher hat kein Modell eine v02-Stichprobe gesehen.

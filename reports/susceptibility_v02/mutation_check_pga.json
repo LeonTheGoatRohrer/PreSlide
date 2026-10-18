@@ -1,221 +1,275 @@
 {
- "baseline_summary": "41 passed, 20 warnings in 6.80s",
+ "baseline_summary": "49 passed, 20 warnings in 8.76s",
  "mutants": [
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "grid spacing from rounded header",
    "tests_failed": true,
-   "summary": "4 failed, 37 passed, 20 warnings in 9.65s"
+   "summary": "4 failed, 45 passed, 20 warnings in 17.95s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "lattice order check disabled",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 10.28s"
+   "summary": "1 failed, 48 passed, 20 warnings in 21.22s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "corner check disabled",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 10.40s"
+   "summary": "1 failed, 48 passed, 20 warnings in 13.46s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "rows counted from the south",
    "tests_failed": true,
-   "summary": "4 failed, 37 passed, 20 warnings in 10.21s"
+   "summary": "4 failed, 45 passed, 20 warnings in 10.96s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "half-cell offset",
    "tests_failed": true,
-   "summary": "4 failed, 37 passed, 20 warnings in 10.69s"
+   "summary": "4 failed, 45 passed, 20 warnings in 12.41s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "lon/lat swapped in interpolation",
    "tests_failed": true,
-   "summary": "4 failed, 37 passed, 20 warnings in 10.37s"
+   "summary": "4 failed, 45 passed, 20 warnings in 12.53s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "outside grid clamped instead of NaN",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 8.23s"
+   "summary": "1 failed, 48 passed, 20 warnings in 9.67s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "easting/northing swapped",
    "tests_failed": true,
-   "summary": "2 failed, 39 passed, 20 warnings in 8.12s"
+   "summary": "2 failed, 47 passed, 20 warnings in 9.92s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "axis order not forced",
    "tests_failed": true,
-   "summary": "2 failed, 39 passed, 20 warnings in 8.27s"
+   "summary": "2 failed, 47 passed, 20 warnings in 9.70s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "non-positive PGA filled with 0",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 8.32s"
+   "summary": "1 failed, 48 passed, 20 warnings in 12.61s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "PGA units not checked",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 8.15s"
+   "summary": "1 failed, 48 passed, 20 warnings in 13.70s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "open extent line accepted",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 8.86s"
+   "summary": "1 failed, 48 passed, 20 warnings in 10.23s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "GSI role by suffix match",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 8.77s"
+   "summary": "1 failed, 48 passed, 20 warnings in 11.02s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "cp932 member names not decoded",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 7.91s"
+   "summary": "1 failed, 48 passed, 20 warnings in 9.58s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "buffer not rounded up",
    "tests_failed": true,
-   "summary": "3 failed, 38 passed, 20 warnings in 7.37s"
+   "summary": "3 failed, 46 passed, 20 warnings in 12.82s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "buffer floor dropped",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 8.97s"
+   "summary": "1 failed, 48 passed, 20 warnings in 10.85s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "buffer cap not flagged",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 9.65s"
+   "summary": "1 failed, 48 passed, 20 warnings in 10.68s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "buffer from mean not maximum",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 9.76s"
+   "summary": "1 failed, 48 passed, 20 warnings in 9.29s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "radius from area without pi",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 8.99s"
+   "summary": "1 failed, 48 passed, 20 warnings in 10.23s"
   },
   {
    "file": "preslide/susceptibility/v02_phase1.py",
    "mutant": "touching old landslides ignored",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 8.47s"
+   "summary": "1 failed, 48 passed, 20 warnings in 11.19s"
   },
   {
    "file": "preslide/susceptibility/v02_terrain.py",
    "mutant": "merge bounds not snapped",
    "tests_failed": true,
-   "summary": "2 failed, 39 passed, 18 warnings in 8.14s"
+   "summary": "2 failed, 47 passed, 18 warnings in 9.25s"
   },
   {
    "file": "preslide/susceptibility/v02_terrain.py",
    "mutant": "snap rounds inward",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 7.73s"
+   "summary": "1 failed, 48 passed, 20 warnings in 8.80s"
   },
   {
    "file": "preslide/susceptibility/v02_terrain.py",
    "mutant": "tile checksum not verified",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 8.12s"
+   "summary": "1 failed, 48 passed, 20 warnings in 9.66s"
   },
   {
    "file": "preslide/susceptibility/v02_terrain.py",
    "mutant": "terrain parameters not checked",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 7.50s"
+   "summary": "1 failed, 48 passed, 20 warnings in 10.15s"
   },
   {
    "file": "preslide/susceptibility/v02_terrain.py",
    "mutant": "disjoint blocks kept",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 7.70s"
+   "summary": "1 failed, 48 passed, 20 warnings in 9.77s"
   },
   {
    "file": "preslide/susceptibility/v02_terrain.py",
    "mutant": "window shape swapped",
    "tests_failed": true,
-   "summary": "2 failed, 39 passed, 20 warnings in 7.72s"
+   "summary": "2 failed, 47 passed, 20 warnings in 9.16s"
   },
   {
    "file": "preslide/susceptibility/v02_terrain.py",
    "mutant": "unsupported inventory accepted",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 7.70s"
+   "summary": "1 failed, 48 passed, 20 warnings in 13.09s"
   },
   {
    "file": "preslide/susceptibility/v02_terrain.py",
    "mutant": "v01 inventories downloadable",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 8.15s"
+   "summary": "1 failed, 48 passed, 20 warnings in 12.46s"
   },
   {
    "file": "preslide/susceptibility/v02_terrain.py",
    "mutant": "wrong central meridian",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 7.93s"
+   "summary": "1 failed, 48 passed, 20 warnings in 11.90s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sampling.py",
+   "mutant": "sea cells accepted",
+   "tests_failed": true,
+   "summary": "1 failed, 48 passed, 20 warnings in 11.40s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sampling.py",
+   "mutant": "zero elevation accepted",
+   "tests_failed": true,
+   "summary": "1 failed, 48 passed, 20 warnings in 13.20s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sampling.py",
+   "mutant": "sea rejections not counted",
+   "tests_failed": true,
+   "summary": "1 failed, 48 passed, 20 warnings in 17.36s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sampling.py",
+   "mutant": "exact buffer check disabled",
+   "tests_failed": true,
+   "summary": "2 failed, 47 passed, 20 warnings in 13.26s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sampling.py",
+   "mutant": "boundary candidates rejected",
+   "tests_failed": true,
+   "summary": "1 failed, 48 passed, 20 warnings in 18.12s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sampling.py",
+   "mutant": "only first rule applied",
+   "tests_failed": true,
+   "summary": "1 failed, 48 passed, 20 warnings in 10.21s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sampling.py",
+   "mutant": "block index truncated",
+   "tests_failed": true,
+   "summary": "1 failed, 48 passed, 20 warnings in 10.49s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sampling.py",
+   "mutant": "pending inventory sampled",
+   "tests_failed": true,
+   "summary": "2 failed, 47 passed, 20 warnings in 10.35s"
+  },
+  {
+   "file": "preslide/susceptibility/v02_sampling.py",
+   "mutant": "stream order changed",
+   "tests_failed": true,
+   "summary": "1 failed, 48 passed, 20 warnings in 9.04s"
   },
   {
    "file": "preslide/susceptibility/v02_sensitivity.py",
    "mutant": "PGA in terrain-only model",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 8.48s"
+   "summary": "1 failed, 48 passed, 20 warnings in 12.37s"
   },
   {
    "file": "preslide/susceptibility/v02_sensitivity.py",
    "mutant": "block index truncated not floored",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 7.50s"
+   "summary": "1 failed, 48 passed, 20 warnings in 11.58s"
   },
   {
    "file": "preslide/susceptibility/v02_sensitivity.py",
    "mutant": "hyperparameter check disabled",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 7.57s"
+   "summary": "1 failed, 48 passed, 20 warnings in 12.52s"
   },
   {
    "file": "preslide/susceptibility/v02_sensitivity.py",
    "mutant": "purge skipped",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 7.65s"
+   "summary": "1 failed, 48 passed, 20 warnings in 9.98s"
   },
   {
    "file": "preslide/susceptibility/v02_sensitivity.py",
    "mutant": "interval clause dropped from rule",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 8.27s"
+   "summary": "1 failed, 48 passed, 20 warnings in 11.34s"
   },
   {
    "file": "preslide/susceptibility/v02_sensitivity.py",
    "mutant": "half boundary inclusive",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 9.35s"
+   "summary": "1 failed, 48 passed, 20 warnings in 10.54s"
   },
   {
    "file": "preslide/susceptibility/v02_sensitivity.py",
    "mutant": "design constants changed",
    "tests_failed": true,
-   "summary": "1 failed, 40 passed, 20 warnings in 9.14s"
+   "summary": "1 failed, 48 passed, 20 warnings in 9.54s"
   }
  ],
  "status": "PASS"

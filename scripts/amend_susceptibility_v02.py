@@ -18,11 +18,12 @@ from preslide.susceptibility import v02 as V  # noqa: E402
 from preslide.susceptibility.paths import amendments, text_sha  # noqa: E402
 from preslide.susceptibility.registry import apply_amendments  # noqa: E402
 
-# Everything from the named stage on must not exist yet. v02 samples, v02 terrain blocks and models are the design
-# stages; data/features and data/predictions also hold the registered Gorkha sensitivity, which runs on the read-only
-# v01 samples and depends on no sampling parameter, so they only block a 'models' amendment.
-STAGES = {'samples': [V.DATA / 'samples', V.DATA / 'terrain', V.MODELS],
-          'features': [V.DATA / 'terrain', V.DATA / 'samples', V.MODELS],
+# Everything from the named stage on must not exist yet. A 'features' amendment (terrain parameters) must precede the
+# v02 terrain blocks; a 'samples' amendment (sampling rules) must precede v02 samples and models; a 'models' amendment
+# must precede models and predictions. data/features and data/predictions also hold the registered Gorkha
+# sensitivity, which runs on the read-only v01 samples and depends on no sampling parameter.
+STAGES = {'features': [V.DATA / 'terrain', V.DATA / 'samples', V.MODELS],
+          'samples': [V.DATA / 'samples', V.MODELS],
           'models': [V.MODELS, V.DATA / 'predictions']}
 
 

@@ -1,0 +1,27 @@
+{
+ "id": 3,
+ "before": "samples",
+ "title": "Phase 3 sampling details: sea cells excluded from background, sampling streams, inputs",
+ "basis": "Phase 2 terrain blocks exist (extent-wide distributions only, reports/susceptibility_v02/phase2_terrain_*.json). No v02 sample, no value at any landslide, no model. Decision approved by the user on 2026-10-18.",
+ "add": {
+  "sampling.background_rule.min_elevation_rule": {
+   "value": "a background cell is rejected if its NASADEM elevation on the 30 m working grid (v02 terrain block, bilinear) is <= 0 m (sea / NASADEM ocean fill); rejections are counted per inventory. Applies identically to every inventory. Positives are not filtered by elevation; their number at <= 0 m is reported.",
+   "reason": "About 2.6 % of the Iburi GSI interpretation extent (about 36 km2 along the Pacific coast) has NASADEM elevation exactly 0 m: the provider's extent includes sea. Area-uniform background there would be trivially landslide-free and inflate every AUC, including the slope baseline. The rule is derived from the DEM, not from the landslides. Gorkha and Far-Western Nepal have no cell <= 0 m in their extents, so the rule does not change them."
+  },
+  "sampling.implementation": {
+   "value": {
+    "terrain_source": "v02 terrain blocks (data/susceptibility_v02/terrain), corrected tile-lattice merge; v01 blocks are not used for v02 samples",
+    "rng_stream": "numpy default_rng([seeds.sampling, k]) with k the index of the inventory in the sorted list of sampled inventories (far_western_nepal, gorkha_2015, iburi_2018); positives are drawn first in polygon file order, then background",
+    "positive_definitions": "gorkha_2015: Source20170209.shp, uniform among cells in the source area; far_western_nepal: v01 Amendment 1 positive_filter (minimum dated year >= 2001), top elevation third; iburi_2018: Amendment 1 and 2 (3,177 GSI polygons), top elevation third. Duplicated cells and cells outside the extent are counted and dropped.",
+    "background_definitions": "area-uniform 30 m cells inside the mapping extent minus (all known landslide polygons buffered by exclusion_buffer_m, plus obscured areas), min_separation_m apart, NASADEM elevation finite and > 0 m",
+    "block_id": "5 km square blocks on the working CRS grid: '<dataset>:<floor(x/5000)>:<floor(y/5000)>' (bootstrap and permutation unit of the registered evaluation)",
+    "pga": "gorkha_2015 and iburi_2018 samples carry log10_pga_pctg from their frozen ShakeMap grid.xml (bilinear PGA in percent g, then log10); far_western_nepal has no PGA",
+    "rain_arm": "rer2023 stays pending_extent and is not sampled"
+   },
+   "reason": "Fixes the remaining sampling choices in writing before any v02 sample is drawn."
+  }
+ },
+ "written_at_utc": "2026-10-18T10:00:24.209070+00:00",
+ "config_sha256": "f6883194f18d67d580066076206a227a10e4e547a0620483b2fa1955e542d4fe",
+ "preconditions": "registration present; nothing from stage 'samples' on existed"
+}
