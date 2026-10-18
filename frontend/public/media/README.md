@@ -29,3 +29,15 @@ Prompts (Endfassung, gekürzt; vollständige Probe-Prompts in der Session vom 18
   gravel road with switchbacks and a creek in a gully“
 
 Restguthaben nach der Erzeugung: 17,42 Credits (Plan „plus“).
+
+## Hero-Clip (KI-generiertes Video)
+
+| Datei | Größe | Länge | Job | Modell | Kosten |
+|---|---|---|---|---|---|
+| `tal-clip.mp4` (H.264, 1464 × 628, `-crf 26`, `+faststart`, ohne Ton), `tal-clip.webm` (VP9, `-crf 38`) | 1,07 MB / 0,60 MB | 10 s | `b2972996-074c-41a8-915f-4e95b38791fc` | Kling 3.0 Turbo (`kling3_0_turbo`), 720p, 5 s, Bild-zu-Video | 7,5 Credits (Vorabprüfung mit `get_cost`; FLUX 3 Video hätte 30 gekostet) |
+
+Startbild: End-Job `d3e15296-40b6-43c2-962a-d242e2b4a961` (`tal`). Prompt: „very slow subtle push-in, rain curtains drift
+gently, low clouds move slightly, a few window lights flicker softly, no camera shake, no cuts“. Erzeugt am 18.10.2026.
+Mit ffmpeg 9.0.1 als Vorwärts-Rückwärts-Schleife (5 s vor, 5 s zurück) ohne Tonspur kodiert, damit die Schleife ohne
+Sprung läuft. Poster ist `tal.webp`. Die Startseite spielt den Clip nur auf breiten Bildschirmen und nie bei reduzierter
+Bewegung oder aktivem Datensparmodus; das Standbild liegt immer darunter. Restguthaben danach: 9,92 Credits.
