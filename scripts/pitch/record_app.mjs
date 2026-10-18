@@ -79,6 +79,12 @@ async function take(name, fn) {
   }
 }
 
+await take('app_00_hero', async (page) => {
+  await page.goto(base + '/#/', { waitUntil: 'networkidle' });
+  await page.mouse.move(1900, 1070);
+  await sleep(16000);
+});
+
 await take('app_01_start', async (page) => {
   await page.goto(base + '/#/', { waitUntil: 'networkidle' });
   await sleep(3500);

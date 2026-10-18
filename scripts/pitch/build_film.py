@@ -25,12 +25,12 @@ TAIL_S = 1.0
 
 # (clip, start_s, duration_s or None = to end); app clips come from deliverables/pitch/app
 SEGMENTS = [
-    dict(id='01_hook', clips=[('clips/a1_terminal.mp4', 0, 5), ('app/app_02_hangcheck_gastein.webm|crop=1440:810:480:100', 12.5, 15.0, 'clips/a1_ort.mp4')],
-         text='Achtzehnter November 2019. Gasteinertal. Ein Eintrag im Naturgefahren-Inventar: Hangmure. '
+    dict(id='01_hook', clips=[('app3/app_00_hero.webm|crop=1920:1062:0:10', 0.8, 11.0), ('clips/a1_terminal.mp4', 0, 5), ('app3/app_02_hangcheck_gastein.webm|crop=1440:810:480:100', 'mark:app_02_hangcheck_gastein:-2.5', 7.0, 'clips/a1_ort.mp4')],
+         text='Achtzehnter November 2019. Gasteiner Tal. Ein Eintrag im Naturgefahren-Inventar: Hangmure. '
               'Rundherum: Hänge. Genauso steil. Genauso hoch. Genauso ausgerichtet. Von ihnen: keine Meldung. '
               'Was unterscheidet diesen einen Hang von seinen Zwillingen – bevor etwas passiert?'),
     dict(id='02_titel', clips=[('clips/a1_titel.mp4', 0, 7)], text=''),
-    dict(id='03_idee', clips=[('app/app_01_start.webm', 1.5, None)],
+    dict(id='03_idee', clips=[('app3/app_01_start.webm', 3.0, None)],
          text='Rutschungen und Muren treffen in Österreich jedes Jahr Straßen, Bahnlinien und Häuser. '
               'Niemand kann jeden Hang beobachten. Gefahrenkarten zeigen, wo ein Hang grundsätzlich anfällig ist. '
               'Wir wollten etwas Schärferes wissen: Lässt sich der betroffene Hang von seinen Zwillingen unterscheiden – '
@@ -41,7 +41,7 @@ SEGMENTS = [
     dict(id='05_filter', clips=[('clips/a3_02_filter_oesterreich.mp4', 0, None)],
          text='Aus über fünfundzwanzigtausend Einträgen bleibt nur, was gesichert ist: Datum, Prozess, Lage. 423 Ereignisse.'),
     dict(id='05b_gastein', delay=1.6, clips=[('clips/a3_02_gastein_ausschluss.mp4|setpts=PTS/1.5', 0, None)],
-         text='Und die Hangmure aus dem Gasteinertal? … Aussortiert. Ob es wirklich eine war, ist nicht bestätigt. '
+         text='Und die Hangmure aus dem Gasteiner Tal? … Aussortiert. Ob es wirklich eine war, ist nicht bestätigt. '
               'Kein Eintrag aus diesem Tal hat die Prüfung bestanden.'),
     dict(id='06_zwillinge', clips=[('clips/a3_03_zwillinge.mp4', 0, None)],
          text='Dann sucht das System jedem Ereignis fünf Zwillinge: in der Nähe, gleich steil, gleich hoch, gleich ausgerichtet – '
@@ -65,12 +65,12 @@ SEGMENTS = [
               'ungemeldeten Hängen fast perfekt. Gemeldet wird, was Menschen sehen. Ein Teil des Signals ist Meldeverhalten – '
               'nicht Natur. Elf unabhängige Episoden. Eine davon dominiert. Und nicht gemeldet heißt nicht sicher. '
               'Talwacht warnt nicht. Es gibt eine begründete Reihenfolge: wo man zuerst hinschaut.'),
-    dict(id='11_produkt', clips=[('app/app_02_hangcheck_gastein.webm', 9.0, 12.0), ('app/app_04_starkregen.webm', 12.0, 22.0)],
-         text='Daraus ist ein Werkzeug geworden: der Hang-Check. Ort wählen – zum Beispiel das Gasteinertal, ein Tal, '
+    dict(id='11_produkt', clips=[('app3/app_02_hangcheck_gastein.webm', 'mark:app_02_hangcheck_gastein:-1.0', 12.0), ('app3/app_04_starkregen.webm', 'mark:app_04_ready:+2.5', 22.0)],
+         text='Daraus ist ein Werkzeug geworden: der Hang-Check. Ort wählen – zum Beispiel das Gasteiner Tal, ein Tal, '
               'das unser Modell nie gesehen hat. Sofort zeigt Talwacht die auffälligsten Hänge im Umkreis und fünf Prüfpunkte: '
               'hier zuerst hinschauen. Und wenn Starkregen erwartet wird: mögliche Fließwege – und welche Straßen und Häuser '
               'im Szenario liegen. Für die Gemeinde nach dem Unwetter, den Straßenerhalter auf Kontrollfahrt, die Menschen am Hang.'),
-    dict(id='12_finale', clips=[('app/app_05_belastbar.webm', 2.0, 9.0), ('clips/a7_endtafel.mp4', 0, None)],
+    dict(id='12_finale', clips=[('app3/app_05_belastbar.webm', 2.0, 9.0), ('clips/a7_endtafel.mp4', 0, None)],
          text='Als Nächstes: ein vorab registrierter Test mit Ereignissen, die erst noch kommen. Und Satellitenbilder vorher und '
               'nachher – um zu prüfen, ob die Zwillinge wirklich ruhig geblieben sind. … Talwacht. Wo zuerst hinschauen, '
               'wenn der Starkregen kommt.'),
@@ -112,7 +112,7 @@ def voice_files(voice, rate, keep):
 
 
 def resolve_marks():
-    marks_file = PITCH / 'app2/marks.json'
+    marks_file = PITCH / 'app3/marks.json'
     marks = json.loads(marks_file.read_text(encoding='utf-8')) if marks_file.exists() else {}
     for seg in SEGMENTS:
         fixed = []
