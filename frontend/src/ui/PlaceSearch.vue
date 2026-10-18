@@ -88,8 +88,8 @@ defineExpose({focus: () => input.value?.focus()})
 
 <style>
 .ps{position:relative;width:100%;max-width:560px}
-.ps-row{display:flex;gap:10px}
-.ps-field{position:relative;flex:1;display:flex;align-items:center}
+.ps-row{display:flex;flex-wrap:wrap;gap:10px}
+.ps-field{position:relative;flex:1 1 280px;min-width:0;display:flex;align-items:center}
 .ps-field input{width:100%;height:56px;border-radius:14px;border:1px solid var(--line-2);background:var(--card);padding:0 44px 0 48px;font-size:1.05rem;color:var(--ink);box-shadow:var(--shadow);-webkit-appearance:none;appearance:none}
 .ps-field input::placeholder{color:var(--ink-2);opacity:1}
 .ps-field input::-webkit-search-cancel-button{display:none}

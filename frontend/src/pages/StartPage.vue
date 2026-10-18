@@ -1,11 +1,11 @@
 <script setup>
-import {computed, ref, onMounted, defineAsyncComponent} from 'vue'
+import {computed, ref, defineAsyncComponent} from 'vue'
 import {useResource} from '../useResource.js'
 import {fmt} from '../metricDefinitions.js'
 import {openCheck} from '../session.js'
 import {vReveal, reducedMotion} from '../ui/motion.js'
 import PlaceSearch from '../ui/PlaceSearch.vue'
-import RainCanvas from '../ui/RainCanvas.vue'
+import HangProfile from '../ui/HangProfile.vue'
 import CountUp from '../ui/CountUp.vue'
 import IntervalPlot from '../ui/IntervalPlot.vue'
 import StatusChip from '../ui/StatusChip.vue'
@@ -18,15 +18,9 @@ const n = v => Math.round(v).toLocaleString('de-AT')
 const signed = v => (v > 0 ? '+' : v < 0 ? '−' : '') + fmt(Math.abs(v))
 const range = (iv, f = fmt) => `[${f(iv[0])}; ${f(iv[1])}]`
 const primary = computed(() => v04.value?.test.primary)
-// Signature: the illustration gives way to the real map. Headline and search leave (250 ms), the image
-// zooms and loses focus and colour (500 ms), then the Hang-Check flies in over real terrain.
+// Signature: the sketch gives way to the real map. Headline and search leave (250 ms), the sketch zooms and
+// loses focus (500 ms), then the Hang-Check flies in over real terrain.
 const leaving = ref(false)
-// Optional hero clip (generated from the same illustration): only on wide screens, never with reduced
-// motion or data saver; the still image stays underneath and the page is complete without it.
-const clip = ref(false), clipPlaying = ref(false)
-onMounted(() => {
-  clip.value = !reducedMotion() && !navigator.connection?.saveData && window.matchMedia('(min-width: 901px)').matches
-})
 const webgl = () => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')) } catch { return false } }
 function arrive(place) {
   if (reducedMotion() || !webgl()) return openCheck(place)
@@ -58,23 +52,15 @@ const limits = [
 
 <template>
   <section class="hero" :class="{leaving}" aria-labelledby="hero-title">
-    <picture class="hero-img">
-      <source media="(max-width: 900px)" srcset="/media/tal-1200.webp">
-      <img src="/media/tal.webp" width="2400" height="1029" fetchpriority="high" decoding="async"
-           alt="KI-generierte Illustration: Alpental zur blauen Stunde vor einem Gewitter, Dorf mit Kirche, Bach und Straße.">
-    </picture>
-    <video v-if="clip" class="hero-video" :class="{on: clipPlaying}" muted playsinline loop autoplay preload="auto" poster="/media/tal.webp" aria-hidden="true" @playing="clipPlaying = true">
-      <source src="/media/tal-clip.webm" type="video/webm"><source src="/media/tal-clip.mp4" type="video/mp4">
-    </video>
-    <div class="hero-shade" aria-hidden="true"></div>
-    <RainCanvas v-if="!clipPlaying"/>
-    <div class="hero-copy wrap">
-      <p class="eyebrow hero-eyebrow">Hang-Check bei Starkregen · Österreich</p>
-      <h1 id="hero-title">Wo zuerst hinschauen, wenn der Starkregen kommt.</h1>
-      <p class="hero-sub">Talwacht zeigt für deinen Ort die Hänge, die man bei Starkregen zuerst ansehen sollte, entwickelt und geprüft an {{ v04 ? n(v04.counts.complete_groups) + ' ' : '' }}dokumentierten Rutschungen in Österreich.</p>
-      <PlaceSearch class="hero-search" tone="dark" @select="arrive"/>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow hero-eyebrow">Hang-Check bei Starkregen · Österreich</p>
+        <h1 id="hero-title">Wo zuerst hinschauen, wenn der Starkregen kommt.</h1>
+        <p class="hero-sub">Talwacht zeigt für deinen Ort die Hänge, die man bei Starkregen zuerst ansehen sollte, entwickelt und geprüft an {{ v04 ? n(v04.counts.complete_groups) + ' ' : '' }}dokumentierten Rutschungen in Österreich.</p>
+        <PlaceSearch class="hero-search" @select="arrive"/>
+      </div>
+      <HangProfile class="hero-graphic"/>
     </div>
-    <span class="ai-credit">KI-generierte Illustration</span>
   </section>
 
   <section class="section steps" aria-labelledby="steps-title">
@@ -171,25 +157,15 @@ const limits = [
 </template>
 
 <style>
-.hero{position:relative;min-height:100svh;display:flex;align-items:flex-start;overflow:hidden;background:var(--slate-900);color:#fff;isolation:isolate}
-.hero-img,.hero-img img{position:absolute;inset:0;width:100%;height:100%}
-.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 62%;opacity:0;transition:opacity .8s ease,transform .5s var(--ease),filter .5s var(--ease)}
-.hero-video.on{opacity:1}
-.hero.leaving .hero-video{transform:scale(1.08);filter:blur(8px) saturate(.45)}
-.hero-img img{object-fit:cover;object-position:50% 62%;transform-origin:50% 60%}
-.hero-shade{position:absolute;inset:0;z-index:1;background:
-  linear-gradient(90deg,rgb(14 24 34 / .62) 0%,rgb(14 24 34 / .28) 46%,rgb(14 24 34 / 0) 70%),
-  linear-gradient(180deg,rgb(14 24 34 / .5) 0%,rgb(14 24 34 / 0) 30%,rgb(14 24 34 / 0) 62%,rgb(14 24 34 / .55) 100%)}
-.hero-copy{position:relative;z-index:3;padding-top:clamp(120px,17vh,180px);padding-bottom:64px}
-.hero-eyebrow{color:rgb(255 255 255 / .82)}
-.hero h1{max-width:15ch;font-size:clamp(2.6rem,5.3vw,5.4rem);color:#fff;text-shadow:0 2px 30px rgb(14 24 34 / .35)}
-.hero-sub{margin-top:24px;max-width:46ch;font-size:clamp(1.08rem,1.5vw,1.3rem);line-height:1.55;color:rgb(255 255 255 / .9)}
-.hero-search{margin-top:34px}
-.hero-img img,.hero-copy>*,.hero .rain{transition:transform .5s var(--ease),filter .5s var(--ease),opacity .25s ease}
-.hero.leaving .hero-img img{transform:scale(1.08);filter:blur(8px) saturate(.45)}
+.hero{position:relative;background:var(--paper);color:var(--ink)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:56px;align-items:center;padding-top:clamp(120px,15vh,170px);padding-bottom:clamp(48px,8vh,96px)}
+.hero h1{max-width:15ch;font-size:clamp(2.4rem,4.6vw,4.6rem)}
+.hero-sub{margin-top:22px;max-width:46ch;font-size:clamp(1.05rem,1.4vw,1.25rem);line-height:1.55;color:var(--ink-2)}
+.hero-search{margin-top:32px}
+.hero-copy>*,.hero-graphic{transition:transform .5s var(--ease),filter .5s var(--ease),opacity .25s ease}
+.hero.leaving .hero-graphic{transform:scale(1.06);filter:blur(6px);opacity:.4}
 .hero.leaving .hero-copy>*:not(.hero-search){opacity:0}
 .hero.leaving .hero-search{transform:translateY(-120px);opacity:0;transition:transform .35s var(--ease),opacity .3s ease}
-.hero.leaving .rain{opacity:0}
 
 .steps-grid{display:grid;grid-template-columns:5fr 7fr;gap:clamp(32px,6vw,88px);align-items:center}
 .steps-img{position:relative;margin:0;border-radius:var(--r-card);overflow:hidden;aspect-ratio:4/5;box-shadow:var(--shadow-lift)}
@@ -241,6 +217,10 @@ const limits = [
   .basis-grid{grid-template-columns:1fr 1fr}
   .basis-grid .basis-card:first-child{grid-column:1/-1}
 }
+@media (max-width:1000px){
+  .hero-grid{grid-template-columns:1fr;gap:28px;padding-top:110px}
+  .hero-graphic{max-width:720px}
+}
 @media (max-width:860px){
   .steps-grid{grid-template-columns:1fr}
   .steps-img{aspect-ratio:4/3;max-height:440px}
@@ -257,8 +237,5 @@ const limits = [
 }
 @media (max-width:640px){
   .basis-grid{grid-template-columns:1fr}
-  .hero-copy{padding-top:120px}
-  .hero-img img{object-position:58% 60%}
-  .hero-shade{background:linear-gradient(180deg,rgb(14 24 34 / .66) 0%,rgb(14 24 34 / .38) 55%,rgb(14 24 34 / .7) 100%)}
 }
 </style>

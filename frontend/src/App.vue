@@ -52,7 +52,7 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', changed))
 
 <template>
   <a class="skip" href="#inhalt" @click.prevent="main?.focus()">Zum Inhalt</a>
-  <NavBar :page="route.page" :hero="route.page === 'start'" :compact="isCheck" @search="palette = true"/>
+  <NavBar :page="route.page" :compact="isCheck" @search="palette = true"/>
   <main id="inhalt" ref="main" tabindex="-1" class="site-main">
     <StartPage v-if="route.page === 'start'"/>
     <CheckPage v-else-if="isCheck" :params="route.params"/>

@@ -4,7 +4,7 @@
 // No request ever carries weather or the switch: place and radius only; the classes never change.
 import {ref, computed, watch, onMounted, onBeforeUnmount, nextTick, defineAsyncComponent} from 'vue'
 import {RADIUS, clampRadius, readParams, readCheck, OFFLINE, normalize, coord, wantFlows, normalizeFlows, flowsToShow} from '../check.js'
-import {createLayerLoader, FALLBACK_HINWEISE, OFFICIAL, classShareText, km, flowUrl, infraText} from '../hangcheck.js'
+import {createLayerLoader, FALLBACK_HINWEISE, OFFICIAL, classShareText, km, flowUrl, pointFlowUrl, OWN_POINT, infraText} from '../hangcheck.js'
 import {checkHash, loadExamples} from '../places.js'
 import {takePendingPlace, takeArrival} from '../session.js'
 import PlaceSearch from '../ui/PlaceSearch.vue'
@@ -21,11 +21,19 @@ const arrival = takeArrival(), mapRef = ref(null), sheet = ref(null), listRef = 
 const webgl = (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')) } catch { return false } })()
 let seq = 0, flowSeq = 0, timer = 0, phaseTimer = 0
 const flows = ref(null), flowState = ref('idle'), flowError = ref(''), asked = ref(null)
+// Own start point: the user taps any spot inside the circle and sees where material from there could flow.
+const picking = ref(false), own = ref(null), ownFlow = ref(null), ownState = ref('idle'), ownError = ref('')
+let ownSeq = 0
 
 const notice = computed(() => result.value?.raw.hinweise?.length ? result.value.raw.hinweise : meta.value?.hinweise?.length ? meta.value.hinweise : FALLBACK_HINWEISE)
 const stage = computed(() => !place.value ? 1 : status.value !== 'ready' ? 2 : !rain.value ? 3 : 4)
 const steps = ['Ort', 'Umkreis', 'Hänge', 'Starkregen']
-const shownFlows = computed(() => flowsToShow(flows.value, rain.value, asked.value))
+const shownFlows = computed(() => {
+  const base = flowsToShow(flows.value, rain.value, asked.value)
+  return ownFlow.value ? {type: 'FeatureCollection', features: [...base.features, ...ownFlow.value.features]} : base
+})
+const activeFlow = computed(() => asked.value ?? (ownFlow.value ? OWN_POINT : null))
+const ownScen = computed(() => { const f = ownFlow.value?.byNr?.[OWN_POINT]; return f ? [f.kurz, f.lang].filter(Boolean) : [] })
 const flowFor = nr => (rain.value || asked.value === nr) ? flows.value?.byNr?.[nr] ?? null : null
 const PHASES = ['Gelände lesen', 'Landbedeckung und Geologie', 'Hänge einstufen']
 const counts = computed(() => result.value?.raw.zaehlung)
@@ -101,8 +109,27 @@ function choose(p) {
   if (p.radius_m) radius.value = clampRadius(p.radius_m, limits.value)
   failure.value = null
 }
-function pickOnMap(p) { choose({id: 'karte', name: 'Punkt auf der Karte', label: 'Punkt auf der Karte', region: '', longitude: p.longitude, latitude: p.latitude, radius_m: null}) }
-function reset() { place.value = null; rain.value = false; result.value = null; status.value = 'idle'; flows.value = null; asked.value = null }
+function startPicking() { picking.value = !picking.value; if (picking.value) sheet.value?.set('kopf') }
+function clearOwn() { ownSeq++; own.value = null; ownFlow.value = null; ownState.value = 'idle'; ownError.value = ''; picking.value = false }
+async function pickOwn(p) {
+  const mine = ++ownSeq
+  picking.value = false; asked.value = null
+  own.value = {longitude: p.longitude, latitude: p.latitude}; ownFlow.value = null; ownState.value = 'loading'; ownError.value = ''
+  sheet.value?.set('halb')
+  let r
+  try {
+    try { r = await fetch(pointFlowUrl(place.value, radius.value, own.value)) } catch { throw OFFLINE() }
+    const data = await readCheck(r)
+    if (mine !== ownSeq) return
+    ownFlow.value = normalizeFlows(data); ownState.value = 'ready'
+    await nextTick(); mapRef.value?.fitFlow(OWN_POINT)
+    document.getElementById('cp-own')?.scrollIntoView({block: 'nearest', behavior: 'smooth'})
+  } catch (e) { if (mine === ownSeq) { ownState.value = 'error'; ownError.value = e.message } }
+}
+function pickOnMap(p) {
+  if (picking.value && status.value === 'ready') return pickOwn(p)
+  choose({id: 'karte', name: 'Punkt auf der Karte', label: 'Punkt auf der Karte', region: '', longitude: p.longitude, latitude: p.latitude, radius_m: null}) }
+function reset() { clearOwn(); place.value = null; rain.value = false; result.value = null; status.value = 'idle'; flows.value = null; asked.value = null }
 function selectPoint(nr) {
   active.value = nr
   mapRef.value?.flyToPoint(nr)
@@ -120,7 +147,7 @@ const driverText = p => (p.treiber ?? []).map(t => typeof t === 'string' ? t : t
 
 watch([place, radius], ([p], [p0]) => {
   syncAddress()
-  flowSeq++; flows.value = null; asked.value = null; flowState.value = 'idle'
+  flowSeq++; flows.value = null; asked.value = null; flowState.value = 'idle'; clearOwn()
   if (!p) { seq++; clearInterval(phaseTimer); status.value = 'idle'; result.value = null; return }
   schedule(p !== p0 ? 0 : 350)
 })
@@ -151,7 +178,7 @@ onBeforeUnmount(() => { clearTimeout(timer); clearInterval(phaseTimer); seq++ })
     <div class="check-map">
       <TerrainMap v-if="webgl" ref="mapRef" :centre="place" :radius-m="radius" :cells="result?.cells ?? null" :max-d="result?.maxD ?? 1"
                   :points="result?.points ?? []" :active="active" :base="base" :arrival="arrival"
-                  :flows="shownFlows" :flow-active="asked"
+                  :flows="shownFlows" :flow-active="activeFlow" :own-point="own" :picking="picking"
                   @pick="pickOnMap" @hover="nr => (active = nr)" @select="selectPoint" @failed="m => (mapNote = m)"/>
       <div v-else class="check-nogl"><p>Diese Ansicht braucht WebGL für die 3D-Karte. Ort, Umkreis und die Liste der Prüfpunkte funktionieren trotzdem.</p></div>
       <div v-if="arrival" class="arrival" aria-hidden="true"><img src="/media/tal-1200.webp" alt=""><span class="ai-credit">KI-generierte Illustration</span></div>
@@ -268,6 +295,33 @@ onBeforeUnmount(() => { clearTimeout(timer); clearInterval(phaseTimer); seq++ })
             </li>
           </ol>
           <p v-else class="state">In diesem Umkreis gibt es keine Prüfpunkte der Stufe 1.</p>
+
+          <div id="cp-own" class="cp-own" :class="{active: picking || own}">
+            <p class="cp-own-title">Eigenen Punkt prüfen</p>
+            <p class="cp-small">Tippe auf eine beliebige Stelle im Kreis und sieh, wohin Material von dort hangabwärts fließen könnte.</p>
+            <button type="button" class="cp-own-btn" :aria-pressed="picking" @click="startPicking">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+              {{ picking ? 'Jetzt in die Karte tippen …' : own ? 'Anderen Punkt wählen' : 'Punkt auf der Karte wählen' }}
+            </button>
+            <template v-if="own">
+              <p class="cp-small"><span class="mono cp-nowrap">Startpunkt {{ coord(own.latitude) }} N · {{ coord(own.longitude) }} O</span> <button type="button" class="cp-link" @click="clearOwn">entfernen</button></p>
+              <p v-if="ownState === 'loading'" class="cp-flow-wait" role="status">Fließweg wird berechnet …</p>
+              <p v-else-if="ownState === 'error'" class="cp-flow-err" role="alert">{{ ownError }}</p>
+              <div v-else-if="ownScen.length" class="cp-flow">
+                <p class="cp-flow-title">Möglicher Fließweg (Szenario, ungeprüft)</p>
+                <dl>
+                  <div v-for="(sc, k) in ownScen" :key="sc.id">
+                    <dt>{{ k === 0 ? 'Kurz' : 'Lang' }} · {{ sc.bezeichnung }}</dt>
+                    <dd>Weg {{ Math.round(sc.laenge_m).toLocaleString('de-AT') }} m hangabwärts. <template v-if="infraText(sc.im_szenario, ownFlow.typen)">Im Szenario liegen: {{ infraText(sc.im_szenario, ownFlow.typen) }}.</template><template v-else>Keine Straßen oder Gebäude im Szenario.</template>
+                      <small v-if="sc.status !== 'gestoppt'">{{ sc.status_text }}.</small></dd>
+                  </div>
+                </dl>
+                <p class="cp-small">{{ ownFlow.hinweis }}</p>
+                <p v-if="ownFlow.osm" class="cp-small">Straßen und Gebäude: {{ ownFlow.osm.hinweis }}<template v-if="ownFlow.osm.stand">, Stand {{ ownFlow.osm.stand.slice(0, 10) }}</template>.</p>
+                <p class="cp-small">Der Weg folgt dem steilsten Gefälle im Höhenmodell. Der Startpunkt ist keine Einstufung des Hanges.</p>
+              </div>
+            </template>
+          </div>
           <p v-if="counts" class="cp-counts">
             {{ counts.bewertet.toLocaleString('de-AT') }} von {{ counts.zellen.toLocaleString('de-AT') }} Hangzellen bewertet<template v-if="result.raw.zellgroesse_m"> ({{ result.raw.zellgroesse_m }} m)</template>.
             <template v-for="a in counts.ausgeschlossen ?? []" :key="a.grund"> {{ a.anzahl.toLocaleString('de-AT') }} {{ a.grund }}.</template>
@@ -279,11 +333,14 @@ onBeforeUnmount(() => { clearTimeout(timer); clearInterval(phaseTimer); seq++ })
         </template>
       </section>
 
-      <section class="cp-notice" aria-labelledby="cp-notice">
-        <h2 id="cp-notice" class="sr-only">Wichtige Hinweise</h2>
-        <div v-for="h in notice" :key="h.titel"><strong>{{ h.titel }}</strong><p>{{ h.text }}</p></div>
-        <p class="cp-small">Unwetterwarnungen: <a :href="OFFICIAL.geosphere" target="_blank" rel="noopener noreferrer">GeoSphere Austria</a> und die Landeswarnzentralen. <template v-if="vintages">Datenstand: {{ Object.values(vintages).join(' · ') }}. </template><a href="#/belastbar">Wie belastbar ist das?</a></p>
-      </section>
+      <!-- Collapsed by default on request; the summary keeps the key sentence visible. -->
+      <details class="cp-notice">
+        <summary><span class="cp-notice-title">Wichtige Hinweise</span><span class="cp-notice-lead">{{ notice.map(h => h.titel).join(' · ') }}</span></summary>
+        <div class="cp-notice-body">
+          <div v-for="h in notice" :key="h.titel"><strong>{{ h.titel }}</strong><p>{{ h.text }}</p></div>
+          <p class="cp-small">Unwetterwarnungen: <a :href="OFFICIAL.geosphere" target="_blank" rel="noopener noreferrer">GeoSphere Austria</a> und die Landeswarnzentralen. <template v-if="vintages">Datenstand: {{ Object.values(vintages).join(' · ') }}. </template><a href="#/belastbar">Wie belastbar ist das?</a></p>
+        </div>
+      </details>
     </BottomSheet>
 
     <section class="print-sheet" aria-hidden="true">
@@ -394,14 +451,28 @@ onBeforeUnmount(() => { clearTimeout(timer); clearInterval(phaseTimer); seq++ })
 .cp-pt{display:flex;flex-direction:column;gap:2px;min-width:0}
 .cp-pt span{font-size:.95rem}
 .cp-pt small{font-size:.8rem;color:var(--ink-2)}
+.cp-own{margin-top:14px;padding:14px;border-radius:14px;border:1px dashed #9CBFD0;background:var(--card);display:grid;gap:8px}
+.cp-own.active{border-style:solid;border-color:#1E5A7A}
+.cp-own-title{font-weight:650}
+.cp-nowrap{white-space:nowrap}
+.cp-own-btn{justify-self:start;display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid #1E5A7A;background:#EEF5F8;color:#1E5A7A;font-weight:600;font-size:.92rem}
+.cp-own-btn[aria-pressed=true]{background:#1E5A7A;color:#fff}
+.cp-own-btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.cp-own .cp-flow,.cp-own .cp-flow-wait,.cp-own .cp-flow-err{margin:0}
 .cp-counts{margin-top:14px;font-size:.86rem;color:var(--ink-2)}
 .cp-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 .cp-actions .btn{min-height:44px;padding:0 16px;font-size:.95rem}
-.cp-notice{margin-top:18px;padding:18px;border-radius:16px;background:var(--slate-900);color:var(--on-dark);display:grid;gap:12px}
-.cp-notice strong{color:#fff}
-.cp-notice p{font-size:.9rem;color:var(--on-dark-2)}
-.cp-notice a{color:var(--glacier)}
-.cp-notice .cp-small{color:var(--on-dark-2)}
+.cp-notice{margin-top:18px;border-radius:14px;border:1px solid var(--line-2);background:var(--card)}
+.cp-notice summary{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:12px 14px;cursor:pointer;list-style:none;min-height:44px}
+.cp-notice summary::-webkit-details-marker{display:none}
+.cp-notice summary::after{content:'+';grid-row:1/3;grid-column:2;align-self:center;font:600 1.2rem/1 var(--f-mono);color:var(--ink-2)}
+.cp-notice[open] summary::after{content:'−'}
+.cp-notice summary:focus-visible{outline:3px solid var(--moss);outline-offset:2px;border-radius:14px}
+.cp-notice-title{font-weight:650;font-size:.92rem}
+.cp-notice-lead{font-size:.8rem;color:var(--ink-2)}
+.cp-notice-body{display:grid;gap:10px;padding:0 14px 14px}
+.cp-notice-body strong{font-size:.9rem}
+.cp-notice-body p{font-size:.86rem;color:var(--ink-2)}
 .print-sheet{display:none}
 @media (max-width:759px){
   .map-tools{top:84px;right:58px}

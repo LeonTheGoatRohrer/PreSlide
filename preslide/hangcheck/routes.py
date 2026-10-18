@@ -59,3 +59,21 @@ def fliesswege_route(longitude: float, latitude: float, request: Request, radius
         raise HTTPException(503, f'Fließwege gerade nicht berechenbar: {error}'[:300])
     finally:
         _lock.release()
+
+
+@router.get('/fliessweg_punkt')
+def fliessweg_punkt(longitude: float, latitude: float, punkt_longitude: float, punkt_latitude: float, request: Request,
+                    radius_m: float | None = None):
+    """Possible flow path from one start point the user picks inside the checked circle (scenario, unvalidated)."""
+    if set(request.query_params) - {'longitude', 'latitude', 'radius_m', 'punkt_longitude', 'punkt_latitude'}:
+        raise HTTPException(422, 'Hang-Check nimmt keine Zusatzparameter an (auch keine Wetterangaben).')
+    if not _lock.acquire(timeout=5):
+        raise HTTPException(503, 'Eine andere Berechnung läuft noch; bitte kurz warten.')
+    try:
+        return fliesswege.compute_point(longitude, latitude, radius_m, punkt_longitude, punkt_latitude)
+    except ValueError as error:
+        raise HTTPException(422, str(error))
+    except RuntimeError as error:
+        raise HTTPException(503, f'Fließweg gerade nicht berechenbar: {error}'[:300])
+    finally:
+        _lock.release()

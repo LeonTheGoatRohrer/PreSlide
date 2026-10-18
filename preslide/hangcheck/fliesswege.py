@@ -77,7 +77,35 @@ def compute(lon, lat, radius_m=None):
     return store.load_json(path, ident)
 
 
-def _compute(lon, lat, radius_m, main, cfg):
+def inside_radius(cx_m, cy_m, px_m, py_m, radius_m):
+    """True if a chosen start point lies inside the circle of the checked area (projected metres, EPSG:31287)."""
+    return float(np.hypot(px_m - cx_m, py_m - cy_m)) <= radius_m
+
+
+def compute_point(lon, lat, radius_m, point_lon, point_lat):
+    """Possible flow path from one start point the user picks inside the checked area (same scenarios, no ranking)."""
+    cfg = config()
+    main = build.compute(lon, lat, radius_m)            # validates place and radius; cached
+    radius_m = main['radius_m']
+    cx, cy = PROJECT.transform(lon, lat)
+    px, py = PROJECT.transform(point_lon, point_lat)
+    if not inside_radius(cx, cy, px, py, radius_m):
+        raise ValueError('Der Punkt liegt außerhalb des geprüften Umkreises. Bitte einen Punkt innerhalb des Kreises wählen.')
+    point = [round(float(point_lon), 5), round(float(point_lat), 5)]
+    ident = store.identity({'main': build.identity(lon, lat, radius_m, cfg), 'flow_paths': cfg['flow_paths'],
+                            'scenarios': scenario_config(cfg)[0], 'algorithm': 1, 'punkt': point})
+    path = guard(DATA / 'cache/fliesswege_punkt') / f'{ident}.json'
+    if store.exists(path):
+        return store.load_json(path, ident)
+    ctx = _context(lon, lat, radius_m, cfg)
+    result = _result(cfg, main, radius_m, ctx, [{'nr': 0, 'punkt': {'longitude': point[0], 'latitude': point[1]},
+                                                 'szenarien': _flow(ctx, px, py, cfg)}])
+    store.save_json(path, ident, result)
+    return store.load_json(path, ident)
+
+
+def _context(lon, lat, radius_m, cfg):
+    """DEM window with filled surface and the OSM features of the area: shared by review points and a picked point."""
     fp, t = cfg['flow_paths'], cfg['terrain']
     scenarios, width_m, infra = scenario_config(cfg)
     res = t['resolution_m']
@@ -86,30 +114,45 @@ def _compute(lon, lat, radius_m, main, cfg):
     filled, _, _ = fill_depressions(dem.astype(float))
     cx, cy = PROJECT.transform(lon, lat)
     bounds = INVERSE.transform([cx - window_m, cx + window_m], [cy - window_m, cy + window_m])
-    types = list(infra['types'])
     data, meta = overpass(''.join(v['query'] + ';' for v in infra['types'].values()),
                           (bounds[0][0], bounds[1][0], bounds[0][1], bounds[1][1]), infra['user_agent'])
     features = osm_features(parse_osm(data['elements'])) if data['elements'] else []
-    exposure = W.Exposure(features)
+    return {'dem': dem, 'filled': filled, 'left': left, 'top': top, 'res': res, 'scenarios': scenarios,
+            'width_m': width_m, 'infra': infra, 'exposure': W.Exposure(features), 'data': data, 'meta': meta}
+
+
+def _flow(ctx, px, py, cfg):
+    r0, c0 = W.xy_to_cell(ctx['left'], ctx['top'], ctx['res'], [px], [py])
+    route = route_with_scenarios(ctx['filled'], ctx['dem'], int(r0[0]), int(c0[0]), ctx['res'], ctx['left'], ctx['top'],
+                                 ctx['scenarios'], cfg['flow_paths']['max_route_m'])
+    types = list(ctx['infra']['types'])
+    szen = []
+    for sc in ctx['scenarios']:
+        stop = route['stops'][sc['id']]
+        area = W.corridor(route['x'], route['y'], stop['stop_index'], ctx['width_m'])
+        szen.append({'id': sc['id'], 'bezeichnung': sc['label'], 'reichweite_m': sc['reach_m'], 'quelle': sc['source_de'],
+                     'status': stop['status'], 'status_text': END_TEXT[stop['status']],
+                     'laenge_m': round(float(route['s'][stop['stop_index']]), 1),
+                     'weg': _lonlat(route['x'][:stop['stop_index'] + 1], route['y'][:stop['stop_index'] + 1]),
+                     'korridor': {'type': 'Polygon', 'coordinates': [_lonlat(*area.exterior.xy)]},
+                     'im_szenario': W.count_by_type(ctx['exposure'].hits(area), types)})
+    return szen
+
+
+def _result(cfg, main, radius_m, ctx, out):
+    data, meta, infra = ctx['data'], ctx['meta'], ctx['infra']
+    labels = {k: v['label'] for k, v in infra['types'].items()}
+    return {'version': cfg['version'], 'centre': main['centre'], 'radius_m': radius_m, 'fliesswege': out,
+            'korridor_breite_m': ctx['width_m'], 'typen': labels,
+            'osm': {'stand': data.get('osm3s', {}).get('timestamp_osm_base'), 'abgerufen': meta.get('retrieved_at'),
+                    'hinweis': 'heutiger OpenStreetMap-Stand (© OpenStreetMap-Mitwirkende, ODbL)'},
+            'hinweis': cfg['flow_paths']['notice']}
+
+
+def _compute(lon, lat, radius_m, main, cfg):
+    ctx = _context(lon, lat, radius_m, cfg)
     out = []
     for p in main['pruefpunkte']:
         px, py = PROJECT.transform(p['longitude'], p['latitude'])
-        r0, c0 = W.xy_to_cell(left, top, res, [px], [py])
-        route = route_with_scenarios(filled, dem, int(r0[0]), int(c0[0]), res, left, top, scenarios, fp['max_route_m'])
-        szen = []
-        for sc in scenarios:
-            stop = route['stops'][sc['id']]
-            area = W.corridor(route['x'], route['y'], stop['stop_index'], width_m)
-            szen.append({'id': sc['id'], 'bezeichnung': sc['label'], 'reichweite_m': sc['reach_m'], 'quelle': sc['source_de'],
-                         'status': stop['status'], 'status_text': END_TEXT[stop['status']],
-                         'laenge_m': round(float(route['s'][stop['stop_index']]), 1),
-                         'weg': _lonlat(route['x'][:stop['stop_index'] + 1], route['y'][:stop['stop_index'] + 1]),
-                         'korridor': {'type': 'Polygon', 'coordinates': [_lonlat(*area.exterior.xy)]},
-                         'im_szenario': W.count_by_type(exposure.hits(area), types)})
-        out.append({'nr': p['nr'], 'szenarien': szen})
-    labels = {k: v['label'] for k, v in infra['types'].items()}
-    return {'version': cfg['version'], 'centre': main['centre'], 'radius_m': radius_m, 'fliesswege': out,
-            'korridor_breite_m': width_m, 'typen': labels,
-            'osm': {'stand': data.get('osm3s', {}).get('timestamp_osm_base'), 'abgerufen': meta.get('retrieved_at'),
-                    'hinweis': 'heutiger OpenStreetMap-Stand (© OpenStreetMap-Mitwirkende, ODbL)'},
-            'hinweis': fp['notice']}
+        out.append({'nr': p['nr'], 'szenarien': _flow(ctx, px, py, cfg)})
+    return _result(cfg, main, radius_m, ctx, out)

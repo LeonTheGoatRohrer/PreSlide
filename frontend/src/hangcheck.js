@@ -76,3 +76,13 @@ export function flowUrl(place, radiusM) {
   const b = requestBody(place, radiusM)
   return `/api/hangcheck/fliesswege?longitude=${b.longitude}&latitude=${b.latitude}&radius_m=${b.radius_m}`
 }
+
+/** Flow path from a start point the user picks on the map; place, radius and that point only. */
+export function pointFlowUrl(place, radiusM, point) {
+  const b = requestBody(place, radiusM)
+  return `/api/hangcheck/fliessweg_punkt?longitude=${b.longitude}&latitude=${b.latitude}&radius_m=${b.radius_m}` +
+    `&punkt_longitude=${Number(point.longitude).toFixed(6)}&punkt_latitude=${Number(point.latitude).toFixed(6)}`
+}
+
+/** Nr. of the user's own start point inside normalized flow data (review points are 1..5). */
+export const OWN_POINT = 0

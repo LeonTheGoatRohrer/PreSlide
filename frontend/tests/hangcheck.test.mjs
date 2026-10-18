@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
-import {createLayerLoader, requestBody, placeKey, classShareText, circle, FALLBACK_HINWEISE, OFFICIAL} from '../src/hangcheck.js'
+import {createLayerLoader, requestBody, placeKey, classShareText, circle, FALLBACK_HINWEISE, OFFICIAL, pointFlowUrl, OWN_POINT} from '../src/hangcheck.js'
 
 // The redesign renders the Hang-Check in pages/CheckPage.vue (same helpers, same request).
 const page = readFileSync(new URL('../src/pages/CheckPage.vue', import.meta.url), 'utf8')
@@ -78,4 +78,14 @@ test('flow notice and OSM attribution are shown wherever a flow path is shown', 
   // Heavy-rain view and the single asked point both render the API notice and "heutiger OpenStreetMap-Stand (… ODbL)".
   assert.equal((page.match(/\{\{ flows\.hinweis \}\}/g) || []).length, 2)
   assert.equal((page.match(/\{\{ flows\.osm\.hinweis \}\}/g) || []).length, 2)
+})
+
+test('own start point: the request carries place, radius and the picked point only', () => {
+  const url = new URL(pointFlowUrl(place, 2000, {longitude: 10.565, latitude: 47.149}), 'http://x')
+  assert.equal(url.pathname, '/api/hangcheck/fliessweg_punkt')
+  assert.deepEqual([...url.searchParams.keys()].sort(), ['latitude', 'longitude', 'punkt_latitude', 'punkt_longitude', 'radius_m'])
+  assert.equal(url.searchParams.get('punkt_longitude'), '10.565000')
+  assert.equal(OWN_POINT, 0)
+  assert.ok(page.includes('Eigenen Punkt prüfen'))
+  assert.match(page, /picking\.value && status\.value === 'ready'/)   // a tap only picks a start point after a result exists
 })

@@ -16,10 +16,12 @@ const props = defineProps({
   active: {type: Number, default: null}, base: {type: String, default: 'grau'}, arrival: Boolean,
   flows: {type: Object, default: null}, flowActive: {type: Number, default: null},   // possible flow paths (scenario)
   embedded: Boolean,   // small preview inside a page: no page padding, gestures need two fingers / Ctrl
+  ownPoint: {type: Object, default: null},   // start point the user picked for a flow path
+  picking: Boolean,   // next map click picks that start point (crosshair cursor)
 })
 const emit = defineEmits(['pick', 'hover', 'select', 'ready', 'failed'])
 const el = ref(null)
-let map = null, ready = false, centreMarker = null, pins = [], wave = 0
+let map = null, ready = false, centreMarker = null, ownMarker = null, pins = [], wave = 0
 const EMPTY = {type: 'FeatureCollection', features: []}
 
 function style() {
@@ -103,6 +105,13 @@ function drawPins() {
   })
   highlight()
 }
+function setOwn() {
+  ownMarker?.remove(); ownMarker = null
+  if (!ready || !props.ownPoint) return
+  const dot = document.createElement('div'); dot.className = 'tm-own'; dot.setAttribute('aria-hidden', 'true')
+  ownMarker = new maplibregl.Marker({element: dot, anchor: 'bottom'}).setLngLat([props.ownPoint.longitude, props.ownPoint.latitude]).addTo(map)
+}
+function setPicking() { if (map) map.getCanvas().style.cursor = props.picking ? 'crosshair' : '' }
 function highlight() { pins.forEach(p => p.el.classList.toggle('on', p.nr === props.active)) }
 function setFlows() {
   if (!ready) return
@@ -159,7 +168,7 @@ onMounted(() => {
     ready = true
     map.setTerrain({source: 'dem', exaggeration: 1.4})
     map.setSky({'sky-color': '#C9D9E0', 'horizon-color': '#F5F3EE', 'fog-color': '#F5F3EE', 'sky-horizon-blend': .6, 'horizon-fog-blend': .7, 'fog-ground-blend': .4})
-    setBase(); setRing(); reveal(); drawPins(); setFlows()
+    setBase(); setRing(); reveal(); drawPins(); setFlows(); setOwn(); setPicking()
     // Attribution stays available behind the (i) button; folded so it does not cover a small preview or the phone sheet.
     if (props.embedded || window.innerWidth < 760) map.getContainer().querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show')
     emit('ready')
@@ -168,12 +177,12 @@ onMounted(() => {
   if (props.arrival && props.centre) fly()
   window.addEventListener('resize', padding)
   // Pins sit on the 3D terrain: once late terrain tiles have arrived, place them again on the final surface.
-  map.on('idle', () => { pins.forEach(p => p.marker.setLngLat(p.marker.getLngLat())); centreMarker?.setLngLat(centreMarker.getLngLat()) })
+  map.on('idle', () => { pins.forEach(p => p.marker.setLngLat(p.marker.getLngLat())); centreMarker?.setLngLat(centreMarker.getLngLat()); ownMarker?.setLngLat(ownMarker.getLngLat()) })
   map.on('click', e => emit('pick', {longitude: e.lngLat.lng, latitude: e.lngLat.lat}))
   let warned = false
   map.on('error', () => { if (!warned) { warned = true; emit('failed', 'Ein Teil der Kartenkacheln fehlt (Internetverbindung?). Die Prüfstufen kommen vom lokalen Server.') } })
 })
-onBeforeUnmount(() => { window.removeEventListener('resize', padding); cancelAnimationFrame(wave); pins.forEach(p => p.marker.remove()); centreMarker?.remove(); map?.remove() })
+onBeforeUnmount(() => { window.removeEventListener('resize', padding); cancelAnimationFrame(wave); pins.forEach(p => p.marker.remove()); centreMarker?.remove(); ownMarker?.remove(); map?.remove() })
 watch(() => props.centre, () => { setRing(); fly() })
 watch(() => props.radiusM, () => { setRing(); if (props.centre) map?.easeTo({zoom: zoomFor(props.radiusM), duration: reducedMotion() ? 0 : 600}) })
 watch(() => props.cells, reveal)
@@ -181,6 +190,8 @@ watch(() => props.points, drawPins)
 watch(() => props.active, highlight)
 watch(() => props.base, setBase)
 watch(() => [props.flows, props.flowActive], setFlows)
+watch(() => props.ownPoint, setOwn)
+watch(() => props.picking, setPicking)
 </script>
 
 <template><div ref="el" class="tm" role="region" aria-label="3D-Karte des gewählten Umkreises. Die Ergebnisliste im Panel enthält dieselben Prüfpunkte als Text."></div></template>
@@ -196,6 +207,8 @@ watch(() => [props.flows, props.flowActive], setFlows)
 .tm-pin::after{content:'';position:absolute;left:50%;bottom:2px;width:8px;height:8px;background:var(--ink);transform:translateX(-50%) rotate(45deg);z-index:-2}
 .tm-pin.on::before,.tm-pin:hover::before,.tm-pin:focus-visible::before{background:var(--stufe1);transform:scale(1.12)}
 .tm-pin.on::after,.tm-pin:hover::after{background:var(--stufe1)}
+.tm-own{width:26px;height:34px;position:relative;pointer-events:none;animation:pin-drop .45s var(--ease) both}
+.tm-own::before{content:'';position:absolute;inset:0 0 8px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#1E5A7A;border:3px solid #fff;box-shadow:0 6px 14px -4px rgb(19 32 43 / .6)}
 @keyframes pin-drop{from{opacity:0;transform:translateY(-18px)}}
 @media (prefers-reduced-motion:reduce){.tm-pin{animation:none}}
 </style>

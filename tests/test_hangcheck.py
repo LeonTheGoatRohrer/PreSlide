@@ -11,7 +11,7 @@ from fastapi.testclient import TestClient
 from preslide.hangcheck import core, gemeinden
 from preslide.hangcheck.paths import config, DATA, guard
 from preslide.sources import ROOT
-from preslide.terrain import PROJECT
+from preslide.terrain import PROJECT, INVERSE
 from preslide.v04.models import STATIC, LC_CLASSES, GEO_CLASSES
 from preslide.wirkungskette.core import banned_words
 
@@ -356,3 +356,39 @@ def test_cached_flow_paths_start_at_review_points_and_respect_reach():
             assert np.hypot(wx[0] - px, wy[0] - py) <= 30 * math.sqrt(2) / 2 + 1     # starts in the review point's DEM cell
             assert sc['laenge_m'] <= sc['reichweite_m']
             assert set(sc['im_szenario']) == {'gebaeude', 'strasse', 'weg', 'bahn'}
+
+
+def test_picked_start_point_must_lie_inside_the_checked_circle_in_metres():
+    from preslide.hangcheck.fliesswege import inside_radius
+    cx, cy = PROJECT.transform(13.11, 47.11)
+    assert inside_radius(cx, cy, cx + 1999.0, cy, 2000)
+    assert inside_radius(cx, cy, cx + 1414.0, cy - 1414.0, 2000)
+    assert not inside_radius(cx, cy, cx + 2001.0, cy, 2000)
+    assert not inside_radius(cx, cy, cx, cy + 1.0, 0.5)
+
+
+def test_point_flow_endpoint_refuses_extra_parameters_and_places_outside_austria(client):
+    base = {'longitude': STANZ['longitude'], 'latitude': STANZ['latitude'], 'radius_m': STANZ['radius_m'],
+            'punkt_longitude': STANZ['longitude'], 'punkt_latitude': STANZ['latitude']}
+    assert client.get('/api/hangcheck/fliessweg_punkt', params={**base, 'starkregen': 1}).status_code == 422
+    outside = {**base, 'longitude': 11.576, 'latitude': 48.137, 'punkt_longitude': 11.576, 'punkt_latitude': 48.137}
+    assert client.get('/api/hangcheck/fliessweg_punkt', params=outside).status_code == 422
+
+
+@needs_area
+def test_point_flow_starts_at_the_picked_cell_and_refuses_points_outside_the_circle():
+    from preslide.hangcheck import fliesswege
+    if not ((DATA / 'cache/osm').exists() and any((DATA / 'cache/osm').glob('*.json'))):
+        pytest.skip('data-dependent: no cached OSM response (python -m preslide.hangcheck prewarm)')
+    cx, cy = PROJECT.transform(STANZ['longitude'], STANZ['latitude'])
+    plon, plat = INVERSE.transform(cx + 300.0, cy + 200.0)
+    r = fliesswege.compute_point(STANZ['longitude'], STANZ['latitude'], STANZ['radius_m'], plon, plat)
+    assert [f['nr'] for f in r['fliesswege']] == [0]
+    assert not banned_words(r)
+    for sc in r['fliesswege'][0]['szenarien']:
+        wx, wy = PROJECT.transform(*np.array(sc['weg']).T)
+        assert np.hypot(wx[0] - (cx + 300.0), wy[0] - (cy + 200.0)) <= 30 * math.sqrt(2) / 2 + 1
+        assert sc['laenge_m'] <= sc['reichweite_m']
+    flon, flat = INVERSE.transform(cx + STANZ['radius_m'] + 50.0, cy)
+    with pytest.raises(ValueError, match='außerhalb'):
+        fliesswege.compute_point(STANZ['longitude'], STANZ['latitude'], STANZ['radius_m'], flon, flat)
