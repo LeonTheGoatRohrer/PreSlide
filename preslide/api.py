@@ -61,6 +61,21 @@ def results_v05():
     if not path.exists(): raise HTTPException(503,'V0.5-Ergebnisse fehlen: python -m preslide.v05.web')
     return read_json(path)
 
+HANGMUREN_PILOT=ROOT/'reports/mudslide_cascade_v01'
+
+@app.get('/api/hangmuren_pilot')
+def hangmuren_pilot():
+    # Exploratory pilot (mudslide_cascade_v01, terrain context for pure Hangmuren); allowlisted aggregates only,
+    # served only after its own verification passed.
+    path,verification=HANGMUREN_PILOT/'context_results.json',HANGMUREN_PILOT/'verification.json'
+    if not path.exists() or not verification.exists(): raise HTTPException(503,'Hangmuren-Pilot liegt nicht vor (reports/mudslide_cascade_v01).')
+    if read_json(verification).get('status')!='PASS': raise HTTPException(503,'Hangmuren-Pilot ist nicht abschließend geprüft.')
+    data=read_json(path);primary=data['primary']
+    return {'version':data['version'],'status':'explorativ','scope':data['scope'],
+            'local_auc_units':primary['local_auc_units'],'ci95':data['auc_ci95'],'local_auc_events':primary['local_auc_events'],
+            'events':primary['events'],'units':primary['units'],'chance':0.5,
+            'random_rank_null_q95':data['random_rank_null']['q95'],'p_upper_vs_random_rank':data['random_rank_upper_p']}
+
 @app.get('/api/benchmarks')
 def benchmarks():
     # Cross-version table of stored model runs (python -m preslide.benchmarks); aggregate values only.
