@@ -70,6 +70,17 @@
     "max_results": 10,
     "geocoding": "offline only; no external geocoder"
   },
+  "flow_paths": {
+    "status": "optional display after the core page (step 5); scenario, unvalidated; never changes the classes",
+    "route": "D8 steepest descent on the depression-filled 30 m surface from the DEM cell of each review point (preslide.wirkungskette.core.d8_route)",
+    "scenarios_from": "config/wirkungskette_v01.json",
+    "scenario_ids": ["reach_45m", "reach_467m"],
+    "scenario_rule": "fixed horizontal reach along the route (Hürlimann, McArdell & Rickli 2015: median 45 m, maximum 467 m of 178 open-slope Hangmuren); corridor width and OSM types from the same file",
+    "window_extra_m": 1500,
+    "max_route_m": 2000,
+    "notice": "Möglicher Fließweg (Szenario, ungeprüft): eine einzige steilste Abwärtslinie im Gelände mit zwei Literatur-Reichweiten. Kein berechneter Auslauf, keine Menge, keine Schutzbauten. Liegt ein Prüfpunkt schon neben Straßen oder Häusern, liegen diese fast immer auch im Szenario; das sagt dann wenig über den Hang.",
+    "infrastructure": "OpenStreetMap via the wirkungskette Overpass query, today's state, cached under data/hangcheck_v01/cache/osm"
+  },
   "data_vintages": {
     "terrain": "Höhenmodell Stand 2000",
     "land_cover": "Landbedeckung 2018",

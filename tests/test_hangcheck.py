@@ -209,6 +209,18 @@ def test_outside_austria_and_radius_limits_give_422(client):
         assert r.status_code == 422 and 'Radius' in r.json()['detail'], radius
 
 
+def test_cache_identity_follows_config_content_not_line_endings():
+    from preslide.hangcheck import build
+    import json
+    lf = json.loads(json.dumps(CFG))
+    a = build.identity(10.5617, 47.1478, 1500, CFG)
+    assert a == build.identity(10.56170000001, 47.1478, 1500.0, lf)
+    assert a != build.identity(10.5617, 47.1478, 2000, CFG)
+    changed = {**CFG, 'classes': [{**CFG['classes'][0], 'top_fraction': 0.1}] + CFG['classes'][1:]}
+    assert a != build.identity(10.5617, 47.1478, 1500, changed)
+    assert a == build.identity(10.5617, 47.1478, 1500, {**CFG, 'examples': [], 'flow_paths': {'x': 1}})   # not result-relevant
+
+
 def test_write_guard_stays_in_namespace():
     guard(DATA / 'cache')
     for bad in (ROOT / 'data/v04', ROOT / 'reports/v04', ROOT / 'data/hangmap_v01'):
@@ -277,3 +289,70 @@ def test_examples_endpoint_carries_notice_and_no_banned_words(client):
     r = client.get('/api/hangcheck/beispiele').json()
     assert len(r['beispiele']) == 3 and r['hinweise'][0]['titel'] == 'Nicht markiert heißt nicht sicher.'
     assert not banned_words(r)
+
+
+# ---------- 8: flow paths (step 5) ----------
+
+def _rough_dem(seed, n=60, res=30.0):
+    rng = np.random.default_rng(seed)
+    yy, xx = np.mgrid[0:n, 0:n]
+    dem = 2000 - 8.0 * yy - 3.0 * xx + rng.normal(0, 6, (n, n))           # downhill to the south-east, with pits
+    dem[20:24, 30:34] -= 25                                               # a deep depression
+    return dem
+
+
+def test_flow_path_never_rises_on_filled_surface_and_stops_within_reach():
+    from preslide.hangcheck import fliesswege
+    from preslide.v04.terrain import fill_depressions
+    scenarios, _, _ = fliesswege.scenario_config(CFG)
+    assert [s['reach_m'] for s in scenarios] == [45, 467]
+    cx, cy = PROJECT.transform(13.11, 47.11)
+    for seed in range(5):
+        dem = _rough_dem(seed)
+        filled, _, _ = fill_depressions(dem.copy())
+        for r0, c0 in ((5, 5), (10, 30), (3, 50), (18, 31)):
+            r = fliesswege.route_with_scenarios(filled, dem, r0, c0, 30.0, cx, cy, scenarios, CFG['flow_paths']['max_route_m'])
+            z = filled[r['rows'], r['cols']]
+            assert (np.diff(z) <= 1e-9).all(), 'route rises on the filled surface'
+            assert r['end'] != 'senke', 'the filled surface has no unresolved pit'
+            assert r['rows'][0] == r0 and r['cols'][0] == c0
+            assert np.allclose(np.hypot(np.diff(r['x']), np.diff(r['y'])), np.hypot(np.diff(r['rows']), np.diff(r['cols'])) * 30.0)
+            for sc in scenarios:
+                stop = r['stops'][sc['id']]
+                assert r['s'][stop['stop_index']] <= sc['reach_m']
+                if stop['status'] == 'gestoppt':
+                    assert stop['stop_index'] + 1 >= len(r['s']) or r['s'][stop['stop_index'] + 1] > sc['reach_m']
+
+
+def test_flow_scenarios_must_match_the_registered_literature_values():
+    from preslide.hangcheck import fliesswege
+    bad = {**CFG, 'flow_paths': {**CFG['flow_paths'], 'scenario_ids': ['reach_45m', 'energy_7deg']}}
+    with pytest.raises(RuntimeError, match='fixed-reach'):
+        fliesswege.scenario_config(bad)
+
+
+def test_flow_endpoint_refuses_extra_parameters(client):
+    r = client.get('/api/hangcheck/fliesswege', params={'longitude': STANZ['longitude'], 'latitude': STANZ['latitude'],
+                                                         'radius_m': STANZ['radius_m'], 'starkregen': 1})
+    assert r.status_code == 422
+    r = client.get('/api/hangcheck/fliesswege', params={'longitude': 11.576, 'latitude': 48.137, 'radius_m': 2000})
+    assert r.status_code == 422
+
+
+@needs_area
+def test_cached_flow_paths_start_at_review_points_and_respect_reach():
+    from preslide.hangcheck import build, fliesswege
+    path_ok = (DATA / 'cache/osm').exists() and any((DATA / 'cache/osm').glob('*.json'))
+    if not path_ok:
+        pytest.skip('data-dependent: no cached OSM response (python -m preslide.hangcheck prewarm)')
+    main = build.compute(STANZ['longitude'], STANZ['latitude'], STANZ['radius_m'])
+    r = fliesswege.compute(STANZ['longitude'], STANZ['latitude'], STANZ['radius_m'])
+    assert [f['nr'] for f in r['fliesswege']] == [p['nr'] for p in main['pruefpunkte']]
+    assert not banned_words(r)
+    for f, p in zip(r['fliesswege'], main['pruefpunkte']):
+        px, py = PROJECT.transform(p['longitude'], p['latitude'])
+        for sc in f['szenarien']:
+            wx, wy = PROJECT.transform(*np.array(sc['weg']).T)
+            assert np.hypot(wx[0] - px, wy[0] - py) <= 30 * math.sqrt(2) / 2 + 1     # starts in the review point's DEM cell
+            assert sc['laenge_m'] <= sc['reichweite_m']
+            assert set(sc['im_szenario']) == {'gebaeude', 'strasse', 'weg', 'bahn'}

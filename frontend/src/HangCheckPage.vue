@@ -4,7 +4,7 @@ import * as maplibregl from 'maplibre-gl'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import {useResource} from './useResource.js'
-import {OFFICIAL, FALLBACK_HINWEISE, STUFE_FARBE, createLayerLoader, placeKey, classShareText, circle, km} from './hangcheck.js'
+import {OFFICIAL, FALLBACK_HINWEISE, STUFE_FARBE, createLayerLoader, placeKey, classShareText, circle, km, infraText, flowUrl} from './hangcheck.js'
 maplibregl.setWorkerUrl(workerUrl)
 
 const {data: meta, error: metaError} = useResource('/api/hangcheck/beispiele')
@@ -12,6 +12,8 @@ const container = ref(null)
 const place = ref(null), radius = ref(2000), starkregen = ref(false)
 const result = ref(null), loading = ref(false), error = ref(''), hint = ref('')
 const query = ref(''), suggestions = ref([]), searchOpen = ref(false), locating = ref(false)
+const showFlows = ref(false), flows = ref(null), flowLoading = ref(false), flowError = ref('')
+const flowCache = new Map()
 let map, ready = false, centreMarker, pointMarkers = [], searchTimer, searchSeq = 0
 
 const hinweise = computed(() => meta.value?.hinweise ?? FALLBACK_HINWEISE)
@@ -26,15 +28,33 @@ async function fetchLayer(body) {
   return json
 }
 const loader = createLayerLoader(fetchLayer)
+const flowOf = nr => flows.value?.fliesswege.find(f => f.nr === nr)
+
+async function loadFlows() {
+  flowError.value = ''
+  if (!showFlows.value || !starkregen.value || !result.value || !place.value) { flows.value = null; drawFlows(); return }
+  const key = placeKey(place.value, radius.value)
+  if (!flowCache.has(key)) {
+    flowLoading.value = true
+    try {
+      const r = await fetch(flowUrl(place.value, radius.value))
+      const json = await r.json().catch(() => ({}))
+      if (!r.ok) throw new Error(typeof json.detail === 'string' ? json.detail : `Fließwege nicht verfügbar (HTTP ${r.status}).`)
+      flowCache.set(key, json)
+    } catch (e) { if (key === placeKey(place.value, radius.value)) flowError.value = e.message }
+    finally { flowLoading.value = false }
+  }
+  if (key === placeKey(place.value, radius.value)) { flows.value = flowCache.get(key) ?? null; drawFlows() }
+}
 
 async function refresh() {
   error.value = ''
-  if (!starkregen.value || !place.value) { result.value = null; draw(); return }
+  if (!starkregen.value || !place.value) { result.value = null; draw(); loadFlows(); return }
   const key = placeKey(place.value, radius.value)
   loading.value = !loader.has(place.value, radius.value)
   try {
     const r = await loader.update({on: starkregen.value, place: place.value, radiusM: radius.value})
-    if (key === placeKey(place.value, radius.value) && starkregen.value) { result.value = r; draw() }
+    if (key === placeKey(place.value, radius.value) && starkregen.value) { result.value = r; draw(); loadFlows() }
   } catch (e) {
     if (key === placeKey(place.value, radius.value)) { error.value = e.message; result.value = null; draw() }
   } finally {
@@ -44,7 +64,7 @@ async function refresh() {
 
 // ---------- place choice ----------
 function setPlace(p, zoom) {
-  place.value = p; result.value = null; error.value = ''; hint.value = ''
+  place.value = p; result.value = null; flows.value = null; error.value = ''; hint.value = ''
   drawPlace(); fly(zoom); refresh()
 }
 function pickExample(e) { radius.value = e.radius_m; query.value = ''; setPlace({longitude: e.longitude, latitude: e.latitude, name: e.name}) }
@@ -72,7 +92,7 @@ function locate() {
     () => { locating.value = false; hint.value = 'Standort nicht verfügbar oder nicht freigegeben. Bitte Gemeinde eintippen oder auf die Karte klicken.' },
     {enableHighAccuracy: false, timeout: 10000, maximumAge: 60000})
 }
-function onRadius() { drawPlace(); fly(); refresh() }
+function onRadius() { flows.value = null; drawPlace(); fly(); refresh() }
 
 // ---------- map ----------
 function style() {
@@ -100,6 +120,16 @@ function draw() {
     pointMarkers.push(new maplibregl.Marker({element: m}).setLngLat([p.longitude, p.latitude]).addTo(map))
   }
 }
+function drawFlows() {
+  if (!ready) return
+  const lines = [], areas = []
+  for (const f of flows.value?.fliesswege ?? []) for (const sc of f.szenarien) {
+    lines.push({type: 'Feature', properties: {reichweite: sc.reichweite_m}, geometry: {type: 'LineString', coordinates: sc.weg.length > 1 ? sc.weg : [sc.weg[0], sc.weg[0]]}})
+    areas.push({type: 'Feature', properties: {reichweite: sc.reichweite_m}, geometry: sc.korridor})
+  }
+  map.getSource('wege').setData({type: 'FeatureCollection', features: lines})
+  map.getSource('korridore').setData({type: 'FeatureCollection', features: areas})
+}
 function fly(zoom) {
   if (!ready || !place.value) return
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -125,14 +155,19 @@ onMounted(() => {
     map.addSource('zellen', {type: 'geojson', data: {type: 'FeatureCollection', features: []}})
     map.addLayer({id: 'zellen', type: 'fill', source: 'zellen', paint: {'fill-opacity': .62,
       'fill-color': ['match', ['get', 'stufe'], 1, STUFE_FARBE[1], STUFE_FARBE[2]]}})
+    map.addSource('wege', {type: 'geojson', data: {type: 'FeatureCollection', features: []}})
+    map.addSource('korridore', {type: 'geojson', data: {type: 'FeatureCollection', features: []}})
+    map.addLayer({id: 'korridore', type: 'fill', source: 'korridore', paint: {'fill-color': '#1f5fbf', 'fill-opacity': .18}})
+    map.addLayer({id: 'wege', type: 'line', source: 'wege', layout: {'line-cap': 'round'}, paint: {'line-color': '#0b3d91',
+      'line-width': ['case', ['<', ['get', 'reichweite'], 100], 5, 2.5], 'line-dasharray': ['case', ['<', ['get', 'reichweite'], 100], ['literal', [1, 0]], ['literal', [2, 1]]]}})
     map.addLayer({id: 'umkreis', type: 'line', source: 'umkreis', paint: {'line-color': '#ffffff', 'line-width': 2.5, 'line-dasharray': [2, 1.5]}})
-    drawPlace(); draw(); fly()
+    drawPlace(); draw(); drawFlows(); fly()
   })
   map.on('click', e => { query.value = ''; setPlace({longitude: e.lngLat.lng, latitude: e.lngLat.lat, name: 'Gewählter Kartenpunkt'}) })
   map.on('error', () => { hint.value = 'Ein Teil der Kartenkacheln konnte nicht geladen werden (Internetverbindung?).' })
 })
 onBeforeUnmount(() => { clearTimeout(searchTimer); pointMarkers.forEach(m => m.remove()); centreMarker?.remove(); map?.remove() })
-watch(starkregen, refresh)
+watch(starkregen, refresh); watch(showFlows, loadFlows)
 </script>
 
 <template>
@@ -185,6 +220,9 @@ watch(starkregen, refresh)
         <p class="hc-help">Der Schalter ruft keine Wetterdaten ab und ändert die Einstufung nicht. Er zeigt nur die Ansicht für den Starkregenfall.</p>
         <p v-if="!starkregen" class="hc-off">Schalter aktivieren, um zu sehen, welche Hänge man bei Starkregen zuerst ansehen sollte.</p>
         <p v-else-if="!place" class="hc-off">Zuerst einen Ort wählen.</p>
+        <label v-if="starkregen" class="hc-check"><input type="checkbox" v-model="showFlows"> Mögliche Fließwege und Straßen/Gebäude darin zeigen (Szenario, ungeprüft)</label>
+        <p v-if="flowLoading" class="hc-help" role="status">Fließwege und OpenStreetMap-Daten werden geladen …</p>
+        <p v-if="flowError" class="hc-warn" role="alert">{{ flowError }}</p>
         <p v-if="hint" class="hc-warn" role="status">{{ hint }}</p>
         <p v-if="error" class="hc-warn" role="alert">{{ error }}</p>
       </div>
@@ -196,7 +234,8 @@ watch(starkregen, refresh)
           <span><i :style="{background: STUFE_FARBE[1]}"></i>Prüfstufe 1<template v-if="stufen.length"> · oberste {{ classShareText(stufen, 1) }}</template></span>
           <span><i :style="{background: STUFE_FARBE[2]}"></i>Prüfstufe 2<template v-if="stufen.length"> · nächste {{ classShareText(stufen, 2) }}</template></span>
           <span><i class="none"></i>ohne Farbe: nicht markiert heißt nicht sicher</span>
-          <small class="hc-sources">Orthofoto: basemap.at (CC BY 4.0) · Relief: Mapzen/Skadi · Landbedeckung: CORINE · Geologie: GeoSphere Austria · Gemeinden: GISCO · Karte: MapLibre</small>
+          <span v-if="flows"><i class="line"></i>möglicher Fließweg (Szenario, ungeprüft): durchgezogen 45 m, gestrichelt 467 m</span>
+          <small class="hc-sources">Orthofoto: basemap.at (CC BY 4.0) · Relief: Mapzen/Skadi · Landbedeckung: CORINE · Geologie: GeoSphere Austria · Gemeinden: GISCO<template v-if="flows"> · Straßen/Gebäude: © OpenStreetMap-Mitwirkende (ODbL)</template> · Karte: MapLibre</small>
         </div>
         <p v-if="loading" class="hc-busy" role="status">Gelände, Landbedeckung und Geologie werden berechnet … (beim ersten Mal bis ca. 30 s)</p>
       </div>
@@ -212,10 +251,15 @@ watch(starkregen, refresh)
             <p class="hc-facts"><b>{{ p.hoehe_m.toLocaleString('de-AT') }} m Höhe</b> · {{ p.neigung_grad.toLocaleString('de-AT') }}° Neigung · {{ p.landbedeckung }} · {{ p.geologie }}</p>
             <p class="hc-drivers">Das Modell stützt sich hier vor allem auf: <span v-for="(d, i) in p.treiber" :key="d.merkmal">{{ i ? '; ' : '' }}{{ d.merkmal }} ({{ d.richtung }})</span>.</p>
             <p v-if="p.treiber.some(d => d.merkmal.startsWith('Landbedeckung Siedlung') && d.richtung.startsWith('hebt'))" class="hc-caution">Siedlungs- oder Verkehrsfläche hebt hier die Einstufung. Das kann ein Meldeeffekt sein (Ereignisse an Straßen werden eher gemeldet), nicht unbedingt eine Eigenschaft des Hangs.</p>
+            <div v-if="flowOf(p.nr)" class="hc-flow">
+              <b>Möglicher Fließweg (Szenario, ungeprüft):</b>
+              <span v-for="sc in flowOf(p.nr).szenarien" :key="sc.id" class="hc-flow-line">{{ sc.bezeichnung }}: <template v-if="infraText(sc.im_szenario, flows.typen)">im Szenario liegen {{ infraText(sc.im_szenario, flows.typen) }}</template><template v-else>keine Straßen, Wege, Bahn oder Gebäude im Szenario</template><template v-if="sc.status !== 'gestoppt'"> ({{ sc.status_text }})</template>.</span>
+            </div>
             <button type="button" class="hc-link" @click="showPoint(p)">Auf der Karte zeigen</button>
           </div>
         </li>
       </ol>
+      <p v-if="flows" class="hc-note">{{ flows.hinweis }} Straßen und Gebäude: {{ flows.osm.hinweis }}<template v-if="flows.osm.stand">, Datenstand {{ flows.osm.stand.slice(0, 10) }}</template>. Korridor {{ flows.korridor_breite_m }} m breit. „Liegt im Szenario“ heißt nur räumliche Überlagerung.</p>
       <p v-if="result.pruefpunkte.length < 5" class="hc-note">In der Prüfstufe 1 liegen nicht genug getrennte Stellen für fünf Prüfpunkte.</p>
       <p class="hc-note">{{ result.zaehlung.bewertet.toLocaleString('de-AT') }} von {{ result.zaehlung.zellen.toLocaleString('de-AT') }} Rasterzellen ({{ result.zellgroesse_m }} m) im Umkreis bewertet,
         davon {{ stufe1.toLocaleString('de-AT') }} in Prüfstufe 1 und {{ (result.zaehlung.stufen['Prüfstufe 2'] ?? 0).toLocaleString('de-AT') }} in Prüfstufe 2.
@@ -255,6 +299,9 @@ watch(starkregen, refresh)
 .hc-nr{flex:none;width:30px;height:30px;border-radius:50%;background:#c62828;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center}
 .hc-facts{margin:0 0 4px;font-size:14px;line-height:1.5}.hc-drivers{margin:0 0 4px;font-size:12px;color:var(--muted);line-height:1.5}
 .hc-caution{margin:2px 0 6px;font-size:12px;line-height:1.5;color:#6b4a00;background:#fff6e0;padding:6px 9px}
+.hc-check{display:flex;gap:8px;font-size:13px;margin:12px 0 4px;align-items:flex-start;line-height:1.45}.hc-check input{margin-top:3px}
+.hc-flow{font-size:12px;line-height:1.55;margin:4px 0 6px;padding:6px 9px;background:#eef3fb}.hc-flow-line{display:block}
+.hc-legend i.line{height:0;border-top:3px solid #0b3d91;vertical-align:3px}
 .hc-link{background:none;border:0;color:var(--blue);text-decoration:underline;font-size:12px;padding:0}
 .hc-note{font-size:12px;color:var(--muted);line-height:1.7;max-width:980px;margin:12px 0 0}
 @media(max-width:900px){.hc-grid{grid-template-columns:1fr}.hc-map{height:60vh;min-height:360px}}

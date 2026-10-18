@@ -66,3 +66,13 @@ export function circle(place, radiusM, steps = 96) {
 }
 
 export const km = m => (Number(m) / 1000).toLocaleString('de-AT', {maximumFractionDigits: 1}) + ' km'
+
+/** "Gebäude 2 · Straßen 1" for the features lying inside a scenario corridor ('' when nothing lies in it). */
+export function infraText(counts, labels) {
+  return Object.entries(counts || {}).filter(([, v]) => v.anzahl > 0).map(([k, v]) => `${labels?.[k] ?? k} ${v.anzahl}`).join(' · ')
+}
+
+export function flowUrl(place, radiusM) {
+  const b = requestBody(place, radiusM)
+  return `/api/hangcheck/fliesswege?longitude=${b.longitude}&latitude=${b.latitude}&radius_m=${b.radius_m}`
+}
