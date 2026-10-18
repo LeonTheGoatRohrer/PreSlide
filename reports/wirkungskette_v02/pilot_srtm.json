@@ -1,0 +1,72 @@
+{
+  "version": "wirkungskette_v02",
+  "mode": "pilot",
+  "dem": "srtm",
+  "computed_at_utc": "2026-10-18T10:56:31.763204+00:00",
+  "config_sha256": "062f10110260b29b28ee3869e40527fa0c967a85b26abc4702a9d59f2d5c1381",
+  "areas": [
+    {
+      "campaign": "Klingfurth_Juni_2009",
+      "year": 2009,
+      "targets_total": 73,
+      "targets_in_area": 73,
+      "targets_outside_area": 0,
+      "municipalities": [
+        {
+          "lau_id": "32310",
+          "name": "Hochwolkersdorf",
+          "n_targets": 8,
+          "area_km2": 23.52
+        },
+        {
+          "lau_id": "32333",
+          "name": "Walpersbach",
+          "n_targets": 20,
+          "area_km2": 16.34
+        },
+        {
+          "lau_id": "32325",
+          "name": "Bromberg",
+          "n_targets": 45,
+          "area_km2": 31.4
+        }
+      ],
+      "area_km2": 71.3,
+      "components": 1,
+      "grid_cells": 8805,
+      "grid_assessable": 7362,
+      "grid_not_assessable_by_reason": {
+        "slope_below_minimum": 1443
+      },
+      "targets_not_assessable_by_reason": {
+        "slope_below_minimum": 9
+      },
+      "v04_training_events_inside": 0,
+      "capture_model_05": 0.1096,
+      "cutoff_model_05": 1.4058,
+      "capture_model_20": 0.2603,
+      "cutoff_model_20": 0.2199,
+      "capture_slope_05": 0.0137,
+      "cutoff_slope_05": 22.4271,
+      "capture_slope_20": 0.1096,
+      "cutoff_slope_20": 17.2933,
+      "targets_not_assessable_share": 0.1233
+    }
+  ],
+  "area_weighted": {
+    "capture_model_05": 0.1096,
+    "capture_model_20": 0.2603,
+    "capture_slope_05": 0.0137,
+    "capture_slope_20": 0.1096
+  },
+  "event_pooled": {
+    "capture_model_05": 0.1096,
+    "capture_model_20": 0.2603,
+    "capture_slope_05": 0.0137,
+    "capture_slope_20": 0.1096
+  },
+  "chance": {
+    "05": 0.05,
+    "20": 0.2
+  }
+}

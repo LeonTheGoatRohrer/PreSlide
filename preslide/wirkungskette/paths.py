@@ -8,7 +8,10 @@ from ..sources import ROOT
 CONFIG = ROOT / 'config/wirkungskette_v01.json'
 DATA = ROOT / 'data/wirkungskette_v01'
 REPORT = ROOT / 'reports/wirkungskette_v01'
-ROOTS = (DATA, REPORT)
+CONFIG_V02 = ROOT / 'config/wirkungskette_v02.json'
+DATA_V02 = ROOT / 'data/wirkungskette_v02'
+REPORT_V02 = ROOT / 'reports/wirkungskette_v02'
+ROOTS = (DATA, REPORT, DATA_V02, REPORT_V02)
 # Earlier response caches, read only (never written here).
 READ_ONLY_HTTP = (ROOT / 'data/raw/http', ROOT / 'data/v04/cache/http', ROOT / 'data/hangmap_v01/cache/http')
 
@@ -17,7 +20,7 @@ def guard(path):
     """Create directory `path` only inside the wirkungskette_v01 roots."""
     path = Path(path).resolve()
     if not any(path == r.resolve() or r.resolve() in path.parents for r in ROOTS):
-        raise RuntimeError(f'wirkungskette_v01 may only write under data/wirkungskette_v01 or reports/wirkungskette_v01: {path}')
+        raise RuntimeError(f'wirkungskette may only write under data/ or reports/wirkungskette_v01|v02: {path}')
     path.mkdir(parents=True, exist_ok=True)
     return path
 

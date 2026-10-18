@@ -58,9 +58,11 @@ def cached_json(url, params, f_param=True):
 
 # ---------- land cover ----------
 
-def land_cover_polygons(bounds_lonlat, vintage, tiles):
-    """All CORINE polygons intersecting the envelope, requested as tiles x tiles sub-envelopes, deduplicated by OBJECTID."""
-    url, field = C.CLC[vintage]
+def land_cover_polygons(bounds_lonlat, vintage, tiles, service=None):
+    """All CORINE polygons intersecting the envelope, requested as tiles x tiles sub-envelopes, deduplicated by OBJECTID.
+
+    `service` = (query url, code field) for vintages outside preslide.v04.context.CLC (CLC2000, CLC2006)."""
+    url, field = service or C.CLC[vintage]
     w, s, e, n = bounds_lonlat
     xs, ys = np.linspace(w, e, tiles + 1), np.linspace(s, n, tiles + 1)
     seen, geoms, codes = set(), [], []
