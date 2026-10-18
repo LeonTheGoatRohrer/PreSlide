@@ -1,0 +1,23 @@
+{
+ "version": "susceptibility_v02",
+ "registered_at_utc": "2026-10-18T06:06:19.941811+00:00",
+ "config_sha256": "f6883194f18d67d580066076206a227a10e4e547a0620483b2fa1955e542d4fe",
+ "files_sha256_lf": {
+  "config/susceptibility_v02.json": "f6883194f18d67d580066076206a227a10e4e547a0620483b2fa1955e542d4fe",
+  "reports/susceptibility_v02/DECISIONS.md": "6f5cc0ad0ff66cddb900c55ab83c2e73c470097546996b9f80d5e6e1a85d8b63",
+  "reports/susceptibility_v02/phase0_data_audit.json": "91d33f9f8ffd3d9e4c4daee1817c743f80d2c4913083d76c407097de602bbcca",
+  "reports/susceptibility_v02/mutation_check.json": "d46fb1792a6f323e330ff09b68bda017047c61fb9b762760ead425c5bd436161",
+  "preslide/susceptibility/v02.py": "4560c8c6b0b69fa41d7a9631b5571ec683d6b09e06987dc085d01280fbd0448f",
+  "tests/test_susceptibility_v02.py": "9a57f59340393fed823117679d8916e1d2793a51f90ea38c4e747321b4fe8de5",
+  "reports/susceptibility_v01/PHASE4_GATE.md": "90e646529d317e4b05564b6a8e343ee87f72d7d19d71c752b71259892660a0b3",
+  "reports/susceptibility_v01/phase4_cause_analysis.json": "7829401fe8dca1e4586f19010e64b61a419daa893cdb921e85b2add7d81a4714"
+ },
+ "known_at_registration": "All susceptibility_v01 results (seen). RER2023 attribute audit from v01 Phase 1. Iburi and Wenchuan candidates: file lists, geometry types, counts, bounding boxes, CRS, field names, metadata text, catchment-id linkage. USGS ShakeMap product metadata for Gorkha and Iburi. No terrain value of Iburi or RER2023, no v02 sample and no model output. Suedtirol not opened.",
+ "phase1_gate_at_registration": "NOT MET for either trigger: iburi_2018 and rer2023 lack an independent mapping extent (see DECISIONS.md). Procurement needs the user (author or provider request).",
+ "pending": [
+  "Iburi mapping extent",
+  "RER2023 mapping extent",
+  "buffer value",
+  "ShakeMap versions and hashes"
+ ]
+}

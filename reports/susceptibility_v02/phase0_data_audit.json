@@ -1,0 +1,42 @@
+{
+ "version": "susceptibility_v02",
+ "checked_at": "2026-10-18",
+ "scope": "Layer-level check of the registered candidate inventories and source metadata before registration. Read: file lists, geometry types, feature counts, bounding boxes, CRS, attribute field names, ArcGIS metadata text, catchment-id linkage. Not read: any terrain value, per-landslide statistic of Iburi or Wenchuan beyond counts, any model output. No new file was downloaded.",
+ "iburi_2018": {
+  "source": "data/susceptibility_v01/raw/candidates/iburi_2018/Iburi landslide dataset.zip (v01 candidate download, SHA-256 891542a6abe6e2b5596663485b77c4575d0ded1c03740cde7c112257b183e4a3)",
+  "record": "https://zenodo.org/api/records/2577300 (licence cc-by-4.0, published 2019-02-25, creators Zhang, Li, Wang, Iio, Shimane University; no paper DOI in the record)",
+  "record_description_summary": "detailed landslide inventory, old landslide inventory incl. reactivated area, three standard-deviation ellipses, four AMeDAS stations in the vicinity of the study area",
+  "layers": {
+   "landslide_inventory/landslide_inventory.shp": {"type": "POLYGON", "n": 5625, "epsg": 3100, "crs": "JGD2000 / UTM zone 54N", "bbox_m": [563675.0, 4712254.8, 592070.8, 4754748.1], "fields_note": "Join_Count, area, perimeter, ID, geology join fields (legend_en, age_en, litho_en), LSA; no date, no type, no source-area field"},
+   "old_landslides/old_landslides.shp": {"type": "POLYGON", "n": 1649, "epsg": 4612, "bbox_deg": [141.7469, 42.5809, 142.2267, 42.9921]},
+   "old_landslides/reactivated_landslides.shp": {"type": "POLYGON", "n": 110, "epsg": 4612},
+   "AMeDAS/AMeDAS.shp": {"type": "POINTZ", "n": 4, "names": ["Atsuma", "Abira", "Mukawa", "Hobetsu"]},
+   "Standard Deviational Ellipse/ellipse_1..3.shp": {"type": "POLYGON", "n": "1 each", "note": "centre 579710 E / 4735736 N, X/Y standard distances 1, 2 and 3 SD of the landslide distribution (ellipse_3 areakm 1557); a statistic of the landslides, not a mapping extent"}
+  },
+  "mapping_extent": "missing",
+  "alternatives_checked": {
+   "gsi_d1_no991": {"page": "https://www.gsi.go.jp/BOUSAI/H30-hokkaidoiburi-east-earthquake-index.html", "finding": "slope-failure/deposit map interpreted from GSI aerial photos of 6-11 Sep 2018; GeoJSON ZIP 1.1 MB (D1-No.991); the page does not describe an interpretation extent and does not publish photo coverage as data; terms: GSI content terms of use with attribution", "status": "not downloaded; archive content to be checked in Phase 1"},
+   "literature_areas": "published affected-area figures differ (about 400, 440, 580, >700 km2) because each study draws its own boundary; none is a published file"
+  },
+  "shakemap": {"event_id": "us2000h8ty", "time_utc": "2018-09-05T18:07:59Z", "magnitude": "6.6 mww", "product": "source atlas, version 1, updateTime 1594401324136", "grid_xml": "https://earthquake.usgs.gov/product/shakemap/us2000h8ty/atlas/1594401324136/download/grid.xml", "grid_xml_bytes": 14484026}
+ },
+ "gorkha_2015": {
+  "mapping_extent": "available (MappingExtent20170209.shp, 1 polygon, 28,345 km2; ObscuredAreas20170209.shp, 456 polygons; v01 PHASE1_GATE.md)",
+  "shakemap": {"event_id": "us20002926", "product": "source atlas, version 1, updateTime 1594162031303", "grid_xml": "https://earthquake.usgs.gov/product/shakemap/us20002926/atlas/1594162031303/download/grid.xml", "grid_xml_bytes": 14875206}
+ },
+ "far_western_nepal": {"mapping_extent": "available (AOI, 1 polygon, 6,409 km2; v01 PHASE1_GATE.md)"},
+ "rer2023": {
+  "record": "Zenodo 10.5281/zenodo.13742643: only RER2023_V1.rar -> RER2023_V1.shp (v01 phase1_audit_rer2023.json, no other files)",
+  "article": "https://essd.copernicus.org/articles/17/1055/2025/ : area 'segmented based on the administrative boundaries of the municipalities', 'more than 6000 km2', affected zone described as the southern sector from Rimini to Reggio Emilia; no municipality list, no extent file in the data availability statement",
+  "regional_layers": "INSPIRE record of Regione Emilia-Romagna on areas under safeguard measures after the May 2023 landslides (created 2023-06-01, updated 2024-03-18): derived from the landslides, not a mapping extent",
+  "contact_for_extent": "corresponding author Alessandro Corsini (University of Modena and Reggio Emilia); alternatively Regione Emilia-Romagna, Settore Difesa del Territorio",
+  "mapping_extent": "missing"
+ },
+ "wenchuan_fan2019": {
+  "source": "data/susceptibility_v01/raw/candidates/wenchuan_fan2019 (v01 candidate download)",
+  "layers": {"2008.shp": {"n": 8917, "types": {"s": 8259, "d": 571, "cd": 87}, "distinct_CID": 43, "CID_type": "integer 1-43"}, "DF_Catchments.shp": {"n": 252, "area_km2_union": 1686.3, "CID_type": "string, e.g. B45", "counties": "Beichuan 117, Wenchuan 75, Mianzhu 26, Pengzhou 23, Anxian 11, ..."}},
+  "finding": "the 252 catchments are the debris-flow catchments of Dataset 2; none matches the integer CIDs of the multi-temporal landslide layers; 65 catchments (575 km2) intersect the 2008 bounding box versus 42 catchments / 471 km2 in the article. The 42 mapped catchments are not published as an extent; choosing them by overlap with landslides would derive the extent from the polygons.",
+  "mapping_extent": "missing (not usable)"
+ },
+ "conclusion": "Neither trigger can currently be staffed with two inventories that have an independent mapping extent: earthquake = Gorkha only, rain = Far-Western Nepal only. v02 is registered with Iburi and RER2023 as pending_extent; Phase 1 cannot start until an extent is obtained for at least one of them."
+}

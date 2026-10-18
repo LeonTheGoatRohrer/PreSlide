@@ -2,6 +2,8 @@
 
 Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then this file.
 
+2026-10-18 (later): **susceptibility_v02 registered (Phase 0 only, no model).** Trigger-specific terrain models (earthquake: terrain + ShakeMap PGA, Gorkha + Iburi; rain: terrain, Far-Western Nepal + RER2023), leave-one-inventory-out within each trigger, confirmatory tests only on the unseen inventories (Bonferroni over 4), pre-registered 20 km block sensitivity for Gorkha. **Phase 1 gate not met for either trigger:** Iburi and RER2023 have no independent mapping extent (Wenchuan checked, excluded). Next step needs the user: request extents from the authors/providers. See `reports/susceptibility_v02/DECISIONS.md`.
+
 2026-10-18: **susceptibility_v01 stopped at the Phase 4 gate.** Phases 0–3 passed (registration, data incl. Gorkha via user browser download, NASADEM terrain, verified sampling). Leave-one-inventory-out (Gorkha <-> Far-Western Nepal): primary HGB mean AUC 0.715 vs slope-only 0.709, difference +0.006 [-0.005, 0.017] -> gate not passed; no extension (Phases 5-14 not run beyond the registered block CV as diagnosis). See `reports/susceptibility_v01/PHASE4_GATE.md`.
 
 2026-10-17: **Planning only:** concrete single-image neural detector/verifier and controlled self-training plan in `reports/weiterentwicklung_2026-10-17/NEURONALE_MURENSUCHE_PLAN.md`. Proposed namespace `satellite_nn_v01`; no implementation, registration, dataset download or new training. Model agreement remains a pseudo-label; specific mudslide classification requires subtype labels beyond Landslide4Sense. Existing satellite/V0.6–V0.9 work is on separate local branches, not merged here; the plan identifies reusable files and verification limits.
@@ -67,6 +69,12 @@ Few independent units (11 test); Stanz dominance; reporting/placement bias in la
 - Phase 2: Geländeraster 30 m (Amendment 2), 42 + 168 Blöcke. Phase 3: Gorkha 24.037+24.037 (1.260 Blöcke), Far-Western Nepal 1.557+1.557 (303 Blöcke), Verifikation PASS; Pufferfehler (Vieleck-Näherung, 99,54 m) gefunden und vor jedem Modell behoben.
 - Phase 4 (Amendment 3, feste Hyperparameter): Gate nicht bestanden (+0,006 [−0,005; 0,017] gegenüber Neigung). Diagnose: innerhalb Gorkha +0,12 (ein Ereignis, Erschütterungs-Stellvertreter möglich), Far-Western Nepal kein Vorteil; TPI kehrt Vorzeichen zwischen Erdbeben und Monsun um. Details `reports/susceptibility_v01/PHASE4_GATE.md`.
 - Tests: `tests/test_susceptibility_v01.py` 52 bestanden; Mutationsprüfung 30/30 erkannt. Neue Abhängigkeit `pyshp`.
+
+## susceptibility_v02 (Stand 18.10.2026, Phase 0 registriert)
+
+- `config/susceptibility_v02.json` (schreibgeschützt, SHA `f6883194…`), `preslide/susceptibility/v02.py` (Regeln, Schreibschutz, Leseverbot für den v01-Südtirol-Ordner), `scripts/register_susceptibility_v02.py`, `reports/susceptibility_v02/` (PREREGISTRATION, DECISIONS, phase0_data_audit, mutation_check).
+- Datenlage: Erdbeben nur Gorkha mit Umriss (Iburi: kein Umriss im Datensatz, Ellipsen sind aus Rutschungen abgeleitet; Wege: Autoren oder GSI D1-No.991), Regen nur Far-Western Nepal (RER2023: kein Umriss, keine Gemeindeliste; Weg: A. Corsini/Region). Wenchuan ausgeschlossen.
+- Tests `tests/test_susceptibility_v02.py` 31 bestanden; Mutationsprüfung 18/18 erkannt. v01-Tests unverändert 52 bestanden.
 
 ## satellite_nn_v01 (Stand 17.10.2026, M0 teilweise)
 
