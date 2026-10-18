@@ -1,0 +1,87 @@
+[
+ {
+  "mutation": "puffer-strikt",
+  "ergebnis": "1 failed, 29 passed in 9.14s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "inventarabstand-aus",
+  "ergebnis": "1 failed, 29 passed in 9.98s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "inventarabstand-strikt",
+  "ergebnis": "1 failed, 29 passed in 16.44s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "am-punkt-strikt",
+  "ergebnis": "1 failed, 29 passed in 9.83s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "laengstes-fuer-beide",
+  "ergebnis": "1 failed, 29 passed in 8.99s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "einheitenanteile-ungewichtet",
+  "ergebnis": "1 failed, 29 passed in 9.68s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "zeilen-statt-einheiten",
+  "ergebnis": "3 failed, 27 passed in 23.84s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "seed-ignoriert",
+  "ergebnis": "1 failed, 29 passed in 13.15s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "ohne-sortierung",
+  "ergebnis": "1 failed, 29 passed in 8.32s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "block-100-m",
+  "ergebnis": "1 failed, 29 passed in 10.16s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "falsche-gruppe",
+  "ergebnis": "3 failed, 27 passed in 8.98s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "primaerpaarung-vertauscht",
+  "ergebnis": "1 failed, 29 passed in 10.48s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "null-als-ueber",
+  "ergebnis": "1 failed, 29 passed in 11.29s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "differenz-vorzeichen",
+  "ergebnis": "1 failed, 29 passed in 11.16s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "v02-pruefung-aus",
+  "ergebnis": "1 failed, 29 passed in 11.47s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "flache-zellen-im-hangrahmen",
+  "ergebnis": "1 failed, 29 passed in 8.19s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "schreibschutz-aus",
+  "ergebnis": "1 failed, 29 passed in 7.54s",
+  "gescheitert": true
+ }
+]

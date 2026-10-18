@@ -168,6 +168,14 @@ Ein **getrenntes System** (`preslide/satellite/`, Ausgaben nur unter `data/satel
 - **Baseline C** (eingefrorener ResNet-18 mit ImageNet-Gewichten, CPU, optionales torch): lokale AUC 0.53 – generische Bildmerkmale übertragen sich nicht; die handgemachten Indexkontraste (0,79–0,80) bleiben.
 - Offen: Wolkenprüfung über den gesamten Ausschnitt (erste Änderung für satellite-0.3), erneute Kandidatenprüfung, Sentinel-1 (kein terrainkorrigiertes Produkt auf Earth Search), kleine Suche in unbekanntem Gebiet.
 
+## Wirkungskette (18.10.2026, Demonstration, Branch claude/wirkungskette-v01-f4836f)
+
+Die Prüfgebiete-Seite zeigt für das Demogebiet Stanz (25.07.2016) die Kette relative Prüfpunkte → Auslaufszenario → Infrastruktur im Szenario. Prüfpunkte kommen aus dem eingefrorenen V0.4-Geländemodell, relativ zu einem Umkreis von 1–10 km. Der Auslauf ist eine deterministische D8-Route mit vier Literatur-Reichweiten und ausdrücklich **unvalidiert**, weil das Inventar keine Auslaufgeometrien enthält. Die Infrastruktur stammt aus OpenStreetMap. Explorativ konzentrieren die Prüfstufen die dokumentierten Stanz-Ereignisse nicht (Stufe 1: 3,4 % der Ereignisse bei 5 % Fläche). Keine Eintritts- oder Schadensaussage, keine kombinierte Stufe. Details: `reports/wirkungskette_v01/summary.md`.
+
+Gegenprobe v02 (vorab registriert): Mit 24 Schadensmeldungen aus Gasen 2017/2018 als Startpunkt passen Szenario und Meldung qualitativ zusammen (Straße im Szenario bei 21–22 von 22 Straßenschäden), aber 20 dieser Punkte liegen schon höchstens 25 m neben einer Straße. Die Übereinstimmung entsteht also am Punkt selbst; den Auslauf bestätigt sie nicht. Ohne Angabe, ob ein Punkt Anriss oder Schadensort ist, bleibt der Auslauf unvalidiert. Details: `reports/wirkungskette_v02/gegenprobe.md`.
+
+Nullreferenz v03 (vorab registriert): Hangpunkte derselben Gegend ohne Inventareintrag haben im längsten Szenario ebenfalls meist eine Straße (79 %), aber nur 4 % liegen höchstens 25 m neben einer Straße, gegenüber 20 von 22 Schadenspunkten. Der Unterschied liegt also in der Lage der gemeldeten Punkte an der Straße, nicht im Auslauf. Mit nur 2–3 unabhängigen Ereigniseinheiten ist das eine Beschreibung, kein Befund. Details: `reports/wirkungskette_v03/nullreferenz.md`.
+
 ## Genau eine nächste wissenschaftliche Priorität
 
 **Die Wetterfrage ist für dieses Design und die 1-km-Auflösung beantwortet: Ein Wetterzusatznutzen ist in keiner Variante belegt (V0.4-Test, V0.5/V0.6, V0.9 auf ungesehenen Episoden), der Gelände- und Landbedeckungseffekt wiederholt sich.** Mehr saubere unabhängige Einheiten liefert nur noch ein vorwärts gerichteter Test mit Ereignissen nach dem 15.10.2026 (jetzt registrieren, bewerten ab 15 neuen Einheiten; INCA v1 endet im Dezember 2026, der Übergang auf INCA v2 muss vorher festgelegt werden). Anfragen an Datenhalter (WLV-Kataster, Kärnten, Südtirol) nur nach Freigabe des Nutzers.

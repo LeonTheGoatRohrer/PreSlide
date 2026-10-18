@@ -44,6 +44,15 @@ def results_v04():
     if not path.exists(): raise HTTPException(503,'V0.4-Ergebnisse fehlen: python -m preslide.v04.report')
     return read_json(path)
 
+@app.get('/api/pruefgebiete')
+def pruefgebiete():
+    # Read-only event overview (python -m preslide.pruefgebiete): locations and counts only, no model output.
+    path=ROOT/'data/pruefgebiete_v01/web/overview.json'
+    if not path.exists(): raise HTTPException(503,'Ereignisübersicht fehlt: python -m preslide.pruefgebiete')
+    return read_json(path)
+
+app.include_router(__import__('preslide.wirkungskette.routes', fromlist=['router']).router)  # Wirkungskette demo (preslide/wirkungskette)
+
 @app.get('/api/results_v05')
 def results_v05():
     # Separate V0.5 bundle (python -m preslide.v05.web); aggregates plus eight ID-selected example groups, local only.

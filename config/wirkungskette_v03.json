@@ -1,0 +1,81 @@
+{
+  "version": "wirkungskette_v03",
+  "created_on": "2026-10-18",
+  "status": "registered before any reference point was sampled and before the chain ran for any reference point; null reference for the wirkungskette_v02 Gegenprobe; exploratory, no tuning",
+  "question": "How often does a slope point in the same area that is NOT an inventory event have a road or building inside the shortest/longest unchanged v01 runout scenario, or within 25 m of the point, compared with the v02 primary events?",
+  "inspected_before_registration": "the committed v02 report (reports/wirkungskette_v02/gegenprobe.md/.json); the column list of data/wirkungskette_v01/demo_r10000/cells.parquet, its counts by kind and reason and the distance range of its grid cells; the distances of the 24 v02 primary events from the demo centre (7.06-9.77 km). No reference point was drawn, no route, scenario or infrastructure overlap was computed for any non-event point before this file was committed.",
+  "not_claimed": [
+    "hit rate, sensitivity or any validation of the runout",
+    "that the inventory point is the release point",
+    "that infrastructure inside a scenario was or would be damaged",
+    "that reference points are stable slopes (they are only not in the inventory)",
+    "independence of the events: the v02 primary set forms about 3 independent units"
+  ],
+  "chain": {
+    "config": "config/wirkungskette_v01.json",
+    "function": "preslide.wirkungskette.analysis.scenario_chain",
+    "window_radius_max_m": 10000,
+    "scenario_choice": "preslide.wirkungskette.gegenprobe.shortest_and_longest",
+    "hit_rule": "preslide.wirkungskette.gegenprobe.present (at least one feature of the type intersects the scenario corridor)",
+    "context_rule": "preslide.wirkungskette.gegenprobe.nearest_m; object 'at the point' if the nearest feature is at most the corridor half-width (25 m) from the point",
+    "rule": "everything above is used unchanged from wirkungskette_v01/v02; nothing is adjusted after seeing results"
+  },
+  "events": {
+    "source": "the v02 primary set, selected again with preslide.wirkungskette.gegenprobe.select_events and config/wirkungskette_v02.json",
+    "consistency_check": "event rows are recomputed with gegenprobe.event_row; ids, scenario infrastructure counts and nearest-object distances must equal reports/wirkungskette_v02/gegenprobe.json, and the v01 config SHA-256 must equal the one recorded there; otherwise the run stops",
+    "independent_unit": "campaign id (RegKatE_ID), else 'ohne Kampagne YYYY-MM' of the event date, exactly as v02 'nach_kampagne' (3 units: Gasen September 2018, June 2018, August 2017)"
+  },
+  "reference": {
+    "area_centre": "arithmetic mean of the EPSG:31287 coordinates of the 24 v02 primary events (around Gasen)",
+    "area_radius_rule": "largest distance of a v02 primary event from area_centre, rounded up to the next 100 m",
+    "area_note": "only cells of the cached 10 km demo window exist; the area circle may be cut by that window and this is reported",
+    "area_amended": {"rule": "cells within 2000 m (planar, EPSG:31287) of at least one v02 primary event, inside the cached 10 km window", "buffer_m": 2000, "supersedes": ["area_centre", "area_radius_rule"]},
+    "frames": [
+      {"id": "bewertbar", "rank": "primaer", "cells": "kind == 'grid' and reason == '' (assessable 90 m cells: slope at least the v01 minimum, catchment not truncated)"},
+      {"id": "alle_rasterzellen", "rank": "sekundaer", "cells": "kind == 'grid', any reason (adds flat cells and cells with truncated catchment)", "reason": "the v02 events were not slope-filtered; shows how much the slope filter alone changes the reference"}
+    ],
+    "exclusion": {
+      "inventory": "data/raw/geosphere_natural_hazards.json, every point regardless of process, year or position quality",
+      "min_distance_m": 250,
+      "reason": "position uncertainty of the inventory reaches 100 m, plus the 25 m corridor half-width and margin; a reference cell near any documented point is not a non-event point",
+      "distance": "planar metres in EPSG:31287 (KD-tree on projected coordinates)"
+    },
+    "sample_size": 500,
+    "seed": 20261018,
+    "sampling": "per frame: eligible cells sorted by (row, col), numpy default_rng(seed).choice without replacement; if fewer than sample_size cells are eligible, all are used and this is reported; the same seed is used for both frames"
+  },
+  "metrics": [
+    {"id": "strasse_kuerzestes", "type": "strasse", "what": "road in the shortest scenario corridor"},
+    {"id": "strasse_laengstes", "type": "strasse", "what": "road in the longest scenario corridor"},
+    {"id": "strasse_am_punkt", "type": "strasse", "what": "nearest road at most 25 m from the point"},
+    {"id": "gebaeude_kuerzestes", "type": "gebaeude", "what": "building in the shortest scenario corridor"},
+    {"id": "gebaeude_laengstes", "type": "gebaeude", "what": "building in the longest scenario corridor"},
+    {"id": "gebaeude_am_punkt", "type": "gebaeude", "what": "nearest building at most 25 m from the point"}
+  ],
+  "comparisons": {
+    "primary": "road metrics: v02 events with Verkehrsanlagen = 1 against the bewertbar frame; building metrics: v02 events with Bauwerke = 1 against the bewertbar frame (6 comparisons)",
+    "secondary": "the same 6 against the alle_rasterzellen frame; and all 6 metrics for all 24 primary events against both frames (6 + 12 = 18 comparisons)",
+    "comparisons_counted": 24,
+    "all_reported": true
+  },
+  "uncertainty": {
+    "events": "exact cluster bootstrap over the independent units: all k^k ordered resamples of the k units, equal weight; share = pooled hits / pooled n; reported as 2.5 and 97.5 percentiles and min-max. With 3 units this interval is coarse and understates uncertainty",
+    "reference": "block bootstrap over 1 km x 1 km EPSG:31287 blocks (floor(x/1000), floor(y/1000)), 2000 draws, seed 20261018, percentiles 2.5/97.5",
+    "difference": "event share minus reference share; 2000 joint draws (events: random resample of the units with replacement; reference: block resample), seed 20261018 + 1, percentiles 2.5/97.5",
+    "wording_rule": "a difference is described as above or below the null reference only if its interval excludes 0; otherwise 'nicht von der Nullreferenz unterscheidbar'. Always labelled exploratory; never a hit rate or validation"
+  },
+  "known_limits": [
+    "point reference unknown: inventory points may mark the damage site, reference cells are cell anchors on slopes",
+    "OpenStreetMap is today's state (2026)",
+    "3 independent event units; any interval from them is coarse",
+    "the reference area is defined from the event positions; it describes infrastructure density around these events, not in Austria"
+  ],
+  "amendments": [
+    {"id": 1, "date": "2026-10-18", "what": "reference area changed from the centroid circle (area_centre/area_radius_rule) to the union of 2000 m buffers around the 24 v02 primary events", "reason": "the registered centroid circle has radius 7400 m because two Breitenau events lie 6-8 km west of the Gasen cluster; it covers 12082 of 36569 assessable cells (a third of the 10 km window) and reaches 5.5 km beyond the window edge, so it is not 'the same area'. 2000 m keeps the reference inside the local valley systems of both event groups (same order as the 2 km v01 pilot radius)", "seen_before_amendment": "pilot run (1 and 5 reference points per frame): area centre and radius, cell counts of the circle and the inventory exclusion, end status and inventory distance of one reference point. No reference metric, share, interval or comparison was printed or inspected", "unchanged": "everything else: frames, 250 m inventory exclusion, sample size 500, seed, chain, hit rule, context rule, metrics, comparisons, uncertainty and wording rules"}
+  ],
+  "outputs": {
+    "report": "reports/wirkungskette_v03/nullreferenz.md",
+    "numbers": "reports/wirkungskette_v03/nullreferenz.json",
+    "mutation_tests": "reports/wirkungskette_v03/mutation_tests.json"
+  }
+}

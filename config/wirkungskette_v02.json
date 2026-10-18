@@ -1,0 +1,60 @@
+{
+  "version": "wirkungskette_v02",
+  "created_on": "2026-10-18",
+  "status": "registered before any chain output for these events was computed; qualitative cross-check of the unvalidated wirkungskette_v01 runout scenarios against documented damage fields; exploratory, no tuning",
+  "question": "Does infrastructure inside the v01 runout scenarios started at inventory points agree qualitatively with the inventory damage fields Verkehrsanlagen and Bauwerke?",
+  "inspected_before_registration": "inventory selection fields only (date, year, process, position quality, damage fields, distance to the demo centre); no route, scenario or infrastructure overlap was computed for these events before this file was written",
+  "not_claimed": [
+    "hit rate, sensitivity or any validation of the runout",
+    "that the inventory point is the release point",
+    "that infrastructure inside a scenario was damaged",
+    "independence of the events (two Gasen campaigns in 2018, one event in 2017)"
+  ],
+  "chain": {
+    "config": "config/wirkungskette_v01.json",
+    "function": "preslide.wirkungskette.analysis.scenario_chain",
+    "window_radius_max_m": 10000,
+    "unchanged_blocks": ["demo", "terrain", "runout", "infrastructure"],
+    "rule": "scenarios, energy-line parameters, corridor width and infrastructure types are taken unchanged from wirkungskette_v01; nothing is adjusted after seeing results"
+  },
+  "events": {
+    "source": "data/raw/geosphere_natural_hazards.json",
+    "centre": "demo centre of wirkungskette_v01 (Stanz im Mürztal)",
+    "radius_m": 10000,
+    "damage_fields_required": ["Verkehrsanlagen", "Bauwerke"],
+    "damage_rule": "both detail fields set (0 or 1); 1 = ja, 0 = nein; events with only SACHSCHADEN but empty detail fields are excluded and counted",
+    "dem_rule": "event start (Date_Anfan, UTC) after the DEM object Last-Modified recorded in the v01 terrain checkpoint",
+    "dem_object_last_modified_utc": "2016-04-26T07:15:43+00:00",
+    "primary_years": [2017, 2018],
+    "primary_years_reason": "task scope: Gasen campaigns 2017/2018, DEM before the event",
+    "secondary_set": "all years satisfying dem_rule (adds July 2016 and 2023-2025); reported separately and labelled secondary",
+    "position_classes_allowed": ["Lage sehr genau / sehr sicher (0-5m)", "Lage genau (5-20m)", "Lage relativ genau (20-100m)"],
+    "position_reason": "a point uncertain by more than 100 m cannot be compared with a 50 m corridor; excluded and counted",
+    "process_groups_excluded": ["Stuerzen"],
+    "process_reason": "falls are not the process the runout scenarios describe"
+  },
+  "comparison": {
+    "shortest_scenario": "per event, the scenario with the smallest stop index along the route",
+    "longest_scenario": "per event, the scenario with the largest stop index along the route",
+    "primary_tables": [
+      {"id": "verkehr_strasse", "damage_field": "Verkehrsanlagen", "infrastructure_types": ["strasse"], "label": "Verkehrsanlagen gegen Straße"},
+      {"id": "bauwerke_gebaeude", "damage_field": "Bauwerke", "infrastructure_types": ["gebaeude"], "label": "Bauwerke gegen Gebäude"}
+    ],
+    "secondary_tables": [
+      {"id": "verkehr_alle_wege", "damage_field": "Verkehrsanlagen", "infrastructure_types": ["strasse", "weg", "bahn"], "label": "Verkehrsanlagen gegen Straße, Forst-/Feldweg oder Bahn"}
+    ],
+    "hit_rule": "infrastructure type counted as present if at least one feature of that type intersects the scenario corridor (count > 0 in scenario_chain output)",
+    "context": "distance from the inventory point to the nearest road and nearest building (descriptive only), to show whether a corridor hit already arises at the start point",
+    "comparisons_counted": "2 primary tables x 2 scenarios + 1 secondary table x 2 scenarios, each on the primary and the secondary event set = 12 tables; all are reported"
+  },
+  "known_limits": [
+    "point reference unknown: the inventory point may mark release, transport path, deposit or damage site",
+    "OpenStreetMap is today's state (2026), not the state at the event; objects may be newer or rebuilt",
+    "DEM object date 2016-04-26 is an upload date; the underlying survey is older",
+    "Verkehrsanlagen = 1 for almost all selected events, so the nein row is very small"
+  ],
+  "outputs": {
+    "report": "reports/wirkungskette_v02/gegenprobe.md",
+    "numbers": "reports/wirkungskette_v02/gegenprobe.json"
+  }
+}

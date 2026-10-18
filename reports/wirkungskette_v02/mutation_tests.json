@@ -1,0 +1,67 @@
+[
+ {
+  "mutation": "zellen-vertauscht",
+  "ergebnis": "20 failed, 30 passed in 8.48s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "nan-als-nein",
+  "ergebnis": "1 failed, 49 passed in 7.66s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "laengstes-ist-kuerzestes",
+  "ergebnis": "1 failed, 49 passed in 7.27s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "szenario-nach-konfigreihenfolge",
+  "ergebnis": "1 failed, 49 passed in 8.13s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "treffer-ab-null",
+  "ergebnis": "3 failed, 47 passed in 8.37s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "dem-datum-einschliesslich",
+  "ergebnis": "1 failed, 49 passed in 8.32s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "ohne-lagefilter",
+  "ergebnis": "3 failed, 47 passed in 8.58s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "ohne-jahresfilter",
+  "ergebnis": "2 failed, 48 passed in 8.32s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "schadensdetail-leer-erlaubt",
+  "ergebnis": "2 failed, 48 passed in 11.70s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "umkreis-in-grad",
+  "ergebnis": "2 failed, 48 passed in 9.60s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "doppelte-ids-erlaubt",
+  "ergebnis": "1 failed, 49 passed in 9.12s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "falsches-schadensfeld",
+  "ergebnis": "2 failed, 48 passed in 7.33s",
+  "gescheitert": true
+ },
+ {
+  "mutation": "schreibschutz-aus",
+  "ergebnis": "1 failed, 49 passed in 7.22s",
+  "gescheitert": true
+ }
+]
