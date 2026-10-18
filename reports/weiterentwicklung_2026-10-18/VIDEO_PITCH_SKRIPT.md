@@ -1,312 +1,292 @@
-# Talwacht – Video-Pitch: Drehbuch (Entwurf 1)
+# TALWACHT – Pitchfilm · Drehbuch (Entwurf 2, cinematisch)
 
-Stand 18.10.2026. Abgabe laut Ausschreibung: **18.10.2026, 23:59**. Länge laut Vorgabe 3–5 Minuten.
-Ziellänge dieses Skripts: **ca. 4:35** (Sprechtext ≈ 640 Wörter inkl. Platzhalter, ruhiges Tempo ≈ 140 Wörter/Minute).
-Referenzort: **Gasteinertal (Salzburg)**.
-
-Alle Zahlen und Gastein-Fakten stammen aus gespeicherten Projektergebnissen bzw. dem GeoSphere-Inventar
-(Abruf 14.10.2026); Belege in der Tabelle „Faktencheck“ am Ende. Nichts davon ist gerundet geschönt oder erfunden.
+Stand 18.10.2026 · Abgabe **18.10.2026, 23:59** · Vorgabe 3–5 min · Ziellänge **ca. 4:40**
+Sprechtext ≈ 450 Wörter (≈ 3:40 bei langsamem Erzähltempo), bewusst knapp: Der Rest gehört Bild, Musik und Pausen.
+Referenzort: **Gasteinertal (Salzburg)**. Alle Zahlen und Gastein-Fakten sind belegt (Faktencheck am Ende).
 
 ---
 
-## Leitidee
+## Konzept: „Der Zwilling“
 
-**Ein Tal. Eine Frage. Ein ehrlicher Test.**
+Ein Kurzfilm über **einen Hang und seine fünf Zwillinge**. Er beginnt mit einer echten Inventarmeldung aus dem
+Gasteinertal, zerlegt dann wie in einem Technik-Trailer, wie Talwacht arbeitet, öffnet den versiegelten Test,
+hält sich selbst den Spiegel vor und endet wieder im Gasteinertal, im fertigen Produkt.
 
-Das Gasteinertal rahmt das Video: Es beginnt mit einer echten Meldung von dort (Hangmure, 18.11.2019, Bad Hofgastein)
-und endet dort in der Web-Anwendung. Dazwischen steckt die Wendung, die das Projekt glaubwürdig macht: **Kein einziger
-Eintrag aus dem Gasteinertal hat unsere Qualitätsprüfung bestanden** – auch die Hangmure aus dem Einstieg nicht.
-Das zeigt Strenge statt Schönfärberei, und es macht das Tal zu einem Ort, den unser Modell nie gesehen hat.
+**Die Wendung in der Mitte:** Die Hangmure, mit der der Film beginnt, ist gar nicht in unseren Daten. Kein einziger
+Eintrag aus dem Gasteinertal hat die Qualitätsprüfung bestanden. Das zeigt Strenge, und es macht das Tal zu einem
+Ort, den das Modell nie gesehen hat. Dort endet der Film.
 
-Tonalität: ruhig, präzise, selbstbewusst. Keine Katastrophen-Dramatik, keine Alarmwörter.
+### Bildsprache
 
----
-
-## Szene 1 – Einstieg (0:00–0:30) · *die wichtigsten 30 Sekunden*
-
-**BILD**
-- 0:00 Schwarz. Ein tiefer Ton.
-- 0:02 Flug über das Gasteinertal (3D-Geländeansicht aus der eigenen Hangkarte, Beispiel „Gasteiner Tal“, langsam
-  rotierend; alternativ eigene Aufnahme/Foto). Einblendung unten links: *Gasteinertal, Salzburg · 18. November 2019*
-- 0:10 Ein roter Punkt erscheint am Hang bei Bad Hofgastein.
-- 0:14 Ringsum leuchten nacheinander graue Punkte auf – andere Hänge.
-- 0:22 Langsamer Zoom auf den roten Punkt.
-- 0:26 Schnitt: Titelkarte **TALWACHT** – Untertitel *Was verrät die Vorgeschichte eines Hangs?*
-
-**SPRECHER (off, ruhig, mit Pausen)**
-> 18. November 2019. Gasteinertal.
-> Im Naturgefahren-Inventar Österreichs wird eine Hangmure eingetragen.
->
-> Rund um diese Stelle: Dutzende Hänge. Genauso steil. Genauso hoch. Genauso ausgerichtet. Am selben Tag.
-> Von ihnen ist nichts gemeldet.
->
-> *(Pause)* Warum gerade dieser eine Hang?
->
-> Wir haben mit maschinellem Lernen und echten Daten aus ganz Österreich nachgesehen –
-> und ehrlich aufgeschrieben, was dabei herauskommt.
-
-*(≈ 65 Wörter)*
+| Element | Festlegung |
+|---|---|
+| Format | 16:9, 1080p oder 4K, 25 fps. Akt I und VII mit Letterbox (2,39:1), ab Akt III volles Bild für Daten und Produkt. |
+| Farbe | Entsättigt, kühles Blaugrau, tiefe Schwarztöne. **Eine** Signalfarbe: Orange = der gemeldete Hang. Kaltes Weiß/Grau = Zwillinge. Cyan = Daten und Wetter. |
+| Typografie | Eine schlanke Grotesk (z. B. Inter, IBM Plex Sans), Versalien mit weiter Laufweite für Titel. Zahlen in Monospace (IBM Plex Mono). Dezimalkomma: 0,75. |
+| Kamera | Langsam: Push-ins, Orbit-Flüge über das 3D-Gelände, Makro in Zeitlupe. Keine Wackelkamera, keine schnellen Zooms. |
+| Übergänge | Harte Schnitte auf Musik-Akzente, Match-Cuts (Wassertropfen → Datenpunkt, Höhenlinie → Diagrammlinie). |
+| Musik | Drei Phasen: (1) tiefer Ambient-Drone, (2) pulsierender Elektronik-Beat ab Akt III, (3) Stille beim Öffnen des Tests, dann warmes Auflösen im Finale. |
+| Sounddesign | Regen, Tropfen, Wind am Grat, leises Knacken von Erde, Tastatur, ein tiefer „Boom“ bei Titel und Ergebnis, Datenklicks beim Filtern. |
+| Stimme | Eine ruhige Erzählerstimme aus dem Off (eine Person aus dem Team). Das Team ist im Bild, spricht aber nur in Akt II kurz und im Schlusssatz. |
 
 ---
 
-## Szene 2 – Team und Motivation (0:30–0:55)
+## AKT I – Kaltstart (0:00–0:30) · *die entscheidenden 30 Sekunden*
 
-**BILD**
-Team vor der Kamera (draußen mit Hangkulisse oder am Tisch mit Laptop, Karte sichtbar). Bauchbinden mit Namen und Rolle.
-
-**SPRECHER (on camera, je Person ein Satz)**
-> Wir sind **[Name 1]**, **[Name 2]** und **[Name 3]** von **[Schule/Ort]**.
->
-> In Österreich gehen jedes Jahr Rutschungen und Muren ab – auf Straßen, Bahnlinien, neben Häusern.
-> Niemand kann jeden Hang beobachten.
-> **[Optional, 1 Satz persönlicher Bezug: z. B. „Bei uns im Ort war die Straße nach einer Mure tagelang gesperrt.“ – nur
-> verwenden, wenn es wirklich stimmt.]**
->
-> Uns hat interessiert: Kann maschinelles Lernen den Blick lenken – und wo liegen seine ehrlichen Grenzen?
-
-*(≈ 65 Wörter)*
-
----
-
-## Szene 3 – Ziel und Idee: der faire Vergleich (0:55–1:30)
-
-**BILD**
-- Animierte Österreichkarte, Ereignispunkte erscheinen.
-- Zoom auf ein Ereignis: Fünf Kontrollhänge erscheinen mit Verbindungslinien (Screenshot/Aufnahme aus der Demo-Seite).
-- Einblendung der Kriterien, Stück für Stück:
-  *750 m – 10 km entfernt · Neigung ± 5° · Höhe ± 150 m · Ausrichtung ± 45° · mind. 400 m Abstand untereinander ·
-  derselbe Stichtag*
-
-**SPRECHER**
-> Die meisten Gefahrenkarten fragen: Wo ist ein Hang grundsätzlich anfällig?
->
-> Wir stellen eine schärfere Frage: Wenn man nur weiß, was *vor* dem Ereignis war – kann man den betroffenen Hang von
-> Nachbarhängen unterscheiden, die ihm zum Verwechseln ähnlich sehen?
->
-> Dafür bekommt jedes Ereignis fünf Kontrollhänge: in der Nähe, gleich steil, gleich hoch, gleich ausgerichtet –
-> und mit demselben Stichtag.
-> So vergleichen wir nicht Berg gegen Flachland, sondern Hang gegen Zwilling.
-
-*(≈ 75 Wörter)*
-
----
-
-## Szene 4 – Was wir gebaut haben: Daten und Strenge (1:30–2:45)
-
-### 4a – Die Daten (1:30–2:05)
-
-**BILD**
-Trichter-Grafik, die sich von oben nach unten füllt:
-*über 25 000 Einträge im GeoSphere-Inventar → nur gesichertes Datum, Prozess und Lage → **423 Ereignisse** ·
-je 5 Kontrollhänge · **2 538 Hänge***
-Danach: Gastein-Karte, die Inventarpunkte des Tals werden nacheinander grau, kurzes Etikett am Hangmuren-Punkt:
-*„Prozess: keine Information · Massenbewegung: keine Information · Quelle: Webmeldung → ausgeschlossen“*
-
-**SPRECHER**
-> Unsere Daten sind echt: das Naturgefahren-Inventar der GeoSphere Austria, ein Geländemodell mit 30 Metern
-> Auflösung, Landbedeckung, Geologie und stündliche Wetterdaten im Ein-Kilometer-Raster.
->
-> Von über 25 000 Einträgen behalten wir nur die, bei denen Datum, Prozess und Lage gesichert sind:
-> 423 Ereignisse, jedes mit fünf Kontrollhängen.
->
-> Und die Hangmure aus dem Gasteinertal? Die ist nicht dabei. Ob es wirklich eine Hangmure war, ist im Inventar nicht
-> bestätigt – die Quelle ist eine Webmeldung. Kein einziger Eintrag aus dem Tal hat unsere Prüfung bestanden.
-> Lieber weniger Daten – dafür saubere.
-
-*(≈ 90 Wörter)*
-
-### 4b – Technische Raffinesse: Das Modell darf sich nicht selbst betrügen (2:05–2:45)
-
-**BILD**
-Drei Karten-/Icon-Tafeln nacheinander, dazu kurze Einblendungen von echtem Testcode bzw. Terminal mit grünen Tests:
-1. Zeitstrahl: 60 Tage farbig, ab *t₀* ein harter Schnitt – *„keine Information ab dem Ereignis“*
-2. Ereignis + 5 Kontrollen in einem Kasten, mehrere Kästen eines Unwetters zusammengefasst – *„unabhängige Einheiten“*
-3. Ein Umschlag mit Siegel – *„vorab registriert · einmal geöffnet“*
-Abschluss: Modell-Logos/Begriffe *Bedingte logistische Regression · Random Forest · Gradient Boosting · Permutationstest*
-
-**SPRECHER**
-> Die eigentliche Arbeit steckt darin, dass sich das Modell nicht selbst betrügen kann.
->
-> Erstens: Jedes Merkmal stammt nur aus der Zeit *vor* dem Ereignis – bis zu 60 Tage zurück, keine Stunde danach.
-> Automatische Tests schlagen Alarm, wenn das verletzt wird.
->
-> Zweitens: Ein Ereignis und seine Kontrollhänge bleiben immer zusammen, ebenso alle Ereignisse eines Unwetters.
-> Gezählt werden unabhängige Wetterepisoden, nicht Tabellenzeilen.
->
-> Drittens: Wir haben den Versuchsplan vorab festgeschrieben und einen Testdatensatz versiegelt.
-> Er wurde genau einmal geöffnet – erst, als alles eingefroren war.
->
-> Unser Hauptmodell ist eine selbst implementierte bedingte logistische Regression: Sie vergleicht immer einen Hang mit
-> seinen fünf Zwillingen. Random Forest und Gradient Boosting dienen zum Vergleich, Permutationstests zeigen, was reiner
-> Zufall erreichen würde.
-
-*(≈ 115 Wörter)*
-
----
-
-## Szene 5 – Das Ergebnis (2:45–3:25)
-
-**BILD**
-Balkendiagramm, Balken wachsen nacheinander, gestrichelte Linie bei 0,5 = *Zufall*:
-- *Wetter allein* 0,60
-- *Gelände allein* 0,70
-- *Gelände + Wetter* **0,75** mit Fehlerbalken *[0,63 – 0,87]*
-
-Fußzeile klein: *versiegelter Test · 300 Ereignisse · 11 unabhängige Episoden · Kennzahl: lokale AUC*
-
-Danach zweite Tafel: *Gelände allein auf später hinzugekommenen, ungesehenen Ereignissen: 0,77 (explorativ)*
-Dritte Tafel: *Dieselben Orte, verschiedene Zeiten: extrem nasse 3 Tage vor dem Ereignis in 24,6 % der Episoden –
-erwartet 5 % (explorativ)*
-
-**SPRECHER**
-> Das Ergebnis im versiegelten Test: In rund drei von vier Vergleichen liegt der tatsächlich betroffene Hang vor seinen
-> Zwillingen. Die Kennzahl ist 0,75 – Zufall wäre 0,5.
->
-> Das Überraschende: Den Großteil davon leistet das Gelände. Dass das Wetter der Vorwochen etwas hinzufügt, konnten wir
-> nicht belegen – weder im versiegelten Test noch auf neuen, ungesehenen Ereignissen.
->
-> Ganz egal ist das Wetter trotzdem nicht: Vergleicht man einen Ort mit sich selbst, waren die drei Tage vor einem
-> Ereignis in einem Viertel der Fälle extrem nass – erwartet wäre jeder zwanzigste.
-
-*(≈ 85 Wörter)*
-
----
-
-## Szene 6 – Das fertige Ergebnis: die Web-Anwendung (3:25–3:50)
-
-**BILD** (Bildschirmaufnahme, flüssig, ohne Mauszittern, 1080p)
-1. Startseite Talwacht → Demo: ein Ereignis mit seinen fünf Kontrollhängen auf der Karte, Klick zeigt 60 Tage Wetter.
-2. Ergebnisse: Kennzahlen mit Unsicherheitsbereich.
-3. Forschung → Hangkarte → Beispiel *Gasteiner Tal (Salzburg)* → 3D-Gelände dreht sich, Vergleichsgruppe mit
-   Anteilen (Summe 100 %). Einblendung: *relative Anteile · keine Gefahrenkarte*
-
-**SPRECHER**
-> Alles ist in unserer Web-Anwendung nachvollziehbar: jedes Ereignis mit seinen Kontrollhängen, die 60 Tage davor,
-> jede Kennzahl mit ihrem Unsicherheitsbereich.
->
-> Und zurück ins Gasteinertal: Hier hat unser Modell nie ein Ereignis gesehen. Die Hangkarte vergleicht Hänge nur
-> untereinander – als Rangfolge, nicht als Gefahrenkarte.
-
-*(≈ 50 Wörter)*
-
----
-
-## Szene 7 – Kritische Reflexion (3:50–4:20)
-
-**BILD**
-Team on camera, ernster Ton. Dazwischen eine Tafel: *Abstand zu Straßen und Gebäuden allein: 0,93* mit dem Zusatz
-*„Gemeldet wird, was Menschen sehen.“* Danach drei kurze Einblendungen: *11 Episoden · Stanz 2016 = 243 von 300
-Testereignissen · ohne Meldung ≠ stabil*
-
-**SPRECHER (on camera)**
-> Wir haben auch gezielt gegen uns selbst gesucht – und etwas gefunden:
-> Allein der Abstand zu Straßen und Gebäuden trennt gemeldete von ungemeldeten Hängen in einem einfacheren Vergleich
-> fast perfekt. Gemeldet wird, was Menschen sehen. Ein Teil des Signals ist also Meldeverhalten, nicht Natur.
->
-> Dazu kommen nur elf unabhängige Episoden im Test, eine davon dominiert. Und „ohne Meldung“ heißt nicht „stabil“.
->
-> Deshalb sagen wir klar: Talwacht ist kein Warnsystem und berechnet keine Wahrscheinlichkeit.
-
-*(≈ 75 Wörter)*
-
----
-
-## Szene 8 – Ausblick und Schluss (4:20–4:35)
-
-**BILD**
-Zurück zum Flug über das Gasteinertal (wie Szene 1, jetzt in hellerem Licht). Letzte Einstellung: Team, dann Logo.
-Endtafel: **TALWACHT** · Teamnamen · *Daten: GeoSphere Austria, Copernicus/CORINE, u. a.* · Link/QR zur Anwendung (falls
-öffentlich erreichbar).
-
-**SPRECHER**
-> Als Nächstes: ein vorab registrierter Test mit Ereignissen, die erst ab jetzt passieren.
-> Und Satellitenbilder vorher und nachher – um zu prüfen, ob unsere Kontrollhänge wirklich ruhig geblieben sind.
->
-> *(on camera, gemeinsam oder eine Person)*
-> **Talwacht. Nicht lauter warnen – genauer hinschauen.**
-
-*(≈ 40 Wörter)*
-
----
-
-## Zeitplan im Überblick
-
-| Szene | Inhalt | Zeit | Kriterium der Jury |
-|---|---|---|---|
-| 1 | Gastein-Hook, Frage, Titel | 0:00–0:30 | Präsentation (erste 30 s) |
-| 2 | Team, Motivation | 0:30–0:55 | Team, Motivation, praktische Relevanz |
-| 3 | Ziel: Hang gegen Zwilling | 0:55–1:30 | Innovationskraft |
-| 4a | Echte Daten, Qualitätsfilter, Gastein-Wendung | 1:30–2:05 | Leistung, kritische Reflexion |
-| 4b | Leckschutz, Gruppen, versiegelter Test, Modelle | 2:05–2:45 | ML-Methoden, technische Raffinesse |
-| 5 | Ergebnis mit Intervall, Wetterbefund | 2:45–3:25 | Ergebnis |
-| 6 | Web-Anwendung, zurück nach Gastein | 3:25–3:50 | finales Ergebnis |
-| 7 | Meldebias, kleine Stichprobe, keine Warnung | 3:50–4:20 | kritische Reflexion |
-| 8 | Ausblick, Schlusssatz | 4:20–4:35 | Präsentation |
-
-Puffer bis 5:00: ca. 25 s. Wenn es zu lang wird, zuerst Szene 4b um den Modell-Absatz kürzen (die Modellnamen stehen
-dann nur als Einblendung).
-
----
-
-## Produktion (machbar bis heute 23:59)
-
-**Bildquellen ohne Drehgenehmigung**
-- Gasteinertal-Flug: **Bildschirmaufnahme der eigenen 3D-Hangkarte** (Beispiel „Gasteiner Tal“). Das ist echtes
-  Projektmaterial und braucht keine Drohne. Hinweis: Die Hintergrundkacheln (Orthofoto/Gelände) kommen von
-  Drittservern – deren Namensnennung in die Endtafel übernehmen.
-- Eigene Drohnenaufnahme nur, wenn erlaubt: Teile der Region grenzen an den Nationalpark Hohe Tauern; Drohnenregeln
-  (Registrierung, Verbotszonen) vorher prüfen.
-- **Keine fremden Muren-Videos als „Gastein 2019“ zeigen.** Allgemeines Muren-Material nur lizenziert und mit
-  Einblendung *Symbolbild*.
-
-**Grafiken**
-Trichter (4a), drei Tafeln (4b), Balkendiagramm (5), Reflexions-Tafeln (7). Einheitlich: dunkler Hintergrund,
-eine Akzentfarbe für „betroffener Hang“, Grau für Kontrollhänge, Zahlen immer mit Komma (0,75), Intervalle mit
-eckigen Klammern.
-
-**Ton**
-Externes Mikrofon oder Smartphone nah am Mund, ruhiger Raum. Musik: lizenzfrei, zurückhaltend, unter dem Sprechtext
-deutlich leiser. Untertitel einbrennen oder als Datei mitliefern (viele schauen ohne Ton).
-
-**Bildschirmaufnahme**
-App lokal starten (`scripts/start.ps1`, `http://127.0.0.1:8000`), Browser im Vollbild, Zoom 110–125 %, Lesezeichen-
-leiste aus, Klickwege vorher einmal proben. Die Hangkarte für Gastein vorab einmal laden, damit sie im Video aus dem
-Cache sofort erscheint.
-
-**Sprechregeln (gelten für jede Änderung am Text)**
-- Sagen: *Rangfolge, Vergleich, über Zufall, nicht belegt, explorativ, Kontrollhang ohne Meldung*.
-- Nicht sagen: *vorhersagen, Risiko, Wahrscheinlichkeit, Warnung, Gefahrenkarte* – außer verneint (wie in Szene 6/7).
-- Keine Ursache behaupten: „das Modell stützt sich stark auf …“, nicht „… verursacht Rutschungen“.
-
----
-
-## Faktencheck (jede Zahl im Video)
-
-| Aussage im Video | Wert | Quelle |
+| Zeit | Bild | Ton |
 |---|---|---|
-| Hangmure 18.11.2019, Bad Hofgastein | Inventar-ID 1310133_001, „Hangmure“, Lage 20–100 m, Massenbewegung/Prozess „keine Information“, Erhebung „Auswertung WebInfo; Einzeldokument“ | `data/raw/geosphere_natural_hazards.json` (Abruf 14.10.2026) |
-| Gastein-Hangmure ausgeschlossen | Grund `process_or_mass_movement_quality` | `data/v04/audit/audit_exclusions.json` |
-| Kein Eintrag aus dem Gasteinertal im Datensatz | 0 Ereignisse im Umkreis von 20 km um Bad Gastein (V0.4 und V0.5) | `data/v04/run_c6d67a854ba7/dataset.parquet`, `data/v05/run_5b86b6475ecb/dataset.parquet` |
-| Modell hat in Gastein nie ein Ereignis gesehen | Hangkarte nutzt das V0.5-Modell; V0.5 enthält dort keine Ereignisse | `config/hangmap_v01.json`, V0.5-Datensatz |
-| über 25 000 Inventareinträge | 25 609 Einträge (alle Naturgefahren-Kategorien) | `data/raw/geosphere_natural_hazards.json` |
-| 423 Ereignisse, 2 538 Hänge, je 5 Kontrollen | 423 Gruppen / 2 538 Stichproben | `PROJECT_STATE.md`, `reports/v04/summary.md` |
-| Kontrollkriterien | 750 m–10 km, ± 5°, ± 150 m, ± 45° zirkulär, ≥ 400 m | `PROJEKTUEBERBLICK.md`, `config/v04.json` |
-| Gelände 30 m, Wetter 1 km stündlich, 60 Tage | Skadi/SRTM 30 m, INCA v1 1 km stündlich, Fenster [t₀ − 60 d, t₀) | `PROJEKTUEBERBLICK.md`, `METHODOLOGY.md` |
-| Versiegelter Test: 0,75 [0,63–0,87] | 0,751 [0,633; 0,866], Gelände 0,702, Wetter 0,604, Zusatz +0,049 [−0,003; +0,108] nicht belegt | `reports/v04/summary.md`, `reports/v04/test_results.json` |
-| 300 Testereignisse, 11 Episoden, Stanz 243 | wie angegeben | `reports/v04/summary.md` |
-| Ungesehene Ereignisse: Gelände 0,77 | 0,770 (Medien, explorativ; Prozessprüfung gescheitert, 14 < 15 Einheiten) | `reports/v09/summary.md` |
-| Extrem nasse 3 Tage: 24,6 % statt 5 % | 24,6 % [11,8; 38,2], 35 Episoden, explorativ; Haupttest knapp nicht erfüllt | `reports/extremwetter_v01/summary.md` |
-| Abstand zu Straßen/Gebäuden: 0,93 | 0,928 im V0.5-Design (ungematchte Umgebungspunkte), explorativ | `reports/v07/summary.md` |
-| Modelle | bedingte logistische Regression (eigene Implementierung, Hauptmodell), Random Forest, Gradient Boosting, Permutationsnull | `METHODOLOGY.md`, `reports/v04/summary.md`, `reports/null_v03/summary.md` |
+| 0:00 | Schwarz. | Regen setzt ein, sehr nah. Tiefer Drone. |
+| 0:03 | **Makro, Zeitlupe:** Ein Wassertropfen läuft an einem Grashalm herab und fällt. | Tropfen-Akzent. |
+| 0:06 | **Makro:** nasse Erde, Wasser sickert in einen feinen Riss. | Leises Knacken. |
+| 0:09 | **Totale (Letterbox):** Orbit-Flug über das Gasteinertal im Nebel, 3D-Gelände. Einblendung unten links, schmale Versalien: *GASTEINERTAL · SALZBURG* | Wind. |
+| 0:14 | Eingeblendet wie im Terminal getippt, Monospace: `18.11.2019 · Bad Hofgastein · Hangmure` | Tastenklicks. |
+| 0:17 | Push-in auf den Hang: ein **oranger Punkt** glüht auf. | Tiefer Puls. |
+| 0:20 | Rundherum zeichnen sich Höhenlinien, nacheinander leuchten **graue Hänge** auf. | Drone schwillt an. |
+| 0:26 | Harter Schnitt auf Schwarz. Eine Sekunde Stille. Dann der Titel: **TALWACHT**, darunter klein: *Was die Vorgeschichte eines Hangs verrät. Und was nicht.* | **Boom.** Nachhall. |
 
-Bewusst **nicht** im Text: Behauptungen über das Wetter in Gastein im November 2019 (nicht aus unseren Daten
-geprüft) und Zahlen zu Schäden oder Häufigkeiten von Muren in Österreich.
+**ERZÄHLER (Off)**
+> Achtzehnter November 2019. Gasteinertal.
+> Ein Eintrag im Naturgefahren-Inventar: Hangmure.
+>
+> Rundherum: Hänge. Genauso steil. Genauso hoch. Genauso ausgerichtet.
+> Von ihnen: keine Meldung.
+>
+> *(Pause)*
+> Was unterscheidet diesen einen Hang von seinen Zwillingen – bevor etwas passiert?
 
 ---
 
-## Was vor dem Dreh noch fehlt
+## AKT II – Die Idee (0:30–1:05)
 
-1. Teamnamen, Schule/Ort, Rollen (Szene 2, Endtafel).
-2. Wer spricht welche Szene (Vorschlag: Person 1 Off-Text, Personen 2–3 on camera in Szenen 2, 7, 8).
-3. Optionaler persönlicher Bezug in Szene 2 – nur, wenn er stimmt.
-4. Ob die Anwendung öffentlich erreichbar ist (sonst kein Link/QR in der Endtafel).
+| Zeit | Bild | Ton |
+|---|---|---|
+| 0:30 | Dunkler Raum. Das Licht eines Bildschirms mit Karte fällt auf ein Gesicht (Teammitglied 1). Bauchbinde: *[Name] · [Rolle]* | Drone, leiser Puls. |
+| 0:35 | Hände auf der Tastatur, Codezeilen spiegeln sich in einer Brille oder Scheibe. Bauchbinde Teammitglied 2. | Tastatur. |
+| 0:39 | Whiteboard/Papier: Skizze eines Hangs, daneben fünf kleinere Hänge mit Pfeilen. Bauchbinde Teammitglied 3. | Stift auf Papier. |
+| 0:44 | Archivartig, entsättigt: gesperrte Straße/Bahnlinie unter einem Hang (**eigene Aufnahme** oder lizenziertes Material, Einblendung *Symbolbild*). | Regen. |
+| 0:52 | Zurück zum Team: alle drei sehen auf den Bildschirm, Kamera fährt langsam hinter sie, auf dem Bildschirm Österreich mit Punkten. | Puls wird deutlicher. |
+
+**TEAM (on camera, je ein Satz)**
+> Wir sind **[Name 1]**, **[Name 2]** und **[Name 3]** von **[Schule/Ort]**.
+
+**ERZÄHLER (Off)**
+> Rutschungen und Muren treffen in Österreich jedes Jahr Straßen, Bahnlinien und Häuser. Niemand kann jeden Hang
+> beobachten.
+> Gefahrenkarten zeigen, wo ein Hang grundsätzlich anfällig ist. Wir wollten etwas Schärferes wissen:
+> Lässt sich der betroffene Hang von seinen Zwillingen unterscheiden – nur mit dem, was vorher bekannt war?
+
+---
+
+## AKT III – Die Maschine (1:05–2:40)
+
+*Musik: Der Beat setzt ein. Ab hier volles Bild. Jede Teilsequenz ist ein eigener „Bauabschnitt“ mit Kapiteltitel
+oben links in Monospace: `01 DATEN` · `02 FILTER` · `03 ZWILLINGE` · `04 REGELN` · `05 MODELL`.*
+
+### 01 DATEN (1:05–1:30)
+
+| Bild | Ton |
+|---|---|
+| Das 3D-Gelände des Gasteinertals, Kamera im Orbit. Nacheinander legen sich durchscheinende **Ebenen wie Glasplatten** darüber, jede mit kleiner Beschriftung: *GELÄNDE 30 m* (Schummerung) → *NEIGUNG* (Farbverlauf) → *LANDBEDECKUNG* → *GEOLOGIE* → *NIEDERSCHLAG 1 km · STÜNDLICH*: ein Raster aus Säulen, die im Takt wachsen und schrumpfen. Ein Zeitzähler läuft rückwärts: `t₀ − 60 Tage`. | Jede Ebene ein Klick-Akzent im Beat. |
+
+**ERZÄHLER**
+> Talwacht baut jeden Hang aus echten Daten neu auf: das Gelände auf 30 Meter genau. Landbedeckung. Geologie.
+> Und Niederschlag – Stunde für Stunde, sechzig Tage zurück.
+
+### 02 FILTER (1:30–1:55)
+
+| Bild | Ton |
+|---|---|
+| Österreichkarte von oben, schwarz. **Tausende Punkte** regnen herab, ein Zähler zählt hoch: `25 609`. Ein Scan-Strahl fährt über die Karte, die meisten Punkte erlöschen; der Zähler fällt auf `423`. Die verbleibenden glühen orange. | Datenrauschen, das beim Scan abreißt. |
+| Schnitt ins Gasteinertal: Die Punkte des Tals erlöschen einzeln. Am Punkt aus Akt I erscheint ein Etikett: `Prozess: keine Information` · `Massenbewegung: keine Information` · `Quelle: Webmeldung` → `AUSGESCHLOSSEN` | Bei „ausgeschlossen“ ein trockener Akzent. |
+
+**ERZÄHLER**
+> Aus über 25 000 Einträgen bleibt nur, was gesichert ist: Datum, Prozess, Lage. 423 Ereignisse.
+>
+> Die Hangmure aus dem Gasteinertal? Aussortiert. Ob es wirklich eine war, ist nicht bestätigt.
+> Kein Eintrag aus diesem Tal hat die Prüfung bestanden.
+
+### 03 ZWILLINGE (1:55–2:15)
+
+| Bild | Ton |
+|---|---|
+| Ein oranger Punkt. Ein Suchring dehnt sich aus (Einblendung *750 m – 10 km*), Dutzende Kandidaten flackern auf. Filter greifen nacheinander, jeweils mit kleiner Grafik: Neigungswinkel *± 5°*, Höhenband *± 150 m*, rotierende Kompassrose *Ausrichtung ± 45°*. Es bleiben **fünf**, verbunden mit feinen Linien; um jeden ein Kreis *≥ 400 m*. Darüber ein gemeinsames Datum: `t₀ = 18.11.2019` überträgt sich auf alle fünf. | Mit jedem Filter wird der Beat dichter. |
+
+**ERZÄHLER**
+> Dann sucht das System jedem Ereignis fünf Zwillinge: in der Nähe, gleich steil, gleich hoch, gleich ausgerichtet –
+> mit demselben Stichtag. Hang gegen Zwilling. Nicht Berg gegen Flachland.
+
+*Hinweis Bild: Die Zwillinge im Gastein-Beispiel sind eine **Illustration** des Verfahrens (das Ereignis ist
+ausgeschlossen). Für echte Zwillinge die Aufnahme eines Ereignisses aus der Demo-Seite verwenden und so beschriften.*
+
+### 04 REGELN (2:15–2:30)
+
+| Bild | Ton |
+|---|---|
+| Eine **Glaswand** bei `t₀`: Datenpartikel fliegen auf sie zu und prallen ab. Einblendung: *keine Information ab dem Ereignis*. | Glasklang. |
+| Ein Hang und seine fünf Zwillinge schließen sich in einen Kasten; mehrere Kästen eines Unwetters verschmelzen zu einem Block: *1 Unwetter = 1 Einheit*. | Mechanisches Einrasten. |
+| Ein Tresor/Umschlag mit Siegel schließt sich: *vorab registriert · versiegelt*. | Schweres Schließen. Beat setzt aus. |
+
+**ERZÄHLER**
+> Und es darf sich nicht selbst betrügen. Keine Information ab dem Ereignis – automatische Tests schlagen Alarm.
+> Ein Hang und seine Zwillinge bleiben immer zusammen. Der Plan wurde vorab festgeschrieben, der Test versiegelt.
+
+### 05 MODELL (2:30–2:45)
+
+| Bild | Ton |
+|---|---|
+| Ein oranger und fünf graue Hänge auf einer **Waage** aus Licht, die sich einpendelt. Dahinter, halbtransparent, die Formel der bedingten logistischen Regression. Kurz eingeblendet: *Random Forest · Gradient Boosting · Permutationstest (Zufallsreferenz)*. | Beat kehrt zurück, leiser. |
+
+**ERZÄHLER**
+> Im Kern: eine selbst gebaute bedingte logistische Regression. Sie wägt immer einen Hang gegen seine fünf Zwillinge
+> ab – gegengeprüft mit Random Forest, Gradient Boosting und Zufallsvergleichen.
+
+---
+
+## AKT IV – Die Antwort (2:45–3:25)
+
+| Zeit | Bild | Ton |
+|---|---|---|
+| 2:45 | Der Tresor aus Akt III. Das Siegel bricht, Licht fällt heraus. | **Stille.** Nur ein Atemzug. |
+| 2:48 | Groß, mittig, Monospace: **0,75**. Darunter klein: *[0,63 – 0,87] · versiegelter Test · 300 Ereignisse · 11 unabhängige Episoden* | Tiefer Boom. |
+| 2:55 | Balken wachsen aus dem Boden, gestrichelte Linie *Zufall 0,50*: *Wetter allein 0,60* · *Gelände allein 0,70* · *Gelände + Wetter 0,75* | Warmer Pad. |
+| 3:07 | Tafel: *Gelände allein auf neuen, ungesehenen Ereignissen: 0,77* (Fußnote *explorativ*). | |
+| 3:13 | Zeitstrahl am selben Ort über Jahrzehnte; drei Tage vor einem Ereignis leuchten cyan auf. Zähler: *24,6 % statt 5 %* (Fußnote *explorativ*). | Regen kehrt leise zurück. |
+
+**ERZÄHLER**
+> Das Ergebnis.
+> In rund drei von vier Vergleichen liegt der betroffene Hang vor seinen Zwillingen. Null Komma fünfundsiebzig.
+> Zufall wäre null Komma fünf.
+>
+> Den Großteil leistet das Gelände. Ein Zusatznutzen des Wetters: nicht belegt – auch nicht auf neuen, ungesehenen
+> Ereignissen.
+>
+> Und doch: Am selben Ort waren die drei Tage vor einem Ereignis in einem Viertel der Fälle extrem nass. Erwartet
+> wäre jeder zwanzigste.
+
+---
+
+## AKT V – Der Spiegel (3:25–3:55)
+
+| Zeit | Bild | Ton |
+|---|---|---|
+| 3:25 | Nachtaufnahme: eine Talstraße mit Lichtern (eigene Aufnahme) oder die Karte mit dem Straßennetz als leuchtende Linien. Die orangen Ereignispunkte rücken sichtbar an die Linien heran. Einblendung: *Abstand zu Straßen und Gebäuden allein: 0,93*. | Musik bricht ab, nur ein tiefer, dissonanter Ton. |
+| 3:38 | Spiegelung: ein Teammitglied im dunklen Bildschirm, nachdenklich. Drei Zeilen erscheinen nacheinander: *11 Episoden* · *eine Episode dominiert* · *ohne Meldung ≠ stabil* | Jeweils ein leiser Akzent. |
+| 3:50 | Schwarz. Weißer Text: *Kein Warnsystem. Keine Wahrscheinlichkeit.* | Stille. |
+
+**ERZÄHLER**
+> Dann haben wir gegen uns selbst gesucht.
+> Allein der Abstand zu Straßen und Häusern trennt gemeldete von ungemeldeten Hängen fast perfekt. Gemeldet wird,
+> was Menschen sehen. Ein Teil des Signals ist Meldeverhalten – nicht Natur.
+>
+> Elf unabhängige Episoden. Eine davon dominiert. Und „ohne Meldung“ heißt nicht „stabil“.
+>
+> Talwacht ist kein Warnsystem. Es berechnet keine Wahrscheinlichkeit.
+
+---
+
+## AKT VI – Das Produkt (3:55–4:20)
+
+| Zeit | Bild | Ton |
+|---|---|---|
+| 3:55 | Laptop in dunklem Raum, Kamera fährt auf den Bildschirm zu, bis er das Bild füllt. | Musik löst sich auf, warm. |
+| 3:59 | **Demo:** ein Ereignis mit seinen fünf Zwillingen auf der Karte; Klick öffnet die 60 Tage Niederschlag davor. | Weiche Klicks. |
+| 4:06 | **Ergebnisse:** Kennzahlen mit Unsicherheitsbereich. | |
+| 4:10 | **Hangkarte, Beispiel Gasteiner Tal:** das 3D-Gelände dreht sich, die Vergleichsgruppe erscheint mit Anteilen (Summe 100 %). Einblendung: *relative Rangfolge · keine Gefahrenkarte* | |
+
+**ERZÄHLER**
+> Was bleibt, ist ein offenes Werkzeug: jedes Ereignis mit seinen Zwillingen, die sechzig Tage davor, jede Zahl mit
+> ihrer Unsicherheit.
+> Und zurück im Gasteinertal – einem Tal, das unser Modell nie gesehen hat – vergleicht die Hangkarte Hänge
+> untereinander. Als Rangfolge. Nicht als Urteil.
+
+---
+
+## AKT VII – Finale (4:20–4:40)
+
+| Zeit | Bild | Ton |
+|---|---|---|
+| 4:20 | Letterbox kehrt zurück. Das Gasteinertal, jetzt hell, der Nebel hebt sich (3D-Flug mit Lichtwechsel oder eigene Aufnahme). Ein Satellitenbild blendet kurz über das Gelände. | Musik steigt an. |
+| 4:30 | Das Team nebeneinander, Blick in die Kamera. | Musik hält. |
+| 4:34 | Schwarz. **TALWACHT**. Darunter Teamnamen, Schule. Kleiner: *Daten: GeoSphere Austria · Copernicus/CORINE · u. a.* | Letzter Boom, Ausklang. |
+
+**ERZÄHLER**
+> Als Nächstes: ein vorab registrierter Test mit Ereignissen, die erst noch kommen. Und Satellitenbilder vorher und
+> nachher – um zu prüfen, ob die Zwillinge wirklich ruhig geblieben sind.
+
+**TEAM (on camera, gemeinsam oder eine Person)**
+> Talwacht. Nicht lauter warnen – genauer hinschauen.
+
+---
+
+## Abdeckung der Jury-Kriterien
+
+| Vorgabe/Kriterium | Wo im Film |
+|---|---|
+| Die ersten 30 Sekunden | Akt I: echte Meldung, Zwillingsbild, offene Frage, Titel |
+| Team vorstellen | Akt II (Bauchbinden, ein Satz on camera), Endtafel |
+| Motivation und Ziel | Akt II |
+| Praktische Relevanz, Innovationskraft | Akt II (Straßen, Bahn, Häuser), Akt III/03 (Hang gegen Zwilling statt Gefahrenkarte) |
+| Was wir geleistet haben | Akt III/01–02 (echte Daten, Qualitätsfilter) |
+| ML-Methoden, technische Raffinesse | Akt III/03–05 (Matching, Schutz vor Datenlecks, Gruppen, versiegelter Test, bedingte logistische Regression, Vergleichsmodelle, Zufallsreferenz) |
+| Ergebnis | Akt IV (mit Intervall und Zufallslinie) |
+| Kritische Reflexion | Akt III/02 (Gastein aussortiert), Akt V (Meldebias, kleine Stichprobe, kein Warnsystem) |
+| Finales Ergebnis präsentieren | Akt VI (Web-Anwendung, Hangkarte Gastein) |
+
+---
+
+## Produktion: in wenigen Stunden machbar
+
+| Material | Herstellung |
+|---|---|
+| Gastein-Flüge (Akt I, III, VI, VII) | Bildschirmaufnahme der **eigenen 3D-Hangkarte** (Beispiel „Gasteiner Tal“), Browser im Vollbild, Kamera langsam mit der Maus führen; in der Schnittsoftware 110 % skalieren, entsättigen, Vignette, Nebel-Overlay. Namensnennung der Kartenkacheln in die Endtafel. |
+| Makro Tropfen/Erde (Akt I) | Smartphone im Makro- bzw. Zeitlupenmodus, Gießkanne oder Sprühflasche auf Gras und Erde, seitliches Licht. 15 Minuten im Garten. |
+| Team-Einstellungen (Akt II, V, VII) | Dunkler Raum, einzige Lichtquelle der Bildschirm bzw. eine Lampe seitlich; Kamera auf Stativ oder Bücherstapel. |
+| Daten-Animationen (Akt III, IV) | Keynote/PowerPoint mit „Zauberübergang“, Canva, CapCut oder DaVinci Resolve (kostenlos). Grundlage: echte Screenshots der App und die Zahlen aus dem Faktencheck. |
+| Produkt (Akt VI) | Bildschirmaufnahme (OBS oder Win+Alt+R), App lokal starten mit `scripts/start.ps1` (`http://127.0.0.1:8000`), Zoom 110–125 %, Lesezeichenleiste aus, Klickweg vorher proben, Hangkarte für Gastein vorab einmal laden. |
+| Musik | Lizenzfreie Cinematic-/Ambient-Titel (YouTube-Audiomediathek, Pixabay Music) oder bestehende Lizenz; Quelle notieren. |
+| Stimme | Externes Mikrofon oder Smartphone nah am Mund unter einer Decke; langsam sprechen, Pausen stehen lassen. Untertitel einbrennen. |
+
+**Grenzen beim Bildmaterial (wichtig für die Glaubwürdigkeit)**
+- Keine fremden oder KI-erzeugten Murenbilder als „Gasteinertal 2019“ ausgeben. Symbolisches Material nur mit
+  Einblendung *Symbolbild*.
+- Drohnenflüge im Gasteinertal nur nach Prüfung der Drohnenregeln (Teile der Region grenzen an den Nationalpark Hohe
+  Tauern).
+- Die Zwillinge im Gastein-Beispiel sind eine Illustration; das ist in Akt III/03 so vermerkt.
+
+**Sprechregeln für jede Textänderung**
+Sagen: *Rangfolge, Vergleich, über Zufall, nicht belegt, explorativ, ohne Meldung*. Nicht sagen: *vorhersagen,
+Risiko, Wahrscheinlichkeit, Warnung, Gefahrenkarte*, außer verneint. Keine Ursache behaupten.
+
+---
+
+## Faktencheck (jede Zahl und Aussage im Film)
+
+| Aussage | Wert | Quelle |
+|---|---|---|
+| Hangmure 18.11.2019, Bad Hofgastein | Inventar-ID 1310133_001, „Hangmure“, Lage 20–100 m, Massenbewegung und Prozess „keine Information“, Erhebung „Auswertung WebInfo; Einzeldokument“ | `data/raw/geosphere_natural_hazards.json` (Abruf 14.10.2026) |
+| Gastein-Hangmure aussortiert | Grund `process_or_mass_movement_quality` | `data/v04/audit/audit_exclusions.json` |
+| Kein Eintrag aus dem Tal hat die Prüfung bestanden | 0 Ereignisse im Umkreis von 20 km um Bad Gastein in V0.4 und V0.5 | `data/v04/run_c6d67a854ba7/dataset.parquet`, `data/v05/run_5b86b6475ecb/dataset.parquet` |
+| Modell hat das Tal nie gesehen | Hangkarte nutzt das V0.5-Modell; V0.5 enthält dort keine Ereignisse | `config/hangmap_v01.json`, V0.5-Datensatz |
+| über 25 000 Einträge | 25 609 Einträge (alle Naturgefahren-Kategorien) | `data/raw/geosphere_natural_hazards.json` |
+| 423 Ereignisse, je 5 Zwillinge | 423 Gruppen / 2 538 Hänge | `reports/v04/summary.md`, `PROJECT_STATE.md` |
+| Zwillingskriterien | 750 m–10 km, ± 5°, ± 150 m, ± 45° zirkulär, ≥ 400 m, gleicher Stichtag | `PROJEKTUEBERBLICK.md`, `config/v04.json` |
+| Gelände 30 m, Niederschlag 1 km stündlich, 60 Tage | Skadi/SRTM 30 m, INCA v1, Fenster [t₀ − 60 d, t₀) | `PROJEKTUEBERBLICK.md`, `METHODOLOGY.md` |
+| 0,75 [0,63 – 0,87], Gelände 0,70, Wetter 0,60 | 0,751 [0,633; 0,866], 0,702, 0,604; Zusatz +0,049 [−0,003; +0,108] nicht belegt | `reports/v04/summary.md`, `reports/v04/test_results.json` |
+| 300 Ereignisse, 11 Episoden, eine dominiert | Stanz 2016: 243 von 300 | `reports/v04/summary.md` |
+| Ungesehene Ereignisse: Gelände 0,77 | 0,770 (Medien, explorativ) | `reports/v09/summary.md` |
+| 24,6 % statt 5 % | 24,6 % [11,8; 38,2], 35 Episoden, explorativ; Haupttest knapp nicht erfüllt | `reports/extremwetter_v01/summary.md` |
+| Abstand zu Straßen und Gebäuden: 0,93 | 0,928 im V0.5-Design (ungematchte Umgebungspunkte), explorativ | `reports/v07/summary.md` |
+| Modelle | bedingte logistische Regression (eigene Implementierung), Random Forest, Gradient Boosting, Permutationsnull | `METHODOLOGY.md`, `reports/v04/summary.md`, `reports/null_v03/summary.md` |
+| Satellitenbilder vorher/nachher | Pipeline B existiert (Sentinel-2); Prüfung der Zwillinge ist Ausblick, nicht Ergebnis | `reports/satellite/` |
+
+Bewusst **nicht** im Film: Aussagen über das Wetter in Gastein im November 2019 (nicht aus eigenen Daten geprüft)
+und Zahlen zu Schäden oder Häufigkeiten von Muren in Österreich.
+
+---
+
+## Offen vor dem Dreh
+
+1. Teamnamen, Rollen, Schule/Ort (Akt II, Endtafel).
+2. Wer die Erzählerstimme spricht.
+3. Eigene Aufnahme einer gesperrten Straße oder Bahnlinie für Akt II, sonst lizenziertes Symbolbild.
+4. Ob die Anwendung öffentlich erreichbar ist (dann Link/QR in die Endtafel).
