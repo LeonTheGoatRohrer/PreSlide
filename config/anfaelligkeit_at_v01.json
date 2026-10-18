@@ -1,0 +1,154 @@
+{
+  "version": "anfaelligkeit_at_v01",
+  "registered_on": "2026-10-18",
+  "registered_before": "any positive selection on terrain, any background point, any terrain/land-cover/geology/OSM value, any model fit or score of this version. Only inventory attribute counts (process, position class, project, year) had been looked at (PROJEKTBEWERTUNG_VOR_ZUSAMMENFUEHRUNG.md and this session).",
+  "status": "pre-registered leave-one-area-out evaluation. The primary endpoint is confirmatory within this design; every secondary analysis is exploratory. Not a sealed test: no area is kept back for later.",
+  "plan": "reports/weiterentwicklung_2026-10-18/TRAININGSPLAN_ALLE_INVENTARDATEN.md (branch claude/website-jury-d7408d), user decision 2026-10-18",
+  "question": "Does a static model trained on the terrain and geology around precisely located pure Hangmuren of other Austrian areas rank the Hangmuren of a completely held-out area above random background points of that area better than slope alone?",
+  "primary_endpoint": "SRTM variant, hist_gradient_boosting with feature set terrain_geology: AUC of held-out positives versus held-out background inside each evaluation area (leave-one-area-out), mean over evaluation areas with equal area weights",
+  "primary_comparison": "paired per-area difference AUC(hgb terrain_geology) - AUC(hgb slope_only), mean over evaluation areas; 95 % percentile interval from the area bootstrap",
+  "decision_rule": "'better than slope alone' only if the 95 % interval of the mean paired difference lies entirely above 0; 'above chance' only if the 95 % interval of the mean AUC lies entirely above 0.5; otherwise 'no established benefit'. Results are relative susceptibility rankings, never probabilities of a landslide.",
+  "must_not_change": ["V0.3 baseline (reports/baseline, archive/v0.3-baseline)", "V0.4 registration, freeze and sealed test (reports/v04, config/v04.json)", "V0.5-V0.9 registrations and results", "wirkungskette_v02 registration and results (other session); no results of this version on its areas are sent to it before its test is frozen"],
+  "comparisons_counted": "primary 1; secondary listed under evaluation.secondary (11 analyses); all are reported, including those without a benefit",
+
+  "inputs": {
+    "inventory": "data/raw/geosphere_natural_hazards.json",
+    "inventory_sha256": "9dc1581c122b83839b45ac7cc53eec83177fe4e54c785019f7a519313eaa3d97"
+  },
+
+  "positives": {
+    "source": "GeoSphere Austria Naturgefahren inventory, local snapshot (retrieved 2026-10-14, 25 609 records)",
+    "process_subgroup": "Prozessuntergruppe stripped == 'Hangmure' (pure Hangmuren only)",
+    "not_used": "'Hangmure bis Lockergesteinsrutschung', 'Hangmure und Lockergesteinsrutschung' and all other subgroups are counted, never used as positives (mixed process class; AGENTS.md section 17). They do not run separately in v01.",
+    "position_classes": ["Lage sehr genau / sehr sicher (0-5m)", "Lage genau (5-20m)"],
+    "no_other_quality_filter": "QUAL_MB and QUAL_PROZ are counted and reported, not filtered",
+    "inside_austria": "GISCO NUTS 2016 Austria polygon (preslide.matching.austria_boundary)",
+    "event_year": "EREIGNIS_J if present, else the single four-digit year in RegKatE_ID, else unknown",
+    "deduplication_m": 30,
+    "deduplication_rule": "greedy in EPSG:31287 metres: sort by (has RegKatE_ID, year known, position class 0-5 m before 5-20 m, OBJECTID) and keep a record only if no kept record lies within 30 m; done once over all candidates before any terrain value",
+    "terrain_checks": "DEM value finite, 0-4500 m, DEM slope >= 5 deg at the positive cell; otherwise excluded and counted (same minimum as the background)"
+  },
+
+  "dem": {
+    "date_rule": "the provenance of the height data must precede the event (user decision 2026-10-18: provenance counts instead of the file date), consistent with wirkungskette_v02",
+    "primary": {
+      "name": "srtm",
+      "source": "SRTM 1 arc-second (SRTMGL1 v3, NASA/USGS, acquisition 11-22 February 2000), ESA STEP mirror https://step.esa.int/auxdata/dem/SRTMGL1/<tile>.SRTMGL1.hgt.zip",
+      "eligible_positives": "event year known and >= 2001",
+      "limitation": "C-band surface model (includes forest canopy and buildings), smoother than a laser terrain model; SRTMGL1 v3 voids are filled from later sources (ASTER GDEM, GMTED), so a small share of cells in steep terrain has later provenance"
+    },
+    "sensitivity": {
+      "name": "skadi",
+      "source": "Mapzen/AWS Skadi 1 arc-second composite (the V0.4 tiles; over Austria based on the data.gv.at laser-scan DGM, acquisitions not demonstrably before 2005-2015)",
+      "eligible_positives": "all positives regardless of year, including unknown years and Thiersee 1970 ('alle Inventardaten')",
+      "label": "sensitivity analysis: height-data provenance not demonstrably pre-event; never the headline"
+    },
+    "crs": "EPSG:31287",
+    "resolution_m": 30,
+    "grid_origin": "cell edges at integer multiples of 30 m in EPSG:31287",
+    "resampling": "bilinear from geographic 1 arc-second, nodata -32768 -> NaN",
+    "processing_block_cells": 300,
+    "catchment_margin_m": 5010,
+    "sample_rule": "a point takes the values of the 30 m cell that contains it"
+  },
+
+  "areas": {
+    "project_area": "RegKatE_ID (stripped); all its positives form one area",
+    "tile_area": "positives without RegKatE_ID: fixed 50 km x 50 km tiles in EPSG:31287 with edges at multiples of 50 000 m",
+    "evaluation_area": "an area with >= 10 included positives in the DEM variant; smaller areas are training-only (always in training, listed and counted)",
+    "sampling_region": "union of the fixed 5 km x 5 km lattice cells (EPSG:31287, edges at multiples of 5000 m) that contain >= 1 included positive of the area, clipped to Austria. Boundaries come from the fixed lattice, never from the point shapes (no hulls, no buffers around positives)",
+    "independence_note": "areas are the units of resampling. Same-storm areas (Vorarlberg/Tirol and Gasen/Haslau August 2005; Nordhaelfte and Taxenbach June 2013) are kept separate (different regions) and reported as possibly dependent"
+  },
+
+  "background": {
+    "ratio_per_positive": 3,
+    "draw": "uniform in the area's sampling region, candidate stream seeded by sha256(area_id, seed); accepted in stream order until 3 x n_positives are found",
+    "seed": 20261018,
+    "inventory_buffer_m": 100,
+    "inventory_buffer_rule": "no background point within 100 m (EPSG:31287 metres) of ANY inventory record with geometry (all processes, all position classes)",
+    "minimum_slope_deg": 5,
+    "elevation_range_m": [0, 4500],
+    "minimum_separation_m": 60,
+    "max_candidates_per_needed_point": 200,
+    "shortfall": "an area whose region cannot supply the background is excluded and counted",
+    "label": "PSEUDO_NEGATIVE: random slope cell without a documented inventory record nearby, not a confirmed stable slope",
+    "variant_rule": "the same candidate stream per area for both DEM variants; acceptance (slope, elevation) evaluated on the variant's DEM"
+  },
+
+  "features": {
+    "terrain": ["elevation", "slope", "aspect_sin", "aspect_cos", "profile_curvature", "plan_curvature", "roughness_tri", "tpi_150m", "tpi_500m", "relative_position_500m", "log10_catchment_m2", "twi"],
+    "terrain_code": "preslide.terrain.derivatives and preslide.v04.terrain (curvatures, disc, focal_mean, fill_depressions, flow_accumulation), unchanged algorithms; catchment/TWI MISSING when the upslope area reaches the window edge",
+    "aspect": "only as sin/cos of the downslope azimuth (circular)",
+    "geology": {"source": "GeoSphere Austria INSPIRE GeologicUnit 1:500 000 (CC BY 4.0), whole layer cached", "one_hot": ["geo_carbonate", "geo_clastic_rock", "geo_unconsolidated", "geo_low_grade_metamorphic", "geo_crystalline_other"],
+                "classes": {"geo_carbonate": ["limestone", "carbonate sedimentary rock", "marble"],
+                            "geo_clastic_rock": ["sandstone", "siltstone", "clastic sedimentary rock"],
+                            "geo_unconsolidated": ["clastic sedimentary material", "gravel"],
+                            "geo_low_grade_metamorphic": ["phyllite", "schist", "mica schist", "chlorite actinolite epidote metamorphic rock"],
+                            "geo_crystalline_other": "all remaining lithologies"},
+                "missing": "no or several polygons with different lithology at a point = all five indicators MISSING"},
+    "land_cover": {
+      "use": "secondary analysis only (feature set terrain_geology_landcover)",
+      "vintage_rule": "latest CORINE vintage whose imagery ended before the event year: CLC2000 (imagery 1999-2001) for 2002-2007, CLC2006 (2005-2007) for 2008-2012, CLC2012 (2011-2012) for 2013-2018, CLC2018 (2017-2018) for 2019+",
+      "services": {"CLC2000": ["https://image.discomap.eea.europa.eu/arcgis/rest/services/Corine/CLC2000/MapServer/0/query", "code_00"],
+                   "CLC2006": ["https://image.discomap.eea.europa.eu/arcgis/rest/services/Corine/CLC2006/MapServer/0/query", "Code_06"],
+                   "CLC2012": ["https://image.discomap.eea.europa.eu/arcgis/rest/services/Corine/CLC2012/MapServer/0/query", "Code_12"],
+                   "CLC2018": ["https://image.discomap.eea.europa.eu/arcgis/rest/services/Corine/CLC2018_LAEA/MapServer/0/query", "Code_18"]},
+      "area_rule": "an area enters the land-cover analysis only if all its included positives have a known year >= 2002 that maps to one vintage; its background takes that vintage",
+      "classes": {"lc_forest": [311, 312, 313], "lc_grass_shrub": [231, 321, 322, 323, 324],
+                  "lc_agriculture": [211, 212, 213, 221, 222, 223, 241, 242, 243, 244],
+                  "lc_open_bare": [331, 332, 333, 334, 335], "lc_artificial_water_other": "all remaining codes"},
+      "missing": "no or several polygons at a point = all five indicators MISSING",
+      "caveat": "most positives were mapped on orthophotos ('Ferndiagnose - Orthofoto'): slides under forest canopy are hard to see, so a forest contrast is partly a visibility artefact"
+    },
+    "forbidden": "no weather, no coordinates (x, y, lon, lat), no distance to roads/buildings, no distance to or count of other inventory events, no area or project identifier, no event year",
+    "missing_values": "never invented. HistGradientBoosting: native missing handling. Logistic regression: training-median imputation plus one missing indicator per feature with any missing training value; counts reported"
+  },
+
+  "models": {
+    "slope_rule": "score = DEM slope (no training)",
+    "hist_gradient_boosting": {"max_iter": 150, "max_leaf_nodes": 7, "min_samples_leaf": 10, "l2_regularization": 1.0, "class_weight": "balanced", "random_state": 42},
+    "logistic_regression": {"C": 1.0, "class_weight": "balanced", "max_iter": 3000, "standardize": "training mean/sd"},
+    "feature_sets": {"slope_only": ["slope"], "terrain_geology": "terrain + geology one-hot", "terrain_geology_landcover": "terrain + geology + land-cover one-hot (secondary)"},
+    "training_weights": "every sample of a training area weighted 1/sqrt(n_positives of that area), so the largest documentation does not dominate",
+    "no_tuning": "no hyperparameter search, no seed search, no feature selection; no neural network"
+  },
+
+  "evaluation": {
+    "scheme": "leave-one-area-out over evaluation areas: the held-out area is never in training",
+    "spatial_purge_m": 1000,
+    "spatial_purge_rule": "for each held-out area, every training sample (any area) within 1000 m of any held-out sample is removed before fitting",
+    "metrics_per_area": ["auc", "average_precision (chance = 0.25)", "capture_top20: share of positives scoring above the 80th percentile of the area's background scores (chance 0.20)"],
+    "aggregation": "mean over evaluation areas, equal weights (units = areas)",
+    "bootstrap": {"draws": 2000, "seed": 20261018, "unit": "evaluation area", "interval": "95 % percentile"},
+    "secondary": [
+      "1 slope_rule (raw slope) and logistic regression terrain_geology, each with its paired difference to hgb slope_only",
+      "2 positive-pooled AUC over all held-out predictions (descriptive)",
+      "3 mean over areas without the largest evaluation area",
+      "4 capture_top20 and average precision for every model",
+      "5 per-area table for every evaluation area (all reported)",
+      "6 skadi sensitivity: the whole LOAO on the skadi sample set (all positives)",
+      "7 land cover: LOAO restricted to land-cover areas, hgb and lr terrain_geology_landcover vs terrain_geology on the same samples (paired)",
+      "8 reporting bias (as V0.7): AUC of -log10(1 + distance to nearest OSM building or public road) per area (distance is never a model feature)",
+      "9 reporting bias: primary predictions re-scored only on samples with distance to infrastructure >= 200 m (areas with >= 5 positives and >= 5 background left), paired vs slope_only",
+      "10 DEM-date description: SRTM-variant areas with event year >= 2017 (Skadi file also pre-event) listed separately",
+      "11 per-feature permutation importance of the primary model on the held-out areas (descriptive, 'the model relied on', not causal)"
+    ]
+  },
+
+  "reporting_bias_control": {
+    "source": "OpenStreetMap via Geofabrik, data/v07/source/austria-261014.osm.pbf (ODbL; sha256 3d00a7f2e50b6338ff91f3c140715b5a7513057896c9d21eda60b7afc7ad01cf, recorded in data/v07/source.json), registered V0.7 definitions (preslide.v07.infrastructure: buildings any 'building' tag except 'no'; public roads incl. service; cap 5000 m)",
+    "temporal_caveat": "2026 snapshot versus events from 1970 to 2026"
+  },
+
+  "demo": {
+    "area_rule": "the SRTM-variant evaluation area with the most included positives",
+    "block_rule": "the 300 x 300 cell processing block of that area containing most of its included positives",
+    "model": "hgb terrain_geology (srtm) from the leave-one-area-out fold that held out the demo area (the area is NOT in its training)",
+    "layer": "score of every 30 m cell of the block (slope >= 5 deg, inside Austria, features computable), shown as percentile rank within the block = relative susceptibility; slope-only layer from the same fold for comparison",
+    "web_bundle": "aggregates and the demo layer; record-level inventory coordinates stay local"
+  },
+
+  "pilot": "1 -> 5 -> 20 areas (or all if fewer) with the full chain, checked, then all areas",
+  "outputs": {"data": "data/anfaelligkeit_at_v01/", "models": "models/anfaelligkeit_at_v01/", "reports": "reports/anfaelligkeit_at_v01/"},
+  "not_claimed": ["probability of a landslide", "risk", "warning", "hazard map", "causal effect of any feature"]
+}

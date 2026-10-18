@@ -1,0 +1,11 @@
+{
+ "amendment": 1,
+ "version": "anfaelligkeit_at_v01",
+ "written_at_utc": "2026-10-18T11:12:52.124150+00:00",
+ "written_before": "any background beyond the 1-area technical pilot, any land-cover/geology/OSM value, any model fit or score",
+ "config_sha256_unchanged": "d1c8ed691d35a9ef8b3dcddda4a4a70a653ec491440df12228be22ba6c984fa2",
+ "finding": "Cell-by-cell comparison of all 27 cached Skadi 1-arc-second tiles N46-N48/E009-E017 with SRTMGL1 v3 (ESA STEP mirror): 0.9931-0.99986 of valid cells identical, mean absolute difference <= 0.025 m, 99th percentile 0 m (table: reports/anfaelligkeit_at_v01/dem_skadi_vs_srtm.json). Over Austria the Skadi tiles used by V0.4 are SRTMGL1 v3, not the data.gv.at laser-scan DGM.",
+ "correction": "config dem.sensitivity.source describes Skadi as 'based on the data.gv.at laser-scan DGM'. That description is factually wrong. Skadi height provenance is effectively SRTM (February 2000) for >= 99.3 % of cells.",
+ "design_change": "none. Both registered variants run unchanged. Consequence for interpretation: the two variants differ essentially only in the positive set (srtm: known year >= 2001; skadi: all positives incl. unknown year and Thiersee 1970), not in the height data. The skadi variant stays a labelled sensitivity analysis because the provenance (Feb 2000) is not demonstrably before the unknown-year and 1970 events.",
+ "shared_with": "wirkungskette session (data-source finding only, no area results), 2026-10-18"
+}
