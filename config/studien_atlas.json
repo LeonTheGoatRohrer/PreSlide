@@ -1,0 +1,347 @@
+{
+  "version": "studien_atlas_v01",
+  "beschreibung": "Registry of the study atlas (GET /api/studien). Every figure names its stored JSON file and JSON path; preslide/studien.py delivers only these stored values. A missing file makes the study unavailable with a reason, never a substitute value. Texts are descriptive; numbers live only in the stored files.",
+  "gruppen": [
+    {"id": "kern", "label": "Kernfrage"},
+    {"id": "wetter", "label": "Wetter"},
+    {"id": "meldebias", "label": "Meldebias"},
+    {"id": "satellit", "label": "Satellit"},
+    {"id": "international", "label": "International"},
+    {"id": "anwendung", "label": "Anwendung"},
+    {"id": "plan", "label": "Plan"}
+  ],
+  "status_bedeutung": {
+    "eingefroren": "Abgeschlossen und mit Prüfsummen eingefroren; wird nicht mehr verändert.",
+    "versiegelt": "Vorab registriert, versiegelter Test genau einmal ausgewertet. Der einzige bestätigende Test des Projekts.",
+    "explorativ": "Auf bereits gesehenen Daten oder ohne bestandenes Gate; Hinweise, keine Bestätigung.",
+    "abgeschlossen": "Vorab registriert und einmal ausgewertet; Ergebnis steht fest.",
+    "demonstration": "Zeigt einen Ablauf an einem Beispielgebiet; keine Gütezahl.",
+    "anwendung": "Wendet ein eingefrorenes Modell an; keine neue Auswertung.",
+    "registriert": "Vorab registriert; Ergebnis liegt noch nicht vor.",
+    "plan": "Plan oder Gerüst ohne Daten und ohne Ergebnis.",
+    "lokal": "Ergebnis liegt nur auf dem Rechner des Projekts, nicht im Repository."
+  },
+  "ausgenommen": {},
+  "studien": [
+    {
+      "id": "baseline", "anker": ["baseline", "experiment"], "titel": "V0 bis V0.3: Baseline", "kurztitel": "V0 Baseline",
+      "datum": "2026-10-14", "status": "eingefroren", "gruppen": ["kern"],
+      "frage": "Lässt sich der gemeldete Hang in einer ersten Stichprobe von 60 Gruppen von fünf ähnlichen Nachbarhängen unterscheiden?",
+      "design": "60 Ereignisgruppen mit je fünf gematchten Kontrollen, Aufteilung in Training, Validierung und Test; Steiermark als getrennter Gebietstest.",
+      "ergebnis": "Der ursprüngliche Test liegt nahe am Zufall und ist inzwischen gesehen. Die Baseline ist mit Prüfsummen eingefroren und dient als Ausgangspunkt aller späteren Versionen.",
+      "grenzen": ["Sehr wenige unabhängige Cluster im Test.", "Test- und Steiermark-Daten sind bereits gesehen."],
+      "bericht": "reports/baseline/BASELINE_STATUS.md",
+      "detail": "baseline",
+      "kennzahlen": [
+        {"label": "Gelände + Wetter, ROC AUC im ursprünglichen Test (logistische Regression)", "art": "auc", "datei": "reports/experiment/metrics.json", "pfad": "models[2].test.roc_auc",
+         "intervall": {"pfad": "models[2].test_interval.roc_auc"}, "einheiten": {"pfad": "models[2].test.clusters"}, "einheiten_label": "unabhängige Cluster"}
+      ]
+    },
+    {
+      "id": "stability_v02", "titel": "V0.2: Stabilität des Wettersignals", "kurztitel": "V0.2 Stabilität",
+      "datum": "2026-10-14", "status": "eingefroren", "gruppen": ["wetter"],
+      "frage": "Bleibt ein Wetterzusatz stabil, wenn Aufteilung und Zufallsstart wechseln?",
+      "design": "4 Folds mal 5 Startwerte, 180 und 260 Trainingsläufe, drei Modellarten.",
+      "ergebnis": "Kein robuster Wetternutzen: Modelle und Maße widersprechen sich im Vorzeichen.",
+      "grenzen": ["Entwicklungsanalyse auf der kleinen Baseline-Stichprobe.", "Für diese Unterschiede ist kein Intervall gespeichert."],
+      "bericht": "reports/stability_v02/summary.md", "verifikation": "reports/stability_v02/verification.json",
+      "link": {"href": "#/studien#baseline", "label": "Abbildungen der Stabilitätsanalyse im Bereich V0 bis V0.3"},
+      "kennzahlen": [
+        {"label": "Wetterzusatz, lokale AUC, Random Forest", "art": "delta", "datei": "reports/stability_v02/public_summary.json", "pfad": "models[1].local_auc_delta"},
+        {"label": "Wetterzusatz, lokale AUC, logistische Regression", "art": "delta", "datei": "reports/stability_v02/public_summary.json", "pfad": "models[0].local_auc_delta"}
+      ]
+    },
+    {
+      "id": "null_v03", "titel": "V0.3: Zufallsreferenz für das Wetter", "kurztitel": "V0.3 Zufallsreferenz",
+      "datum": "2026-10-14", "status": "eingefroren", "gruppen": ["wetter"],
+      "frage": "Ist der beobachtete Wetterbeitrag größer als bei vertauschten Wetterdaten?",
+      "design": "100 Vertauschungen der Wetterreihen zwischen den Gruppen, gleiche Modelle.",
+      "ergebnis": "Das Wetter ist von vertauschten Wetterdaten nicht unterscheidbar.",
+      "grenzen": ["Kleine Baseline-Stichprobe."],
+      "bericht": "reports/null_v03/summary.md",
+      "kennzahlen": [
+        {"label": "kleinster p-Wert gegen Vertauschung (Wetter- und kombinierte Varianten)", "art": "p", "datei": "reports/null_v03/null_summary.json", "pfad": "rows[36].p_upper"}
+      ]
+    },
+    {
+      "id": "v04", "anker": ["v04", "methodik"], "titel": "V0.4: Hauptstudie mit versiegeltem Test", "kurztitel": "V0.4 Hauptstudie",
+      "datum": "2026-10-14", "status": "versiegelt", "gruppen": ["kern", "wetter"],
+      "frage": "Trennt das Gelände den gemeldeten Hang von fünf ähnlichen Nachbarhängen, und bringt Wetter vor dem Stichtag etwas dazu?",
+      "design": "Vorab registriert, 500 Kandidaten zu 423 Gruppen. Kontrollen 750 m bis 10 km entfernt, Neigung ±5°, Höhe ±150 m, Ausrichtung zirkulär ±45°, mindestens 400 m Abstand. Entwicklung auf frühen Episoden, versiegelter Test genau einmal bewertet. Bedingte logistische Regression.",
+      "ergebnis": "Gelände trennt deutlich über Zufall. Der Zusatz durch Wetter ist nicht belegt, weil sein Intervall null einschließt.",
+      "grenzen": ["Nur 11 unabhängige Einheiten im Test; ein Sturm (Stanz 2016) stellt die meisten Ereignisse.", "Ein Teil des Signals kann Meldebias sein (Landbedeckung, Siedlungsnähe).", "Der Test ist jetzt gesehen und steuert keine Auswahl mehr."],
+      "bericht": "reports/v04/summary.md", "verifikation": "reports/v04/verification.json",
+      "detail": "v04",
+      "kennzahlen": [
+        {"label": "Gelände + Wetter, lokale AUC im versiegelten Test", "art": "auc", "datei": "reports/v04/test_results.json", "pfad": "primary.value",
+         "intervall": {"pfad": "primary.ci95"}, "einheiten": {"pfad": "results.conditional_logit/combined.units"}, "bezug": 0.5},
+        {"label": "Gelände allein, lokale AUC im versiegelten Test", "art": "auc", "datei": "reports/v04/test_results.json", "pfad": "results.conditional_logit/static.local_auc_weighted",
+         "intervall": {"pfad": "bootstrap.conditional_logit.static.ci95"}, "einheiten": {"pfad": "results.conditional_logit/static.units"}, "bezug": 0.5},
+        {"label": "Zusatz durch Wetter (Gelände + Wetter minus Gelände)", "art": "delta", "datei": "reports/v04/test_results.json", "pfad": "primary.combined_minus_static.mean",
+         "intervall": {"pfad": "primary.combined_minus_static.ci95"}, "einheiten": {"pfad": "results.conditional_logit/combined.units"}, "bezug": 0}
+      ]
+    },
+    {
+      "id": "v05", "anker": ["v05"], "titel": "V0.5: Zehn ungematchte Umgebungshänge", "kurztitel": "V0.5 Umgebung",
+      "datum": "2026-10-14", "status": "explorativ", "gruppen": ["kern", "wetter"],
+      "frage": "Wie gut unterscheidet sich der gemeldete Hang von zehn beliebigen Hängen der Umgebung?",
+      "design": "Kreuzvalidierung mit räumlicher Sperrzone auf bereits bekannten Ereignissen, fünf Wiederholungen.",
+      "ergebnis": "Höhere Trennung als in V0.4, weil die Vergleichshänge nicht angeglichen sind. Auch hier bringt Wetter keinen belegten Zusatz.",
+      "grenzen": ["Die Spanne der fünf Wiederholungen ist kein Konfidenzintervall.", "Mit gematchten Kontrollen sinkt die Trennung deutlich; ein Teil ist Meldebias."],
+      "bericht": "reports/v05/summary.md", "verifikation": "reports/v05/verification.json",
+      "detail": "v05",
+      "kennzahlen": [
+        {"label": "Gelände + Wetter, lokale AUC (Median aus fünf Wiederholungen)", "art": "auc", "datei": "reports/v05/cv_results.json", "pfad": "primary.median",
+         "intervall": {"pfad": "primary.range"}, "intervall_art": "Spanne der Wiederholungen (kein Konfidenzintervall)", "einheiten": {"pfad": "cohort.units"}, "bezug": 0.5},
+        {"label": "Gelände allein, lokale AUC (Median)", "art": "auc", "datei": "reports/v05/cv_results.json", "pfad": "purged.conditional_logit/static.median.local_auc_units",
+         "intervall": {"pfad": "bootstrap_rep1.conditional_logit.local_auc.static.ci95"}, "intervall_art": "95-%-Intervall der ersten Wiederholung", "einheiten": {"pfad": "cohort.units"}, "bezug": 0.5},
+        {"label": "Zusatz durch Wetter", "art": "delta", "datei": "reports/v05/cv_results.json", "pfad": "primary.combined_minus_static_rep1_bootstrap.mean",
+         "intervall": {"pfad": "primary.combined_minus_static_rep1_bootstrap.ci95"}, "intervall_art": "95-%-Intervall der ersten Wiederholung", "einheiten": {"pfad": "cohort.units"}, "bezug": 0}
+      ]
+    },
+    {
+      "id": "v06", "titel": "V0.6: Hydrologische Regenmerkmale", "kurztitel": "V0.6 Hydrologie",
+      "datum": "2026-10-15", "status": "explorativ", "gruppen": ["wetter"],
+      "frage": "Helfen 23 hydrologisch begründete Regenmerkmale, wo einfache Regensummen nicht helfen?",
+      "design": "Gleiches Design wie V0.5, zusätzliche Merkmale vorab festgelegt.",
+      "ergebnis": "Kein Gewinn: Die Trennung wird mit den zusätzlichen Merkmalen eher kleiner, das Intervall schließt null ein.",
+      "grenzen": ["Bereits gesehene Ereignisse; 1-km-Wetterraster."],
+      "bericht": "reports/v06/summary.md",
+      "kennzahlen": [
+        {"label": "Veränderung durch hydrologische Merkmale", "art": "delta", "datei": "reports/v06/cv_results.json", "pfad": "primary.median",
+         "intervall": {"pfad": "primary.bootstrap_rep1.ci95"}, "intervall_art": "95-%-Intervall der ersten Wiederholung", "einheiten": {"pfad": "cohort.units"}, "bezug": 0},
+        {"label": "Gelände + Wetter + Hydrologie, lokale AUC", "art": "auc", "datei": "reports/v06/cv_results.json", "pfad": "variants.conditional_logit/combined_hydro.median_local_auc_units",
+         "intervall": {"pfad": "variants.conditional_logit/combined_hydro.range_local_auc_units"}, "intervall_art": "Spanne der Wiederholungen (kein Konfidenzintervall)", "einheiten": {"pfad": "variants.conditional_logit/combined_hydro.units"}, "bezug": 0.5}
+      ]
+    },
+    {
+      "id": "v07", "titel": "V0.7: Meldebias durch Straßen und Gebäude", "kurztitel": "V0.7 Meldebias",
+      "datum": "2026-10-15", "status": "explorativ", "gruppen": ["meldebias"],
+      "frage": "Wie viel der Trennung erklärt allein die Nähe zu Straßen und Gebäuden?",
+      "design": "Abstand zu Straßen und Gebäuden aus OpenStreetMap als einziges Merkmal; zusätzlich Kontrollen mit gleicher Erreichbarkeit.",
+      "ergebnis": "Der Abstand zur Infrastruktur trennt allein sehr stark. Bei gleicher Erreichbarkeit trennt das Gelände weiterhin über Zufall.",
+      "grenzen": ["OpenStreetMap-Stand 2026 für Ereignisse ab 2016.", "Eine Korrektur der Abstandsberechnung (V0.7b) ist registriert; ihr Bericht erscheint im Atlas, sobald er integriert ist."],
+      "bericht": "reports/v07/summary.md",
+      "kennzahlen": [
+        {"label": "Abstand zur Infrastruktur allein, lokale AUC", "art": "auc", "datei": "reports/v07/cv_results.json", "pfad": "a_in_model.conditional_logit/infra_only.median_local_auc_units",
+         "intervall": {"pfad": "a_in_model.conditional_logit/paired.infra_only_ci95"}, "einheiten": {"pfad": "a_in_model.conditional_logit/infra_only.units"}, "bezug": 0.5},
+        {"label": "Gelände allein bei gleicher Erreichbarkeit, lokale AUC", "art": "auc", "datei": "reports/v07/cv_results.json", "pfad": "b_equal_visibility.conditional_logit/static.caliper_controls.median_local_auc_units",
+         "intervall": {"pfad": "b_equal_visibility.bootstrap_ci95_caliper_static"}, "einheiten": {"pfad": "b_caliper.units_kept"}, "bezug": 0.5}
+      ]
+    },
+    {
+      "id": "v07b", "titel": "V0.7b: Korrigierte OpenStreetMap-Abstände", "kurztitel": "V0.7b Korrektur",
+      "datum": "2026-10-18", "status": "explorativ", "gruppen": ["meldebias"],
+      "frage": "Wie ändern sich die V0.7-Ergebnisse mit exakt berechneten Abständen zu Straßen und Gebäuden?",
+      "design": "Vorab registrierte Neuberechnung mit exakten Abständen; V0.7 bleibt unverändert.",
+      "ergebnis": "Der Bericht liegt im Branch der Korrektur und erscheint hier nach der Integration.",
+      "grenzen": ["Bereits gesehene Ereignisse; keine neue unabhängige Prüfung."],
+      "bericht": "reports/v07b/summary.md", "verifikation": "reports/v07b/verification.json",
+      "kennzahlen": []
+    },
+    {
+      "id": "v08", "titel": "V0.8: Wann rutscht derselbe Hang?", "kurztitel": "V0.8 Zeitpunkt",
+      "datum": "2026-10-15", "status": "explorativ", "gruppen": ["wetter"],
+      "frage": "Ist der Zeitraum vor dem Ereignis nasser als andere Zeiträume am selben Hang?",
+      "design": "Case-Crossover: derselbe Hang zu Vergleichszeitpunkten 28 und 56 Tage davor und danach.",
+      "ergebnis": "Ereigniszeiten sind deutlich nasser als Vergleichszeiten. Das ist ein Zusammenhang mit dem Zeitpunkt, keine Aussage über einen einzelnen Hang.",
+      "grenzen": ["Bereits gesehene Ereignisse; Meldezeitpunkt und Regen können zusammenhängen."],
+      "bericht": "reports/v08/summary.md",
+      "kennzahlen": [
+        {"label": "Wetter vor dem Ereignis gegen Vergleichszeiten, lokale AUC", "art": "auc", "datei": "reports/v08/cv_results.json", "pfad": "variants.conditional_logit/temporal.median_local_auc_units",
+         "intervall": {"pfad": "variants.conditional_logit/temporal.ci95_rep1"}, "intervall_art": "95-%-Intervall der ersten Wiederholung", "einheiten": {"pfad": "cohort.units"}, "bezug": 0.5}
+      ]
+    },
+    {
+      "id": "v09", "titel": "V0.9: Ungesehene Episoden aus neuen Quellen", "kurztitel": "V0.9 Neue Episoden",
+      "datum": "2026-10-15", "status": "explorativ", "gruppen": ["kern", "wetter"],
+      "frage": "Hält das Ergebnis auf Episoden, die keine frühere Version gesehen hat?",
+      "design": "Neue Ereignisse aus Medienberichten und aus dem Kärntner Ereigniskataster, einmal bewertet mit den eingefrorenen Modellen.",
+      "ergebnis": "Gelände trennt auch hier über Zufall; Wetter bringt keinen belegten Zusatz. Die Prozessprüfung der Medienmeldungen ist gescheitert, deshalb nur explorativ.",
+      "grenzen": ["Weniger als 15 unabhängige Einheiten; Gate der Prozessprüfung nicht bestanden."],
+      "bericht": "reports/v09/summary.md", "verifikation": "reports/v09/verification.json",
+      "kennzahlen": [
+        {"label": "Gelände allein, Medien-Episoden, lokale AUC", "art": "auc", "datei": "reports/v09/test_results.json", "pfad": "primary.static.local_auc_weighted",
+         "intervall": {"pfad": "bootstrap.refit_all/media/conditional_logit.static.ci95"}, "einheiten": {"pfad": "primary.media_units"}, "bezug": 0.5},
+        {"label": "Zusatz durch Wetter", "art": "delta", "datei": "reports/v09/test_results.json", "pfad": "primary.combined_minus_static.mean",
+         "intervall": {"pfad": "primary.combined_minus_static.ci95"}, "einheiten": {"pfad": "primary.media_units"}, "bezug": 0}
+      ]
+    },
+    {
+      "id": "extremwetter", "anker": ["extremwetter_v01"], "titel": "Extremwetter am Ereignisort", "kurztitel": "Extremwetter",
+      "datum": "2026-10-18", "status": "explorativ", "gruppen": ["wetter"],
+      "frage": "War der Niederschlag vor dem Ereignistag am selben Ort extremer als an gewöhnlichen Tagen derselben Jahreszeit?",
+      "design": "Derselbe 1-km-Punkt an verschiedenen Tagen (SPARTACUS), Referenz ±15 Kalendertage 1991–2025, Episoden gleich gewichtet.",
+      "ergebnis": "Vor Ereignissen liegt der Regen deutlich öfter über dem örtlichen 95. Perzentil. Der vorab festgelegte Mittelwerttest ist knapp nicht erfüllt.",
+      "grenzen": ["Alle Ereignisse bereits gesehen.", "Zusammenhang, keine Ursache; Meldebias nicht trennbar."],
+      "bericht": "reports/extremwetter_v01/summary.md",
+      "detail": "extremwetter",
+      "kennzahlen": [
+        {"label": "Anteil der Episoden über dem örtlichen 95. Perzentil (3 Tage)", "art": "anteil", "datei": "reports/extremwetter_v01/comparisons.json", "pfad": "rows[1].share_q95",
+         "intervall": {"pfad": "rows[1].share_q95_ci95"}, "einheiten": {"pfad": "rows[1].n_episodes"}, "einheiten_label": "Episoden", "bezug": 0.05, "bezug_label": "erwartet"},
+        {"label": "Ratenverhältnis gegenüber gewöhnlichen Tagen", "art": "faktor", "datei": "reports/extremwetter_v01/comparisons.json", "pfad": "rows[1].rate_ratio_q95",
+         "intervall": {"pfad": "rows[1].rate_ratio_q95_ci95"}, "einheiten": {"pfad": "rows[1].n_episodes"}, "einheiten_label": "Episoden"},
+        {"label": "Mittlerer Rang des Ereignisregens (vorab festgelegt)", "art": "auc", "datei": "reports/extremwetter_v01/comparisons.json", "pfad": "rows[1].mean_pr",
+         "intervall": {"pfad": "rows[1].mean_pr_ci95"}, "einheiten": {"pfad": "rows[1].n_episodes"}, "einheiten_label": "Episoden", "bezug": 0.5, "bezug_label": "gewöhnlich"}
+      ]
+    },
+    {
+      "id": "hangmuren_pilot", "titel": "Pilot: reine Hangmuren", "kurztitel": "Hangmuren-Pilot",
+      "datum": "2026-10-18", "status": "lokal", "gruppen": ["kern"],
+      "frage": "Trennt das Gelände auch bei eindeutig als Hangmure gemeldeten Ereignissen?",
+      "design": "Pilot auf bereits bekannten Ereignissen, Gelände allein, Einheiten gleich gewichtet.",
+      "ergebnis": "Bei reinen Hangmuren trennt das Gelände kaum; das Intervall schließt den Zufallswert ein.",
+      "grenzen": ["Pilot, explorativ, bereits bekannte Daten.", "Bericht und Daten liegen nur lokal."],
+      "bericht": "reports/mudslide_cascade_v01/summary.md", "verifikation": "reports/mudslide_cascade_v01/verification.json",
+      "kennzahlen": [
+        {"label": "Gelände allein, lokale AUC", "art": "auc", "datei": "reports/mudslide_cascade_v01/context_results.json", "pfad": "primary.local_auc_units",
+         "intervall": {"pfad": "auc_ci95"}, "einheiten": {"pfad": "primary.units"}, "bezug": 0.5}
+      ]
+    },
+    {
+      "id": "anfaelligkeit_at_v01", "titel": "Hangmuren-Anfälligkeit Österreich", "kurztitel": "Anfälligkeit AT",
+      "datum": "2026-10-18", "status": "registriert", "gruppen": ["kern", "plan"],
+      "frage": "Ordnet ein statisches Modell genau verortete reine Hangmuren in ungesehenen Gebieten besser als die Neigung allein?",
+      "design": "Vorab registriert: Leave-one-area-out über die genau verorteten Hangmuren des Inventars, Vergleich mit Neigung allein.",
+      "ergebnis": "Registriert, Pipeline und Sicherheitstests liegen vor; das Experiment ist noch nicht gelaufen.",
+      "grenzen": ["Noch kein Ergebnis."],
+      "bericht": "reports/anfaelligkeit_at_v01/summary.md",
+      "link": {"href": "#/studien#plan_training", "label": "Trainingsplan für alle Inventardaten"},
+      "kennzahlen": []
+    },
+    {
+      "id": "plan_training", "titel": "Trainingsplan für alle Inventardaten", "kurztitel": "Trainingsplan",
+      "datum": "2026-10-18", "status": "plan", "gruppen": ["plan"],
+      "frage": "Wie lassen sich alle Inventardaten nutzen, ohne Test und Entwicklung zu vermischen?",
+      "design": "Plan mit Gates, Einheiten und Reihenfolge; Grundlage der Registrierung der Hangmuren-Anfälligkeit.",
+      "bericht": "reports/weiterentwicklung_2026-10-18/TRAININGSPLAN_ALLE_INVENTARDATEN.md",
+      "kennzahlen": []
+    },
+    {
+      "id": "gebietstest", "anker": ["wirkungskette_gebietstest_v01"], "titel": "Gebietstest der Prüfstufen", "kurztitel": "Gebietstest",
+      "datum": "2026-10-18", "status": "registriert", "gruppen": ["kern", "anwendung"],
+      "frage": "Ordnen die Prüfstufen in ungesehenen Hangmuren-Gebieten besser als die Neigung allein?",
+      "design": "Vorab registrierter Test an Gebieten, die kein Modell gesehen hat (u. a. Vorarlberg und Tirol 2005).",
+      "ergebnis": "Der Bericht liegt im Branch des Gebietstests und erscheint hier nach der Integration.",
+      "grenzen": ["Noch nicht integriert."],
+      "bericht": "reports/wirkungskette_gebietstest_v01/summary.md",
+      "kennzahlen": []
+    },
+    {
+      "id": "satellite", "anker": ["satellit", "pipeline_b"], "titel": "Pipeline B: Sentinel-2 vorher und nachher", "kurztitel": "Satellit",
+      "datum": "2026-10-14", "status": "explorativ", "gruppen": ["satellit"],
+      "frage": "Ist ein frischer Rutschungshang auf Satellitenbildern nach dem Ereignis von seinen Kontrollhängen zu unterscheiden, und lassen sich so unbekannte Rutschungen finden?",
+      "design": "Getrennt von der Kernfrage: nutzt absichtlich Bilder nach dem Ereignis. 2018 und später, Lagegenauigkeit bis 20 m.",
+      "ergebnis": "Ereignis und Kontrolle sind auf den Bildern gut zu unterscheiden. Die Suche nach unbekannten Rutschungen findet bekannte Ereignisse nur mäßig; neue Kandidaten sind nicht bestätigt.",
+      "grenzen": ["Für die AUC ist kein Intervall gespeichert, nur drei Wiederholungen.", "Wolken- und Dunstränder dominieren die Kandidatenliste."],
+      "bericht": "reports/satellite/baseline_results.md",
+      "detail": "satellite",
+      "kennzahlen": [
+        {"label": "Ereignis gegen Kontrolle auf Bildern, AUC in der Gruppe (logistische Regression)", "art": "auc", "datei": "reports/satellite/baseline_results.json", "pfad": "models.change_features/logistic_regression.within_group_auc.mean",
+         "einheiten": {"pfad": "dataset.independence_units"}},
+        {"label": "95-%-Grenze bei vertauschten Etiketten", "art": "auc", "datei": "reports/satellite/baseline_results.json", "pfad": "permutation_null.null_95"},
+        {"label": "Wiedergefundene bekannte Ereignisse (beliebiger Rang)", "art": "zahl", "datei": "reports/satellite/heldout_discovery_results.json", "pfad": "detected_any_rank",
+         "einheiten": {"pfad": "independence_units"}}
+      ]
+    },
+    {
+      "id": "satellite_nn_v01", "titel": "Neuronale Murensuche", "kurztitel": "Neuronale Suche",
+      "datum": "2026-10-17", "status": "plan", "gruppen": ["satellit", "plan"],
+      "frage": "Kann ein neuronales Netz frische Muren auf Satellitenbildern verlässlich markieren?",
+      "design": "Gerüst mit Kachelung, Entscheidungslogik und Tests; keine Daten, kein Training, nicht registriert.",
+      "bericht": "reports/weiterentwicklung_2026-10-17/NEURONALE_MURENSUCHE_PLAN.md",
+      "kennzahlen": []
+    },
+    {
+      "id": "susceptibility_v01", "titel": "Anfälligkeit international: Übertragung zwischen Regionen", "kurztitel": "International v01",
+      "datum": "2026-10-17", "status": "abgeschlossen", "gruppen": ["international"],
+      "frage": "Überträgt ein Geländemodell zwischen Erdbebengebieten in Nepal besser als die Neigung allein?",
+      "design": "Polygoninventare Gorkha 2015 und Far-Western Nepal, Leave-one-inventory-out, vorab registriert.",
+      "ergebnis": "Kein belegter Vorteil gegenüber der Neigung allein; das Gate ist nicht bestanden.",
+      "grenzen": ["Ein dokumentierter Fehler (Höhenkacheln bis 15 m verschoben) bleibt in v01 unverändert."],
+      "bericht": "reports/susceptibility_v01/PHASE4_GATE.md",
+      "kennzahlen": [
+        {"label": "Vorteil gegenüber Neigung allein, AUC", "art": "delta", "datei": "reports/susceptibility_v01/phase4_loio_results.json", "pfad": "primary_minus_other_mean_auc.slope_only.point",
+         "intervall": {"pfad": "primary_minus_other_mean_auc.slope_only.interval_95"}, "bezug": 0},
+        {"label": "Geländemodell (Gradient Boosting), AUC", "art": "auc", "datei": "reports/susceptibility_v01/phase4_loio_results.json", "pfad": "mean_auc.hist_gradient_boosting.point",
+         "intervall": {"pfad": "mean_auc.hist_gradient_boosting.interval_95"}, "bezug": 0.5}
+      ]
+    },
+    {
+      "id": "susceptibility_v02", "titel": "Anfälligkeit international: je Auslöser", "kurztitel": "International v02",
+      "datum": "2026-10-18", "status": "abgeschlossen", "gruppen": ["international"],
+      "frage": "Hilft Gelände zusätzlich zur Bodenbeschleunigung, Rutschungen nach dem Iburi-Erdbeben 2018 zu ordnen?",
+      "design": "Vorab registriert, einmal auf Iburi (Japan) bewertet; der Regenarm war mangels Kartierumriss nicht testbar.",
+      "ergebnis": "Gelände plus Bodenbeschleunigung ist nicht besser als Neigung plus Bodenbeschleunigung; die Hypothese ist nicht gestützt.",
+      "grenzen": ["Iburi ist jetzt gesehen.", "Regenarm nicht testbar."],
+      "bericht": "reports/susceptibility_v02/PHASE4_RESULTS.md",
+      "kennzahlen": [
+        {"label": "Gelände + Bodenbeschleunigung minus Neigung + Bodenbeschleunigung, AUC", "art": "delta", "datei": "reports/susceptibility_v02/phase4_results.json", "pfad": "hypotheses.H1_EQ.point",
+         "intervall": {"pfad": "hypotheses.H1_EQ.interval_95"}, "einheiten": {"pfad": "confirmatory.independent_units_5km_blocks"}, "einheiten_label": "unabhängige 5-km-Blöcke", "bezug": 0},
+        {"label": "Gelände + Bodenbeschleunigung, AUC", "art": "auc", "datei": "reports/susceptibility_v02/phase4_results.json", "pfad": "confirmatory.metrics.EQ_TERRAIN_PGA.roc_auc",
+         "intervall": {"pfad": "confirmatory.auc_interval_95.EQ_TERRAIN_PGA"}, "einheiten": {"pfad": "confirmatory.independent_units_5km_blocks"}, "einheiten_label": "unabhängige 5-km-Blöcke", "bezug": 0.5}
+      ]
+    },
+    {
+      "id": "wirkungskette_v01", "anker": ["wirkungskette"], "titel": "Wirkungskette: Prüfpunkt, Auslauf, Infrastruktur", "kurztitel": "Wirkungskette v01",
+      "datum": "2026-10-18", "status": "demonstration", "gruppen": ["anwendung"],
+      "frage": "Wie führt man vom auffälligen Hang zum möglichen Fließweg und zur betroffenen Straße, ohne mehr zu behaupten als belegt ist?",
+      "design": "Demogebiet Stanz (25.07.2016, gesehener Test). Prüfstufen aus dem eingefrorenen V0.4-Geländemodell, Auslauf als Route nach steilstem Gefälle mit Reichweiten aus der Literatur, Infrastruktur aus OpenStreetMap.",
+      "ergebnis": "Die Prüfstufen bündeln die Stanz-Ereignisse nicht. Der Auslauf ist eine unvalidierte Illustration.",
+      "grenzen": ["Ein Demogebiet; keine Gütezahl.", "Auslauf unvalidiert; Infrastruktur heutiger Stand."],
+      "bericht": "reports/wirkungskette_v01/summary.md",
+      "link": {"href": "#/so-funktionierts#wirkungskette", "label": "Wirkungskette Stanz interaktiv ansehen"},
+      "kennzahlen": []
+    },
+    {
+      "id": "wirkungskette_v02", "titel": "Wirkungskette: Gegenprobe an Schadensmeldungen", "kurztitel": "Gegenprobe v02",
+      "datum": "2026-10-18", "status": "demonstration", "gruppen": ["anwendung", "meldebias"],
+      "frage": "Liegt bei gemeldeten Schäden (Gasen) eine Straße im Auslaufszenario?",
+      "design": "24 Schadensmeldungen, Straße im kürzesten und längsten Szenario, dazu der Abstand der Meldung zur nächsten Straße.",
+      "ergebnis": "Fast immer liegt eine Straße im Szenario, aber fast alle Meldepunkte liegen schon direkt an einer Straße.",
+      "grenzen": ["2–3 unabhängige Einheiten, beschreibend."],
+      "bericht": "reports/wirkungskette_v02/gegenprobe.md",
+      "kennzahlen": [
+        {"label": "Schäden mit Straße im kürzesten Szenario", "art": "zahl", "datei": "reports/wirkungskette_v02/gegenprobe.json", "pfad": "sets.primaer.tabellen.verkehr_strasse.kuerzestes.schaden_ja_szenario_ja"},
+        {"label": "Meldepunkte höchstens 25 m neben einer Straße", "art": "zahl", "datei": "reports/wirkungskette_v02/gegenprobe.json", "pfad": "sets.primaer.kontext.Verkehrsanlagen_1_strasse_am_punkt.innerhalb_halbbreite",
+         "einheiten": {"pfad": "sets.primaer.kontext.Verkehrsanlagen_1_strasse_am_punkt.n"}, "einheiten_label": "Meldepunkte gesamt"}
+      ]
+    },
+    {
+      "id": "wirkungskette_v03", "titel": "Wirkungskette: Nullreferenz", "kurztitel": "Nullreferenz v03",
+      "datum": "2026-10-18", "status": "demonstration", "gruppen": ["anwendung", "meldebias"],
+      "frage": "Wie oft liegt eine Straße im Szenario, wenn man von Hängen ohne Meldung startet?",
+      "design": "500 Hangzellen ohne Meldung, gleiche Szenarien, Intervall über räumliche Blöcke.",
+      "ergebnis": "Auch ohne Meldung liegt im längsten Szenario meist eine Straße, aber nur wenige Punkte liegen direkt daneben. Die Übereinstimmung entsteht an der Meldeposition, nicht im Auslauf.",
+      "grenzen": ["Beschreibend; Szenarien unvalidiert."],
+      "bericht": "reports/wirkungskette_v03/nullreferenz.md",
+      "kennzahlen": [
+        {"label": "Hänge ohne Meldung mit Straße im längsten Szenario", "art": "anteil", "datei": "reports/wirkungskette_v03/nullreferenz.json", "pfad": "vergleiche[1].referenz.anteil",
+         "intervall": {"pfad": "vergleiche[1].referenz.intervall_95"}, "einheiten": {"pfad": "vergleiche[1].referenz.bloecke"}, "einheiten_label": "räumliche Blöcke"},
+        {"label": "Hänge ohne Meldung höchstens 25 m neben einer Straße", "art": "anteil", "datei": "reports/wirkungskette_v03/nullreferenz.json", "pfad": "vergleiche[2].referenz.anteil",
+         "intervall": {"pfad": "vergleiche[2].referenz.intervall_95"}, "einheiten": {"pfad": "vergleiche[2].referenz.bloecke"}, "einheiten_label": "räumliche Blöcke"}
+      ]
+    },
+    {
+      "id": "hangmap_v01", "anker": ["hangkarte"], "titel": "Hangkarte, der Vorgänger des Hang-Checks", "kurztitel": "Hangkarte",
+      "datum": "2026-10-17", "status": "anwendung", "gruppen": ["anwendung"],
+      "frage": "Wie verteilt das eingefrorene V0.5-Geländemodell relative Anteile auf Hänge eines frei gewählten Gebiets?",
+      "design": "Anwendung des V0.5-Modells (Gelände, Landbedeckung, Geologie) auf eine 3D-Ansicht; nur relative Anteile innerhalb einer Vergleichsgruppe.",
+      "ergebnis": "Keine neue Studie. Der Hang-Check ersetzt die Hangkarte im Alltag und nutzt das strengere V0.4-Modell.",
+      "grenzen": ["Die hohe V0.5-Trennung ist teils Meldebias; die Anteile hängen stark an der Landbedeckung."],
+      "bericht": "reports/hangmap_v01/summary.md",
+      "detail": "hangkarte",
+      "kennzahlen": []
+    },
+    {
+      "id": "hangcheck_v01", "titel": "Hang-Check bei Starkregen", "kurztitel": "Hang-Check",
+      "datum": "2026-10-18", "status": "anwendung", "gruppen": ["anwendung"],
+      "frage": "Welche Hänge in einem gewählten Umkreis sieht man bei Starkregen zuerst an?",
+      "design": "Anwendung des eingefrorenen V0.4-Geländemodells, Prüfstufen relativ im Umkreis, fünf Prüfpunkte mindestens 300 m auseinander. Kein Wetter, kein Training, kein Test.",
+      "ergebnis": "Werkzeug, keine Studie: Es ordnet Hänge, es sagt nicht, ob oder wann einer abgeht.",
+      "grenzen": ["Nicht markiert heißt nicht sicher.", "Kein Wetter im Modell; Meldebias möglich."],
+      "link": {"href": "#/check", "label": "Hang-Check öffnen"},
+      "kennzahlen": []
+    }
+  ]
+}

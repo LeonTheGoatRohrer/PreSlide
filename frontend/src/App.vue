@@ -8,6 +8,7 @@ import StartPage from './pages/StartPage.vue'
 const AboutPage = defineAsyncComponent(() => import('./pages/AboutPage.vue'))
 const InterimPage = defineAsyncComponent(() => import('./pages/InterimPage.vue'))
 const CheckPage = defineAsyncComponent(() => import('./pages/CheckPage.vue'))
+const AtlasPage = defineAsyncComponent(() => import('./pages/AtlasPage.vue'))
 const SearchPalette = defineAsyncComponent(() => import('./ui/SearchPalette.vue'))
 
 const route = ref(resolveRoute(location.hash))
@@ -54,8 +55,9 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', changed))
   <main id="inhalt" ref="main" tabindex="-1" class="site-main">
     <StartPage v-if="route.page === 'start'"/>
     <CheckPage v-else-if="isCheck" :params="route.params"/>
+    <AtlasPage v-else-if="route.page === 'studien'" :anchor="route.anchor"/>
     <AboutPage v-else-if="route.page === 'ueber'"/>
-    <InterimPage v-else :which="route.page" :anchor="route.anchor"/>
+    <InterimPage v-else :which="route.page"/>
   </main>
   <SiteFooter v-if="!isCheck"/>
   <SearchPalette v-if="palette" @close="palette = false" @select="selectPlace"/>

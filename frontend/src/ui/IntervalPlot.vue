@@ -25,16 +25,16 @@ const aria = computed(() => `${props.label}: ${show(props.value)}, Intervall ${s
       <span class="ivp-ref" :style="{left: pct(reference) + '%'}"></span>
       <span class="ivp-ci" :style="{left: pct(interval[0]) + '%', width: (pct(interval[1]) - pct(interval[0])) + '%'}"></span>
       <span class="ivp-dot" :style="{left: pct(value) + '%'}"></span>
+      <span class="ivp-ref-label" aria-hidden="true" :style="{left: pct(reference) + '%', transform: `translateX(${pct(reference) < 18 ? '-6px' : pct(reference) > 82 ? 'calc(-100% + 6px)' : '-50%'})`}">{{ referenceLabel }} {{ show(reference) }}</span>
     </div>
     <div class="ivp-axis" aria-hidden="true">
       <span>{{ show(min) }}</span>
-      <span class="ivp-ref-label" :style="{left: pct(reference) + '%'}">{{ referenceLabel }} {{ show(reference) }}</span>
       <span>{{ show(max) }}</span>
     </div>
   </div>
 </template>
 <style>
-.ivp{--c:var(--moss);width:100%;padding-top:6px}
+.ivp{--c:var(--moss);width:100%;padding-top:22px}
 .ivp-grey{--c:var(--ink-2)}
 .ivp-glacier{--c:var(--glacier)}
 .ivp-track{position:relative;height:28px}
@@ -43,7 +43,8 @@ const aria = computed(() => `${props.label}: ${show(props.value)}, Intervall ${s
 .ivp-dot{position:absolute;top:50%;width:16px;height:16px;border-radius:50%;background:var(--c);transform:translate(-50%,-50%);box-shadow:0 0 0 3px var(--card)}
 .ivp-ref{position:absolute;top:0;bottom:0;width:0;border-left:1.5px dashed var(--ink-2)}
 .ivp-axis{position:relative;display:flex;justify-content:space-between;margin-top:6px;font:400 12.5px/1.2 var(--f-mono);color:var(--ink-2);font-variant-numeric:tabular-nums}
-.ivp-ref-label{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap;background:inherit}
+.ivp-ref-label{position:absolute;top:-20px;white-space:nowrap;font:400 12px/1.2 var(--f-mono);color:var(--ink-2)}
+.dark .ivp-ref-label{color:var(--on-dark-2)}
 .dark .ivp-track::before{background:rgb(255 255 255 / .2)}
 .dark .ivp-dot{box-shadow:0 0 0 3px var(--slate-700)}
 .dark .ivp-ref{border-color:var(--on-dark-2)}
