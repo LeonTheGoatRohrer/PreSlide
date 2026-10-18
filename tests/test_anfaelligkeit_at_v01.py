@@ -148,6 +148,20 @@ def test_block_cache_identity_and_checksum(tmp_path, monkeypatch):
     assert set(terrain.compute_block('srtm', 1, 2)) == set(terrain.TERRAIN)
 
 
+# 7. exact nearest-infrastructure distance even when samples lie close together (regression: V0.7 accumulator)
+def test_nearest_vertex_distance_is_exact_for_clustered_samples():
+    from preslide.anfaelligkeit_at_v01.infrastructure import NearestVertex
+    from preslide.v07.infrastructure import densify
+    road = densify(np.array([[0.0, 0.0], [2000.0, 0.0]]))           # straight road along y = 0
+    samples = np.array([[1000.0, 10.0], [1000.0, 100.0], [1000.0, 100.0], [1000.0, 6000.0]])
+    acc = NearestVertex(samples, cap_m=5000, chunk=10)
+    for i in range(0, len(road), 7):
+        acc.add(road[i:i + 7])
+    d, capped = acc.result()
+    assert d[:3] == pytest.approx([10.0, 100.0, 100.0], abs=0.5)     # densified to 25 m: nearest vertex at x = 1000
+    assert capped.tolist() == [False, False, False, True] and d[3] == 5000
+
+
 # supporting rules
 def test_deduplication_and_priority():
     x0, y0 = 500_000.0, 400_000.0

@@ -1,0 +1,22 @@
+{
+ "amendment": 2,
+ "version": "anfaelligkeit_at_v01",
+ "written_at_utc": "2026-10-18T12:58:29.095528+00:00",
+ "written_before": "any model fit or score on the full sample sets and any reporting-bias result; only the 5-area technical pilot (without OSM distances) had been run",
+ "config_sha256_unchanged": "d1c8ed691d35a9ef8b3dcddda4a4a70a653ec491440df12228be22ba6c984fa2",
+ "changes": [
+  {
+   "what": "OSM nearest-distance algorithm (implementation bug, definitions unchanged)",
+   "finding": "The V0.7 accumulator (preslide.v07.infrastructure.RunningMinimum) assigns every OSM vertex only to its single nearest sample. A sample whose nearest vertex is even nearer to another sample is never updated and its distance is overestimated, up to the 5000 m cap. On the first full run (both variants streamed together, so most samples appear twice with identical coordinates) the median distance was the cap (5000 m); a 4-sample test reproduces it (samples 10 m and 100 m from a road: V0.7 returns 10 m and 5000 m).",
+   "fix": "preslide/anfaelligkeit_at_v01/infrastructure.py: every buffered vertex chunk gets its own KD-tree that all samples query; the running minimum is the exact nearest-vertex distance. Building/road definitions, densification (25 m) and the cap (5000 m) are the registered V0.7 ones. Regression test test_nearest_vertex_distance_is_exact_for_clustered_samples with the V0.7 behaviour as injected bug.",
+   "use_of_wrong_values": "none: the wrong table was overwritten before any analysis used it; the pilot-1 table (40 samples) was also computed with the V0.7 accumulator and is not used",
+   "consequence_outside_this_version": "V0.7 (frozen, not changed here) used the same accumulator on samples 0.75-10 km apart; its control distances may be overestimated where a positive or another control lies nearer to the same road or building. Reported as a follow-up, not corrected in V0.7."
+  },
+  {
+   "what": "CORINE retrieval (implementation, rule unchanged)",
+   "change": "point queries were replaced by polygon queries per 10 km EPSG:3035 tile (native CRS, paged) with the same rule: exactly one covering polygon, else missing",
+   "check": "488 of 488 pilot samples identical to the point-query codes (CLC2012 and CLC2018 areas)",
+   "reason": "point queries ran at about 37 per minute (about 3 h for 7080 SRTM samples)"
+  }
+ ]
+}

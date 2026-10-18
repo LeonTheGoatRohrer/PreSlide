@@ -3,10 +3,14 @@ import json
 
 import numpy as np
 import pandas as pd
-from shapely import points
+from pyproj import Transformer
+from shapely import STRtree, points
 
 from ..v04 import context as v04_context
 from .http import cached_json
+
+TO_3035 = Transformer.from_crs('EPSG:4326', 'EPSG:3035', always_xy=True)
+TILE_3035_M = 10000
 
 GEO = ['geo_carbonate', 'geo_clastic_rock', 'geo_unconsolidated', 'geo_low_grade_metamorphic', 'geo_crystalline_other']
 LC = ['lc_forest', 'lc_grass_shrub', 'lc_agriculture', 'lc_open_bare', 'lc_artificial_water_other']
@@ -46,18 +50,41 @@ def geology(lon, lat, cfg: dict) -> pd.Series:
     return pd.Series(out, dtype=object)
 
 
-def land_cover(lon, lat, vintages, cfg: dict) -> pd.DataFrame:
+def _clc_tile(url, field, tx, ty):
+    """All CORINE polygons intersecting one 10 km EPSG:3035 tile (native CRS, exact geometry), paged and cached."""
+    env = {'xmin': tx * TILE_3035_M, 'ymin': ty * TILE_3035_M, 'xmax': (tx + 1) * TILE_3035_M, 'ymax': (ty + 1) * TILE_3035_M,
+           'spatialReference': {'wkid': 3035}}
+    geoms, codes, offset = [], [], 0
+    while True:
+        r = cached_json(url, {'geometry': json.dumps(env), 'geometryType': 'esriGeometryEnvelope', 'inSR': '3035', 'outSR': '3035',
+                              'spatialRel': 'esriSpatialRelIntersects', 'outFields': field, 'returnGeometry': 'true',
+                              'resultOffset': str(offset), 'resultRecordCount': '1000', 'orderByFields': 'OBJECTID'}, min_interval_s=0.2)
+        for feat in r.get('features', []):
+            rings = feat['geometry']['rings']
+            geoms.append(v04_context._rings(rings))
+            codes.append(feat['attributes'][field])
+        if not r.get('exceededTransferLimit'):
+            return geoms, codes
+        offset += len(r['features'])
+
+
+def land_cover_tiles(lon, lat, vintages, cfg: dict) -> pd.DataFrame:
+    """CORINE class per point: exactly one covering polygon, else missing (V0.4 rule). Polygons are fetched per 10 km
+    EPSG:3035 tile (checked against V0.4-style point queries on the 488 pilot samples: 488/488 identical codes)."""
     lc = cfg['features']['land_cover']
-    rows = []
-    for x, y, vintage in zip(lon, lat, vintages):
-        if vintage is None:
-            rows.append({'clc_code': None, 'land_cover_class': None})
-            continue
-        url, field = lc['services'][vintage]
-        r = cached_json(url, {'geometry': json.dumps({'x': round(float(x), 7), 'y': round(float(y), 7), 'spatialReference': {'wkid': 4326}}),
-                              'geometryType': 'esriGeometryPoint', 'inSR': '4326', 'spatialRel': 'esriSpatialRelIntersects',
-                              'outFields': field, 'returnGeometry': 'false'}, min_interval_s=0.2)
-        codes = {f['attributes'][field] for f in r.get('features', [])}
-        code = codes.pop() if len(codes) == 1 else None
-        rows.append({'clc_code': code, 'land_cover_class': v04_context.clc_class(code, lc['classes']) if code is not None else None})
-    return pd.DataFrame(rows)
+    x, y = TO_3035.transform(np.asarray(lon, float), np.asarray(lat, float))
+    out = pd.DataFrame({'clc_code': [None] * len(x), 'land_cover_class': [None] * len(x)}, dtype=object)
+    vint = pd.Series(vintages, dtype=object)
+    keys = pd.DataFrame({'v': vint, 'tx': np.floor(x / TILE_3035_M).astype(int), 'ty': np.floor(y / TILE_3035_M).astype(int)})
+    for (v, tx, ty), g in keys[vint.notna()].groupby(['v', 'tx', 'ty']):
+        url, field = lc['services'][v]
+        geoms, codes = _clc_tile(url, field, tx, ty)
+        tree = STRtree(geoms) if geoms else None
+        for i in g.index:
+            p = points(x[i], y[i])
+            hits = {codes[j] for j in tree.query(p) if geoms[j].covers(p)} if tree is not None else set()
+            if len(hits) == 1:
+                code = hits.pop()
+                out.at[i, 'clc_code'] = code
+                out.at[i, 'land_cover_class'] = v04_context.clc_class(code, lc['classes'])
+    return out

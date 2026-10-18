@@ -35,8 +35,10 @@ def assemble(variant: str, areas: int = 0) -> pd.DataFrame:
     samples = load(DATA / f'samples_{t}.parquet')
     ctx = load(DATA / f'context_{t}.parquet')
     infra = load(DATA / f'infra_{t}.parquet')
-    if samples is None or ctx is None or infra is None:
+    if samples is None or ctx is None or (infra is None and not areas):
         raise RuntimeError(f'missing checkpoints for {t}')
+    if infra is None:       # pilot only: the OSM chain was verified on pilot 1; reporting-bias analyses are skipped
+        infra = pd.DataFrame({'sample_id': samples.sample_id, 'dist_infrastructure_m': np.nan})
     data = samples.merge(ctx, on='sample_id', how='left', validate='1:1').merge(infra, on='sample_id', how='left', validate='1:1')
     if len(data) != len(samples) or data.sample_id.duplicated().any():
         raise ValueError('sample join changed the row count')
@@ -225,7 +227,7 @@ def run(variant: str, areas: int = 0) -> dict:
     if len(eval_areas) > 2:
         results['without_largest_area'] = summarise(table[table.area_id != largest], cfg)
     # secondary 8, 9: reporting bias
-    results['reporting_bias'] = reporting_bias(data, pred, eval_areas, cfg)
+    results['reporting_bias'] = reporting_bias(data, pred, eval_areas, cfg) if data.dist_infrastructure_m.notna().all() else None
     # secondary 10: DEM date description
     years = data[data.label == 1].groupby('area_id').year.agg(lambda s: s.dropna().min() if s.notna().all() else np.nan)
     late = [a for a in eval_areas if pd.notna(years.get(a)) and years[a] >= 2017]

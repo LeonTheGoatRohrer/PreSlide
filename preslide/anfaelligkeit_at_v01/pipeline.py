@@ -131,7 +131,7 @@ def stage_context(variant: str, areas: int = 0):
         v = {context.clc_vintage(y) for y in g.year}
         vint[a] = v.pop() if len(v) == 1 and None not in v else None
     vintages = samples.area_id.map(vint).where(samples.area_id.map(vint).notna(), None).tolist()
-    lc = context.land_cover(samples.lon, samples.lat, vintages, cfg)
+    lc = context.land_cover_tiles(samples.lon, samples.lat, vintages, cfg)
     out = pd.DataFrame({'sample_id': samples.sample_id, 'geology_class': geo.to_numpy(), 'clc_vintage': vintages,
                         'clc_code': lc.clc_code.to_numpy(), 'land_cover_class': lc.land_cover_class.to_numpy()})
     counts = {'geology_missing': int(out.geology_class.isna().sum()), 'lc_areas': {a: v for a, v in vint.items() if v},
@@ -145,6 +145,7 @@ def stage_context(variant: str, areas: int = 0):
 def stage_infra(variant: str, areas: int = 0):
     """OSM distances (reporting-bias control only). variant 'both' streams the extract once for srtm and skadi."""
     from ..v07 import infrastructure as v07
+    from .infrastructure import extract
     cfg = config()
     expected = cfg['reporting_bias_control']['source'].split('sha256 ')[1].split(',')[0]
     if sha(v07.PBF) != expected:
@@ -152,7 +153,7 @@ def stage_infra(variant: str, areas: int = 0):
     tags = [tag(v, areas) for v in (('srtm', 'skadi') if variant == 'both' else (variant,))]
     tables = {t: load(DATA / f'samples_{t}.parquet') for t in tags}
     xy = np.vstack([s[['x', 'y']].to_numpy(float) for s in tables.values()])
-    (road, road_cap), (bld, bld_cap), counts = v07.extract(xy, {'infrastructure': {'distance_cap_m': 5000}})
+    (road, road_cap), (bld, bld_cap), counts = extract(xy, 5000.0)
     start = 0
     for t, samples in tables.items():
         sl = slice(start, start + len(samples))
