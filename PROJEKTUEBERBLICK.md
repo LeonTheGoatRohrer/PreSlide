@@ -135,6 +135,8 @@ Die Prüfgebiete-Seite zeigt für das Demogebiet Stanz (25.07.2016) die Kette re
 
 Gegenprobe v02 (vorab registriert): Mit 24 Schadensmeldungen aus Gasen 2017/2018 als Startpunkt passen Szenario und Meldung qualitativ zusammen (Straße im Szenario bei 21–22 von 22 Straßenschäden), aber 20 dieser Punkte liegen schon höchstens 25 m neben einer Straße. Die Übereinstimmung entsteht also am Punkt selbst; den Auslauf bestätigt sie nicht. Ohne Angabe, ob ein Punkt Anriss oder Schadensort ist, bleibt der Auslauf unvalidiert. Details: `reports/wirkungskette_v02/gegenprobe.md`.
 
+Nullreferenz v03 (vorab registriert): Hangpunkte derselben Gegend ohne Inventareintrag haben im längsten Szenario ebenfalls meist eine Straße (79 %), aber nur 4 % liegen höchstens 25 m neben einer Straße, gegenüber 20 von 22 Schadenspunkten. Der Unterschied liegt also in der Lage der gemeldeten Punkte an der Straße, nicht im Auslauf. Mit nur 2–3 unabhängigen Ereigniseinheiten ist das eine Beschreibung, kein Befund. Details: `reports/wirkungskette_v03/nullreferenz.md`.
+
 ## Genau eine nächste wissenschaftliche Priorität
 
 **Den in V0.4 gefundenen Gelände- und Landbedeckungseffekt gegen Meldebias absichern und mehr unabhängige Episoden gewinnen** (z. B. getrennt gekennzeichnete Medienereignisse, vorab registriertes Case-Crossover-Design oder Satellitenprüfung der Positionen). Jede Erweiterung ist eine neue Version; der V0.4-Test ist jetzt gesehen und darf keine Auswahl mehr steuern.
