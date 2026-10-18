@@ -5,7 +5,7 @@ import {mainNav, primaryAction, href} from '../navigation.js'
 import Signet from './Signet.vue'
 const props = defineProps({page: {type: String, required: true}, hero: Boolean, compact: Boolean})
 const emit = defineEmits(['search'])
-const scrolled = ref(false), menu = ref(false), copied = ref(false)
+const scrolled = ref(false), menu = ref(false)
 const links = ref([]), list = ref(null), bar = ref({x: 0, w: 0, on: false}), menuBtn = ref(null), sheet = ref(null)
 const onHero = computed(() => props.hero && !scrolled.value && !menu.value)
 
@@ -15,9 +15,6 @@ function measure() {
   if (!el || !list.value) { bar.value = {...bar.value, on: false}; return }
   const a = el.getBoundingClientRect(), b = list.value.getBoundingClientRect()
   bar.value = {x: a.left - b.left, w: a.width, on: true}
-}
-async function share() {
-  try { await navigator.clipboard.writeText(location.href); copied.value = true; setTimeout(() => { copied.value = false }, 1800) } catch { copied.value = false }
 }
 function back() { if (history.length > 1) history.back(); else location.hash = '#/' }
 function key(e) {
@@ -45,7 +42,6 @@ onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll); window.r
 
       <template v-if="compact">
         <button type="button" class="nav-tool" @click="back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5 8 12l7 7"/></svg><span>Zurück</span></button>
-        <button type="button" class="nav-tool nav-push" @click="share"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12h8M12 8l4 4-4 4"/><rect x="3" y="4" width="18" height="16" rx="4"/></svg><span aria-live="polite">{{ copied ? 'Link kopiert' : 'Link teilen' }}</span></button>
       </template>
       <template v-else>
         <nav class="nav-links" aria-label="Hauptnavigation">
@@ -100,7 +96,6 @@ onBeforeUnmount(() => { window.removeEventListener('scroll', onScroll); window.r
 .on-hero .nav-search:hover,.on-hero .nav-menu:hover{background:rgb(255 255 255 / .12)}
 .nav-search svg,.nav-menu svg,.nav-tool svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 .nav-tool{padding:0 12px}
-.nav-push{margin-left:auto}
 .compact .nav-bar{max-width:none}
 .nav-cta{min-height:44px;padding:0 18px}
 .nav-menu{display:none}
