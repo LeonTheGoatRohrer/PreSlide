@@ -96,21 +96,27 @@ def fig_sensitivity(data, path, window_days):
     plt.close(fig)
 
 
+def episode_ranks(scores, window_days):
+    """Episode-mean percentile ranks for the primary end and the end including the event day."""
+    return scores.groupby('episode').agg(n=(f'pr_{window_days}d_end-2', 'size'), primary=(f'pr_{window_days}d_end-2', 'mean'),
+                                         event_day=(f'pr_{window_days}d_end0', 'mean'))
+
+
 def fig_histogram(scores, path, window_days):
-    """Distribution of event-level percentile ranks (primary end) against the uniform expectation."""
-    fig, ax = plt.subplots(figsize=(7.2, 3.6), dpi=150)
-    style(ax)
-    pr = scores[f'pr_{window_days}d_end-2']
+    """Distribution of episode-mean percentile ranks (the independent unit) against the uniform expectation."""
+    ep = episode_ranks(scores, window_days)
+    fig, axes = plt.subplots(1, 2, figsize=(7.6, 3.4), dpi=150, sharey=True)
     bins = np.linspace(0, 1, 11)
-    stanz = scores.stanz.to_numpy()
-    ax.hist([pr[~stanz], pr[stanz]], bins=bins, stacked=True, color=[BLUE, AQUA], edgecolor='white', linewidth=2,
-            label=['andere Episoden', 'Stanz-Sturm 25.07.2016'])
-    ax.axhline(len(pr) / 10, color=MUTED, lw=1, ls='--', label='erwartet ohne Zusammenhang (gleichverteilt)')
-    ax.set_xlabel(f'Perzentilrang des {window_days}-Tage-Niederschlags am Ereignisort (primäres Fenster)', fontsize=9, color=INK)
-    ax.set_ylabel('Ereignisse', fontsize=9, color=INK)
-    ax.set_title('Wo lag das Ereignisfenster in der Verteilung desselben Orts? (einzelne Ereignisse, nicht unabhängig)',
-                 fontsize=10, color=INK, loc='left')
-    ax.legend(fontsize=8, frameon=False, loc='upper left')
+    for ax, column, color, title in ((axes[0], 'primary', BLUE, 'Primär: bis 07:00 des Vortags (vor t0)'),
+                                     (axes[1], 'event_day', ORANGE, 'Sekundär: inkl. Ereignistag (nach t0)')):
+        style(ax)
+        ax.hist(ep[column], bins=bins, color=color, edgecolor='white', linewidth=2)
+        ax.axhline(len(ep) / 10, color=MUTED, lw=1, ls='--')
+        ax.set_title(title, fontsize=9, color=INK, loc='left')
+        ax.set_xlabel(f'mittlerer Rang der Episode ({window_days} Tage)', fontsize=9, color=INK)
+    axes[0].set_ylabel(f'Episoden (von {len(ep)})', fontsize=9, color=INK)
+    axes[0].text(0.02, len(ep) / 10 + 1.4, 'erwartet ohne Zusammenhang', fontsize=7.5, color=MUTED)
+    fig.suptitle('Zwei Muster: Vorregen über Tage oder Regen erst am Ereignistag (explorativ)', fontsize=10, color=INK, x=0.01, ha='left')
     fig.tight_layout()
     fig.savefig(path)
     plt.close(fig)

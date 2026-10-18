@@ -100,3 +100,12 @@ Land cover, geology, soil moisture and snow are not included in this V0. Terrain
 ## V0.5 (2026-10-14)
 
 No new data source. V0.5 queries the same V0.4 endpoints (INCA v1, SPARTACUS v2, SNOWGRID-CL v2, CORINE 2012/2018, GeoSphere geology 1:500 000) for the ten new unmatched control points per event; new responses are cached under `data/v05/cache/http/`, existing baseline/V0.4 responses and DEM tiles are only read. Control points come from the existing V0.4 pools (`data/v04/cache/control_pools/`, audited, see `data/v05/pool_audit/`).
+
+## extremwetter_v01 (2026-10-18)
+
+| Provider / dataset | Endpoint | Licence | Use | Rule / limitation |
+|---|---|---|---|---|
+| GeoSphere Austria, SPARTACUS v2 1 d 1 km (`spartacus-v2-1d-1km`), parameter RR | `dataset.api.hub.geosphere.at/v1/timeseries/historical/spartacus-v2-1d-1km` (metadata: `.../metadata`) | CC BY 4.0, © GeoSphere Austria | daily precipitation 1961-01-01 → 2026-10-16 at the nearest 1 km cell of each of the 423 V0.4 positives (case-crossover exposure and reference days) | RR of day D = station-based sum 07:00 CET D → 07:00 CET D+1; primary windows end with D = event day − 2 (strictly before t0). Station-derived grid: convective cells between stations can be missed; long-term homogeneity is the provider's design goal, not verified here |
+| GeoSphere Naturgefahren (Test), local snapshot (see above) | – | see above | dated records (Gleiten/Rutschen, Fließen, unclear type; interval ≤ 31 days) within 10 km exclude reference days ±3 days | no new download; incomplete before ~2000, so older reference days are less thoroughly cleaned |
+
+Raw responses: `data/extremwetter_v01/cache/http/` (15 requests × 30 points, URL + SHA-256 sidecar, local only). Grid-cell offsets checked ≤ 800 m (EPSG:31287).
