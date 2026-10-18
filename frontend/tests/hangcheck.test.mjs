@@ -62,3 +62,13 @@ test('radius circle is geodesic: 2 km north and east of the centre', () => {
   const east = (ring[1][0] - place.longitude) * rad(1) * R * Math.cos(rad(place.latitude))
   assert.ok(Math.abs(north - 2000) < 2 && Math.abs(east - 2000) < 5, `${north} ${east}`)
 })
+
+test('flow-path request carries only position and radius; infrastructure text lists only present types', async () => {
+  const {flowUrl, infraText} = await import('../src/hangcheck.js')
+  const url = new URL(flowUrl(place, 1500), 'http://x')
+  assert.deepEqual([...url.searchParams.keys()].sort(), ['latitude', 'longitude', 'radius_m'])
+  const labels = {gebaeude: 'Gebäude', strasse: 'Straßen', weg: 'Forst- und Feldwege', bahn: 'Bahn'}
+  assert.equal(infraText({gebaeude: {anzahl: 3}, strasse: {anzahl: 0}, bahn: {anzahl: 1}}, labels), 'Gebäude 3 · Bahn 1')
+  assert.equal(infraText({gebaeude: {anzahl: 0}}, labels), '')
+  assert.doesNotMatch(page + helpers, /wird getroffen|getroffen werden/)
+})

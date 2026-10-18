@@ -4,7 +4,7 @@ import threading
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, ConfigDict
 
-from . import build, gemeinden
+from . import build, fliesswege, gemeinden
 from .paths import config
 
 router = APIRouter(prefix='/api/hangcheck')
@@ -40,5 +40,22 @@ def hangcheck(req: PlaceRequest, request: Request):
         return build.compute(req.longitude, req.latitude, req.radius_m)
     except ValueError as error:
         raise HTTPException(422, str(error))
+    finally:
+        _lock.release()
+
+
+@router.get('/fliesswege')
+def fliesswege_route(longitude: float, latitude: float, request: Request, radius_m: float | None = None):
+    """Possible flow paths of the review points (scenario, unvalidated) and OSM features inside the corridor."""
+    if set(request.query_params) - {'longitude', 'latitude', 'radius_m'}:
+        raise HTTPException(422, 'Hang-Check nimmt keine Zusatzparameter an (auch keine Wetterangaben).')
+    if not _lock.acquire(timeout=5):
+        raise HTTPException(503, 'Eine andere Berechnung läuft noch; bitte kurz warten.')
+    try:
+        return fliesswege.compute(longitude, latitude, radius_m)
+    except ValueError as error:
+        raise HTTPException(422, str(error))
+    except RuntimeError as error:
+        raise HTTPException(503, f'Fließwege gerade nicht berechenbar: {error}'[:300])
     finally:
         _lock.release()
