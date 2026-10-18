@@ -1,0 +1,351 @@
+{
+  "cohort": {
+    "events": 418,
+    "units": 29,
+    "samples": 4598
+  },
+  "chance_local_auc": 0.5,
+  "a_in_model": {
+    "conditional_logit/static": {
+      "median_local_auc_units": 0.8653389985541449,
+      "range": [
+        0.8583351315975528,
+        0.8773611988267159
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/combined": {
+      "median_local_auc_units": 0.8507626797025514,
+      "range": [
+        0.8349891699837627,
+        0.8625161720537756
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/infra_only": {
+      "median_local_auc_units": 0.9456604610296985,
+      "range": [
+        0.9428588492557719,
+        0.9473056951585563
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/static_infra": {
+      "median_local_auc_units": 0.9263477090218222,
+      "range": [
+        0.906894840043709,
+        0.9407315778869048
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/combined_infra": {
+      "median_local_auc_units": 0.9158257493603866,
+      "range": [
+        0.8984406717051013,
+        0.9200470605224342
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "conditional_logit/paired": {
+      "static_infra - static": {
+        "mean": 0.07221960320120081,
+        "ci95": [
+          0.04147220317473145,
+          0.10300921047806481
+        ],
+        "share_above_zero": 1.0
+      },
+      "combined_infra - combined": {
+        "mean": 0.08012668027729902,
+        "ci95": [
+          0.039461349811681125,
+          0.12304227397461767
+        ],
+        "share_above_zero": 1.0
+      },
+      "infra_only_ci95": [
+        0.9182969933838415,
+        0.9673427103264267
+      ]
+    },
+    "hist_gradient_boosting/static": {
+      "median_local_auc_units": 0.7936809736037272,
+      "range": [
+        0.7818777691407774,
+        0.8041491432266676
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/combined": {
+      "median_local_auc_units": 0.7975862466986865,
+      "range": [
+        0.7908193469386462,
+        0.8288254640300123
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/infra_only": {
+      "median_local_auc_units": 0.91895970568956,
+      "range": [
+        0.8763611274343879,
+        0.9250900319257136
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/static_infra": {
+      "median_local_auc_units": 0.9089805166727054,
+      "range": [
+        0.8907601619188568,
+        0.9328748157595023
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/combined_infra": {
+      "median_local_auc_units": 0.9260871352609087,
+      "range": [
+        0.8867626482884176,
+        0.9411691972650135
+      ],
+      "events": 418,
+      "units": 29
+    },
+    "hist_gradient_boosting/paired": {
+      "static_infra - static": {
+        "mean": 0.14517977425568498,
+        "ci95": [
+          0.07758708488731424,
+          0.2212092047029825
+        ],
+        "share_above_zero": 1.0
+      },
+      "combined_infra - combined": {
+        "mean": 0.13544244761567484,
+        "ci95": [
+          0.06972696571865399,
+          0.21941881311467898
+        ],
+        "share_above_zero": 1.0
+      },
+      "infra_only_ci95": [
+        0.8931041301184978,
+        0.9483183655425035
+      ]
+    }
+  },
+  "b_caliper": {
+    "groups_kept": 174,
+    "groups_total": 418,
+    "controls_kept_share": 0.26626794258373204,
+    "units_kept": 10
+  },
+  "b_equal_visibility": {
+    "conditional_logit/static": {
+      "all_controls_same_groups": {
+        "median_local_auc_units": 0.782945205479452,
+        "range": [
+          0.7390410958904109,
+          0.8082534246575342
+        ],
+        "events": 174,
+        "units": 10
+      },
+      "caliper_controls": {
+        "median_local_auc_units": 0.7617854424874974,
+        "range": [
+          0.7247651663405088,
+          0.7751701456838443
+        ],
+        "events": 174,
+        "units": 10
+      },
+      "difference": -0.021159762991954656,
+      "bootstrap_rep1_difference": {
+        "mean": -0.021221352739726022,
+        "ci95": [
+          -0.068743415688193,
+          0.02609065829528153
+        ],
+        "share_above_zero": 0.199
+      }
+    },
+    "conditional_logit/temporal": {
+      "all_controls_same_groups": {
+        "median_local_auc_units": 0.6441324200913243,
+        "range": [
+          0.6129680365296803,
+          0.6609589041095891
+        ],
+        "events": 174,
+        "units": 10
+      },
+      "caliper_controls": {
+        "median_local_auc_units": 0.6220966514459665,
+        "range": [
+          0.5884711350293541,
+          0.6592340726244836
+        ],
+        "events": 174,
+        "units": 10
+      },
+      "difference": -0.022035768645357834
+    },
+    "conditional_logit/combined": {
+      "all_controls_same_groups": {
+        "median_local_auc_units": 0.7962557077625572,
+        "range": [
+          0.7615410958904111,
+          0.8129680365296805
+        ],
+        "events": 174,
+        "units": 10
+      },
+      "caliper_controls": {
+        "median_local_auc_units": 0.7545341378560556,
+        "range": [
+          0.6776233963905198,
+          0.7659648836703632
+        ],
+        "events": 174,
+        "units": 10
+      },
+      "difference": -0.041721569906501554,
+      "bootstrap_rep1_difference": {
+        "mean": -0.08410967751141553,
+        "ci95": [
+          -0.1922510328332246,
+          -0.0018537114046530522
+        ],
+        "share_above_zero": 0.0175
+      }
+    },
+    "bootstrap_ci95_caliper_static": [
+      0.664712756849315,
+      0.8730077190693628
+    ],
+    "land_cover_ablation_combined": {
+      "with_lc_all_groups": {
+        "median_local_auc_units": 0.7962557077625572,
+        "range": [
+          0.7615410958904111,
+          0.8129680365296805
+        ],
+        "events": 174,
+        "units": 10
+      },
+      "without_lc_all_groups": {
+        "median_local_auc_units": 0.7621917808219181,
+        "range": [
+          0.7288127853881279,
+          0.802214611872146
+        ],
+        "events": 174,
+        "units": 10
+      },
+      "with_lc_caliper": {
+        "median_local_auc_units": 0.7545341378560556,
+        "range": [
+          0.6776233963905198,
+          0.7659648836703632
+        ],
+        "events": 174,
+        "units": 10
+      },
+      "without_lc_caliper": {
+        "median_local_auc_units": 0.7597268427919113,
+        "range": [
+          0.7114494998912808,
+          0.7883401282887584
+        ],
+        "events": 174,
+        "units": 10
+      }
+    }
+  },
+  "diagnostics": {
+    "distance_quantiles_m": {
+      "dist_building_m": {
+        "positive": [
+          13.3,
+          34.6,
+          117.1,
+          252.6,
+          345.2
+        ],
+        "control": [
+          64.9,
+          141.3,
+          276.9,
+          457.9,
+          655.3
+        ]
+      },
+      "dist_road_m": {
+        "positive": [
+          6.7,
+          15.1,
+          71.6,
+          249.7,
+          364.6
+        ],
+        "control": [
+          56.2,
+          167.5,
+          505.0,
+          1048.7,
+          1570.1
+        ]
+      },
+      "dist_infrastructure_m": {
+        "positive": [
+          6.2,
+          10.1,
+          57.2,
+          193.5,
+          281.9
+        ],
+        "control": [
+          39.8,
+          105.6,
+          244.4,
+          434.4,
+          616.1
+        ]
+      }
+    },
+    "capped_share": {
+      "building_capped": {
+        "positive": 0.0,
+        "control": 0.0
+      },
+      "road_capped": {
+        "positive": 0.0,
+        "control": 0.0014354066985645933
+      }
+    },
+    "spearman_dist_infrastructure": {
+      "elevation": 0.5158837637052774,
+      "lc_forest": 0.402647394346977,
+      "lc_grass_shrub": -0.23350817365026863,
+      "lc_agriculture": -0.2980679901395399,
+      "lc_open_bare": 0.13422873034213362,
+      "lc_artificial_water_other": -0.17607942449915806
+    }
+  },
+  "inputs": {
+    "config_sha256": "7e321379b1b88fd4100ae2c3c4035c353fc3437242b5ffa749ba2d6b9c9841e2",
+    "oof_infra_sha256": "7acc7fbb469889e545ef75e4bdac444bd003014c07178eb53bc85e7a941997e7",
+    "infrastructure_sha256": "b59cf9e76114d7e7ab4dcc33de3528eca3cf7f2f3a0fe8e0b15bdec4823927d0",
+    "v07b_config_sha256": "a07d9ef1c1c550e1b35b7bc90a2a33668bade5b312daa82057d3a1c115c27d6c",
+    "analysis_code": "preslide.v07.experiment.main (unchanged, rebound)",
+    "distance_table": "data/v07b/infrastructure.parquet (exact nearest vertex)"
+  }
+}

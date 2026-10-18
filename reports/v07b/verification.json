@@ -1,0 +1,19 @@
+{
+ "status": "PASS",
+ "checks": {
+  "config_matches_registration": true,
+  "registered_inputs_unchanged_incl_v07_tables": true,
+  "v07_code_config_reports_unchanged_in_git": true,
+  "results_record_v07b_config": true,
+  "results_use_registered_v07_analysis_plan": true,
+  "infrastructure_table_matches_results": true,
+  "oof_matches_results": true,
+  "v07_accumulator_reproduced_v07_table_exactly": true,
+  "brute_force_check_within_0_01_m": true,
+  "exact_distances_never_above_v07": true,
+  "distances_in_range_and_cap_flags_consistent": true,
+  "held_out_units_never_trained": true,
+  "one_oof_prediction_per_sample_and_repetition": true,
+  "comparison_uses_these_results": true
+ }
+}

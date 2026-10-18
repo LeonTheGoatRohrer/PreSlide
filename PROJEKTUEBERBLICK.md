@@ -1,6 +1,6 @@
 # Talwacht — Ziel, Projektstand und Orientierung
 
-**Stand: 15. Oktober 2026 (nach V0.9; V0.6–V0.8 und Pipeline B eingemergt). Diese Datei zu Beginn jeder Session vollständig lesen.**
+**Stand: 18. Oktober 2026 (nach V0.9 und der V0.7b-Korrektur der Infrastrukturabstände; V0.6–V0.8 und Pipeline B eingemergt). Diese Datei zu Beginn jeder Session vollständig lesen.**
 Danach `PROJECT_STATE.md` für den technischen Arbeitsstand lesen. Bei Widersprüchen die gespeicherten Artefakte prüfen; keine Ergebnisse erfinden oder historische Experimente überschreiben.
 
 ## Was ist Talwacht?
@@ -129,6 +129,8 @@ Aus den bereits zwischengespeicherten stündlichen INCA-Reihen wurden 23 Merkmal
 
 Abstand jeder Probe zum nächsten Gebäude und zur nächsten öffentlichen Straße (OSM-Auszug Österreich, Geofabrik, ODbL, Stand 14.10.2026; `config/v07.json`, vorab registriert). Der Abstand allein trennt den gemeldeten Hang von den zehn Umgebungspunkten mit lokaler AUC **0,928** (Gelände allein 0,865): ein großer Teil der V0.5-Trennung ist Sichtbarkeit/Platzierung, zum Teil auch durch das Design (Kontrollen liegen 0,75–10 km entfernt). Werden nur Kontrollen mit ähnlichem Infrastrukturabstand (Faktor 2) behalten (173 von 418 Gruppen, 10 Einheiten), behält das infrastrukturunkundige Geländemodell 0,783 (−0,013, Intervall [−0,068; +0,031]). Bericht `reports/v07/summary.md`.
 
+**Korrektur V0.7b (18.10.2026):** Die V0.7-Abstände waren durch einen Programmfehler überschätzt (jeder OSM-Knoten aktualisierte nur die nächstgelegene Probe; bei 49,5 % der Proben zu große Abstände, bei rund 45 % der gemeldeten Hänge Gebäudeabstand = Obergrenze 5 000 m). Vorab registriert neu berechnet (`config/v07b.json`, Bericht `reports/v07b/summary.md`, Nachweis PASS); die V0.7-Dateien bleiben unverändert. Ergebnis: Der Abstand allein trennt noch stärker (**0,946** statt 0,928); mit infrastrukturähnlichen Kontrollen (174 Gruppen, 10 Einheiten) behält das Geländemodell **0,762** (−0,021 [−0,069; +0,026]). Die Meldebias-Aussage bleibt bestehen und wird eher gestärkt; das registrierte Prüfkriterium „andere Gruppen im Caliper“ schlägt an (24 Gruppen fallen heraus, 25 kommen hinzu). **Zitiert werden ab jetzt die V0.7b-Zahlen.**
+
 ## V0.8: Case-Crossover am selben Hang (15.10.2026, abgeschlossen, explorativ)
 
 Ereigniszeit gegen vier Referenzzeiten (±28/±56 Tage, gleiche Uhrzeit) am identischen Hang; Gelände, Landbedeckung und Infrastrukturabstand kürzen sich heraus. 376 Hänge, 23 Einheiten. Bedingte logistische Regression mit INCA-Fenstern: lokale AUC **0,818** (Intervall [0,759; 0,912]); Hydrologie-Merkmale verschlechtern sie (−0,172 [−0,293; −0,065]). Das ist ein „Wann“-Ergebnis: Ereigniszeiten sind nasser als gewöhnliche Zeiten, auch weil das Inventar Starkregenepisoden dokumentiert; es ist keine Vorhersage. Bericht `reports/v08/summary.md`.
@@ -193,6 +195,7 @@ Ein **getrenntes System** (`preslide/satellite/`, Ausgaben nur unter `data/satel
 | `reports/baseline/` | Eingefrorene V0.3-Baseline: Manifest, Status, Fehleranalyse je Ereignis |
 | `archive/v0.3-baseline/` | Schreibgeschützte Kopie aller Baseline-Ausgaben mit Prüfsummen |
 | `config/v09.json`, `reports/v09/`, `preslide/v09/` | V0.9: Registrierung, Prozessprüfung, ungesehene Episoden, einmalige Bewertung, Verifikation |
+| `config/v07b.json`, `reports/v07b/`, `preslide/v07b/` | V0.7b: V0.7 mit exakten OSM-Abständen wiederholt, Vergleich alt/neu (ersetzt die V0.7-Zahlen) |
 | `config/v05.json`, `reports/v05/`, `preslide/v05/` | V0.5: Registrierung, Kohorten-Freeze, CV-Ergebnisse, Bericht, Verifikation |
 | `config/v04.json`, `reports/v04/` | V0.4: Präregistrierung, Änderung 1, Freeze, Test, Bericht, Verifikation |
 | `preslide/v04/` | V0.4-Code (Audit, Datumsregeln, Pipeline, Modelle, Auswertung) |
