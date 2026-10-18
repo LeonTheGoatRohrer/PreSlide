@@ -11,6 +11,7 @@ export const researchPages = [
   {id:'projekt',label:'Projekt'},
   {id:'vorgehen',label:'Vorgehen'},
   {id:'ergebnisse',label:'Ergebnisse im Detail'},
+  {id:'hangkarte',label:'Hangkarte'},
 ]
 export const pages = [...mainNav, ...researchPages]
 export const pageTitles = {pruefgebiete:'Demo: Prüfgebiete',forschung:'Forschungsbereich'}

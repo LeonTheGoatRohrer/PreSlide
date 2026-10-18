@@ -4,7 +4,7 @@ import {mainNav,researchPages,pages,resolveRoute,activeNav,isResearch,pageTitle}
 
 test('jury entry first, research area last, start page as safe default',()=>{
   assert.deepEqual(mainNav.map(p=>p.id),['start','pruefgebiete','befunde','methodik','forschung'])
-  assert.deepEqual(researchPages.map(p=>p.id),['projekt','vorgehen','ergebnisse'])
+  assert.deepEqual(researchPages.map(p=>p.id),['projekt','vorgehen','ergebnisse','hangkarte'])
   for(const {id} of pages) assert.deepEqual(resolveRoute('#/'+id),{page:id,section:''})
   for(const hash of ['', '#', '#/', '#/unbekannt']) assert.deepEqual(resolveRoute(hash),{page:'start',section:''})
   assert.equal(pageTitle('pruefgebiete'),'Demo: Prüfgebiete')

@@ -1,6 +1,6 @@
 # Talwacht — Ziel, Projektstand und Orientierung
 
-**Stand: 18. Oktober 2026 (Integrationsstand: `origin/main` mit V0.6–V0.9 und Pipeline B, dazu Anfälligkeit international, Wirkungskette v01–v03, Extremwetter, Jury-Website, Satelliten-NN-Gerüst und die Registrierung `anfaelligkeit_at_v01`). Diese Datei zu Beginn jeder Session vollständig lesen.**
+**Stand: 18. Oktober 2026 (Integrationsstand: `origin/main` mit V0.6–V0.9 und Pipeline B, dazu Anfälligkeit international, Wirkungskette v01–v03, Extremwetter, Jury-Website, Hangkarte, Satelliten-NN-Gerüst und die Registrierung `anfaelligkeit_at_v01`). Diese Datei zu Beginn jeder Session vollständig lesen.**
 Danach `PROJECT_STATE.md` für den technischen Arbeitsstand lesen. Bei Widersprüchen die gespeicherten Artefakte prüfen; keine Ergebnisse erfinden oder historische Experimente überschreiben.
 
 ## Was ist Talwacht?
@@ -54,6 +54,8 @@ Nachweise: `reports/*/verification.json` (PASS). V0.4 wurde vor dem Test einmal 
 
 **Anfälligkeit international (`susceptibility_v01`, `v02`, abgeschlossen).** Polygoninventare aus Nepal (Gorkha 2015, Far-Western Nepal), Japan (Iburi 2018), Italien (RER2023). v01: Gelände überträgt zwischen Regionen nicht besser als die Neigung allein (+0,006 [−0,005; +0,017]), Gate nicht bestanden. v02 (je Auslöser): auf Iburi Gelände + PGA 0,826 gegen Neigung + PGA 0,841, **nicht belegt**; Regenarm mangels Kartierumriss nicht testbar; Iburi ist jetzt gesehen. Ein v01-Fehler (DEM-Blöcke bis 15 m verschoben) wurde dokumentiert, v01 bleibt unverändert. `reports/susceptibility_v01/PHASE4_GATE.md`, `reports/susceptibility_v02/PHASE4_RESULTS.md`.
 
+**Hangkarte (`hangmap_v01`, Anwendung, keine neue Studie).** Seite `#/hangkarte` im Forschungsbereich: Das eingefrorene V0.5-Modell (nur Gelände, Landbedeckung, Geologie) bewertet Hangzellen in einem frei gewählten Gebiet auf einer 3D-Ansicht; angezeigt werden nur relative Anteile innerhalb einer Vergleichsgruppe (Summe 100 %). Keine Eintrittswahrscheinlichkeit, keine Gefahrenkarte. Die hohe V0.5-Trennung ist teils Meldebias (mit gematchten Kontrollen nur 0,705), die Anteile hängen stark an der Landbedeckung. In Stanz wäre das V0.5-Modell in-sample. Optionale INCA-Regenebene ist getrennt und kein Modelleingang. `reports/hangmap_v01/summary.md`.
+
 **Hangmuren-Anfälligkeit Österreich (`anfaelligkeit_at_v01`, registriert, noch kein Ergebnis).** Vorregistriert: statisches Modell für genau verortete reine Hangmuren, Leave-one-area-out gegen Neigung allein (Plan `reports/weiterentwicklung_2026-10-18/TRAININGSPLAN_ALLE_INVENTARDATEN.md`). Amendment 1: Skadi über Österreich ist praktisch SRTMGL1. Pipeline und Sicherheitstests sind integriert, das Experiment ist nicht gelaufen.
 
 **Neuronale Murensuche (`satellite_nn_v01`, nur Gerüst).** Kachelung, Entscheidungslogik, Modelle A/B und Tests; keine Daten, kein Training, nicht registriert. Plan `reports/weiterentwicklung_2026-10-17/NEURONALE_MURENSUCHE_PLAN.md`; Landslide4Sense-Download wartet auf Freigabe.
@@ -66,12 +68,11 @@ Eine Wahrscheinlichkeit, dass an einem bestimmten Hang eine Mure abgeht, kann da
 
 ## Webdemonstration (Jury-Einstieg seit 18.10.2026)
 
-Python/FastAPI, Vue 3/Vite/MapLibre, CPU-Betrieb; Start `scripts/start.ps1` (üblich `http://127.0.0.1:8000`). Hauptnavigation: **Start** (`#/start`) · **Demo** (`#/pruefgebiete`, Ereignisübersicht und Wirkungskette) · **Ergebnisse** kurz (`#/befunde`, inkl. Extremwetter und Hangmuren-Pilot) · **Methodik & Grenzen** (`#/methodik`) · **Forschung** (`#/forschung`). Die früheren Seiten Projekt, Vorgehen und Ergebnisse bleiben inhaltlich unverändert als Forschungsbereich unter ihren alten Adressen. Kennzahlen kommen nur aus den API-Bündeln, immer mit Intervall; ein Wortlauttest verhindert Wahrscheinlichkeits-, Risiko- und Vorhersagewörter auf den Jury-Seiten. Meisterprompt für die geplante Überarbeitung: `reports/weiterentwicklung_2026-10-18/MEISTERPROMPT_JURY_WEBSITE.md`.
+Python/FastAPI, Vue 3/Vite/MapLibre, CPU-Betrieb; Start `scripts/start.ps1` (üblich `http://127.0.0.1:8000`). Hauptnavigation: **Start** (`#/start`) · **Demo** (`#/pruefgebiete`, Ereignisübersicht und Wirkungskette) · **Ergebnisse** kurz (`#/befunde`, inkl. Extremwetter und Hangmuren-Pilot) · **Methodik & Grenzen** (`#/methodik`) · **Forschung** (`#/forschung`). Die früheren Seiten Projekt, Vorgehen und Ergebnisse bleiben inhaltlich unverändert als Forschungsbereich unter ihren alten Adressen; dort liegt auch die Hangkarte (`#/hangkarte`). Kennzahlen kommen nur aus den API-Bündeln, immer mit Intervall; ein Wortlauttest verhindert Wahrscheinlichkeits-, Risiko- und Vorhersagewörter auf den Jury-Seiten. Meisterprompt für die geplante Überarbeitung: `reports/weiterentwicklung_2026-10-18/MEISTERPROMPT_JURY_WEBSITE.md`.
 
 ## Noch nicht integriert
 
 - `claude/wirkungskette-v02-gebietstest`: vorregistrierter Test der Prüfstufen an ungesehenen Hangmuren-Gebieten (Vorarlberg/Tirol 2005 u. a.), Pilot und Amendment 1 vorhanden, Volllauf nicht abgeschlossen. Kollidiert im Namensraum mit der v02-Gegenprobe; laut Amendment 1 zieht er nach dem Volllauf nach `wirkungskette_gebietstest_v01` um.
-- `claude/clever-satoshi-e4ace7` (Hangkarte `hangmap_v01`, V0.5-Modell): laut Bewertung eher nicht übernehmen; Entscheidung des Nutzers offen.
 - `reports/mudslide_cascade_v01/` und der zugehörige Code liegen nur lokal (uncommittet).
 
 ## Nächste Prioritäten
@@ -87,7 +88,7 @@ Python/FastAPI, Vue 3/Vite/MapLibre, CPU-Betrieb; Start `scripts/start.ps1` (üb
 - Gelernte Vorverarbeitung nur am jeweiligen Training anpassen; keine Auswahl nach gesehenen Testergebnissen, keine Seed-Suche, kein Nachjustieren der Kontrollen.
 - Neue Experimente in eigenem Namensraum, vor der Modellierung registrieren; Änderungen als Amendment mit Grund. Eingefrorene Artefakte (AGENTS.md §45) nie ändern.
 - Caches und gültige Checkpoints verwenden; Wetter, Gelände und fertige Läufe nicht unnötig neu berechnen.
-- Oberfläche: Jury-Einstieg plus Forschungsbereich; die drei Forschungsseiten unter ihren alten Adressen erhalten; grundlegende Umgestaltungen nur auf Auftrag.
+- Oberfläche: Jury-Einstieg plus Forschungsbereich (Projekt, Vorgehen, Ergebnisse im Detail, Hangkarte); die Forschungsseiten unter ihren alten Adressen erhalten; grundlegende Umgestaltungen nur auf Auftrag.
 - Rohdaten und Probenvorhersagen bleiben lokal. Die GeoSphere-Quelle hat keine geklärte spezifische Weiterverwendungslizenz; lokale nicht kommerzielle Forschung ist vom Nutzer autorisiert.
 - Passende vorhandene Skills dürfen ohne erneute Nachfrage verwendet werden; das ist keine Erlaubnis für Veröffentlichung oder externe Kommunikation.
 
@@ -107,6 +108,7 @@ Python/FastAPI, Vue 3/Vite/MapLibre, CPU-Betrieb; Start `scripts/start.ps1` (üb
 | `config/susceptibility_v0*.json`, `preslide/susceptibility/`, `reports/susceptibility_v0*/` | Anfälligkeit international |
 | `config/anfaelligkeit_at_v01.json`, `preslide/anfaelligkeit_at_v01/`, `reports/anfaelligkeit_at_v01/` | Hangmuren-Anfälligkeit Österreich (registriert) |
 | `config/satellite_nn_v01.json`, `preslide/satellite_nn/` | Neuronale Murensuche (Gerüst) |
+| `config/hangmap_v01.json`, `preslide/hangmap/`, `reports/hangmap_v01/` | Hangkarte (3D, relative Anteile, V0.5-Modell) |
 | `reports/weiterentwicklung_2026-10-1*/` | Pläne, Meisterprompts, Projektbewertung |
 | `METHODOLOGY.md`, `DATA_SOURCES.md`, `RESULTS.md`, `LIMITATIONS.md`, `README.md` | Methodik, Quellen, historische Ergebnisse, Grenzen, Einrichtung |
 

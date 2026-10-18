@@ -1,9 +1,10 @@
 <script setup>
-// Entry to the unchanged research pages (Projekt, Vorgehen, Ergebnisse im Detail).
+// Entry to the unchanged research pages (Projekt, Vorgehen, Ergebnisse im Detail) and the Hangkarte.
 const areas = [
   { href: '#/projekt', label: 'Projekt', title: 'Forschungsfrage und Kurzfassung', text: 'Was ein Hang vor dem Ereignis verrät, die Idee des Vergleichs und der Ausblick.' },
   { href: '#/vorgehen', label: 'Vorgehen', title: 'Sechs Schritte vom Inventar zur Auswertung', text: 'Echte Beispielgruppe auf der Karte, 60 Tage Wettergeschichte, Schutzregeln und Datenquellen.' },
   { href: '#/ergebnisse', label: 'Ergebnisse im Detail', title: 'Alle Studien getrennt dargestellt', text: 'Hauptstudie V0.4, Ergänzungsstudie V0.5, alle Modellläufe im Vergleich und die Historie V0 bis V0.3.' },
+  { href: '#/hangkarte', label: 'Hangkarte', title: 'Relative Anteile auf einer 3D-Ansicht', text: 'Anwendung des eingefrorenen V0.5-Geländemodells in einem frei gewählten Gebiet. Nur relative Anteile innerhalb einer Vergleichsgruppe, keine Aussage darüber, ob oder wann ein Hang abgeht.' },
 ]
 const direct = [
   ['#/ergebnisse/v04', 'V0.4: alle Modelle und Testdetails'],

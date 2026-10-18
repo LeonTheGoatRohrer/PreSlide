@@ -196,3 +196,13 @@ Raw responses: `data/extremwetter_v01/cache/http/` (15 requests × 30 points, UR
 - **Finding: the Skadi tiles used since V0 are SRTMGL1 v3 over Austria.** A cell-by-cell comparison of all 27 cached Skadi 1-arc-second tiles with SRTMGL1 v3 gave 99.3–99.99 % identical cells, mean absolute difference ≤ 0.025 m, 99th percentile 0 m (`reports/anfaelligkeit_at_v01/dem_skadi_vs_srtm.json`, amendment 1). Skadi at 1 arc-second is therefore not the data.gv.at laser-scan DGM; all earlier terrain features (V0–V0.9) rest on SRTM-equivalent heights.
 - **CORINE Land Cover 2000 and 2006** (EEA, Copernicus Land, free and open with attribution) — point queries to `https://image.discomap.eea.europa.eu/arcgis/rest/services/Corine/CLC2000/MapServer/0` (field `code_00`) and `…/CLC2006/MapServer/0` (field `Code_06`), plus the CLC2012/CLC2018 endpoints above; responses cached in `data/anfaelligkeit_at_v01/cache/http/`. Vintage = latest CORINE whose imagery ended before the event year (2002–2007 → CLC2000, 2008–2012 → CLC2006, 2013–2018 → CLC2012, 2019+ → CLC2018); used only in the secondary land-cover analysis.
 - Reused unchanged: GeoSphere inventory snapshot (positives and the 100 m background buffer around all 25,609 records), GeoSphere geology 1:500 000 (V0.4 layer cache), GISCO Austria polygon, OSM Austria extract of V0.7 (distance to buildings/public roads as reporting-bias control only, never a model feature).
+
+## Hangkarte hangmap_v01 (2026-10-17)
+
+No new modelling data. The relative shares use the frozen V0.5 static model on DEM (Skadi tiles, read-only cache), CORINE CLC2018 polygons (envelope queries instead of V0.5 point queries, same class rules) and the GeoSphere 1:500 000 geology layer (cached). New responses are cached under `data/hangmap_v01/cache/http/`.
+
+| Provider / dataset | Endpoint | Licence | Use | Limitation |
+|---|---|---|---|---|
+| basemap.at Orthofoto | `mapsneu.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg` | CC BY 4.0 (basemap.at) | display only, loaded by the viewer's browser | not used in any computation; tile imagery date varies and is not necessarily pre-event |
+| Mapzen Terrarium DEM tiles (AWS) | `s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png` | Mapzen terms; attribution incl. Austrian DGM, EU-DEM, USGS | 3D relief and hillshade display only | display only; the model uses the cached Skadi 30 m grid, not these tiles |
+| GeoSphere INCA v1 (live) | `…/inca-v1-1h-1km`, one point | CC BY 4.0 | optional separate rain layer, last 7 UTC days | precipitation, not soil moisture; not an input of the shares; INCA v1 retirement announced Dec 2026 |

@@ -9,6 +9,7 @@ const PruefgebietePage = defineAsyncComponent(() => import('./PruefgebietePage.v
 const BefundePage = defineAsyncComponent(() => import('./BefundePage.vue'))
 const MethodikPage = defineAsyncComponent(() => import('./MethodikPage.vue'))
 const ForschungPage = defineAsyncComponent(() => import('./ForschungPage.vue'))
+const HangkartePage = defineAsyncComponent(() => import('./HangkartePage.vue'))
 const route = ref(resolveRoute(location.hash))
 const initialCase = ref(''), heading = ref(null)
 const current = computed(() => activeNav(route.value.page))
@@ -41,6 +42,7 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', changed))
     <ForschungPage v-else-if="route.page==='forschung'"/>
     <ProjectPage v-else-if="route.page==='projekt'"/>
     <MethodPage v-else-if="route.page==='vorgehen'" :initial-case="initialCase" :section="route.section"/>
+    <HangkartePage v-else-if="route.page==='hangkarte'"/>
     <ResultsPage v-else :section="route.section" @show-case="showCase"/>
   </main>
   <footer class="site-footer"><a class="footer-brand" href="#/start">Talwacht.</a><p>Retrospektive Forschung · Österreich<br>Lokale Demonstration · Stand 18. Oktober 2026</p><span>Erkenntnis vor Kennzahl.</span></footer>
