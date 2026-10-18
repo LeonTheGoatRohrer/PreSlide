@@ -1,0 +1,34 @@
+{
+  "registered_at_utc": "2026-10-18T10:49:53.286634+00:00",
+  "config": "config/wirkungskette_v02.json",
+  "config_sha256": "062f10110260b29b28ee3869e40527fa0c967a85b26abc4702a9d59f2d5c1381",
+  "git_head_before": "c5db3c338666c74ff544bf47bbc24e9bce43b191",
+  "campaigns_selected_by_rule": [
+    {
+      "RegKatE_ID": "Vorarlberg_Tirol_August_2005",
+      "n": 1176,
+      "year": 2005.0
+    },
+    {
+      "RegKatE_ID": "Nordhaelfte_Oesterreich_Juni_2013",
+      "n": 105,
+      "year": 2013.0
+    },
+    {
+      "RegKatE_ID": "Sellrain_Juni_2015",
+      "n": 92,
+      "year": 2015.0
+    },
+    {
+      "RegKatE_ID": "Gasen_Haslau_August_2005",
+      "n": 76,
+      "year": 2005.0
+    },
+    {
+      "RegKatE_ID": "Klingfurth_Juni_2009",
+      "n": 73,
+      "year": 2009.0
+    }
+  ],
+  "statement": "Written before any terrain, feature, score or capture is computed for these campaigns. Changes to the registered design are amendments with a reason, made before results are seen."
+}

@@ -1,0 +1,74 @@
+{
+  "version": "wirkungskette_v02",
+  "registered_on": "2026-10-18",
+  "status": "pre-registered test of the wirkungskette_v01 review classes on unseen Hangmuren areas; written before any score is computed in these areas",
+  "question": "Do the review classes of the frozen V0.4 static model place documented, precisely located pure Hangmuren of unseen event documentations into the top 5 % / 20 % of the assessable area more often than slope alone and than the area share?",
+  "requested_by": "user via the website session, 2026-10-18 ('Den Demo-Test würde ich machen, wie du empfohlen hast. Aber ich würde sagen, zuerst einmal mit Gebiet rechnen.'), design from PROJEKTBEWERTUNG_VOR_ZUSAMMENFUEHRUNG.md sections 5 and 6",
+  "inventory": {
+    "source": "data/raw/geosphere_natural_hazards.json (GeoSphere Austria Naturgefahren inventory, local copy, read only)",
+    "campaign_field": "RegKatE_ID",
+    "campaign_year_rule": "the single four-digit year contained in RegKatE_ID",
+    "target_process": "Prozessuntergruppe (stripped) == 'Hangmure' (pure Hangmuren only; mixed classes are not targets)",
+    "precise_location": ["Lage sehr genau / sehr sicher (0-5m)", "Lage genau (5-20m)"]
+  },
+  "areas": {
+    "campaign_rule": "every campaign with 2000 <= campaign year <= 2015 and >= 50 precisely located pure Hangmuren",
+    "unseen_reason": "the V0.4 model was trained only on events from 2016 onwards; campaigns before 2016 were never used for training, selection or evaluation",
+    "boundary_source": "Eurostat GISCO LAU 2021, 1:1 million (https://gisco-services.ec.europa.eu/distribution/v2/lau/geojson/LAU_RG_01M_2021_4326.geojson), Austrian units only (CNTR_CODE == 'AT')",
+    "boundary_rule": "area of a campaign = union of the LAU 2021 municipalities that contain >= 5 of the campaign's precisely located pure Hangmuren (point in polygon)",
+    "boundary_limitation": "municipalities are chosen because events lie in them, and the true survey extent of each documentation is unknown; slopes inside that were not surveyed count as background. Boundaries are official and drawn independently of the point pattern inside them. 1:1 million generalisation shifts edges by up to a few hundred metres",
+    "targets": "the campaign's precisely located pure Hangmuren inside its area; events outside are counted and reported, never used",
+    "windows": "one terrain window per connected component of the area (bbox + catchment margin); cells are 90 m grid cells whose centre lies in the area and inside Austria"
+  },
+  "terrain": {
+    "primary_dem": "SRTM 1 arc-second (SRTMGL1 v3, acquisition 11-22 February 2000), ESA STEP mirror https://step.esa.int/auxdata/dem/SRTMGL1/<tile>.SRTMGL1.hgt.zip, no login",
+    "date_rule": "provenance of the height data must precede the campaign year (user decision 2026-10-18: provenance counts instead of the file date)",
+    "date_rule_consequence": "Tilezen/Mapzen documentation lists the 10 m data.gv.at DGM (airborne laser scanning of the federal states) as the Austrian source of the Skadi tiles; its acquisitions are not demonstrably before 2005-2015, so Skadi does not satisfy the provenance rule here. SRTM (February 2000) does for every area.",
+    "known_shift": "the V0.4 model was trained on Skadi (laser-scan based) features; SRTM is a C-band radar surface model including vegetation and buildings and is smoother. The model is applied unchanged; slope is computed on the same SRTM grid, so model and baseline share the shift",
+    "secondary_dem": "Skadi (same tiles as V0.4) as a labelled sensitivity analysis only: provenance not demonstrably pre-event",
+    "crs": "EPSG:31287",
+    "resolution_m": 30,
+    "catchment_margin_m": 5010,
+    "window_extra_m": 300,
+    "minimum_slope_deg": 5,
+    "elevation_range_m": [0, 4500]
+  },
+  "land_cover": {
+    "rule": "latest CORINE vintage whose imagery ended before the campaign year: CLC2000 (imagery 1999-2001) for 2002-2007, CLC2006 (2005-2007) for 2008-2012, CLC2012 (2011-2012) for 2013-2018",
+    "services": {
+      "CLC2000": ["https://image.discomap.eea.europa.eu/arcgis/rest/services/Corine/CLC2000/MapServer/0/query", "code_00"],
+      "CLC2006": ["https://image.discomap.eea.europa.eu/arcgis/rest/services/Corine/CLC2006/MapServer/0/query", "Code_06"],
+      "CLC2012": ["https://image.discomap.eea.europa.eu/arcgis/rest/services/Corine/CLC2012/MapServer/0/query", "Code_12"]
+    },
+    "classes_from": "config/v04.json features.land_cover.classes (unchanged mapping of CORINE codes to the five model classes)",
+    "missing": "no or several polygons covering a point = not assessable (V0.4 rule)"
+  },
+  "geology": "GeoSphere Austria 1:500 000, five V0.4 classes (static map, unchanged)",
+  "model": {
+    "path": "models/v04/final_c6d67a854ba7/conditional_logit_static.joblib",
+    "sha256": "fbce46ad7f25e43e9ca954b177f4a5dea2e40680fa5fa035217cfcba15e753b4",
+    "use": "linear score of the frozen V0.4 static conditional logit, applied unchanged; no refit, no tuning"
+  },
+  "baseline": "slope alone (higher slope = higher rank), same cells, same SRTM grid",
+  "cells_m": 90,
+  "metric": {
+    "classes": "per area, cutoffs from the scores of all assessable grid cells: top 5 % and top 20 %",
+    "capture": "a target event is captured at k % if its own 30 m cell is assessable and its score reaches the area's top-k % cutoff; non-assessable target events count as not captured for both methods",
+    "primary": "capture at 20 %, mean over areas with equal area weights",
+    "secondary": ["capture at 5 %, area-weighted", "capture at 5 % and 20 %, event-pooled", "per-area capture at 5 % and 20 %", "share of target events not assessable"],
+    "chance_reference": "0.05 and 0.20 (area share)",
+    "primary_comparison": "paired difference model minus slope in the primary metric"
+  },
+  "uncertainty": {
+    "units": "areas (one campaign = one storm episode). Vorarlberg/Tirol and Gasen/Haslau August 2005 may belong to the same synoptic event; reported, not merged",
+    "method": "two-stage cluster bootstrap: resample areas with replacement, then within each drawn area resample 2 km x 2 km blocks (EPSG:31287 grid) of target events with replacement; cutoffs from grid cells stay fixed",
+    "draws": 2000,
+    "seed": 20261018,
+    "claim_rule": "'better than slope' only if the 95 % interval of the paired difference excludes 0; 'better than chance' only if the interval of the capture share lies above the chance reference; otherwise 'no established benefit'"
+  },
+  "spatial_overlap_report": "number of V0.4 training (development) events lying inside each area is reported; no exclusion",
+  "procedure": ["pilot on one area (smallest by target count) to check the technical chain", "all areas", "freeze results (write-once) before building the demo"],
+  "demo_rule": "after the test is frozen: demo area = campaign with the most precisely located pure Hangmuren; demo centre = representative point of its municipality with the most of them",
+  "after_test": "the user plans to use all inventory data (including 2005 and earlier) for a new training model; from then on the tested areas are seen data",
+  "not_claimed": ["probability of a landslide", "risk", "warning", "validated runout"]
+}
