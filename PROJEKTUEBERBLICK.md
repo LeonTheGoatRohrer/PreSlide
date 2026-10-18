@@ -1,6 +1,6 @@
 # Talwacht — Ziel, Projektstand und Orientierung
 
-**Stand: 15. Oktober 2026 (nach V0.5 und UI-Neugestaltung). Diese Datei zu Beginn jeder Session vollständig lesen.**
+**Stand: 18. Oktober 2026 (nach V0.5, Prüfgebiete-Grundgerüst und Jury-Einstieg). Diese Datei zu Beginn jeder Session vollständig lesen.**
 
 **Planungsergänzung 17.10.2026:** Auf Nutzerauftrag liegt ein konkreter Plan für eine Einzelbildsuche mit zwei neuronalen Netzen und kontrolliertem Weiterlernen unter `reports/weiterentwicklung_2026-10-17/NEURONALE_MURENSUCHE_PLAN.md`. Noch keine Umsetzung oder neuen Ergebnisse. Der Plan berücksichtigt die bislang separat entwickelten Satellitenzweige; reine Murenerkennung erfordert zusätzliche Prozesslabels, Modellübereinstimmung allein ergibt nur ein Pseudo-Label.
 Danach `PROJECT_STATE.md` für den technischen Arbeitsstand lesen. Bei Widersprüchen die gespeicherten Artefakte prüfen; keine Ergebnisse erfinden oder historische Experimente überschreiben.
@@ -123,7 +123,13 @@ Plan `reports/weiterentwicklung_2026-10-14/V05_NACHBARHANG_PLAN.md`, Regeln vora
 
 Bericht: `reports/v05/summary.md`; Nachweis: `reports/v05/verification.json` (PASS).
 
-## Webdemonstration: drei Seiten (15.10.2026)
+## Webdemonstration: Jury-Einstieg und Forschungsbereich (18.10.2026)
+
+Auf ausdrücklichen Nutzerauftrag vom 18.10.2026 ersetzt ein Jury-Einstieg die bisherige Startseite. Hauptnavigation: **Start** (`#/start`, Problem, Wirkungskette Prüfpunkt → Auslauf → Infrastruktur, drei Kernzahlen, sichtbare Grenze, belegte Quellen) · **Demo** (`#/pruefgebiete`) · **Ergebnisse** kurz (`#/befunde`: V0.4-Test mit Intervall, Gelände gegen Wetter, Schwäche bei reinen Hangmuren, Extremwetter-Abschnitt) · **Methodik & Grenzen** (`#/methodik`) · **Forschung** (`#/forschung`). Die drei bisherigen Seiten Projekt, Vorgehen und Ergebnisse bleiben inhaltlich unverändert als Forschungsbereich unter ihren alten Adressen (`#/projekt`, `#/vorgehen`, `#/ergebnisse/...`); alte Lesezeichen führen weiter zum selben Inhalt.
+
+Modellkennzahlen kommen nur aus den API-Bündeln (`/api/results_v04`, `/api/benchmarks`, `/api/pruefgebiete`, `/api/hangmuren_pilot`, `/api/extremwetter`), immer mit Intervall. Für Modellwerte gelten die Begriffe Prüfstufe, Rangfolge, Szenario; ein Wortlauttest verhindert Wahrscheinlichkeits-, Risiko- und Vorhersagewörter auf den Jury-Seiten. Aussagen zum Problem sind mit überprüfbaren Quellen belegt (GeoSphere Austria/Nature 2025, BMLUK, Schlögl et al. 2021 als Gegenbefund).
+
+### Vorherige Fassung: drei Seiten (15.10.2026)
 
 Die lokale Oberfläche führt über **Projekt → Vorgehen → Ergebnisse**. Direkte Routen: `/#/projekt`, `/#/vorgehen`, `/#/ergebnisse`; alte Abschnittslinks werden weiter zugeordnet. Der Einstieg erklärt den retrospektiven Prototyp, die Vorgehensseite zeigt die Schrittfolge und das reale Baseline-Beispiel, die Ergebnisse trennen V0.4-Test und explorative V0.5. Karten, Wetterkurven, Modellvergleiche und historische Analysen bleiben in aufklappbaren Bereichen erreichbar.
 
@@ -141,7 +147,7 @@ Kennzahlen und Intervalle kommen aus den vorhandenen API-Bündeln. V0.5-Wiederho
 - Keine Auswahl nach beobachteten Testresultaten, keine Seed-Suche, kein Nachjustieren der Kontrollen.
 - Neue Experimente getrennt versionieren; bei nachgewiesenem Fehler Original erhalten, Fehler dokumentieren und neuen Stand erzeugen.
 - Caches und gültige Checkpoints verwenden. Wetter, Gelände und fertige Modellläufe nicht unnötig neu berechnen.
-- Die ausdrücklich beauftragte UI-Neugestaltung ist abgeschlossen. Die drei Hauptseiten beibehalten; weitere grundlegende Umgestaltungen nur auf Auftrag.
+- Struktur der Oberfläche seit 18.10.2026 (Nutzerauftrag): Jury-Einstieg (Start, Demo, Ergebnisse kurz, Methodik & Grenzen) plus Forschungsbereich mit den drei bisherigen Seiten Projekt, Vorgehen, Ergebnisse. Diese drei Seiten inhaltlich erhalten und unter ihren alten Adressen erreichbar halten; weitere grundlegende Umgestaltungen nur auf Auftrag.
 - Rohdaten und Probenvorhersagen bleiben lokal. Die GeoSphere-Testquelle hat keine geklärte spezifische Weiterverwendungslizenz; lokale nicht kommerzielle Forschung ist vom Nutzer autorisiert, keine Anbieterbestätigung wird behauptet.
 - Passende vorhandene Skills dürfen gemäß aktueller ausdrücklicher Nutzeranweisung ohne erneute Nachfrage verwendet werden. Das ist keine pauschale Erlaubnis für Veröffentlichung oder externe Kommunikation.
 
