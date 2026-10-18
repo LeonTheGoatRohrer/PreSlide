@@ -1,0 +1,24 @@
+{
+  "amendment": 1,
+  "written_at_utc": "2026-10-18T11:13:19.585974+00:00",
+  "results_seen": false,
+  "results_seen_note": "full run in progress; reports/wirkungskette_v02/test_results.json does not exist yet; only the one-area technical pilot (Klingfurth) had been computed",
+  "config_sha256_unchanged": "062f10110260b29b28ee3869e40527fa0c967a85b26abc4702a9d59f2d5c1381",
+  "changes": [
+    {
+      "item": "terrain.date_rule_consequence and terrain.known_shift (factual correction, design unchanged)",
+      "reason": "Cell-by-cell comparison of the cached Skadi tiles with SRTMGL1 v3 from the ESA mirror: N46E009 99.72 %, N46E010 99.81 %, N47E009 99.50 %, N47E010 99.68 %, N47E016 99.84 % identical cells, mean absolute difference 0.002-0.019 m (pointed out by session anfaelligkeit_at_v01, verified here). Skadi 1 arc-second over Austria is therefore practically SRTMGL1 (acquisition February 2000), not the data.gv.at laser-scan DGM; the Tilezen data-source table refers to the high-zoom terrain formats.",
+      "consequence": "SRTM remains the primary DEM and satisfies the provenance rule; there is no train/test DEM shift (the V0.4 model was trained on practically the same heights). The registered statement that Skadi does not satisfy the provenance rule is withdrawn."
+    },
+    {
+      "item": "secondary_dem (Skadi sensitivity)",
+      "reason": "identical heights up to < 0.5 % of cells; a second run would repeat the primary analysis",
+      "consequence": "dropped; not computed"
+    },
+    {
+      "item": "namespace",
+      "reason": "the session for the qualitative runout cross-check registered the name wirkungskette_v02 earlier (branch claude/wirkungskette-v02, commit 9f1bcb1, 12:31 vs 12:49)",
+      "consequence": "after the full run, files of this test move to an own namespace (wirkungskette_gebietstest_v01); paths only, no change to rules, metric, data or code logic; a second amendment entry records the move"
+    }
+  ]
+}
