@@ -141,8 +141,13 @@ def table(data):
     return '\n'.join(lines)
 
 
-def web_bundle(data):
-    """Aggregates only: no event IDs, coordinates or per-event values."""
+def claim_met(row):
+    """Registered claim rule: one-sided null p < 0.05 and episode-bootstrap interval above 0.5."""
+    return row['p_one_sided'] < 0.05 and row['mean_pr_ci95'][0] > 0.5
+
+
+def web_bundle(data, scores, window_days):
+    """Aggregates only: no event IDs, coordinates or per-event values (episode histogram = counts)."""
     keep = ('setting', 'window_days', 'last_label_offset_days', 'years', 'weighting', 'n_events', 'n_episodes', 'mean_pr',
             'mean_pr_ci95', 'null_mean_pr', 'null_mean_pr_95', 'p_one_sided', 'share_q95', 'share_q95_ci95', 'expected_q95',
             'p_share_q95_one_sided', 'rate_ratio_q95', 'rate_ratio_q95_ci95', 'share_q99', 'share_q99_ci95', 'expected_q99',
@@ -155,12 +160,23 @@ def web_bundle(data):
         'einheiten': {'ereignisse': meta['n_events'], 'episoden': meta['n_episodes'], 'stanz_ereignisse': meta['stanz_events']},
         'fensterende': {str(k): v for k, v in END_LABEL.items()},
         'vergleiche_bezeichnung': SETTING_LABEL,
-        'vergleiche': [{k: r.get(k) for k in keep} for r in data['rows']],
+        'vergleiche': [{**{k: r.get(k) for k in keep}, 'regel_erfuellt': claim_met(r)} for r in data['rows']],
+        'kernergebnis': {
+            'primaer': next({k: r.get(k) for k in keep} for r in data['rows'] if r['setting'] == 'primary' and r['window_days'] == window_days),
+            'regel': 'erhöht nur wenn p < 0,05 und 95-%-Intervall über 0,5',
+            'regel_erfuellt': claim_met(next(r for r in data['rows'] if r['setting'] == 'primary' and r['window_days'] == window_days)),
+        },
+        'episoden_histogramm': {
+            'fenster_tage': window_days, 'klassen': [round(b, 1) for b in np.linspace(0, 1, 11)],
+            'primaer': np.histogram(episode_ranks(scores, window_days).primary, np.linspace(0, 1, 11))[0].tolist(),
+            'inkl_ereignistag': np.histogram(episode_ranks(scores, window_days).event_day, np.linspace(0, 1, 11))[0].tolist(),
+        },
         'hinweise': [
             'Explorativ: alle 423 Ereignisse wurden bereits in V0.4/V0.5 verwendet. Eine Bestätigung braucht neue Ereignisse (Bestätigungsplan).',
             'Zusammenhang, keine Kausalität. Nach großen Unwettern werden Rutschungen vollständiger gemeldet (Meldebias); das kann den Zusammenhang verstärken.',
             'Effektive Stichprobe = Zahl der zeitlichen Episoden, nicht der Ereignisse.',
             'Primärfenster enden um 07:00 des Vortags; Regen in den letzten Stunden vor dem Ereignis fehlt dort.',
+            'regel_erfuellt bei Fensterende -1 oder 0 ist nur beschreibend: diese Fenster enthalten (möglicherweise) Regen nach dem Ereignis.',
         ],
         'config_sha256': sha(CONFIG),
     }
@@ -181,5 +197,5 @@ def main():
         'Erzeugt aus `comparisons.json` (`python -m preslide.extremwetter report`). Effektive Stichprobe = Episoden. '
         'p = einseitig gegen die Pseudo-Fall-Nullverteilung (5000 Ziehungen). Intervalle: Bootstrap über Episoden (2000). '
         '"erw." = erwarteter Anteil ohne Zusammenhang.\n\n' + table(data) + '\n', encoding='utf-8', newline='\n')
-    write_json(WEB, web_bundle(data))
+    write_json(WEB, web_bundle(data, scores, k))
     print('report written')

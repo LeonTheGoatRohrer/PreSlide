@@ -123,6 +123,18 @@ Plan `reports/weiterentwicklung_2026-10-14/V05_NACHBARHANG_PLAN.md`, Regeln vora
 
 Bericht: `reports/v05/summary.md`; Nachweis: `reports/v05/verification.json` (PASS).
 
+## Extremwetter am Ereignisort: Case-Crossover (18.10.2026, explorativ)
+
+V0.4 vergleicht Hänge am selben Tag und kann daher nicht zeigen, ob Extremwetter **mehr** Ereignisse auslöst. `extremwetter_v01` vergleicht deshalb denselben Ort an verschiedenen Tagen: SPARTACUS-Tagesregen vor dem Ereignis gegen dieselben Kalendertage (±15) der Jahre 1991–2025. Das Design wurde vor jedem Ergebnis registriert (`config/extremwetter_v01.json`); die Primärfenster enden um 07:00 des Vortags.
+
+- 422 Ereignisse, **35 unabhängige Episoden**. Alle waren schon gesehen, daher **explorativ**.
+- Extrem nasse Fenster sind stark überrepräsentiert: 3 Tage über dem örtlichen 95. Perzentil in **24,6 %** der Episoden statt 5 %. Ratenverhältnis 6,2 [2,5; 11,7]. Das bleibt so ohne den Stanz-Sturm und mit anderen Referenzzeiträumen; der Placebotest ist unauffällig.
+- Der vorab festgelegte Mittelwerttest (3 Tage: 0,587 [0,481; 0,691]) ist **knapp nicht erfüllt**. Grund sind zwei Muster: tagelanger Vorregen oder Gewitter erst am Ereignistag, das das strikte Fenster nicht sieht.
+- Meldebias (vollständigere Erfassung nach Unwettern) kann den Zusammenhang verstärken. Es ist ein Zusammenhang, keine Kausalität.
+- Ein Bestätigungsplan für neue Sturmepisoden ist vorab eingefroren, aber noch nicht ausgeführt.
+
+Bericht: `reports/extremwetter_v01/summary.md`; Web-API `GET /api/extremwetter`.
+
 ## Webdemonstration: drei Seiten (15.10.2026)
 
 Die lokale Oberfläche führt über **Projekt → Vorgehen → Ergebnisse**. Direkte Routen: `/#/projekt`, `/#/vorgehen`, `/#/ergebnisse`; alte Abschnittslinks werden weiter zugeordnet. Der Einstieg erklärt den retrospektiven Prototyp, die Vorgehensseite zeigt die Schrittfolge und das reale Baseline-Beispiel, die Ergebnisse trennen V0.4-Test und explorative V0.5. Karten, Wetterkurven, Modellvergleiche und historische Analysen bleiben in aufklappbaren Bereichen erreichbar.
