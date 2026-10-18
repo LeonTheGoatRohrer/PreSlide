@@ -134,7 +134,8 @@ onMounted(() => {
   map.addControl(new maplibregl.NavigationControl({visualizePitch: true, showCompass: !props.embedded}), 'top-right')
   if (!props.embedded) map.addControl(new maplibregl.ScaleControl({unit: 'metric'}), 'bottom-right')
   map.addControl(new maplibregl.AttributionControl({compact: true}), 'bottom-right')
-  map.on('load', () => {
+  // Set up on style load (not 'load', which waits for every tile of the tilted 3D view).
+  map.once('style.load', () => {
     ready = true
     map.setTerrain({source: 'dem', exaggeration: 1.4})
     map.setSky({'sky-color': '#C9D9E0', 'horizon-color': '#F5F3EE', 'fog-color': '#F5F3EE', 'sky-horizon-blend': .6, 'horizon-fog-blend': .7, 'fog-ground-blend': .4})

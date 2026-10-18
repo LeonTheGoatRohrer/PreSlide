@@ -8,8 +8,8 @@ const src = new URL('../src/', import.meta.url)
 const dir = d => readdirSync(new URL(d, src)).filter(f => /\.(vue|js)$/.test(f)).map(f => d + f)
 // Every new page and component is covered automatically; the listed root files are shared by them.
 export const juryFiles = [...dir('pages/'), ...dir('ui/'),
-  'App.vue', 'navigation.js', 'places.js', 'session.js', 'sources.js', 'check.js', 'hangcheck.js', 'studien.js', 'map/TerrainMap.vue', 'map/LiveExample.vue', 'InfoTip.vue', 'IntervalPlot.vue',
-  'BefundePage.vue', 'MethodikPage.vue', 'ExtremwetterSection.vue']
+  'App.vue', 'navigation.js', 'places.js', 'session.js', 'sources.js', 'check.js', 'hangcheck.js', 'studien.js', 'map/TerrainMap.vue', 'map/LiveExample.vue', 'InfoTip.vue',
+  'ExtremwetterSection.vue', 'map/EventMap.vue']
 const banned = /wahrscheinlich|risik|vorhersag|prognos|gefährdet/i
 export const bannedWord = text => text.match(banned)?.[0] ?? null
 
@@ -31,7 +31,7 @@ test('the wording guard fails on an injected forbidden word', () => {
 const literals = ['0,751', '0.751', '0,633', '0,866', '0,702', '0,604', '0,049', '0,539', '0.539', '0,406', '0,669', '0,770', '0,928', '0,818', '423', '0.7506']
 export const metricLiteral = text => literals.find(l => text.includes(l)) ?? null
 test('model numbers on user pages come from API bundles, not from literals', () => {
-  for (const file of [...dir('pages/'), ...dir('ui/'), 'BefundePage.vue', 'MethodikPage.vue']) {
+  for (const file of [...dir('pages/'), ...dir('ui/'), ...dir('map/')]) {
     const hit = metricLiteral(readFileSync(new URL(file, src), 'utf8'))
     assert.equal(hit, null, `${file} contains ${hit}`)
   }

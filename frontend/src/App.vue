@@ -6,7 +6,8 @@ import NavBar from './ui/NavBar.vue'
 import SiteFooter from './ui/SiteFooter.vue'
 import StartPage from './pages/StartPage.vue'
 const AboutPage = defineAsyncComponent(() => import('./pages/AboutPage.vue'))
-const InterimPage = defineAsyncComponent(() => import('./pages/InterimPage.vue'))
+const HowPage = defineAsyncComponent(() => import('./pages/HowPage.vue'))
+const EvidencePage = defineAsyncComponent(() => import('./pages/EvidencePage.vue'))
 const CheckPage = defineAsyncComponent(() => import('./pages/CheckPage.vue'))
 const AtlasPage = defineAsyncComponent(() => import('./pages/AtlasPage.vue'))
 const SearchPalette = defineAsyncComponent(() => import('./ui/SearchPalette.vue'))
@@ -57,7 +58,8 @@ onBeforeUnmount(() => window.removeEventListener('hashchange', changed))
     <CheckPage v-else-if="isCheck" :params="route.params"/>
     <AtlasPage v-else-if="route.page === 'studien'" :anchor="route.anchor"/>
     <AboutPage v-else-if="route.page === 'ueber'"/>
-    <InterimPage v-else :which="route.page"/>
+    <HowPage v-else-if="route.page === 'so-funktionierts'"/>
+    <EvidencePage v-else-if="route.page === 'belastbar'"/>
   </main>
   <SiteFooter v-if="!isCheck"/>
   <SearchPalette v-if="palette" @close="palette = false" @select="selectPlace"/>
