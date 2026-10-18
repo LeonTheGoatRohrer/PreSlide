@@ -38,9 +38,10 @@ SEGMENTS = [
     dict(id='04_daten', clips=[('clips/a3_01_ebenen.mp4', 3.5, None)],
          text='Talwacht baut jeden Hang aus echten Daten neu auf: das Gelände auf dreißig Meter genau. Landbedeckung. '
               'Geologie. Und Niederschlag – Stunde für Stunde, sechzig Tage zurück.'),
-    dict(id='05_filter', clips=[('clips/a3_02_filter_oesterreich.mp4', 0, None), ('clips/a3_02_gastein_ausschluss.mp4', 0, None)],
-         text='Aus über fünfundzwanzigtausend Einträgen bleibt nur, was gesichert ist: Datum, Prozess, Lage. '
-              '423 Ereignisse. … Und die Hangmure aus dem Gasteinertal? Aussortiert. Ob es wirklich eine war, ist nicht bestätigt. '
+    dict(id='05_filter', clips=[('clips/a3_02_filter_oesterreich.mp4', 0, None)],
+         text='Aus über fünfundzwanzigtausend Einträgen bleibt nur, was gesichert ist: Datum, Prozess, Lage. 423 Ereignisse.'),
+    dict(id='05b_gastein', delay=1.6, clips=[('clips/a3_02_gastein_ausschluss.mp4|setpts=PTS/1.5', 0, None)],
+         text='Und die Hangmure aus dem Gasteinertal? … Aussortiert. Ob es wirklich eine war, ist nicht bestätigt. '
               'Kein Eintrag aus diesem Tal hat die Prüfung bestanden.'),
     dict(id='06_zwillinge', clips=[('clips/a3_03_zwillinge.mp4', 0, None)],
          text='Dann sucht das System jedem Ereignis fünf Zwillinge: in der Nähe, gleich steil, gleich hoch, gleich ausgerichtet – '
@@ -123,16 +124,23 @@ def resolve_marks():
         seg['clips'] = fixed
 
 
+def speed(path):
+    m = re.search(r'setpts=PTS/([0-9.]+)', path)
+    return float(m.group(1)) if m else 1.0
+
+
 def clip_len(path, start, dur):
     total = duration(PITCH / path.split('|')[0])
-    return min(dur, total - start) if dur else total - start
+    raw = min(dur, total - start) if dur else total - start
+    return raw / speed(path)
 
 
 def build_segment(seg, idx):
     lens = [clip_len(c[0], c[1], c[2]) for c in seg['clips']]
     vis = sum(lens)
     speech = duration(seg['voice']) if seg['voice'] else 0.0
-    length = max(vis, speech + VOICE_DELAY_S + TAIL_S)
+    delay_s = seg.get('delay', VOICE_DELAY_S)
+    length = max(vis, speech + delay_s + TAIL_S)
     seg['length'] = length
     seg['speech'] = speech
     inputs, filters, labels = [], [], []
@@ -140,7 +148,7 @@ def build_segment(seg, idx):
     for k, (c, (path, start, _dur, *overlay)) in enumerate(zip(lens, seg['clips'])):
         path, _, pre = path.partition('|')
         pre = pre + ',' if pre else ''
-        inputs += ['-ss', str(start), '-t', f'{c:.3f}', '-i', str(PITCH / path)]
+        inputs += ['-ss', str(start), '-t', f'{c * speed(pre):.3f}', '-i', str(PITCH / path)]
         base = n
         n += 1
         chain = f'[{base}:v]{pre}fps={FPS},scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=0E1822,setsar=1,format=gbrp'
@@ -160,7 +168,7 @@ def build_segment(seg, idx):
     filters.append(''.join(labels) + f'concat=n={len(labels)}:v=1:a=0[vout]')
     if seg['voice']:
         inputs += ['-i', str(seg['voice'])]
-        delay = int(VOICE_DELAY_S * 1000)
+        delay = int(delay_s * 1000)
         filters.append(f'[{n}:a]aresample=48000,aformat=channel_layouts=stereo,adelay={delay}|{delay},apad,atrim=0:{length:.3f}[aout]')
     else:
         inputs += ['-f', 'lavfi', '-t', f'{length:.3f}', '-i', 'anullsrc=r=48000:cl=stereo']
@@ -189,7 +197,7 @@ def srt(segments):
         if seg['text']:
             sentences = [s.strip() for s in re.split(r'(?<=[.?!])\s+', seg['text'].replace('…', '').strip()) if s.strip()]
             total_chars = sum(len(s) for s in sentences)
-            cur = t + VOICE_DELAY_S
+            cur = t + seg.get('delay', VOICE_DELAY_S)
             for s in sentences:
                 d = seg['speech'] * len(s) / total_chars
                 lines.append(f'{k}\n{ts(cur)} --> {ts(cur + d)}\n{s}\n')
