@@ -33,7 +33,19 @@ def relief():
         if not store.exists(p['relief_meta']):
             raise FileNotFoundError('Demogebiet nicht vorbereitet: python -m preslide.wirkungskette build')
         ident = B.terrain_identity(cfg, r)
-        return {**store.load_json(p['relief_meta'], ident), 'hoehenlinien': store.load_json(p['contours'], ident)}
+        return store.load_json(p['relief_meta'], ident)
+    return _guarded(load)
+
+
+@router.get('/hoehenlinien')
+def hoehenlinien():
+    def load():
+        cfg = config()
+        r = float(cfg['radius_m']['max'])
+        p = B.paths(r)
+        if not store.exists(p['contours']):
+            raise FileNotFoundError('Demogebiet nicht vorbereitet: python -m preslide.wirkungskette build')
+        return store.load_json(p['contours'], B.terrain_identity(cfg, r))
     return _guarded(load)
 
 

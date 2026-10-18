@@ -128,9 +128,9 @@ def scenario_chain(w, release):
             energy = stop.pop('energy_height_m')
         area = core.corridor(x, y, stop['stop_index'], rc['corridor']['width_m'])
         hits = w['exposure'].hits(area)
-        scenarios.append({'id': sc['id'], 'bezeichnung': sc['label'], 'art': sc['kind'], 'quelle': sc['source'],
+        scenarios.append({'id': sc['id'], 'bezeichnung': sc['label'], 'art': sc['kind'], 'quelle': sc['source_de'],
                           'stopp_index': stop['stop_index'], 'status': stop['status'], 'status_text': END_TEXT[stop['status']],
-                          'laenge_m': round(float(s[stop['stop_index']]), 1),
+                          'laenge_m': round(float(s[stop['stop_index']]), 1), 'stopp_lage': _lonlat([x[stop['stop_index']]], [y[stop['stop_index']]])[0],
                           'hoehendifferenz_m': round(float(z[0] - z[stop['stop_index']]), 1),
                           'energielinie_m': [round(v, 1) for v in energy] if energy is not None else None,
                           'infrastruktur': core.count_by_type(hits, types), '_hits': hits, '_area': area,

@@ -80,13 +80,13 @@
       "v_max_source": "Horton et al. (2013) Flow-R, NHESS 13:869-885: limit 15 m/s, observed debris-flow maxima in Switzerland 13-14 m/s (Rickenmann & Zimmermann 1993)"
     },
     "scenarios": [
-      {"id": "reach_45m", "label": "Reichweite 45 m", "kind": "fixed_reach", "reach_m": 45,
+      {"id": "reach_45m", "source_de": "Hürlimann, McArdell & Rickli (2015), Geomorphology 232: Median der horizontalen Reichweite von 178 Hangmuren auf offenem Hang in der Schweiz (Spanne 7–467 m).", "label": "Reichweite 45 m", "kind": "fixed_reach", "reach_m": 45,
        "source": "Hürlimann, McArdell & Rickli (2015) Geomorphology 232:20-32: median horizontal runout of 178 open-slope hillslope debris flows in Switzerland (range 7-467 m)"},
-      {"id": "reach_467m", "label": "Reichweite 467 m", "kind": "fixed_reach", "reach_m": 467,
+      {"id": "reach_467m", "source_de": "Hürlimann, McArdell & Rickli (2015): größte beobachtete horizontale Reichweite derselben 178 Ereignisse.", "label": "Reichweite 467 m", "kind": "fixed_reach", "reach_m": 467,
        "source": "Hürlimann, McArdell & Rickli (2015): maximum observed horizontal runout of the same 178 open-slope events"},
-      {"id": "energy_11deg", "label": "Energielinie 11°", "kind": "energy_line", "angle_deg": 11,
+      {"id": "energy_11deg", "source_de": "Horton et al. (2013), Flow-R, NHESS 13: minimaler Fahrböschungswinkel etwa 11° für grob- bis mittelkörnige Muren (Zimmermann et al. 1997); gilt, wenn eine Hangmure in ein Gerinne gelangt. Geschwindigkeit höchstens 15 m/s.", "label": "Energielinie 11°", "kind": "energy_line", "angle_deg": 11,
        "source": "Horton et al. (2013) Flow-R: minimum travel angle about 11 deg for coarse/medium-grained debris flows in the Swiss Alps (Zimmermann et al. 1997); applies when a Hangmure enters a channel and behaves as a debris flow"},
-      {"id": "energy_7deg", "label": "Energielinie 7°", "kind": "energy_line", "angle_deg": 7,
+      {"id": "energy_7deg", "source_de": "Horton et al. (2013), Flow-R: etwa 7° für feinkörnige Muren (Zimmermann et al. 1997); äußerste Beweglichkeit. Geschwindigkeit höchstens 15 m/s.", "label": "Energielinie 7°", "kind": "energy_line", "angle_deg": 7,
        "source": "Horton et al. (2013) Flow-R: minimum travel angle about 7 deg for fine-grained debris flows (Zimmermann et al. 1997); extreme mobility bound"}
     ],
     "scenario_rule": "all four scenarios are always shown together as a band; none was fitted to the demo events. Literature angles are minima for debris flows, i.e. upper-end reach for Hangmuren.",

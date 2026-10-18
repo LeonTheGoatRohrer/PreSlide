@@ -4,9 +4,10 @@ import * as maplibregl from 'maplibre-gl'
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import {useResource} from './useResource.js'
+import WirkungsketteView from './wirkungskette/WirkungsketteView.vue'
 maplibregl.setWorkerUrl(workerUrl)
 
-// Grundgerüst: nur dokumentierte Ereignisstellen. Modellergebnisse und Fließwege werden später angebunden.
+// Ereignisübersicht (read-only) plus die Wirkungskette des Demogebiets (eigene Komponente unter ./wirkungskette).
 const {data,error,loading,reload}=useResource('/api/pruefgebiete')
 const container=ref(null),mapWarning=ref('')
 const shown=ref({Hangmure:true,'Hangmure gemischt':true,Lockergesteinsrutschung:true})
@@ -68,18 +69,22 @@ onBeforeUnmount(()=>{disposed=true;map?.remove()})
 <template>
   <div class="pg">
     <header class="pg-head">
-      <p class="pg-kicker">Grundgerüst · noch ohne Modellergebnisse</p>
+      <p class="pg-kicker">Demonstration · retrospektiv · ein Demogebiet</p>
       <h1 tabindex="-1">Prüfgebiete und mögliche Fließwege</h1>
-      <p class="pg-lead">Diese Seite zeigt, wo dokumentierte Hangereignisse im Datensatz liegen und wie dicht sie beieinander auftreten. Wahrscheinlichkeiten und Fließwege sind hier noch nicht berechnet.</p>
+      <p class="pg-lead">Diese Seite führt an einem Demogebiet vom Hang bis zur Straße: relative Prüfpunkte aus dem Gelände, ein Auslaufszenario von einem Anrisspunkt und die Infrastruktur, die in diesem Szenario liegt. Darunter steht, wo die dokumentierten Ereignisse im Datensatz liegen.</p>
     </header>
 
     <section class="pg-block" aria-labelledby="pg-steps">
       <h2 id="pg-steps">Die Frage in drei Schritten</h2>
       <ol class="pg-steps">
-        <li><strong>Prüfpunkte aus Hangbedingungen</strong><span class="pg-status">Ausstehend</span><p>Geländebasierte Prüfpunkte, sobald ein geprüftes Ergebnis vorliegt. Ein Ranking ist keine Gefährdungswahrscheinlichkeit.</p></li>
-        <li><strong>Fließweg vom Anrisspunkt</strong><span class="pg-status">Ausstehend</span><p>Zuerst eine Abwärtsroute als Referenz, danach ein Reichweitenmodell. Auswertbar nur mit unabhängigen Auslaufreferenzen.</p></li>
-        <li><strong>Prüfpriorität</strong><span class="pg-status">Ausstehend</span><p>Zusammenführung der beiden Teile als Prüfstufe. Ausdrücklich keine Wahrscheinlichkeitsangabe.</p></li>
+        <li><strong>Prüfpunkte aus Hangbedingungen</strong><span class="pg-status is-demo">Demonstration</span><p>Relative Rangfolge der Hangzellen im gewählten Umkreis aus dem eingefrorenen V0.4-Geländemodell. Eine Rangfolge, keine Eintrittsangabe.</p></li>
+        <li><strong>Fließweg vom Anrisspunkt</strong><span class="pg-status is-ill">Unvalidierte Illustration</span><p>Abwärtsroute nach steilstem Gefälle und vier Reichweitenannahmen aus der Literatur. Das Inventar enthält keine Auslaufreferenzen, deshalb ist nichts davon geprüft.</p></li>
+        <li><strong>Prüfpriorität</strong><span class="pg-status">Bewusst nicht kombiniert</span><p>Beide Teile bleiben getrennt sichtbar. Eine Gesamtstufe wäre erst sinnvoll, wenn mindestens eine Komponente an unabhängigen Referenzen geprüft ist.</p></li>
       </ol>
+    </section>
+
+    <section class="pg-block pg-chain">
+      <WirkungsketteView />
     </section>
 
     <section class="pg-block" aria-labelledby="pg-data">
@@ -125,19 +130,10 @@ onBeforeUnmount(()=>{disposed=true;map?.remove()})
       <p class="pg-note">Jeder Punkt ist eine dokumentierte Ereignisstelle mit Positionsunsicherheit, kein Anrisspolygon.</p>
     </section>
 
-    <section class="pg-block" aria-labelledby="pg-later">
-      <h2 id="pg-later">Ergebnisse, sobald sie vorliegen</h2>
-      <p class="pg-note">Die drei Felder bleiben leer, bis ein geprüftes Ergebnis mit eigener Version und vorab festgelegten Regeln vorliegt.</p>
-      <div class="pg-slots">
-        <article class="pg-slot"><h3>Prüfpunkte</h3><p>Noch kein Ergebnis. Platz für das Gelände-Ranking mit Kontrollvergleich und Unsicherheit.</p></article>
-        <article class="pg-slot"><h3>Fließweg-Szenario</h3><p>Noch kein Ergebnis. Platz für Abwärtsroute und Auslaufhülle mit benannten Annahmen.</p></article>
-        <article class="pg-slot"><h3>Prüfpriorität</h3><p>Noch kein Ergebnis. Platz für die kombinierte Prüfstufe, ohne Wahrscheinlichkeitsangabe.</p></article>
-      </div>
-    </section>
   </div>
 </template>
 <style scoped>
-.pg{max-width:1080px;margin:0 auto;padding:0 16px;color:inherit}
+.pg{max-width:1240px;margin:0 auto;padding:0 16px;color:inherit}
 .pg-head{padding:32px 0 8px}
 .pg-kicker{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;opacity:.7;margin:0 0 6px}
 .pg-head h1{font-size:1.9rem;margin:0 0 10px}
@@ -151,6 +147,8 @@ onBeforeUnmount(()=>{disposed=true;map?.remove()})
 .pg-steps li{border:1px solid rgba(127,127,127,.3);border-radius:8px;padding:12px 14px;display:grid;gap:4px}
 .pg-status{justify-self:start;font-size:.78rem;padding:2px 8px;border-radius:999px;background:rgba(127,127,127,.18)}
 .pg-steps p{margin:0;font-size:.95rem}
+.pg-status.is-demo{background:#7a1e481f;color:#7a1e48}
+.pg-status.is-ill{background:#002fa71a;color:#002fa7}
 .pg-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0}
 .pg-stats div{border:1px solid rgba(127,127,127,.3);border-radius:8px;padding:10px 12px}
 .pg-stats dt{font-size:.82rem;opacity:.75}
@@ -165,9 +163,5 @@ onBeforeUnmount(()=>{disposed=true;map?.remove()})
 .pg-filter legend{font-size:.92rem;padding:0;margin-bottom:4px;opacity:.8}
 .pg-filter label{display:inline-flex;align-items:center;cursor:pointer}
 .pg-map{height:420px;width:100%;border-radius:8px;overflow:hidden;border:1px solid rgba(127,127,127,.3)}
-.pg-slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.pg-slot{border:1px dashed rgba(127,127,127,.5);border-radius:8px;padding:12px 14px}
-.pg-slot h3{margin-top:0}
-.pg-slot p{margin:0;font-size:.92rem;opacity:.85}
 @media (max-width:480px){.pg-head h1{font-size:1.55rem}.pg-map{height:340px}}
 </style>

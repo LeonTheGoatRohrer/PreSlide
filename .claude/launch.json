@@ -2,6 +2,12 @@
   "version": "0.0.1",
   "configurations": [
     {
+      "name": "preslide-api-wirkungskette",
+      "runtimeExecutable": ".venv/Scripts/python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "preslide.api:app", "--host", "127.0.0.1", "--port", "8041"],
+      "port": 8041
+    },
+    {
       "name": "preslide-api",
       "runtimeExecutable": ".venv/Scripts/python.exe",
       "runtimeArgs": [
