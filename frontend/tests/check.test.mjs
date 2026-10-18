@@ -46,3 +46,34 @@ test('the notice block is part of the page, not only a tooltip', () => {
   assert.match(page, /v-for="h in notice"/)
   assert.ok(page.includes('class="cp-notice"'))
 })
+
+test('flow paths: loaded only for the heavy-rain view or an asked point, one request per place and radius', async () => {
+  const {wantFlows} = await import('../src/check.js')
+  assert.equal(wantFlows(false, null), false)
+  assert.equal(wantFlows(true, null), true)
+  assert.equal(wantFlows(false, 2), true)
+  const calls = []
+  const loader = createLayerLoader(async body => { calls.push(body); return {fliesswege: []} })
+  const load = (rain, asked) => wantFlows(rain, asked) ? loader.update({on: true, place, radiusM: 1500}) : null
+  await load(false, null)
+  assert.equal(calls.length, 0)                       // results alone never fetch flow paths
+  await load(false, 3); await load(true, null); await load(true, 1)
+  assert.equal(calls.length, 1)                       // asked point and switch share one request
+  assert.deepEqual(Object.keys(calls[0]).sort(), ['latitude', 'longitude', 'radius_m'])
+})
+
+test('flow paths: short and long scenario per point; switch shows all, asking shows one; no guessed lines', async () => {
+  const {normalizeFlows, flowsToShow} = await import('../src/check.js')
+  const sc = (id, reach, weg) => ({id, reichweite_m: reach, weg, korridor: {type: 'Polygon', coordinates: [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]]]}, im_szenario: {}})
+  const f = normalizeFlows({fliesswege: [
+    {nr: 1, szenarien: [sc('reach_467m', 467, [[10, 47], [10.01, 47.01]]), sc('reach_45m', 45, [[10, 47], [10.001, 47.001]])]},
+    {nr: 2, szenarien: [sc('reach_45m', 45, [[11, 47]]), sc('reach_467m', 467, [])]},
+  ], typen: {strasse: 'Straßen'}})
+  assert.equal(f.byNr[1].kurz.id, 'reach_45m')
+  assert.equal(f.byNr[1].lang.id, 'reach_467m')
+  assert.equal(f.features.filter(x => x.properties.nr === 2 && x.properties.art !== 'korridor').length, 0)   // one-point paths are not drawn
+  assert.equal(flowsToShow(f, true, null).features.length, f.features.length)
+  assert.ok(flowsToShow(f, false, 1).features.every(x => x.properties.nr === 1))
+  assert.equal(flowsToShow(f, false, null).features.length, 0)
+  assert.equal(flowsToShow(null, true, 1).features.length, 0)
+})

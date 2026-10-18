@@ -13,7 +13,7 @@ from ..terrain import INVERSE
 from ..v05.paths import sha
 from ..wirkungskette import store
 from . import core
-from .paths import CONFIG, DATA, config, guard
+from .paths import DATA, config, guard
 
 HINWEISE = [
     {'titel': 'Nicht markiert heißt nicht sicher.',
@@ -57,9 +57,15 @@ def score_rows(frame):
     return b['model'].decision_function(z), z
 
 
-def identity(lon, lat, radius_m):
+# Config blocks that determine the main result; examples, search and flow-path settings do not.
+RESULT_KEYS = ('version', 'status', 'model', 'terrain', 'land_cover', 'geology', 'area', 'radius_m', 'classes', 'review_points',
+               'data_vintages')
+
+
+def identity(lon, lat, radius_m, cfg):
+    # Parsed config, not file bytes: the same configuration with CRLF (main checkout) or LF (worktree) keeps its cache.
     return store.identity({'lon': round(float(lon), 5), 'lat': round(float(lat), 5), 'radius_m': float(radius_m),
-                           'config_sha256': sha(CONFIG), 'algorithm': 1})
+                           'config': {k: cfg[k] for k in RESULT_KEYS}, 'algorithm': 1})
 
 
 def compute(lon, lat, radius_m=None):
@@ -69,7 +75,7 @@ def compute(lon, lat, radius_m=None):
     radius_m = core.radius(radius_m, cfg)
     if not (np.isfinite(lon) and np.isfinite(lat)) or not inside_austria(lon, lat)[0]:
         raise ValueError('Der gewählte Ort liegt außerhalb Österreichs. Hang-Check rechnet nur für Orte in Österreich.')
-    ident = identity(lon, lat, radius_m)
+    ident = identity(lon, lat, radius_m, cfg)
     path = guard(DATA / 'cache/results') / f'{ident}.json'
     if store.exists(path):
         return store.load_json(path, ident)

@@ -52,3 +52,30 @@ export function normalize(json, centre) {
 export const coord = v => v.toLocaleString('de-AT', {minimumFractionDigits: 5, maximumFractionDigits: 5})
 /** Zoom so that the radius fills the visible map comfortably. */
 export const zoomFor = radiusM => 14.6 - Math.log2(radiusM / 1000)
+
+/** Flow paths are loaded when the heavy-rain view is on or when one review point is asked about. */
+export const wantFlows = (rain, askedNr) => !!rain || askedNr != null
+
+/**
+ * GET /api/hangcheck/fliesswege → per review point the short (median reach) and long (largest observed reach)
+ * scenario, plus map features. Paths without coordinates are dropped, never drawn as guessed lines.
+ */
+export function normalizeFlows(json) {
+  const byNr = {}, features = []
+  for (const f of json?.fliesswege ?? []) {
+    const sorted = [...(f.szenarien ?? [])].sort((a, b) => a.reichweite_m - b.reichweite_m)
+    const [kurz, lang] = [sorted[0] ?? null, sorted.at(-1) ?? null]
+    byNr[f.nr] = {nr: f.nr, kurz, lang: lang !== kurz ? lang : null}
+    if (lang?.korridor?.coordinates?.[0]?.length > 3) features.push({type: 'Feature', properties: {nr: f.nr, art: 'korridor'}, geometry: lang.korridor})
+    for (const [art, sc] of [['lang', lang], ['kurz', kurz]])
+      if (sc?.weg?.length > 1) features.push({type: 'Feature', properties: {nr: f.nr, art}, geometry: {type: 'LineString', coordinates: sc.weg}})
+  }
+  return {byNr, features, typen: json?.typen ?? {}, hinweis: json?.hinweis ?? '', osm: json?.osm ?? null}
+}
+
+/** Map features to draw: all paths in the heavy-rain view, otherwise only the asked point's path. */
+export function flowsToShow(flows, rain, askedNr) {
+  if (!flows) return {type: 'FeatureCollection', features: []}
+  const features = rain ? flows.features : flows.features.filter(f => f.properties.nr === askedNr)
+  return {type: 'FeatureCollection', features}
+}

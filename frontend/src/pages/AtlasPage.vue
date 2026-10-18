@@ -149,7 +149,7 @@ watch([() => props.anchor, studies], ([a]) => {
 </template>
 
 <style>
-.atlas-head{position:relative;padding:clamp(150px,20vh,210px) 0 clamp(56px,8vw,96px);overflow:hidden;isolation:isolate}
+.atlas-head{position:relative;padding:clamp(156px,22vh,220px) 0 clamp(56px,8vw,96px);overflow:hidden;isolation:isolate}
 .atlas-img,.atlas-img img{position:absolute;inset:0;width:100%;height:100%;z-index:-2}
 .atlas-img img{object-fit:cover}
 .atlas-head::before{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgb(245 243 238 / .82),rgb(245 243 238 / .9) 60%,var(--paper))}

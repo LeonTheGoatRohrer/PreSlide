@@ -40,8 +40,8 @@ const years = computed(() => {
 })
 const steps = [
   {title: 'Ort wählen', text: 'Gemeinde eintippen, auf die Karte tippen oder den eigenen Standort nehmen. Dazu den Umkreis von 1 bis 3 km.'},
-  {title: '„Starkregen erwartet“ einschalten', text: 'Der Schalter öffnet die Ansicht für den Starkregenfall. Er ruft kein Wetter ab und ändert nichts an der Einstufung.'},
   {title: 'Hänge sehen, die man zuerst ansieht', text: 'Rot sind die auffälligsten Hänge im Umkreis, Orange die nächsten. Fünf Prüfpunkte mit Höhe, Neigung und Landbedeckung im Klartext.'},
+  {title: '„Starkregen erwartet“: Fließwege zeigen', text: 'Zeigt, wohin Material von den Prüfpunkten fließen könnte und welche Straßen und Gebäude im Szenario liegen. Kein Wetterabruf, ungeprüftes Szenario.'},
 ]
 const uses = [
   {who: 'Gemeinde nach dem Unwetter', text: 'Welche Hänge sieht sich die Begehung zuerst an? Die Prüfliste ordnet den Umkreis vor dem ersten Rundgang und lässt sich ausdrucken.'},
