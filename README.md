@@ -1,5 +1,7 @@
 # Talwacht (ehem. PreSlide) V0
 
+**Executed 2026-10-17: isolated context → RGB image pilot.** See [aggregate pilot report](reports/mudslide_cascade_v01/summary.md). The context model is fitted only on source-classified Hangmuren; the appearance network is trained on real general-landslide image/mask pairs, RGB only. The Austrian transfer comparison is exploratory and uses weak inventory/control labels, not verified scars. No calibrated hazard map, automatic self-training or confirmed new detection is claimed. Local entry points: `python -m preslide.cascade_pilot.context register|train`, `python -m preslide.cascade_pilot.appearance prepare|register|train`, `python -m preslide.cascade_pilot.transfer`, `python -m preslide.cascade_pilot.report`. Existing registrations/results refuse silent replacement. Private source snapshots, the episode-level CV registration and trained weights remain local. Extra installed CPU packages are recorded in `requirements-cascade-pilot-lock.txt`; the frozen baseline lock is unchanged.
+
 A working local scientific prototype: can pre-event weather distinguish a documented Austrian landslide slope from five nearby topographically matched pseudo-negative slopes?
 
 **Executed:** 102 candidates checked; **60 complete positive events + 300 controls**, real pre-event terrain, real guarded 60-day INCA histories, 3 model families x 3 feature sets, grouped evaluation and geographic holdout. German Vue/MapLibre/FastAPI demonstration. See [RESULTS.md](RESULTS.md).
@@ -159,3 +161,7 @@ All steps reuse verified checkpoints and cached API responses (`data/v04/cache/`
 ```
 
 `--limit 1|5|20` runs pilots. V0.5 has no sealed test (all events seen in V0.4). See `METHODOLOGY.md` (V0.5), `reports/v05/`.
+
+## Portfolio publication review (2026-10-29)
+
+Leon Rohrer is the project owner and developer. Scientific data, third-party libraries and AI assistance are attributed in the existing project documents. No new license is introduced. `PUBLICATION_CHECKS.md` distinguishes current checks from historical experiment verification. Frozen models, configurations, manifests and results were not regenerated. Research prototypes and exploratory branches must not be presented as an operational warning system.

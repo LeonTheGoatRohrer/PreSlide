@@ -1,0 +1,11 @@
+{
+  "version": "mudslide_appearance_pilot_v01",
+  "purpose": "RGB-only supervised general-landslide pretraining; separate exploratory Austrian Hangmure transfer check",
+  "user_authorization": "2026-10-17: general landslides for pretraining, Hangmuren checked separately",
+  "source": {"url": "https://zenodo.org/records/10463239", "license": "CC BY 4.0", "image_count": 3799, "train_count": 192, "development_count": 64, "rgb_indices": [3, 2, 1]},
+  "split": {"seed": 1730, "spatial_independence_known": false, "usage": "technical development check only, no geographic generalisation claim"},
+  "input": {"size_px": 128, "rgb_only": true, "per_image_percentile": [1, 99], "normalization": "ImageNet mean/std after fixed per-channel percentile stretch", "minimum_channel_range": 0.000001},
+  "training": {"architecture": "unet_resnet18", "seed": 42, "cpu_threads": 4, "batch_size": 4, "max_epochs": 8, "freeze_encoder_epochs": 4, "lr_decoder": 0.001, "lr_encoder": 0.0001, "weight_decay": 0.0001, "augment_rot90_flips": true, "pixel_threshold": 0.5},
+  "transfer": {"accepted_process_types": ["Hangmure"], "same_acquisition_controls": true, "image_role": "after_primary", "candidate_size_px": 128, "stride_px": 64, "cloud_buffer_m": 100, "minimum_valid_fraction": 0.9, "minimum_object_px": 4, "score_radius_px": 16, "score": "mean probability within centre box", "dense_examples": 3, "image_only_and_context_gate_both_reported": true},
+  "automatic_self_training": false
+}

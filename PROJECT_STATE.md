@@ -2,6 +2,8 @@
 
 Session entry point: read `AGENTS.md`, `PROJEKTUEBERBLICK.md` completely, then this file.
 
+2026-10-17 (later): **Executed exploratory two-stage pilot**, isolated under `data/`, `models/`, `reports/mudslide_cascade_v01/`. Context conditional logit: 102 source-classified Hangmure groups, 19 units, purged grouped CV; local AUC 0.539 [0.406, 0.669], no established selection signal. Real RGB-only U-Net/ResNet-18 trained on 192 Landslide4Sense image/mask pairs, 64 technical development pairs, 8 epochs CPU; development Dice 0.512 (source spatial independence unknown). Separate Austrian transfer after quality exclusions: 14 groups / 5 units, image AUC 0.615 [0.430, 0.825], context+image 0.685 [0.525, 0.845], paired difference +0.070 [-0.120, +0.260]: no established gate benefit. Inventory/control labels are weak image labels, no verified new mudslides or calibrated hazard probabilities. User explicitly authorized general-landslide pretraining with separate Hangmure checking. Entry: `python -m preslide.cascade_pilot.report`; see aggregate report. The private context registration contains episode IDs and stays local; a public hash-only registration summary is supplied.
+
 2026-10-17: **Planning only:** concrete single-image neural detector/verifier and controlled self-training plan in `reports/weiterentwicklung_2026-10-17/NEURONALE_MURENSUCHE_PLAN.md`. Proposed namespace `satellite_nn_v01`; no implementation, registration, dataset download or new training. Model agreement remains a pseudo-label; specific mudslide classification requires subtype labels beyond Landslide4Sense. Existing satellite/V0.6–V0.9 work is on separate local branches, not merged here; the plan identifies reusable files and verification limits.
 
 2026-10-15: **UI redesign implemented**: three German pages (Projekt / Vorgehen / Ergebnisse), hash routes including legacy bookmarks, progressive disclosure, real terrain hero, separate V0.4/V0.5 comparisons and correctly labelled intervals. No model runs or scientific artifact edits. Local production app verified on port 8000. Concurrent remote branding commit `75ca8b1` merged: visible product name is now **Talwacht**, internal package and frozen artifact names stay `preslide`/PreSlide.
@@ -53,9 +55,9 @@ Few independent units (11 test); Stanz dominance; reporting/placement bias in la
 
 # Next 3 Tasks
 
-1. Interpret V0.4/V0.5 together: terrain/land-cover contrast is strong, weather increment unproven in both designs. Do not tune on either.
-2. Independent confirmation needs unseen dependence units: tier-2 media events (separately labelled) and soil/antecedent-moisture pilot per `reports/weiterentwicklung_2026-10-14/KONKRETER_AENDERUNGSPLAN.md` (new version, own protocol).
-3. Reporting-bias diagnostics (road/settlement distance with dated sources; Sentinel-2 position check); the V0.5 web section is complete.
+1. New image-search priority: independently annotate visible Austrian scars and true confounders, retaining UNKNOWN. A source event point is not a scar mask; do not promote the new predictions into training truth.
+2. Keep context filtering optional: the 102-group context pilot and 14-group image-transfer comparison establish no reliable gate benefit. Detailed surrounding land-cover fractions and actual soil data are still absent; any new design gets a new namespace before training.
+3. Preserve all frozen results and interpret them together: weather increment remains unproven; geographic confirmation needs unseen dependence units. Existing V0.5 UI is complete; no further model/threshold/seed search on seen results.
 
 ## satellite_nn_v01 (Stand 17.10.2026, M0 teilweise)
 

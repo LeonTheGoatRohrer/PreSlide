@@ -1,0 +1,143 @@
+{
+  "version": "mudslide_appearance_pilot_v01",
+  "target": "Visible general-landslide mask, no subtype claim",
+  "scope": "Technical development validation; source spatial units unknown. Austrian Hangmure transfer is separate.",
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.6629608211417993,
+      "development": {
+        "tp": 10868,
+        "fp": 19304,
+        "fn": 14701,
+        "precision": 0.3602015113350126,
+        "recall": 0.4250459540850248,
+        "dice": 0.38994635905347946,
+        "iou": 0.24219463820114545
+      },
+      "elapsed_seconds": 9.744854899996426
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.5500503163784742,
+      "development": {
+        "tp": 22499,
+        "fp": 86144,
+        "fn": 3070,
+        "precision": 0.20709111493607504,
+        "recall": 0.8799327310414956,
+        "dice": 0.3352755342294281,
+        "iou": 0.2014000161127174
+      },
+      "elapsed_seconds": 20.72538340004394
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.49046079503993195,
+      "development": {
+        "tp": 20412,
+        "fp": 57956,
+        "fn": 5157,
+        "precision": 0.2604634544712127,
+        "recall": 0.7983104540654699,
+        "dice": 0.39277639339215104,
+        "iou": 0.24438192158036515
+      },
+      "elapsed_seconds": 30.645959999994375
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.44460099811355275,
+      "development": {
+        "tp": 18698,
+        "fp": 28707,
+        "fn": 6871,
+        "precision": 0.394430967197553,
+        "recall": 0.7312761547186045,
+        "dice": 0.5124564913530847,
+        "iou": 0.34449848920333115
+      },
+      "elapsed_seconds": 41.210826500027906
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.4175763490299384,
+      "development": {
+        "tp": 10191,
+        "fp": 13189,
+        "fn": 15378,
+        "precision": 0.435885372112917,
+        "recall": 0.3985685791388009,
+        "dice": 0.4163925718605079,
+        "iou": 0.26293926415191704
+      },
+      "elapsed_seconds": 56.769495100015774
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.3763168702522914,
+      "development": {
+        "tp": 9483,
+        "fp": 12257,
+        "fn": 16086,
+        "precision": 0.4362005519779209,
+        "recall": 0.37087879854511324,
+        "dice": 0.4008962353886153,
+        "iou": 0.25070057632316395
+      },
+      "elapsed_seconds": 71.42638170003192
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.3781798280154665,
+      "development": {
+        "tp": 11953,
+        "fp": 13386,
+        "fn": 13616,
+        "precision": 0.4717234302853309,
+        "recall": 0.46748015174625523,
+        "dice": 0.4695922055472617,
+        "iou": 0.30684122705686045
+      },
+      "elapsed_seconds": 86.15162810002221
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.3579432663197319,
+      "development": {
+        "tp": 13186,
+        "fp": 17342,
+        "fn": 12383,
+        "precision": 0.43193134171907754,
+        "recall": 0.5157026086276351,
+        "dice": 0.4701142663600549,
+        "iou": 0.3072871757824334
+      },
+      "elapsed_seconds": 100.15697490004823
+    }
+  ],
+  "best_epoch": 4,
+  "best_development": {
+    "tp": 18698,
+    "fp": 28707,
+    "fn": 6871,
+    "precision": 0.394430967197553,
+    "recall": 0.7312761547186045,
+    "dice": 0.5124564913530847,
+    "iou": 0.34449848920333115
+  },
+  "independent_source_units": null,
+  "train_images": 192,
+  "development_images": 64,
+  "confidence_intervals": "Not claimed: independent source units unavailable; descriptive development metrics only",
+  "null_reference": "Always-background has zero recall/Dice on these positive masks",
+  "model_sha256": "9ce15c59398adb6ce36fcef4a633ed9e81cc12effcd5a12c03d893bca092be14",
+  "trained_seconds": 100.22224120004103,
+  "limitations": [
+    "General landslides, not exclusively mudslides",
+    "RGB may still encode roads and reporting bias",
+    "Fixed per-image contrast stretch discards absolute radiometry",
+    "No calibrated event probabilities or proof of new Austrian discoveries",
+    "No pseudo-labels or automatic self-training used"
+  ]
+}

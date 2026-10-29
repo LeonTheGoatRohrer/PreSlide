@@ -1,0 +1,93 @@
+{
+  "version": "mudslide_cascade_v01",
+  "scope": "Exploratory reanalysis of already seen inventory; no new sealed test or hazard map",
+  "primary": {
+    "local_auc_units": 0.5388143435511857,
+    "top1_units": 0.17433969539232697,
+    "top3_units": 0.5508338153074995,
+    "mean_rank_units": 3.3059282822440714,
+    "mrr_units": 0.4257807981492192,
+    "local_auc_events": 0.4274509803921568,
+    "top1_events": 0.16666666666666666,
+    "top3_events": 0.3333333333333333,
+    "mean_rank_events": 3.8627450980392157,
+    "mrr_events": 0.3781045751633987,
+    "events": 102,
+    "units": 19
+  },
+  "auc_ci95": [
+    0.4062642182379025,
+    0.6693711683053787
+  ],
+  "random_rank_null": {
+    "mean": 0.5004834816849816,
+    "q05": 0.39637545787545786,
+    "q95": 0.604848274532485,
+    "q025": 0.3747445295932138,
+    "q975": 0.6255192066705224
+  },
+  "random_rank_upper_p": 0.2793720627937206,
+  "candidate_budget_fraction": 0.5,
+  "positive_retention_units": 0.5508338153074995,
+  "positive_retention_ci95": [
+    0.36104010025062655,
+    0.735371120107962
+  ],
+  "positive_retention_events": 0.3333333333333333,
+  "random_budget_retention": 0.5,
+  "features": [
+    "elevation",
+    "slope",
+    "aspect_sin",
+    "aspect_cos",
+    "profile_curvature",
+    "plan_curvature",
+    "roughness_tri",
+    "tpi_150m",
+    "tpi_500m",
+    "relative_position_500m",
+    "log10_catchment_m2",
+    "twi",
+    "lc_forest",
+    "lc_grass_shrub",
+    "lc_agriculture",
+    "lc_open_bare",
+    "geo_carbonate",
+    "geo_clastic_rock",
+    "geo_unconsolidated",
+    "geo_low_grade_metamorphic",
+    "geo_crystalline_other"
+  ],
+  "models": [
+    {
+      "path": "models/mudslide_cascade_v01/context_fold_1.joblib",
+      "sha256": "d70a4f74153cec8bf7aa2d3bc7999e5644487b5a5885003e73056f042e1c61b2"
+    },
+    {
+      "path": "models/mudslide_cascade_v01/context_fold_2.joblib",
+      "sha256": "6678e7b00c37f0cbf36a46c7db08697e1a23792c669cd5216de541e237fb0a36"
+    },
+    {
+      "path": "models/mudslide_cascade_v01/context_fold_3.joblib",
+      "sha256": "9e6cb0b35b0d2632920429979809a0998992514dbb58e051a8cbd24d3adee46e"
+    },
+    {
+      "path": "models/mudslide_cascade_v01/context_fold_4.joblib",
+      "sha256": "149a01450e7e157767821d14526f9fc3fe1c0a8389242f2740d77c9366e54d88"
+    },
+    {
+      "path": "models/mudslide_cascade_v01/context_fold_5.joblib",
+      "sha256": "e40e3b175f60a5bb9dbed7fdc3f6de09c6decc0a39272975395aeadf51404369"
+    }
+  ],
+  "exclusions": {
+    "nonfinite_required_features": []
+  },
+  "limitations": [
+    "Controls are inventory pseudo-negatives, not confirmed stable slopes",
+    "No road/building distance or weather as feature; reporting bias can remain",
+    "Geology is not measured soil moisture or soil strength",
+    "Candidate budget is tested on local matched point sets, not continuous area",
+    "Group-normalised scores rank candidates; they are not hazard probabilities"
+  ]
+}

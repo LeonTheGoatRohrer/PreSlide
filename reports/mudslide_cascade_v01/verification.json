@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "checks": {
+    "registered_inputs": true,
+    "prediction_ids_exactly_once": true,
+    "baseline_manifest": true,
+    "fold_1_purge": true,
+    "fold_1_model_hash": true,
+    "fold_2_purge": true,
+    "fold_2_model_hash": true,
+    "fold_3_purge": true,
+    "fold_3_model_hash": true,
+    "fold_4_purge": true,
+    "fold_4_model_hash": true,
+    "fold_5_purge": true,
+    "fold_5_model_hash": true,
+    "saved_models_reproduce_all_predictions": true,
+    "gate_reproduced": true,
+    "all_ranking_metrics_reproduced": true
+  },
+  "max_prediction_difference": 0.0,
+  "scope": "New exploratory context pilot only; no image detector trained or validated here"
+}

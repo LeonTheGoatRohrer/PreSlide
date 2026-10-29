@@ -1,0 +1,6 @@
+# Additional packages for the isolated CPU image-training pilot; existing baseline lock is unchanged.
+# Installed versions were reused; no package was installed by this pilot.
+# For CPU torch wheels use the official https://download.pytorch.org/whl/cpu index.
+torch==2.14.1+cpu
+torchvision==0.29.1+cpu
+h5py==3.16.0

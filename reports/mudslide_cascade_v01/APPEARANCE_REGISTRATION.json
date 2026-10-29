@@ -1,0 +1,20 @@
+{
+  "registered_at_utc": "2026-10-17T17:32:36.309463+00:00",
+  "config_sha256": "7f21441dfd5dff4ea3b03d2085ea45d8cbcc1f12c82505103e078a9d1ddc056c",
+  "dataset_sha256": "82f2db643ec3d18f6e6ae0f20fd3be74a2f9d7434bcfe740cee4d2d0cbae58fd",
+  "code": {
+    "preslide/satellite_nn/models.py": "1cd82de426ad9af989339f3a99de2f1a1c90d11039e961e93a906359c71fb603",
+    "preslide/cascade_pilot/appearance.py": "3b20d8c536a38e1af8519dd5d32ce3e8f2b47245bef063a73bb6b4fa4873a07b"
+  },
+  "imagenet_encoder_sha256": "f37072fd47e89c5e827621c5baffa7500819f7896bbacec160b1a16c560e07ec",
+  "dataset": {
+    "sha256": "82f2db643ec3d18f6e6ae0f20fd3be74a2f9d7434bcfe740cee4d2d0cbae58fd",
+    "config_sha256": "7f21441dfd5dff4ea3b03d2085ea45d8cbcc1f12c82505103e078a9d1ddc056c",
+    "train_count": 192,
+    "development_count": 64,
+    "positive_pixels": 93695,
+    "spatial_independence_known": false
+  },
+  "target": "Visible general-landslide mask, no subtype claim",
+  "evaluation_scope": "Technical development validation; source spatial units unknown. Austrian Hangmure transfer is separate."
+}

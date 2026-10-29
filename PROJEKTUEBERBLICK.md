@@ -3,6 +3,8 @@
 **Stand: 15. Oktober 2026 (nach V0.5 und UI-Neugestaltung). Diese Datei zu Beginn jeder Session vollständig lesen.**
 
 **Planungsergänzung 17.10.2026:** Auf Nutzerauftrag liegt ein konkreter Plan für eine Einzelbildsuche mit zwei neuronalen Netzen und kontrolliertem Weiterlernen unter `reports/weiterentwicklung_2026-10-17/NEURONALE_MURENSUCHE_PLAN.md`. Noch keine Umsetzung oder neuen Ergebnisse. Der Plan berücksichtigt die bislang separat entwickelten Satellitenzweige; reine Murenerkennung erfordert zusätzliche Prozesslabels, Modellübereinstimmung allein ergibt nur ein Pseudo-Label.
+
+**Später am 17.10.2026 ausgeführt:** Ein eigener Pilot prüft nun die konkretisierte Variante Umgebungsvorauswahl → RGB-Bildnetz. Das Bildnetz wurde mit echten allgemeinen Rutschungsmasken trainiert und getrennt an source-klassifizierten Hangmuren geprüft. Für die Vorauswahl ist bislang kein verlässlicher Vorteil belegt. Die österreichische Bildprüfung umfasst nach Qualitätsausschlüssen nur 14 Gruppen aus fünf Einheiten und verwendet noch keine unabhängig eingezeichneten Narben. Ergebnisse und Grenzen: `reports/mudslide_cascade_v01/summary.md`. Die wissenschaftlichen Originalergebnisse bleiben unverändert; keine zusätzlichen Vorschläge wurden als bestätigte Muren übernommen.
 Danach `PROJECT_STATE.md` für den technischen Arbeitsstand lesen. Bei Widersprüchen die gespeicherten Artefakte prüfen; keine Ergebnisse erfinden oder historische Experimente überschreiben.
 
 ## Was ist Talwacht?

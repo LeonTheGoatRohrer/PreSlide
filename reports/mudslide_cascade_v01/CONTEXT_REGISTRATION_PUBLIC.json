@@ -1,0 +1,15 @@
+{
+  "registered_at_utc": "2026-10-17T17:19:51.533357+00:00",
+  "config_sha256": "04f52ae7a6c41c1b337b3c92f6f28c615982655da7149a39e5ed8108fa094cfc",
+  "original_private_registration_sha256": "911a4b30bd45a2e2b5e8edc234a5fd38943f34929f13d7224a0f196b18648892",
+  "sources": {
+    "data/v04/run_c6d67a854ba7/dataset.parquet": "ea6950102f2e437c3aebbdfe12f91b20b81a6e41ef59120474d4351c9e1077a2",
+    "data/v04/partition/partition.json": "6daa4be3c63d675d962d31ccc66c98d0e98a816c7148afa9afba5a5d94baf9e1"
+  },
+  "dataset_sha256": "8947ba122ef123b230eb208ebaa427a19346296aef1888c98bc553e8fb983014",
+  "cv_plan_digest": "2fd3289d1b465cba7186c1e85b586ffaaf2df87bf2938354f2e6f62eaab47863",
+  "events": 102,
+  "independent_units": 19,
+  "scope": "Exploratory reanalysis of already seen inventory; no new sealed test or hazard map",
+  "note": "Episode identifiers and detailed assignments remain local; hash-only public summary."
+}

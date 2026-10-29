@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "checks": {
+    "registered_code_and_input_hashes": true,
+    "model_hash": true,
+    "best_epoch": true,
+    "development_targets_unchanged": true,
+    "predictions_reproduced": true,
+    "pixel_metrics_reproduced": true,
+    "no_automatic_self_training": true
+  },
+  "max_probability_difference": 0.0,
+  "scope": "Technical development validation; source spatial units unknown. Austrian Hangmure transfer is separate."
+}

@@ -1,0 +1,24 @@
+{
+  "version": "mudslide_cascade_v01",
+  "status": "exploratory_pilot_seen_inventory",
+  "context": {
+    "accepted_process_types": ["Hangmure"],
+    "source_dataset": "data/v04/run_c6d67a854ba7/dataset.parquet",
+    "source_partition": "data/v04/partition/partition.json",
+    "features": ["elevation", "slope", "aspect_sin", "aspect_cos", "profile_curvature", "plan_curvature", "roughness_tri", "tpi_150m", "tpi_500m", "relative_position_500m", "log10_catchment_m2", "twi", "lc_forest", "lc_grass_shrub", "lc_agriculture", "lc_open_bare", "geo_carbonate", "geo_clastic_rock", "geo_unconsolidated", "geo_low_grade_metamorphic", "geo_crystalline_other"],
+    "model": "conditional_logit",
+    "conditional_logit": {"l2": 1.0},
+    "folds": 5,
+    "seed": 42,
+    "purge_distance_m": 1000,
+    "minimum_train_units": 3,
+    "candidate_budget_fraction": 0.5
+  },
+  "uncertainty": {"bootstrap_draws": 2000, "random_rank_draws": 10000, "seed": 71017},
+  "appearance": {
+    "status": "awaiting_user_decision_on_general_landslide_pretraining",
+    "inputs": "RGB_single_image_only",
+    "specific_mudslide_labels_available": false,
+    "automatic_self_training": false
+  }
+}

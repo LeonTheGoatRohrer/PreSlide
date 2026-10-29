@@ -1,0 +1,93 @@
+{
+  "scope": "Exploratory transfer; inventory points and pseudo-negative controls are weak image labels, not verified scars",
+  "target_process": "Hangmure (source classification)",
+  "events": 14,
+  "independent_units": 5,
+  "samples": 81,
+  "summaries": {
+    "image_only": {
+      "local_auc_units": 0.615,
+      "top1_units": 0.3,
+      "top3_units": 0.825,
+      "mean_rank_units": 2.775,
+      "mrr_units": 0.5225,
+      "local_auc_events": 0.6,
+      "top1_events": 0.35714285714285715,
+      "top3_events": 0.7142857142857143,
+      "mean_rank_events": 2.9285714285714284,
+      "mrr_events": 0.5404761904761904,
+      "events": 14,
+      "units": 5
+    },
+    "context_then_image": {
+      "local_auc_units": 0.685,
+      "top1_units": 0.275,
+      "top3_units": 0.775,
+      "mean_rank_units": 2.5,
+      "mrr_units": 0.5545833333333334,
+      "local_auc_events": 0.5785714285714286,
+      "top1_events": 0.2857142857142857,
+      "top3_events": 0.5714285714285714,
+      "mean_rank_events": 3.0714285714285716,
+      "mrr_events": 0.5047619047619047,
+      "events": 14,
+      "units": 5
+    }
+  },
+  "uncertainty": {
+    "image_only": {
+      "ci95": [
+        0.43,
+        0.825
+      ]
+    },
+    "context_then_image": {
+      "ci95": [
+        0.525,
+        0.8451249999999992
+      ]
+    },
+    "context_then_image_minus_image_only": {
+      "mean": 0.069825,
+      "ci95": [
+        -0.12,
+        0.2600000000000001
+      ],
+      "share_above_zero": 0.73
+    }
+  },
+  "null_local_auc": 0.5,
+  "context_positive_retention_events": 0.5714285714285714,
+  "excluded_groups_by_reason": {
+    "nonfinite_RGB_candidate_window": 2,
+    "whole_event_group_excluded": 12,
+    "cloud_snow_or_invalid_candidate_window": 10
+  },
+  "dense_examples": [
+    {
+      "image": "dense_example_1.png",
+      "tiles": 9,
+      "unverified_objects": 6,
+      "context_selected_positive": true
+    },
+    {
+      "image": "dense_example_2.png",
+      "tiles": 9,
+      "unverified_objects": 12,
+      "context_selected_positive": true
+    },
+    {
+      "image": "dense_example_3.png",
+      "tiles": 9,
+      "unverified_objects": 2,
+      "context_selected_positive": true
+    }
+  ],
+  "limitations": [
+    "No calibrated hit probabilities or confirmed new mudslides",
+    "Image visibility at inventory points not independently annotated",
+    "No image training on Austrian cases; these events were seen in earlier project versions",
+    "Context gate ranks matched point sets, not continuous hazard zones",
+    "All dense proposals remain UNVERIFIED; no automatic training uptake"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "checks": {
+    "real_source_process_is_Hangmure": true,
+    "map_ids_unchanged": true,
+    "all_image_maps_reproduced": true,
+    "all_image_scores_reproduced": true,
+    "context_gate_reproduced": true,
+    "unit_count": true,
+    "all_metrics_reproduced": true,
+    "paired_intervals_reproduced": true
+  },
+  "max_probability_difference": 0.0,
+  "scope": "Exploratory transfer; inventory points and pseudo-negative controls are weak image labels, not verified scars"
+}
