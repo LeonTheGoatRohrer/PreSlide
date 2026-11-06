@@ -199,6 +199,12 @@ S.twin = (t, d) => {
   text('STICHTAG FÜR ALLE: 05.07.2023', 1824, 590, 24, { f: F.m, al: 'right', c: C.sig, sp: 2, a: a5 });
   foot('Echte Kandidaten und gespeicherte Kontrollen aus V0.4 · Umkreis 750 m bis 10 km', seg(t, 1, 2) * (1 - seg(t, d - .5, d - .1)));
   vignette(.55);
+  // The slopes from the preceding film shot are scanned away into the real terrain model.
+  if (typeof FREEZE2 !== 'undefined' && FREEZE2.complete && FREEZE2.naturalWidth && t < 1.6) {
+    const yEdge = 1080 * (1 - seg(t, .05, 1.5));
+    g.save(); g.beginPath(); g.rect(0, 0, 1920, yEdge); g.clip(); g.drawImage(FREEZE2, 0, 0, 1920, 1080); g.restore();
+    line(0, yEdge, 1920, yEdge, C.sig, 3, .95); g.fillStyle = 'rgba(255,138,42,.12)'; g.fillRect(0, yEdge, 1920, 70);
+  }
 };
 
 S.rules = (t, d) => {
@@ -259,12 +265,24 @@ S.result = (t, d) => {
 function slopeIcon(x, y, w, h, c, a) { g.save(); g.globalAlpha = a; g.fillStyle = c; g.beginPath(); g.moveTo(x - w / 2, y); g.lineTo(x + w / 2, y); g.lineTo(x + w * .14, y - h); g.closePath(); g.fill(); g.restore(); }
 S.weather = (t, d) => {
   bg(); chapter('04', 'WETTER', t, d);
-  const sw = d * .43, a1 = inout(t, .2, .8, sw - .5, sw);
+  const sw = d * .43, a1 = inout(t, 8.9, 9.4, sw - .5, sw);
+  // Beat 1: the expectation. Beat 2: the measured increment with its interval against zero.
+  const b1 = inout(t, .3, 1, 5.2, 5.7), b2 = inout(t, 5.8, 6.3, 8.5, 8.9);
+  text('ICH WAR SICHER:', 960, 500, 34, { f: F.m, al: 'center', c: C.cold, sp: 5, a: b1 });
+  text('MIT WETTER WIRD ES BESSER.', 960, 590, 74, { f: F.t, al: 'center', sp: 2, a: b1 * seg(t, 2.6, 3.2), glow: 24, glowc: 'rgba(92,200,255,.5)' });
+  if (b2 > 0) {
+    const X = v => 960 + v * 3600, y = 560, k = seg(t, 6.2, 7.2);
+    line(X(-.1), y, X(.15), y, C.faint, 3, b2);
+    line(X(0), y - 70, X(0), y + 40, C.white, 2.5, b2); text('kein Zusatznutzen', X(0), y - 88, 24, { al: 'center', a: b2 });
+    line(X(.049), y, X(lerp(.049, -.003, k)), y, C.cold, 9, b2); line(X(.049), y, X(lerp(.049, .108, k)), y, C.cold, 9, b2);
+    dot(X(.049), y, 15, C.cold, b2, 24);
+    text('+0,05 [−0,00; +0,11]', X(.049), y + 62, 30, { f: F.m, al: 'center', c: C.cold, a: b2 * seg(t, 6.8, 7.3) });
+    text('NICHT BELEGT', 960, 760, 58, { f: F.t, al: 'center', sp: 6, c: C.sig, a: b2 * seg(t, 7.2, 7.7), glow: 22 });
+  }
   if (a1 > 0) {
     const r = rng(9); for (let i = 0; i < 280; i++) { const x = 240 + r() * 1440, sp = 700 + r() * 500, y = 230 + ((r() * 420 + t * sp) % 420); line(x, y, x - 4, y + 22, C.cold, 1.2, a1 * .4); }
     for (let i = 0; i < 6; i++) { const x = 400 + i * 224; slopeIcon(x, 770, 200, 110, i === 0 ? C.sig : '#DDE6EC', a1); }
-    text('GLEICHER TAG, FAST DASSELBE WETTER', 960, 860, 32, { f: F.t, al: 'center', sp: 3, a: a1 * seg(t, 1, 1.8) });
-    text('Zusatznutzen des Wetters: nicht belegt', 960, 910, 25, { al: 'center', c: C.dim, a: a1 * seg(t, 1.8, 2.5) });
+    text('GLEICHER TAG, FAST DASSELBE WETTER', 960, 870, 36, { f: F.t, al: 'center', sp: 3, a: a1 });
   }
   const a2 = seg(t, sw + .1, sw + .7) * (1 - seg(t, d - .4, d - .1));
   if (a2 > 0) {
@@ -329,5 +347,11 @@ S.end = (t, d) => {
   vignette(.7);
 };
 
-window.drawScene = (name, t, d) => { g.setTransform(cv.width / 1920, 0, 0, cv.width / 1920, 0, 0); g.globalAlpha = 1; g.filter = 'none'; S[name](t, d); };
+// Scenes that hold still for a while get a very slow push-in so the picture never stands completely still.
+const PUSH = { rules: .025, result: .03, weather: .03, bias: .02 };
+window.drawScene = (name, t, d) => {
+  const k = cv.width / 1920, z = 1 + (PUSH[name] || 0) * t / d;
+  g.setTransform(k * z, 0, 0, k * z, k * 960 * (1 - z), k * 540 * (1 - z));
+  g.globalAlpha = 1; g.filter = 'none'; S[name](t, d);
+};
 window.sceneNames = Object.keys(S);

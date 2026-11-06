@@ -21,9 +21,11 @@ const still = stillArg ? Number(stillArg.slice(8)) : null;
 const FPS = 25;
 
 const freeze = path.join(out, 'mg/freeze.png');
+const freeze2 = path.join(out, 'mg/freeze2.png');
 const html = `<!doctype html><meta charset="utf-8"><style>html,body{margin:0;background:#000}canvas{display:block}</style>
 <canvas id="c" width="${width}" height="${height}"></canvas>
 ${fs.existsSync(freeze) ? `<script>const FREEZE=new Image();FREEZE.src=${JSON.stringify(pathToFileURL(freeze).href)};</script>` : ''}
+${fs.existsSync(freeze2) ? `<script>const FREEZE2=new Image();FREEZE2.src=${JSON.stringify(pathToFileURL(freeze2).href)};</script>` : ''}
 <script src="${pathToFileURL(path.join(out, 'mg/data.js')).href}"></script>
 <script src="${pathToFileURL(path.join(here, 'mg/scenes.js')).href}"></script>`;
 const page_file = path.join(out, 'mg/index.html');

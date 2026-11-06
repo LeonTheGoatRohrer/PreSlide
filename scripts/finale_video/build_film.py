@@ -53,17 +53,16 @@ SEGMENTS = [
     {'id': 'c2_storm', 'kind': 'film', 'clips': [clip('a02', 1.0, 3.6)], 'bars': True},
     {'id': 'c3_crack', 'kind': 'film', 'clips': [clip('a03', 0.5, 3.0)], 'bars': True},
     {'id': 'c4_valley', 'kind': 'film', 'clips': [clip('a04', 1.0, 4.2)], 'bars': True, 'voice': ('n01', 0.0)},
-    {'id': 'c5_tear', 'kind': 'film', 'clips': [clip('a05', 0.6, 2.8)], 'bars': True},
-    {'id': 'c6_flow', 'kind': 'film', 'clips': [clip('a06c', 0.5, 2.4)], 'bars': True},
-    {'id': 'c7_slide', 'kind': 'film', 'clips': [clip('a06b', 2.2, 3.3)], 'bars': True},
-    {'id': 'title', 'kind': 'mg', 'scene': 'title', 'dur': 9.0, 'voice': ('n02', 0.2)},
+    {'id': 'c5_tear', 'kind': 'film', 'clips': [clip('k1', 1.9, 2.8)], 'bars': True, 'dim': 0.72},
+    {'id': 'c7_slide', 'kind': 'film', 'clips': [clip('k2', 0.4, 4.6)], 'bars': True, 'dim': 0.72},
+    {'id': 'title', 'kind': 'mg', 'scene': 'title', 'dur': 8.0, 'voice': ('n02', 0.2)},
     {'id': 'why1', 'kind': 'film', 'clips': [clip('a08', 0.0, 9.1, 0.55), clip('a09', 0.0, 9.1, 0.66)], 'plate': 'climate',
      'dur': 18.2, 'dim': 0.55, 'voice': ('n03', 0.2)},
     {'id': 'why2', 'kind': 'film', 'clips': [clip('a10', 0.0, 8.4, 0.7)], 'voice': ('n04', 0.3)},
     {'id': 'who', 'kind': 'film', 'clips': [clip('a11', 0.0, 5.6, 1.0)], 'voice': ('n05', 0.2)},
     {'id': 'five', 'kind': 'mg', 'scene': 'five', 'dur': 5.4},
     {'id': 'p1', 'kind': 'mg', 'scene': 'data', 'dur': 19.6, 'voice': ('n06', 0.3)},
-    {'id': 'p2a', 'kind': 'film', 'clips': [clip('a12', 0.0, 10.9, 0.55), clip('a14', 0.0, 8.6, 0.58)], 'plate': 'ch2',
+    {'id': 'p2a', 'kind': 'film', 'clips': [clip('k3', 0.0, 7.0, 0.5), clip('a14', 0.0, 5.4, 0.93), clip('k4', 0.0, 4.0, 0.9), clip('k3', 2.9, 3.1, 1.0)], 'plate': 'ch2',
      'dur': 19.5, 'voice': ('n07', 0.2)},
     {'id': 'p2b', 'kind': 'mg', 'scene': 'twin', 'dur': 17.6, 'voice': ('n08', 0.5)},
     {'id': 'p3', 'kind': 'mg', 'scene': 'rules', 'dur': 25.0, 'voice': ('n09', 0.4)},
@@ -124,7 +123,8 @@ def render_film(seg: dict, out: Path) -> float:
     for i, c in enumerate(seg['clips']):
         source_dur = c['dur'] * c['speed']
         inputs += ['-ss', str(c['start']), '-t', f'{source_dur:.3f}', '-i', str(c['file'])]
-        chains.append(f'[{i}:v]setpts=PTS/{c["speed"]},{GRADE}[c{i}]')
+        smooth = f'minterpolate=fps={FPS}:mi_mode=blend,' if c['speed'] < 0.8 else ''
+        chains.append(f'[{i}:v]setpts=PTS/{c["speed"]},{smooth}{GRADE}[c{i}]')
         total += c['dur']
     n = len(seg['clips'])
     graph = ';'.join(chains) + ';' + ''.join(f'[c{i}]' for i in range(n)) + f'concat=n={n}:v=1[base]'
@@ -249,6 +249,25 @@ def mix_audio(at: dict, total_s: float, out: Path) -> None:
     assert proc.returncode == 0
 
 
+FADES = {'why1': (.5, 0), 'who': (.35, 0), 'five': (.3, 0), 'app1': (.5, 0), 'use1': (.3, 0), 'fazit': (.6, .4), 'next': (.4, .3),
+         'last': (.4, .5), 'end': (.5, 0), 'p5': (0, .4), 'why2': (.3, .3)}
+
+
+def add_fades(path: Path, seg_id: str) -> None:
+    if seg_id not in FADES:
+        return
+    fin, fout = FADES[seg_id]
+    dur = duration(path)
+    filters = []
+    if fin:
+        filters.append(f'fade=t=in:st=0:d={fin}')
+    if fout:
+        filters.append(f'fade=t=out:st={dur - fout:.3f}:d={fout}')
+    tmp = path.with_name(path.stem + '_f.mp4')
+    run(['-i', str(path), '-vf', ','.join(filters), *ENC, str(tmp)])
+    tmp.replace(path)
+
+
 def main() -> None:
     BUILD.mkdir(parents=True, exist_ok=True)
     label_png()
@@ -258,6 +277,7 @@ def main() -> None:
         renderer = {'film': render_film, 'app': render_app, 'mg': render_mg, 'black': render_black}[seg['kind']]
         if not args.audio_only:
             renderer(seg, out)
+            add_fades(out, seg['id'])
         real = duration(out)
         timeline.append({'id': seg['id'], 'start': round(t, 3), 'dur': round(real, 3)})
         listing.append(f"file '{out.as_posix()}'")
