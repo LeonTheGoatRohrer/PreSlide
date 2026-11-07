@@ -216,7 +216,7 @@ const TIMES = {
   result: { pair: 7.5, curve: 14.5, proof: 22.9 },
   weather: { bars: 8.0, sameDay: 11.4, turn: 15.0, define: 20.7, chance: 26.2, measured: 29.6 },
   bias: { second: 17.8 },
-  spuren: { count: 2.3, listen: 3.3, dark: 5.9 },
+  spuren: { count: 2.3, listen: 3.3, dark: 8.3 },
 };
 function lock(x, y, s, c, a) {
   g.save(); g.globalAlpha = a; g.strokeStyle = c; g.fillStyle = c; g.lineWidth = s * .13;
@@ -458,7 +458,7 @@ S.spuren = (t, d) => {
   text(String(lit), 1824, 190, 120, { f: F.m, al: 'right', c: C.sig, glow: 30, a: fall * hush * seg(t, .1, .4) });
   text('Mal', 1824, 240, 34, { f: F.l, al: 'right', a: fall * hush * seg(t, T.count - .4, T.count) });
   for (let i = 0; i < 3; i++) { const u = ((t - T.listen) / 2.6 + i / 3) % 1; if (t > T.listen) ringc(960, 560, 60 + u * 760, C.cold, 1.5, (1 - u) * .35 * fall); }
-  text('Ich habe angefangen zuzuhören.', 960, 950, 58, { f: F.l, al: 'center', a: seg(t, T.listen, T.listen + .5) * fall });
+  text('Ich habe angefangen zuzuhören.', 960, 950, 58, { f: F.l, al: 'center', a: seg(t, T.listen, T.listen + .5) * (1 - seg(t, T.listen + 2.5, T.listen + 2.9)) });
   vignette(.6);
 };
 

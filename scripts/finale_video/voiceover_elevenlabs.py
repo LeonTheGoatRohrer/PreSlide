@@ -55,7 +55,7 @@ TEXTS = {
     'q3a': 'Aber er hat Spuren hinterlassen,',
     'q3b': 'vierhundertdreiundzwanzig Mal.',
     'q4': 'Ich habe angefangen zuzuhören.',
-    'q5a': 'Das ist ... Talwacht.',  # shaped by final_line.py
+    'q5s': 'Das. ... Ist. ... Talwacht.',  # cut into three words and shaped by final_line.py
 }
 
 

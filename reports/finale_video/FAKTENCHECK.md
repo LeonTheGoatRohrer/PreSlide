@@ -38,7 +38,7 @@ eingeblendet; sie zeigen keine echten Orte oder Ereignisse. Karten, Punkte, Gel�
 | „Extrem nass“ = nasseste 5 von 100 Zeiträumen je 3 Tage je Ort, ±15 Kalendertage, 1991 bis 2025; „wenn der Regen egal wäre“ 5 von 100 per Definition; „rund 25“ | 95. Perzentil der Referenz; gemessen 24,6 % | `reports/extremwetter_v01/summary.md` |
 | 93 von 100 Vergleichen | Lesart von 0,928 (bedingte log. Regression, nur Infrastruktur; Vergleichspunkte ungematcht) | `reports/v07/summary.md`, Zeile 11 |
 
-Hergestellt mit: Murenbilder als Standbilder von GPT Image 2.6 mit Kamerabewegung und eingerechnetem Regen, Berg und Narbe im Finale Kling 4.0 aus solchen Standbildern, Musik ElevenLabs Music v2.5, Sprecher Alistair (ElevenLabs v4 über Higgsfield), der letzte Satz zusätzlich tiefer und mit Hall. Alles KI-generiert und im Film so gekennzeichnet.
+Hergestellt mit: Murenbilder als Standbilder von GPT Image 2.6 mit Kamerabewegung und eingerechnetem Regen, Berg und Narbe im Finale Kling 4.0 aus solchen Standbildern, Musik ElevenLabs Music v2.5, Sprecher Alistair (ElevenLabs v4 über Higgsfield), der letzte Satz zusätzlich tiefer, in drei Wörter mit langen Pausen geschnitten. Alles KI-generiert und im Film so gekennzeichnet.
 
 ## Noch offen vor der Abgabe
 

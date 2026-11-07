@@ -94,7 +94,7 @@ SEGMENTS = [
     {'id': 'last', 'kind': 'film', 'clips': [clip('a02', 0.3, 5.5, 1.0)], 'voices': [('n19', 0.1)]},
     {'id': 'q1', 'kind': 'film', 'clips': [clip('m3', 0.0, 8.0, 1.0)], 'plate': 'q1', 'dur': 8.0, 'voices': [('q1', 3.2), ('q2', 5.5)]},
     {'id': 'q3', 'kind': 'film', 'clips': [clip('m4', 0.0, 2.8, 1.0)], 'plate': 'q2', 'dur': 2.8, 'voices': [('q3a', 0.25)]},
-    {'id': 'spuren', 'kind': 'mg', 'scene': 'spuren', 'dur': 8.48, 'voices': [('q3b', 0.1), ('q4', 3.4), ('q5', 6.65)]},
+    {'id': 'spuren', 'kind': 'mg', 'scene': 'spuren', 'dur': 8.98, 'voices': [('q3b', 0.1), ('q4', 3.4), ('q5', 6.15)]},
     {'id': 'end', 'kind': 'mg', 'scene': 'end', 'dur': 7.7},
 ]
 
@@ -229,7 +229,7 @@ def mix_audio(seg_at: dict, total_s: float, out: Path) -> None:
     hit = at['end']
     for name, when, gain in [('drop', at['c1_drop'] + 2.0, 1.0), ('thunder', at['c2_storm'], 0.9), 
                              ('scan', title + 0.2, 0.6), ('boom', boom, 1.0), ('scan', at['p1'] + 5.6, 0.4),
-                             ('boom', at['res'] + 0.5, 0.5), ('boom', hit, 1.0)]:
+                             ('boom', at['res'] + 0.5, 0.5), ('boom', hit, 0.8)]:
         place(sfx, load_audio(SFX / f'{name}.mp3'), when, gain)
     # Debris flow: normalised takes; the rumble dies away before the title line.
     place(sfx, load_audio(SFX / 'tear.mp3', loudnorm=True), at['c5_tear'], 0.9)
@@ -251,15 +251,13 @@ def mix_audio(seg_at: dict, total_s: float, out: Path) -> None:
     cue_start = hit - FINALE_HIT_S
     listen0, listen1 = voice_at['q4']
     line0 = voice_at['q5'][0]
-    word_end = hit + 0.89  # "Talwacht" starts exactly on the cut to the title and lasts 0.89 s
+    word_end = hit + 0.75  # "Talwacht" starts exactly on the cut to the title
     last_t, q1_t = at['last'] - cue_start, at['q1'] - cue_start
     curve = [(0, 0), (6, 1.0), (last_t - 20, 1.0), (last_t, 1.5),
              # After "wo man zuerst hinschaut": seconds without a voice, the music really goes up.
              (q1_t + 2.6, 2.4), (q1_t + 3.2, 1.9),
-             # The music carries "Ich habe angefangen zuzuhören", then falls silent for the pause before the last line.
-             (listen0 - cue_start - .5, 2.2), (listen1 - cue_start, 1.6), (listen1 - cue_start + .55, 0),
-             (line0 - cue_start - .05, 0), (line0 - cue_start + 1.2, .25), (hit - cue_start - .1, .35),
-             (hit - cue_start, 1.8), (1000, 1.8)]
+             # No dip from here on: the music keeps climbing under the last words and opens fully after "Talwacht".
+             (listen0 - cue_start - .5, 1.8), (line0 - cue_start, 1.8), (hit - cue_start, 1.9), (1000, 1.9)]
     gain = ramp(len(cue), curve)
     place(music, cue * gain[:, None], cue_start)
     # Duck under the voice with a smoothed envelope (fast attack, slow release); gentler toward the end so the build stays audible.
@@ -272,7 +270,7 @@ def mix_audio(seg_at: dict, total_s: float, out: Path) -> None:
     for i, v in enumerate(active):
         e = attack * e + (1 - attack) * v if v > e else release * e + (1 - release) * v
         env[i] = e
-    depth = ramp(n, [(0, .72), (at['fazit'], .72), (at['last'], .65), (at['q1'] + 3.0, .8), (total_s, .8)])
+    depth = ramp(n, [(0, .72), (at['fazit'], .72), (at['last'], .65), (at['q1'] + 3.0, .75), (line0 - .05, .75), (line0 + .1, .6), (total_s, .6)])
     mix = voice + sfx + music * (1 - depth * env)[:, None]
     mix *= ramp(n, [(0, 1), (total_s - 1.6, 1), (total_s, 0)])[:, None]
     wav = BUILD / 'mix.f32'
