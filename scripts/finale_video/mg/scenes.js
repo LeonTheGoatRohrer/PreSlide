@@ -209,8 +209,6 @@ S.twin = (t, d) => {
 
 // Beat times in scene seconds, taken from the measured narration takes (see build_film.py).
 const QT = { q1: 3.2, q2: 5.5 };
-// Rain plate, screen-blended over the debris-flow stills.
-S.rain = (t, d) => { g.fillStyle = '#000'; g.fillRect(0, 0, 1920, 1080); const r = rng(31); for (let i = 0; i < 420; i++) { const x = r() * 2200 - 140, sp = 1500 + r() * 1100, L = 50 + r() * 90, y = ((r() * 1400 + t * sp) % 1400) - 150; line(x, y, x - L * .16, y + L, '#C9DCE8', 1.4, .1 + r() * .22); } };
 const TIMES = {
   rules: { future: 3.3, gate: 6.7, tested: 10.2, group: 12.0, plan: 16.0, seal: 18.5, once: 21.3 },
   result: { pair: 7.5, curve: 14.5, proof: 22.9 },
