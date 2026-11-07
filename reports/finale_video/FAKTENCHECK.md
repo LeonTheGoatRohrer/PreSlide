@@ -35,10 +35,10 @@ eingeblendet; sie zeigen keine echten Orte oder Ereignisse. Karten, Punkte, Gel�
 | Plan 13:23, eingefroren 15:39:31, Test 15:39:41, alle am 14.10.2026 UTC | Zeitstempel | `reports/v04/PREREGISTRATION.json`, `FREEZE.json`, `test_results.json` |
 | 123 Ereignisse / 19 Einheiten, 300 / 11 | Aufteilung | `PROJEKTUEBERBLICK.md`, `reports/v04/summary.md` |
 | Gelände 0,70 → Gelände + Wetterdaten 0,75, Balken ab 0,5 | 0,702, 0,751; Zuwachs +0,049 [−0,003; +0,108] | `reports/v04/summary.md` |
-| „Extrem nass“ = nasseste 5 % der 3-Tage-Fenster je Ort, ±15 Kalendertage, 1991 bis 2025; 5 von 100 per Definition | 95. Perzentil der Referenz; gemessen 24,6 % | `reports/extremwetter_v01/summary.md` |
+| „Extrem nass“ = nasseste 5 von 100 Zeiträumen je 3 Tage je Ort, ±15 Kalendertage, 1991 bis 2025; „wenn der Regen egal wäre“ 5 von 100 per Definition; „rund 25“ | 95. Perzentil der Referenz; gemessen 24,6 % | `reports/extremwetter_v01/summary.md` |
 | 93 von 100 Vergleichen | Lesart von 0,928 (bedingte log. Regression, nur Infrastruktur; Vergleichspunkte ungematcht) | `reports/v07/summary.md`, Zeile 11 |
 
-Hergestellt mit: Clips Kling 4.0 aus Startbildern von GPT Image 2.6 (m0 bis m4), Musik ElevenLabs Music v2.5, Sprecher Alistair (ElevenLabs v4 über Higgsfield). Alles KI-generiert und im Film so gekennzeichnet.
+Hergestellt mit: Murenbilder als Standbilder von GPT Image 2.6 mit Kamerabewegung und eingerechnetem Regen, Berg und Narbe im Finale Kling 4.0 aus solchen Standbildern, Musik ElevenLabs Music v2.5, Sprecher Alistair (ElevenLabs v4 über Higgsfield), der letzte Satz zusätzlich tiefer und mit Hall. Alles KI-generiert und im Film so gekennzeichnet.
 
 ## Noch offen vor der Abgabe
 

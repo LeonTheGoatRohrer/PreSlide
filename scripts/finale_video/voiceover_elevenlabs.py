@@ -41,7 +41,7 @@ TEXTS = {
     'n10d': 'Getestet an elf unabhängigen Unwetterepisoden, von denen eine dominiert.',
     'n11a': 'Problem vier hat mich überrascht. Ich war sicher: Gebe ich dem Modell zusätzlich Wetterdaten, liefert es klar bessere Ergebnisse. Das ließ sich nicht belegen.',
     'n11b': 'Denn am selben Tag haben Nachbarhänge fast dasselbe Wetter.',
-    'n12': 'Also habe ich die Frage gedreht: derselbe Ort, verschiedene Zeiten. Extrem nass heißt: die nassesten fünf Prozent an diesem Ort. Bei Zufall läge also jede zwanzigste Episode darin. Gemessen ist es rund jede vierte. Ein Hinweis, noch keine Bestätigung.',
+    'n12': 'Also habe ich die Frage gedreht: War es vor einer Rutschung nasser als sonst an diesem Ort? Extrem nass nenne ich die nassesten fünf von hundert Zeiträumen. Wäre der Regen egal, lägen also auch vor Rutschungen nur fünf von hundert darin. Gemessen sind es rund fünfundzwanzig. Ein Hinweis, noch keine Bestätigung.',
     'n13a': 'Problem fünf: Dann habe ich gegen mein eigenes Projekt gesucht. Allein der Abstand zu Straßen und Häusern erreicht eine AUC von null Komma neun drei: In dreiundneunzig von hundert Vergleichen steht der gemeldete Hang vor einem Punkt in der Umgebung. Gemeldet wird, was Menschen sehen.',
     'n13b': 'Vergleiche ich nur Hänge, die ähnlich nah an Straßen und Gebäuden liegen, bleibt für das Gelände null Komma sieben acht. Ein Teil des Signals bleibt Meldeverhalten. Das sage ich offen.',
     'n14': 'Daraus ist ein Werkzeug geworden: der Hang-Tscheck. Zum Beispiel im Gasteiner Tal. Aus diesem Tal kennt das Modell kein einziges Ereignis. Talwacht ordnet die Hänge im Umkreis und zeigt fünf Prüfpunkte: hier zuerst hinschauen.',
@@ -55,7 +55,7 @@ TEXTS = {
     'q3a': 'Aber er hat Spuren hinterlassen,',
     'q3b': 'vierhundertdreiundzwanzig Mal.',
     'q4': 'Ich habe angefangen zuzuhören.',
-    'q5': 'Das ist Talwacht.',
+    'q5a': 'Das ist ... Talwacht.',  # shaped by final_line.py
 }
 
 

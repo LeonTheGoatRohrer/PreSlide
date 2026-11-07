@@ -52,15 +52,15 @@ def take(name: str) -> Path:
 # kind: film (AI clips, optional screen-blended plate), mg (full-screen graphics), app (screen recording), black.
 # voice: (file, offset seconds into the segment).
 SEGMENTS = [
-    {'id': 'black0', 'kind': 'black', 'dur': 0.8},
-    {'id': 'c1_drop', 'kind': 'film', 'clips': [clip('a01', 0.8, 3.0)], 'bars': True},
+    {'id': 'black0', 'kind': 'black', 'dur': 0.5},
+    {'id': 'c1_drop', 'kind': 'film', 'clips': [clip('a01', 0.8, 2.6)], 'bars': True},
     {'id': 'c2_storm', 'kind': 'film', 'clips': [clip('a02', 1.0, 2.4)], 'bars': True},
-    {'id': 'c3_crack', 'kind': 'film', 'clips': [clip('a03', 0.5, 2.2)], 'bars': True},
+    {'id': 'c3_crack', 'kind': 'film', 'clips': [clip('a03', 0.5, 1.4)], 'bars': True},
     {'id': 'c4_valley', 'kind': 'film', 'clips': [clip('a04', 1.0, 4.6)], 'bars': True, 'voices': [('n01', 0.05)]},
-    {'id': 'c5_tear', 'kind': 'film', 'clips': [clip('m1', 0.8, 2.8)], 'bars': True},
-    {'id': 'c7_slide', 'kind': 'film', 'clips': [clip('m0', 0.0, 3.6)], 'bars': True},
+    {'id': 'c5_tear', 'kind': 'film', 'clips': [clip('p1', 0.0, 2.8)], 'bars': True, 'plate': 'rain', 'dur': 2.8},
+    {'id': 'c7_slide', 'kind': 'film', 'clips': [clip('p0', 0.0, 3.6)], 'bars': True, 'plate': 'rain', 'dur': 3.6},
     {'id': 'title', 'kind': 'mg', 'scene': 'title', 'dur': 6.0, 'voices': [('n02', 0.2)]},
-    {'id': 'why1', 'kind': 'film', 'clips': [clip('m2', 0.0, 7.4, 1.0), clip('a09', 0.0, 7.3, 0.66)], 'plate': 'climate',
+    {'id': 'why1', 'kind': 'film', 'clips': [clip('p2', 0.0, 7.4, 1.0), clip('a09', 0.0, 7.3, 0.66)], 'plate': 'climate',
      'dur': 14.7, 'dim': 0.8, 'voices': [('n03', 0.2)]},
     {'id': 'why2', 'kind': 'film', 'clips': [clip('a10', 0.0, 7.4, 0.7)], 'voices': [('n04', 0.3)]},
     {'id': 'who', 'kind': 'film', 'clips': [clip('a11', 0.0, 4.4, 1.0)], 'voices': [('n05', 0.15)]},
@@ -71,7 +71,7 @@ SEGMENTS = [
     {'id': 'p2b', 'kind': 'mg', 'scene': 'twin', 'dur': 16.2, 'voices': [('n08', 0.3)]},
     {'id': 'p3', 'kind': 'mg', 'scene': 'rules', 'dur': 23.1, 'voices': [('n09a', 0.3), ('n09b', 12.6), ('n09c', 16.2)]},
     {'id': 'res', 'kind': 'mg', 'scene': 'result', 'dur': 28.1, 'voices': [('n10a', 0.3), ('n10b', 4.25), ('n10c', 14.6), ('n10d', 23.0)]},
-    {'id': 'p4', 'kind': 'mg', 'scene': 'weather', 'dur': 32.8, 'voices': [('n11a', 0.3), ('n11b', 12.3), ('n12', 15.9)]},
+    {'id': 'p4', 'kind': 'mg', 'scene': 'weather', 'dur': 34.3, 'voices': [('n11a', 0.3), ('n11b', 11.6), ('n12', 15.2)]},
     {'id': 'p5', 'kind': 'mg', 'scene': 'bias', 'dur': 28.8, 'voices': [('n13a', 0.4), ('n13b', 18.0)]},
     {'id': 'app1', 'kind': 'app', 'file': APP / 'app3/app_01_start.webm', 'start': 2.0, 'dur': 3.7, 'z0': (0, 0, 1920, 1080),
      'z1': (60, 34, 1800, 1012), 'voices': [('n14', 0.2)]},
@@ -91,11 +91,11 @@ SEGMENTS = [
      'voices': [('n17', 0.3)]},
     {'id': 'next', 'kind': 'film', 'clips': [clip('a10', 2.0, 6.7, 0.5)], 'plate': 'next', 'dur': 6.7, 'dim': 0.4,
      'voices': [('n18', 0.2)]},
-    {'id': 'last', 'kind': 'film', 'clips': [clip('m2', 2.0, 5.5, 1.0, crop='iw*0.62:ih*0.62:iw*0.1:ih*0.38')], 'voices': [('n19', 0.1)]},
+    {'id': 'last', 'kind': 'film', 'clips': [clip('a02', 0.3, 5.5, 1.0)], 'voices': [('n19', 0.1)]},
     {'id': 'q1', 'kind': 'film', 'clips': [clip('m3', 0.0, 8.0, 1.0)], 'plate': 'q1', 'dur': 8.0, 'voices': [('q1', 3.2), ('q2', 5.5)]},
     {'id': 'q3', 'kind': 'film', 'clips': [clip('m4', 0.0, 2.8, 1.0)], 'plate': 'q2', 'dur': 2.8, 'voices': [('q3a', 0.25)]},
-    {'id': 'spuren', 'kind': 'mg', 'scene': 'spuren', 'dur': 8.1, 'voices': [('q3b', 0.1), ('q4', 3.4), ('q5', 6.55)]},
-    {'id': 'end', 'kind': 'mg', 'scene': 'end', 'dur': 8.5},
+    {'id': 'spuren', 'kind': 'mg', 'scene': 'spuren', 'dur': 8.48, 'voices': [('q3b', 0.1), ('q4', 3.4), ('q5', 6.65)]},
+    {'id': 'end', 'kind': 'mg', 'scene': 'end', 'dur': 7.7},
 ]
 
 
@@ -216,13 +216,13 @@ def mix_audio(seg_at: dict, total_s: float, out: Path) -> None:
     voice_at = {}
     for seg in SEGMENTS:
         for name, off in seg.get('voices', []):
-            sample = load_audio(take(name), loudnorm=True)
+            sample = load_audio(take(name), loudnorm=name != 'q5')  # q5 keeps its own level and hall (final_line.py)
             when = seg['t'] + off
             if when < previous_end:
                 print(f'WARNUNG: {name} beginnt {previous_end - when:.2f} s vor dem Ende von {previous_name}')
             if when + len(sample) / SR > seg['t'] + seg['dur_real'] and seg['id'] not in ('who', 'app1', 'use1'):
                 print(f'WARNUNG: {name} endet {when + len(sample) / SR - seg["t"] - seg["dur_real"]:.2f} s nach {seg["id"]}')
-            place(voice, sample, when, 1.2 if name.startswith('q') else 1.0)
+            place(voice, sample, when, 1.2 if name.startswith('q') and name != 'q5' else 1.0)
             voice_at[name] = (when, when + len(sample) / SR)
             previous_end, previous_name = when + len(sample) / SR, name
     title, boom = at['title'], at['title'] + 3.9
@@ -250,21 +250,22 @@ def mix_audio(seg_at: dict, total_s: float, out: Path) -> None:
     cue = load_audio(SFX / 'finale.mp3')
     cue_start = hit - FINALE_HIT_S
     listen0, listen1 = voice_at['q4']
-    word_end = voice_at['q5'][1]
+    line0 = voice_at['q5'][0]
+    word_end = hit + 0.89  # "Talwacht" starts exactly on the cut to the title and lasts 0.89 s
     last_t, q1_t = at['last'] - cue_start, at['q1'] - cue_start
     curve = [(0, 0), (6, 1.0), (last_t - 20, 1.0), (last_t, 1.5),
              # After "wo man zuerst hinschaut": seconds without a voice, the music really goes up.
              (q1_t + 2.6, 2.4), (q1_t + 3.2, 1.9),
-             # The breath: nearly gone under "Ich habe angefangen zuzuhören".
-             (listen0 - cue_start - .5, 2.2), (listen0 - cue_start + .2, .12),
-             (listen1 - cue_start, .12), (word_end - cue_start - .25, .28),
-             (word_end - cue_start - .02, .0),  # a blink of silence, then everything at once
+             # The music carries "Ich habe angefangen zuzuhören", then falls silent for the pause before the last line.
+             (listen0 - cue_start - .5, 2.2), (listen1 - cue_start, 1.6), (listen1 - cue_start + .55, 0),
+             (line0 - cue_start - .05, 0), (line0 - cue_start + 1.2, .25), (hit - cue_start - .1, .35),
              (hit - cue_start, 1.8), (1000, 1.8)]
     gain = ramp(len(cue), curve)
     place(music, cue * gain[:, None], cue_start)
     # Duck under the voice with a smoothed envelope (fast attack, slow release); gentler toward the end so the build stays audible.
     level = np.abs(voice).max(axis=1)
     active = (level > 0.01).astype(float)
+    active[int(word_end * SR):] = 0  # the hall of the last word must not hold the orchestra down
     attack, release = np.exp(-1 / (0.03 * SR)), np.exp(-1 / (0.5 * SR))
     env = np.zeros(n)
     e = 0.0

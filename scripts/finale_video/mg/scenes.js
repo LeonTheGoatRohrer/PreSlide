@@ -209,12 +209,14 @@ S.twin = (t, d) => {
 
 // Beat times in scene seconds, taken from the measured narration takes (see build_film.py).
 const QT = { q1: 3.2, q2: 5.5 };
+// Rain plate, screen-blended over the debris-flow stills.
+S.rain = (t, d) => { g.fillStyle = '#000'; g.fillRect(0, 0, 1920, 1080); const r = rng(31); for (let i = 0; i < 420; i++) { const x = r() * 2200 - 140, sp = 1500 + r() * 1100, L = 50 + r() * 90, y = ((r() * 1400 + t * sp) % 1400) - 150; line(x, y, x - L * .16, y + L, '#C9DCE8', 1.4, .1 + r() * .22); } };
 const TIMES = {
   rules: { future: 3.3, gate: 6.7, tested: 10.2, group: 12.0, plan: 16.0, seal: 18.5, once: 21.3 },
   result: { pair: 7.5, curve: 14.5, proof: 22.9 },
-  weather: { bars: 8.0, sameDay: 12.0, turn: 15.7, define: 20.2, chance: 24.6, measured: 28.1 },
+  weather: { bars: 8.0, sameDay: 11.4, turn: 15.0, define: 20.7, chance: 26.2, measured: 29.6 },
   bias: { second: 17.8 },
-  spuren: { count: 2.3, listen: 3.3 },
+  spuren: { count: 2.3, listen: 3.3, dark: 5.9 },
 };
 function lock(x, y, s, c, a) {
   g.save(); g.globalAlpha = a; g.strokeStyle = c; g.fillStyle = c; g.lineWidth = s * .13;
@@ -397,10 +399,10 @@ S.weather = (t, d) => {
   // Beat 4: same place, different times. The 5 % is a definition, not a guess.
   const a2 = seg(t, T.turn, T.turn + .5) * (1 - seg(t, d - .4, d - .1));
   if (a2 > 0) {
-    text('DERSELBE ORT, VERSCHIEDENE ZEITEN', 960, 200, 34, { f: F.t, al: 'center', sp: 3, a: a2 });
-    text('Extrem nass = die nassesten 5 % aller 3-Tage-Fenster an diesem Ort zu dieser Jahreszeit, 1991 bis 2025', 960, 244, 25, { al: 'center', c: C.dim, a: a2 * seg(t, T.define, T.define + .5) });
+    text('WAR ES VOR DER RUTSCHUNG NASSER ALS SONST AN DIESEM ORT?', 960, 200, 34, { f: F.t, al: 'center', sp: 3, a: a2 });
+    text('Extrem nass = die nassesten 5 von 100 Zeiträumen (je 3 Tage) an diesem Ort, zu dieser Jahreszeit, 1991 bis 2025', 960, 244, 25, { al: 'center', c: C.dim, a: a2 * seg(t, T.define, T.define + .5) });
     const G = (x0, n, lab, big, s) => { for (let i = 0; i < 100; i++) { const c = i % 10, ro = i / 10 | 0, x = x0 + c * 44, y = 290 + ro * 44, on = i < n && t > s + i * .05; g.save(); g.globalAlpha = a2 * (on ? 1 : .18); g.fillStyle = on ? (big ? C.cold : '#DDE6EC') : '#40505E'; if (on && big) { g.shadowColor = C.cold; g.shadowBlur = 16; } g.fillRect(x, y, 33, 33); g.restore(); } const q = a2 * seg(t, s, s + .5); text(lab[0], x0 + 203, 800, 64, { f: F.m, al: 'center', c: big ? C.cold : C.ink, a: q }); text(lab[1], x0 + 203, 846, 25, { al: 'center', c: C.dim, a: q }); };
-    G(320, 5, ['5 von 100', 'bei Zufall, per Definition'], false, T.chance); G(1160, 25, ['rund 25 von 100', 'gemessen: Episoden vor dokumentierten Rutschungen'], true, T.measured);
+    G(320, 5, ['5 von 100', 'wenn der Regen egal wäre'], false, T.chance); G(1160, 25, ['rund 25 von 100', 'gemessen vor dokumentierten Rutschungen'], true, T.measured);
     text('24,6 % [11,8; 38,2] · 35 Episoden · explorativ, vorab festgelegter Haupttest knapp nicht erfüllt, Meldebias möglich', 960, 960, 22, { al: 'center', c: C.dim, a: a2 * seg(t, T.measured, T.measured + .8) });
   }
   vignette(.5);
@@ -448,7 +450,7 @@ S.q2 = (t, d) => {
 S.spuren = (t, d) => {
   bg();
   const T = TIMES.spuren, Q = DATA.positives, n = Q.length / 2, r = rng(23), order = Array.from({ length: n }, (_, i) => [r(), i]).sort((a, b) => a[0] - b[0]);
-  const fall = 1 - seg(t, d - .5, d - .08), hush = 1 - .55 * seg(t, T.listen, T.listen + 1);
+  const fall = 1 - seg(t, T.dark, T.dark + .6), hush = 1 - .55 * seg(t, T.listen, T.listen + 1);
   g.save(); g.globalAlpha = seg(t, 0, .4) * fall; g.beginPath(); AT.R.forEach(([x, y], i) => { const p = AT.m(x, y); i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); }); g.closePath();
   g.fillStyle = '#0A1119'; g.fill(); g.strokeStyle = 'rgba(150,195,225,.6)'; g.lineWidth = 1.6; g.stroke(); g.restore();
   const lit = Math.round(n * ease(clamp(t / T.count)));
