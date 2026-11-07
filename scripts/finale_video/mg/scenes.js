@@ -1,7 +1,7 @@
 // Motion graphics for the finale film. Every scene is a pure function of time, drawn in a 1920x1080 design space,
 // so the same code renders at 540p for the prototype and at 1080p/4K for the final without quality loss.
 // All numbers come from the project's reports; see reports/finale_video/FAKTENCHECK.md.
-const C = { bg: '#05080D', ink: '#EEF3F6', dim: '#8FA0AE', faint: '#1E2A36', sig: '#FF8A2A', cold: '#5CC8FF', white: '#FFFFFF' };
+const C = { bg: '#05080D', ink: '#EEF3F6', dim: '#8FA0AE', faint: '#1E2A36', sig: '#FF8A2A', cold: '#5CC8FF', white: '#FFFFFF', bad: '#FF5A5F' };
 const F = { t: 'Bahnschrift', m: 'Cascadia Mono', s: 'Segoe UI', l: 'Segoe UI Light' };
 const cv = document.getElementById('c'), g = cv.getContext('2d');
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
@@ -207,111 +207,257 @@ S.twin = (t, d) => {
   }
 };
 
+// Beat times in scene seconds, taken from the measured narration takes (see build_film.py).
+const QT = { q1: 3.2, q2: 5.5 };
+const TIMES = {
+  rules: { future: 3.3, gate: 6.7, tested: 10.2, group: 12.0, plan: 16.0, seal: 18.5, once: 21.3 },
+  result: { pair: 7.5, curve: 14.5, proof: 22.9 },
+  weather: { bars: 8.0, sameDay: 12.0, turn: 15.7, define: 20.2, chance: 24.6, measured: 28.1 },
+  bias: { second: 17.8 },
+  spuren: { count: 2.3, listen: 3.3 },
+};
+function lock(x, y, s, c, a) {
+  g.save(); g.globalAlpha = a; g.strokeStyle = c; g.fillStyle = c; g.lineWidth = s * .13;
+  g.beginPath(); g.arc(x, y - s * .25, s * .32, Math.PI, 0); g.stroke();
+  g.fillRect(x - s * .5, y - s * .25, s, s * .8); g.restore();
+}
+function crossMark(x, y, r, c, a) { line(x - r, y - r, x + r, y + r, c, 9, a); line(x - r, y + r, x + r, y - r, c, 9, a); }
+function cluster(cx, cy, a, split) {
+  dot(cx, cy, 13, C.sig, a, 14);
+  if (split) return;
+  for (let i = 0; i < 5; i++) { const an = i / 5 * 6.283 - 1.57; dot(cx + Math.cos(an) * 42, cy + Math.sin(an) * 42, 9, C.white, a * .85); }
+}
+function potBox(x, y, w, h, label, a) {
+  g.save(); g.globalAlpha = a; g.strokeStyle = C.dim; g.lineWidth = 2; g.strokeRect(x, y, w, h); g.restore();
+  text(label, x + w / 2, y - 14, 20, { f: F.m, al: 'center', c: C.dim, sp: 3, a });
+}
+
 S.rules = (t, d) => {
   bg(); chapter('03', 'SELBSTTÄUSCHUNG', t, d);
-  const a1 = inout(t, .2, .8, d * .36, d * .36 + .5);
+  const T = TIMES.rules;
+  // Beat 1: the real rain of one real event; the event day is a wall.
+  const a1 = inout(t, .2, .7, T.group - .5, T.group);
   if (a1 > 0) {
-    const X = 1050; const r = rng(3);
-    for (let i = 0; i < 240; i++) { const y = 240 + r() * 600, v = 200 + r() * 340, ph = r() * 6, life = 1100 / v, u = ((t + ph) % life) / life, xFree = 1860 - u * 1400; const hit = xFree < X; const x = hit ? X + (X - xFree) * .42 : xFree; const fade = hit ? clamp(1 - (X - xFree) / 520) : 1; dot(x, y + (hit ? (X - xFree) * (r() - .5) * .4 : 0), 4, C.cold, a1 * .9 * fade, 10); }
-    for (let i = 0; i < 120; i++) { const y = 240 + r() * 600, u = (t * (.08 + r() * .12) + r()) % 1; dot(220 + u * 800, y, 4, C.sig, a1 * .85, 10); }
-    line(X, 210, X, 870, C.white, 3, a1); g.save(); g.globalAlpha = a1 * .08; g.fillStyle = C.white; g.fillRect(X, 210, 22, 660); g.restore();
-    text('t₀', X, 196, 38, { f: F.m, al: 'center', a: a1 });
-    text('VOR DEM EREIGNIS: ERLAUBT', 620, 930, 24, { f: F.m, al: 'center', c: C.sig, sp: 2, a: a1 });
-    text('AB DEM EREIGNIS: GESPERRT', 1490, 930, 24, { f: F.m, al: 'center', c: C.cold, sp: 2, a: a1 });
-  }
-  const a2 = inout(t, d * .345, d * .345 + .5, d * .66, d * .66 + .5);
-  if (a2 > 0) {
-    const k = seg(t, d * .345 + .4, d * .345 + 1.8), cols = 4; const y0 = 300;
-    for (let c = 0; c < cols; c++) {
-      const x0 = 300 + c * 340, w = 280, h = 200 + 0;
-      for (let i = 0; i < 6; i++) { const r0 = rng(c * 13 + i + 3), fromX = x0 + r0() * 300 - 150, fromY = y0 + r0() * 400 - 150, tx = x0 + 42 + (i % 3) * 98, ty = y0 + 60 + (i >> 1 & 1 ? 110 : 0) + 0; const x = lerp(fromX, tx, k), y = lerp(fromY, ty + (i >= 3 ? 110 : 0) - (i >> 1 & 1 ? 110 : 0), k); dot(x, y, 15, i === 0 ? C.sig : C.white, a2 * (i === 0 ? 1 : .78), i === 0 ? 18 : 0); }
-      g.save(); g.globalAlpha = a2 * seg(t, d * .345 + 1.6, d * .345 + 2.1); g.strokeStyle = C.ink; g.lineWidth = 2; g.strokeRect(x0, y0, w, 240); g.restore();
+    const R = DATA.rain, n = R.mm.length, x0 = 170, x1 = 1180, y0 = 760, H = 400, top = Math.max(...R.mm), w = (x1 - x0) / n;
+    text('Regen pro Tag am Ereignisort · Tamsweg', x0, 262, 26, { a: a1 * seg(t, .5, 1), c: C.ink });
+    line(x0, y0, 1780, y0, C.dim, 2, a1);
+    [0, 10, 20, 30, 40].filter(v => v <= top).forEach(v => { const y = y0 - v / top * H; line(x0 - 8, y, x0, y, C.dim, 1.5, a1); text(v + ' mm', x0 - 16, y + 6, 18, { f: F.m, al: 'right', c: C.dim, a: a1 }); });
+    for (let i = 0; i < n; i++) { const k = seg(t, .6 + i * .04, 1.0 + i * .04); g.save(); g.globalAlpha = a1 * k; g.fillStyle = C.cold; const h = R.mm[i] / top * H * k; g.fillRect(x0 + i * w + 2, y0 - h, w - 4, h); g.restore(); }
+    [0, 30, 60].forEach(i => { const q = R.dates[i]; text(`${q.slice(8, 10)}.${q.slice(5, 7)}.`, x0 + i * w + w / 2, y0 + 34, 20, { f: F.m, al: 'center', c: C.dim, a: a1 }); });
+    const af = a1 * seg(t, T.future, T.future + .5), al = a1 * seg(t, T.gate, T.gate + .5);
+    if (af > 0) {
+      g.save(); g.beginPath(); g.rect(x1, y0 - H - 30, 600, H + 30); g.clip(); g.globalAlpha = af * .35; g.strokeStyle = C.bad; g.lineWidth = 2;
+      for (let i = -20; i < 40; i++) { g.beginPath(); g.moveTo(x1 + i * 34, y0); g.lineTo(x1 + i * 34 + H + 30, y0 - H - 30); g.stroke(); } g.restore();
+      text('DIE ZEIT DANACH', 1480, 470, 34, { f: F.t, al: 'center', sp: 2, a: af * (1 - seg(t, T.gate, T.gate + .4)) });
+      text('Wer sie kennt, sieht immer gut aus', 1480, 516, 25, { al: 'center', c: C.dim, a: af * (1 - seg(t, T.gate, T.gate + .4)) });
     }
-    text('EIN HANG UND SEINE ZWILLINGE: IMMER IM SELBEN TEIL DER DATEN', 960, 720, 26, { f: F.m, al: 'center', sp: 1.5, a: a2 });
+    lock(1480, 440, 96, C.bad, al);
+    text('GESPERRT', 1480, 556, 40, { f: F.t, al: 'center', c: C.bad, sp: 4, a: al });
+    text('keine Daten ab dem Ereignis', 1480, 598, 25, { al: 'center', a: al });
+    line(x1, y0 + 8, x1, y0 - H - 44, C.white, 4, a1 * seg(t, .3, .8));
+    text('EREIGNISTAG t₀', x1, y0 - H - 92, 30, { f: F.t, al: 'center', sp: 2, a: a1 * seg(t, .5, 1), c: C.white });
+    text('05.07.2023', x1, y0 - H - 58, 24, { f: F.m, al: 'center', c: C.dim, a: a1 * seg(t, .5, 1) });
+    text('DAS DARF DAS MODELL SEHEN: 60 TAGE DAVOR', (x0 + x1) / 2, y0 + 84, 26, { f: F.t, al: 'center', c: C.cold, sp: 1.5, a: al });
+    text('✓ automatisch getestet: jedes Merkmal endet vor t₀', 960, 940, 30, { f: F.t, al: 'center', c: C.ink, a: a1 * seg(t, T.tested, T.tested + .5) });
+    foot('Echte INCA-Tageswerte aus dem V0.4-Cache', a1 * seg(t, 1, 2));
   }
-  const a3 = seg(t, d * .69, d * .69 + .5) * (1 - seg(t, d - .35, d - .05));
+  // Beat 2: wrong against right, because a twin in training lets the model recognise the place.
+  const a2 = inout(t, T.group, T.group + .5, T.plan - .4, T.plan);
+  if (a2 > 0) {
+    const pan = (x, ok) => {
+      const b = x + 40, y = 330, w = 320, h = 320, kx = x + 420;
+      potBox(b, y, w, h, 'TRAINING', a2); potBox(kx, y, w, h, 'TEST', a2);
+      if (ok) {
+        cluster(b + 90, y + 95, a2); cluster(b + 230, y + 225, a2); cluster(kx + 160, y + 160, a2);
+      } else {
+        cluster(kx + 160, y + 160, a2, true);
+        for (let i = 0; i < 5; i++) { const q = [b + 70 + i * 45, y + 90 + (i % 2) * 130]; line(q[0], q[1], kx + 160, y + 160, C.bad, 2, a2 * .7); dot(q[0], q[1], 9, C.white, a2 * .85); }
+        crossMark(x + 390, y + h + 60, 26, C.bad, a2);
+      }
+    };
+    pan(90, false); pan(1010, true);
+    text('FALSCH', 490, 262, 34, { f: F.t, al: 'center', c: C.bad, sp: 4, a: a2 });
+    text('RICHTIG', 1410, 262, 34, { f: F.t, al: 'center', c: C.cold, sp: 4, a: a2 });
+    text('Zwilling im Training, Hang im Test: Das Modell erkennt nur den Ort wieder.', 490, 800, 25, { al: 'center', a: a2, c: C.dim });
+    text('Ein Hang und seine Zwillinge bleiben immer im selben Teil.', 1410, 800, 25, { al: 'center', a: a2 });
+    dot(790, 912, 12, C.sig, a2); text('betroffener Hang', 815, 920, 23, { a: a2, c: C.dim });
+    dot(1040, 912, 9, C.white, a2); text('Zwillinge', 1062, 920, 23, { a: a2, c: C.dim });
+  }
+  // Beat 3: real time stamps of the registration, the freeze and the single scoring.
+  const a3 = seg(t, T.plan - .1, T.plan + .4) * (1 - seg(t, d - .35, d - .05));
   if (a3 > 0) {
-    const close = seg(t, d * .71, d * .71 + 1.4), cx = 960, cy = 500, R = 190, spin = close * 2.4;
-    for (let i = 0; i < 6; i++) { const an = i / 6 * 6.283 + spin, x0 = cx + Math.cos(an) * (R + (1 - close) * 90), y0 = cy + Math.sin(an) * (R + (1 - close) * 90); line(cx, cy, x0, y0, C.sig, 4, a3 * (.3 + .7 * close)); }
-    ringc(cx, cy, R, C.sig, 5, a3); ringc(cx, cy, R + 20, C.sig, 1.5, a3 * .6); ringc(cx, cy, 44, C.sig, 5, a3);
-    const lab = seg(t, d * .71 + 1, d * .71 + 1.6);
-    text('VERSIEGELTER TEST', 960, 790, 58, { f: F.t, al: 'center', sp: 8, a: a3 * lab, glow: 22 });
-    text('vorab festgeschrieben · genau einmal ausgewertet', 960, 842, 25, { c: C.dim, al: 'center', a: a3 * lab });
+    const yb = 280, opened = seg(t, T.once, T.once + .6);
+    potBox(280, yb, 560, 270, 'ENTWICKLUNG: DAMIT DURFTE ICH ARBEITEN', a3);
+    text('123', 560, yb + 140, 96, { f: F.m, al: 'center', a: a3 }); text('Ereignisse · 19 Einheiten', 560, yb + 196, 25, { al: 'center', c: C.dim, a: a3 });
+    potBox(1080, yb, 560, 270, 'VERSIEGELTER TEST', a3 * seg(t, T.seal, T.seal + .4));
+    const as = a3 * seg(t, T.seal, T.seal + .4);
+    text('300', 1360, yb + 140, 96, { f: F.m, al: 'center', a: as * opened }); text('Ereignisse · 11 Einheiten', 1360, yb + 196, 25, { al: 'center', c: C.dim, a: as * opened });
+    lock(1360, yb + 120, 100, C.sig, as * (1 - opened));
+    const X = [360, 960, 1560], yl = 730, labels = [['Plan festgeschrieben', '13:23', T.plan], ['Modell eingefroren', '15:39:31', T.seal], ['Test genau einmal ausgewertet', '15:39:41', T.once]];
+    line(X[0], yl, lerp(X[0], X[2], seg(t, T.plan, T.once)), yl, C.sig, 3, a3);
+    labels.forEach(([s, h, st], i) => { const k = a3 * seg(t, st, st + .4); dot(X[i], yl, 13, C.sig, k, 18); text(s, X[i], yl + 58, 28, { f: F.t, al: 'center', a: k }); text(h, X[i], yl + 94, 24, { f: F.m, al: 'center', c: C.dim, a: k }); });
+    foot('Alle Zeiten 14.10.2026, UTC · eine Planänderung vor dem Test ist dokumentiert (Amendment 1)', a3);
   }
-  vignette(.55);
+  vignette(.45);
 };
 
 S.result = (t, d) => {
   bg();
-  const k = seg(t, .3, 2.0), v = lerp(.5, .751, k), a = seg(t, .2, .7), lift = seg(t, d * .46, d * .46 + 1);
-  text('ERGEBNIS · VERSIEGELTER TEST', 960, lerp(240, 150, lift), 24, { f: F.m, al: 'center', c: C.dim, sp: 6, a });
-  text(de(v), 960, lerp(580, 370, lift), lerp(300, 200, lift), { f: F.m, al: 'center', a, glow: 50, glowc: 'rgba(255,138,42,.55)', c: C.ink });
-  // scale 0.4..1
-  const X = x => lerp(420, 1500, (x - .4) / .6), yS = lerp(720, 500, lift), aS = seg(t, 1.6, 2.4);
-  line(X(.4), yS, X(1), yS, C.faint, 3, aS);
-  [.5, .6, .7, .8, .9, 1].forEach(q => { line(X(q), yS - 8, X(q), yS + 8, C.dim, 1.5, aS); text(de(q, 1), X(q), yS + 40, 19, { f: F.m, al: 'center', c: C.dim, a: aS }); });
-  text('Zufall', X(.5), yS - 22, 21, { al: 'center', c: C.cold, a: aS }); line(X(.5), yS - 14, X(.5), yS + 8, C.cold, 3, aS);
-  const ci = seg(t, 2.2, 3); line(X(.633), yS, X(lerp(.633, .866, ci)), yS, C.sig, 8, aS);
-  dot(X(.751), yS, 13, C.sig, aS, 22);
-  text('95-%-Intervall [0,63; 0,87]', X(.751), yS - 26, 21, { f: F.m, al: 'center', c: C.sig, a: seg(t, 2.8, 3.4) });
-  const bars = [['Gelände + Wetter', .751, C.sig], ['Gelände allein', .702, C.ink], ['Wetter allein', .604, C.cold]];
-  bars.forEach(([n, b, c], i) => { const s = d * .46 + .6 + i * .3, kb = seg(t, s, s + .8), y = 640 + i * 62; text(n, 400, y + 8, 24, { al: 'right', a: kb }); g.save(); g.globalAlpha = kb; g.fillStyle = c; g.fillRect(420, y - 16, (X(b) - 420) * kb, 28); g.restore(); text(de(b), X(b) + 16, y + 8, 24, { f: F.m, a: kb }); });
-  const af = seg(t, d * .46 + 1.5, d * .46 + 2.2);
-  text('11 unabhängige Episoden · eine Episode stellt 243 von 300 Testereignissen', 960, 880, 26, { al: 'center', c: C.ink, a: af });
-  text('Hangrutschungen allgemein · lokale AUC · Zusatz durch Wetter +0,05 [−0,00; +0,11]: nicht belegt', 960, 925, 21, { al: 'center', c: C.dim, a: af });
-  vignette(.6);
+  const T = TIMES.result, a = seg(t, .2, .7), k = seg(t, .3, 2.0), v = lerp(.5, .751, k);
+  // Beat 1: the number with its unit.
+  const ab = 1 - seg(t, T.pair - .3, T.pair);
+  text('ERGEBNIS · VERSIEGELTER TEST', 960, 210, 24, { f: F.m, al: 'center', c: C.dim, sp: 6, a: a * ab });
+  text('AUC', 960, 310, 64, { f: F.t, al: 'center', c: C.sig, sp: 8, a: a * ab });
+  text(de(v), 960, 620, 300, { f: F.m, al: 'center', a: a * ab, glow: 50, glowc: 'rgba(255,138,42,.55)' });
+  text('Fläche unter der Kurve', 960, 770, 38, { f: F.l, al: 'center', a: a * ab * seg(t, 1.2, 1.8) });
+  // Header that stays after the big reveal.
+  const ah = seg(t, T.pair, T.pair + .4);
+  text('AUC', 96, 118, 30, { f: F.t, c: C.sig, sp: 4, a: ah }); text('0,75', 178, 118, 44, { f: F.m, a: ah });
+  // Beat 2: what is being counted. Eight example pairs (schema), then 100 comparisons.
+  const a2 = inout(t, T.pair, T.pair + .4, T.curve - .4, T.curve);
+  if (a2 > 0) {
+    text('EIN BETROFFENER HANG GEGEN EINEN ZWILLING', 500, 240, 25, { f: F.t, al: 'center', sp: 1.5, a: a2 });
+    text('Wen reiht das Modell weiter vorne?', 500, 280, 24, { al: 'center', c: C.dim, a: a2 });
+    const won = [1, 1, 0, 1, 1, 1, 0, 1];
+    won.forEach((ok, i) => {
+      const c = i % 2, r = i >> 1, x = 110 + c * 400, y = 400 + r * 138, s = T.pair + .3 + i * .7, ka = a2 * seg(t, s, s + .3), kr = seg(t, s + .3, s + .6);
+      slopeIcon(x + 40, y + 40, 86, 62, C.sig, ka); slopeIcon(x + 150, y + 40, 86, 62, '#DDE6EC', ka);
+      if (kr > 0) { const wx = ok ? x + 40 : x + 150; text('VORNE', wx, y + 68, 16, { f: F.m, al: 'center', c: C.ink, a: a2 * kr }); text(ok ? '✓' : '✗', x + 262, y + 42, 50, { f: F.t, al: 'center', c: ok ? C.sig : C.dim, a: a2 * kr }); }
+    });
+    text('Schema', 500, 960, 20, { al: 'center', c: C.dim, a: a2 });
+    const shown = Math.round(75 * seg(t, T.pair + 2.5, T.curve - .6));
+    for (let i = 0; i < 100; i++) { const x = 1080 + (i % 10) * 58, y = 300 + (i / 10 | 0) * 58, on = i < shown; g.save(); g.globalAlpha = a2 * (on ? 1 : .22); g.fillStyle = on ? C.sig : '#40505E'; if (on) { g.shadowColor = C.sig; g.shadowBlur = 8; } g.fillRect(x, y, 44, 44); g.restore(); }
+    text('100 SOLCHE VERGLEICHE', 1341, 240, 28, { f: F.t, al: 'center', sp: 1.5, a: a2 * seg(t, T.pair + 2.5, T.pair + 3) });
+    text('orange: betroffener Hang vorne', 1341, 930, 26, { al: 'center', c: C.dim, a: a2 * seg(t, T.pair + 2.5, T.pair + 3) });
+  }
+  // Beat 3: the curve. y = x^(1/3) has an area of exactly 0.75.
+  const a3 = inout(t, T.curve, T.curve + .4, T.proof - .4, T.proof);
+  if (a3 > 0) {
+    const x0 = 980, y0 = 900, S0 = 640, P = (u, w) => [x0 + u * S0, y0 - w * S0], grow = seg(t, T.curve + .3, T.curve + 4.5);
+    g.save(); g.globalAlpha = a3 * .3; g.fillStyle = C.sig; g.beginPath(); g.moveTo(...P(0, 0));
+    for (let i = 0; i <= 120; i++) { const u = i / 120 * grow; g.lineTo(...P(u, Math.cbrt(u))); } g.lineTo(...P(grow, 0)); g.closePath(); g.fill(); g.restore();
+    g.save(); g.globalAlpha = a3; g.strokeStyle = C.sig; g.lineWidth = 5; g.beginPath(); for (let i = 0; i <= 120; i++) { const u = i / 120 * grow, p = P(u, Math.cbrt(u)); i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); } g.stroke(); g.restore();
+    g.save(); g.globalAlpha = a3; g.strokeStyle = C.cold; g.lineWidth = 3; g.setLineDash([12, 10]); g.beginPath(); g.moveTo(...P(0, 0)); g.lineTo(...P(1, 1)); g.stroke(); g.restore();
+    g.save(); g.globalAlpha = a3; g.strokeStyle = C.dim; g.lineWidth = 2; g.strokeRect(x0, y0 - S0, S0, S0); g.restore();
+    text('Fläche = 0,75', x0 + S0 * .62, y0 - S0 * .3, 38, { f: F.m, al: 'center', a: a3 * seg(t, T.curve + 4.5, T.curve + 5) });
+    text('Münzwurf: Diagonale, Fläche 0,5', x0 + S0 * .5, y0 + 44, 22, { al: 'center', c: C.cold, a: a3 });
+    text('Schema, nicht die gemessene Kurve', x0 + S0 * .5, y0 - S0 - 18, 21, { al: 'center', c: C.dim, a: a3 });
+    const sc = (lab, sub, y, c, s) => { const q = a3 * seg(t, s, s + .4); text(lab, 150, y, 110, { f: F.m, c, a: q }); text(sub, 490, y - 16, 36, { f: F.l, a: q }); };
+    sc('0,5', 'wie ein Münzwurf', 380, C.cold, T.curve + .2);
+    sc('1,0', 'immer richtig', 560, C.ink, T.curve + 2.4);
+    sc('0,75', 'rund 3 von 4 Vergleichen', 740, C.sig, T.curve + 4.5);
+  }
+  // Beat 4: how solid the number is.
+  const a4 = seg(t, T.proof, T.proof + .5) * (1 - seg(t, d - .35, d - .05));
+  if (a4 > 0) {
+    const X = x => lerp(360, 1560, (x - .4) / .6), yS = 370, ci = seg(t, T.proof + .3, T.proof + 1.1);
+    line(X(.4), yS, X(1), yS, C.faint, 3, a4);
+    [.5, .6, .7, .8, .9, 1].forEach(q => { line(X(q), yS - 8, X(q), yS + 8, C.dim, 1.5, a4); text(de(q, 1), X(q), yS + 40, 20, { f: F.m, al: 'center', c: C.dim, a: a4 }); });
+    text('Münzwurf', X(.5), yS - 24, 22, { al: 'center', c: C.cold, a: a4 }); line(X(.5), yS - 14, X(.5), yS + 8, C.cold, 3, a4);
+    line(X(.751), yS, X(lerp(.751, .633, ci)), yS, C.sig, 9, a4); line(X(.751), yS, X(lerp(.751, .866, ci)), yS, C.sig, 9, a4);
+    dot(X(.751), yS, 15, C.sig, a4, 24);
+    text('0,75 · 95-%-Intervall [0,63; 0,87]', X(.751), yS - 34, 25, { f: F.m, al: 'center', c: C.sig, a: a4 * ci });
+    text('11', 500, 620, 110, { f: F.m, al: 'center', a: a4 }); text('unabhängige Unwetterepisoden', 500, 668, 27, { al: 'center', c: C.dim, a: a4 });
+    text('243 / 300', 960, 620, 88, { f: F.m, al: 'center', a: a4 }); text('Testereignisse aus einer Episode', 960, 668, 27, { al: 'center', c: C.dim, a: a4 });
+    text('0,67', 1420, 620, 110, { f: F.m, al: 'center', a: a4 }); text('wenn jedes Ereignis gleich zählt', 1420, 668, 27, { al: 'center', c: C.dim, a: a4 });
+    text('EINE RANGFOLGE, KEINE WAHRSCHEINLICHKEIT FÜR EINE RUTSCHUNG', 960, 830, 32, { f: F.t, al: 'center', sp: 2, a: a4 * seg(t, T.proof + .9, T.proof + 1.5) });
+    text('Hangrutschungen allgemein · lokale AUC, jede Episode gleich gewichtet', 960, 884, 22, { al: 'center', c: C.dim, a: a4 });
+  }
+  vignette(.55);
 };
 
 function slopeIcon(x, y, w, h, c, a) { g.save(); g.globalAlpha = a; g.fillStyle = c; g.beginPath(); g.moveTo(x - w / 2, y); g.lineTo(x + w / 2, y); g.lineTo(x + w * .14, y - h); g.closePath(); g.fill(); g.restore(); }
 S.weather = (t, d) => {
   bg(); chapter('04', 'WETTER', t, d);
-  const sw = d * .43, a1 = inout(t, 8.9, 9.4, sw - .5, sw);
-  // Beat 1: the expectation. Beat 2: the measured increment with its interval against zero.
-  const b1 = inout(t, .3, 1, 5.2, 5.7), b2 = inout(t, 5.8, 6.3, 8.5, 8.9);
-  text('ICH WAR SICHER:', 960, 500, 34, { f: F.m, al: 'center', c: C.cold, sp: 5, a: b1 });
-  text('MIT WETTER WIRD ES BESSER.', 960, 590, 74, { f: F.t, al: 'center', sp: 2, a: b1 * seg(t, 2.6, 3.2), glow: 24, glowc: 'rgba(92,200,255,.5)' });
+  const T = TIMES.weather;
+  // Beat 1: the expectation, unmistakably about data, not about the weather outside.
+  const b1 = inout(t, .3, .9, T.bars - .4, T.bars);
+  text('MEINE ERWARTUNG', 960, 370, 30, { f: F.m, al: 'center', c: C.cold, sp: 5, a: b1 });
+  text('ZUSÄTZLICHE WETTERDATEN', 960, 490, 84, { f: F.t, al: 'center', sp: 2, a: b1 * seg(t, 3.3, 3.8), glow: 24, glowc: 'rgba(92,200,255,.5)' });
+  text('↓', 960, 590, 70, { f: F.t, al: 'center', c: C.cold, a: b1 * seg(t, 4.6, 5) });
+  text('BESSERE ERGEBNISSE DES MODELLS', 960, 690, 64, { f: F.t, al: 'center', sp: 2, a: b1 * seg(t, 5.4, 5.9) });
+  // Beat 2: measured.
+  const b2 = inout(t, T.bars, T.bars + .4, T.sameDay - .4, T.sameDay);
   if (b2 > 0) {
-    const X = v => 960 + v * 3600, y = 560, k = seg(t, 6.2, 7.2);
-    line(X(-.1), y, X(.15), y, C.faint, 3, b2);
-    line(X(0), y - 70, X(0), y + 40, C.white, 2.5, b2); text('kein Zusatznutzen', X(0), y - 88, 24, { al: 'center', a: b2 });
-    line(X(.049), y, X(lerp(.049, -.003, k)), y, C.cold, 9, b2); line(X(.049), y, X(lerp(.049, .108, k)), y, C.cold, 9, b2);
-    dot(X(.049), y, 15, C.cold, b2, 24);
-    text('+0,05 [−0,00; +0,11]', X(.049), y + 62, 30, { f: F.m, al: 'center', c: C.cold, a: b2 * seg(t, 6.8, 7.3) });
-    text('NICHT BELEGT', 960, 760, 58, { f: F.t, al: 'center', sp: 6, c: C.sig, a: b2 * seg(t, 7.2, 7.7), glow: 22 });
+    const X = v => lerp(620, 1660, (v - .5) / .3), kb = i => seg(t, T.bars + .3 + i * .5, T.bars + .9 + i * .5);
+    text('GEMESSEN IM VERSIEGELTEN TEST · AUC', 960, 240, 26, { f: F.m, al: 'center', c: C.dim, sp: 3, a: b2 });
+    text('Balken beginnen bei 0,5 = Münzwurf', 620, 276, 20, { c: C.dim, a: b2 });
+    [['Gelände allein', .702, '#DDE6EC'], ['Gelände + Wetterdaten', .751, C.sig]].forEach(([n, v, c], i) => { const y = 340 + i * 110, q = kb(i); text(n, 590, y + 12, 32, { al: 'right', a: b2 * q }); g.save(); g.globalAlpha = b2 * q; g.fillStyle = c; g.fillRect(620, y - 32, (X(v) - 620) * q, 60); g.restore(); text(de(v), X(v) + 20, y + 14, 38, { f: F.m, a: b2 * q }); });
+    text('Zuwachs +0,05 [−0,00; +0,11]', 960, 600, 42, { f: F.m, al: 'center', c: C.cold, a: b2 * kb(2) });
+    text('Das Intervall berührt die Null', 960, 650, 28, { al: 'center', c: C.dim, a: b2 * kb(2) });
+    text('NICHT BELEGT', 960, 770, 76, { f: F.t, al: 'center', sp: 6, c: C.sig, a: b2 * kb(3), glow: 22 });
   }
+  // Beat 3: why. Same day, nearly the same rain over all six slopes.
+  const a1 = inout(t, T.sameDay, T.sameDay + .4, T.turn - .4, T.turn);
   if (a1 > 0) {
     const r = rng(9); for (let i = 0; i < 280; i++) { const x = 240 + r() * 1440, sp = 700 + r() * 500, y = 230 + ((r() * 420 + t * sp) % 420); line(x, y, x - 4, y + 22, C.cold, 1.2, a1 * .4); }
     for (let i = 0; i < 6; i++) { const x = 400 + i * 224; slopeIcon(x, 770, 200, 110, i === 0 ? C.sig : '#DDE6EC', a1); }
     text('GLEICHER TAG, FAST DASSELBE WETTER', 960, 870, 36, { f: F.t, al: 'center', sp: 3, a: a1 });
   }
-  const a2 = seg(t, sw + .1, sw + .7) * (1 - seg(t, d - .4, d - .1));
+  // Beat 4: same place, different times. The 5 % is a definition, not a guess.
+  const a2 = seg(t, T.turn, T.turn + .5) * (1 - seg(t, d - .4, d - .1));
   if (a2 > 0) {
-    text('DERSELBE ORT, VERSCHIEDENE ZEITEN', 960, 228, 32, { f: F.t, al: 'center', sp: 3, a: a2 });
-    const G = (x0, n, lab, big) => { for (let i = 0; i < 100; i++) { const c = i % 10, ro = i / 10 | 0, x = x0 + c * 46, y = 300 + ro * 46, on = i < n && t > sw + 1 + i * .035; g.save(); g.globalAlpha = a2 * (on ? 1 : .18); g.fillStyle = on ? (big ? C.cold : '#DDE6EC') : '#40505E'; if (on && big) { g.shadowColor = C.cold; g.shadowBlur = 16; } g.fillRect(x, y, 34, 34); g.restore(); } text(lab[0], x0 + 207, 830, 74, { f: F.m, al: 'center', c: big ? C.cold : C.ink, a: a2 * seg(t, sw + 1.4, sw + 2) }); text(lab[1], x0 + 207, 872, 23, { al: 'center', c: C.dim, a: a2 * seg(t, sw + 1.4, sw + 2) }); };
-    G(320, 5, ['5 %', 'erwartet'], false); G(1160, 25, ['24,6 %', 'vor dokumentierten Episoden'], true);
-    text('Extrem nasse 3 Tage · 35 Episoden · Intervall [11,8; 38,2] · explorativ, vorab festgelegter Haupttest knapp nicht erfüllt, Meldebias möglich', 960, 960, 21, { al: 'center', c: C.dim, a: a2 * seg(t, sw + 2, sw + 2.8) });
+    text('DERSELBE ORT, VERSCHIEDENE ZEITEN', 960, 200, 34, { f: F.t, al: 'center', sp: 3, a: a2 });
+    text('Extrem nass = die nassesten 5 % aller 3-Tage-Fenster an diesem Ort zu dieser Jahreszeit, 1991 bis 2025', 960, 244, 25, { al: 'center', c: C.dim, a: a2 * seg(t, T.define, T.define + .5) });
+    const G = (x0, n, lab, big, s) => { for (let i = 0; i < 100; i++) { const c = i % 10, ro = i / 10 | 0, x = x0 + c * 44, y = 290 + ro * 44, on = i < n && t > s + i * .05; g.save(); g.globalAlpha = a2 * (on ? 1 : .18); g.fillStyle = on ? (big ? C.cold : '#DDE6EC') : '#40505E'; if (on && big) { g.shadowColor = C.cold; g.shadowBlur = 16; } g.fillRect(x, y, 33, 33); g.restore(); } const q = a2 * seg(t, s, s + .5); text(lab[0], x0 + 203, 800, 64, { f: F.m, al: 'center', c: big ? C.cold : C.ink, a: q }); text(lab[1], x0 + 203, 846, 25, { al: 'center', c: C.dim, a: q }); };
+    G(320, 5, ['5 von 100', 'bei Zufall, per Definition'], false, T.chance); G(1160, 25, ['rund 25 von 100', 'gemessen: Episoden vor dokumentierten Rutschungen'], true, T.measured);
+    text('24,6 % [11,8; 38,2] · 35 Episoden · explorativ, vorab festgelegter Haupttest knapp nicht erfüllt, Meldebias möglich', 960, 960, 22, { al: 'center', c: C.dim, a: a2 * seg(t, T.measured, T.measured + .8) });
   }
   vignette(.5);
 };
 
 S.bias = (t, d) => {
   bg(); chapter('05', 'MELDEBIAS', t, d);
-  const H = DATA.roads_half_m, sc = 960 / (2 * H), M = (x, y) => [1370 + (x) * sc * .98, 560 - y * sc * .98], draw = seg(t, .5, d * .42), ev = DATA.stanz_events;
+  const H = DATA.roads_half_m, sc = 960 / (2 * H), M = (x, y) => [1370 + (x) * sc * .98, 560 - y * sc * .98], draw = seg(t, .5, d * .42), ev = DATA.stanz_events, sw = TIMES.bias.second;
   g.save(); g.beginPath(); g.rect(860, 100, 1020, 900); g.clip(); g.strokeStyle = 'rgba(255,200,130,.85)'; g.lineWidth = 1.7; const nR = DATA.roads.length;
   for (let i = 0; i < nR * draw; i++) { const L = DATA.roads[i]; g.beginPath(); for (let j = 0; j < L.length; j += 2) { const p = M(L[j], L[j + 1]); j ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); } g.stroke(); }
   const ak = seg(t, d * .2, d * .4); for (let i = 0; i < ev.length / 2; i++) { const p = M(ev[2 * i], ev[2 * i + 1]); dot(p[0], p[1], 4.6, C.sig, ak, 12); }
   g.restore();
-  const a1 = inout(t, d * .14, d * .14 + .6, d * .58, d * .58 + .5);
-  text('0,93', 120, 520, 210, { f: F.m, a: a1, glow: 30, glowc: 'rgba(255,190,110,.5)' });
-  text('nur Abstand zu Straßen und Gebäuden', 120, 610, 30, { a: a1 });
-  text('GEMELDET WIRD, WAS MENSCHEN SEHEN.', 120, 680, 30, { f: F.t, c: C.sig, sp: 1.5, a: a1 * seg(t, d * .28, d * .34) });
-  text('Design mit ungematchten Vergleichspunkten · explorativ', 120, 726, 21, { c: C.dim, a: a1 });
-  const a2 = seg(t, d * .6, d * .6 + .6) * (1 - seg(t, d - .4, d - .1));
-  text('0,78', 120, 520, 210, { f: F.m, c: C.sig, a: a2, glow: 34 });
-  text('Gelände, nur Hänge ähnlich nah an Infrastruktur', 120, 610, 28, { a: a2 });
+  const a1 = inout(t, 3.2, 3.8, sw - .5, sw);
+  text('AUC', 120, 300, 40, { f: F.t, c: C.sig, sp: 6, a: a1 });
+  text('0,93', 120, 490, 200, { f: F.m, a: a1, glow: 30, glowc: 'rgba(255,190,110,.5)' });
+  text('nur Abstand zu Straßen und Häusern', 120, 566, 32, { a: a1 });
+  text('In 93 von 100 Vergleichen steht der', 120, 626, 27, { c: C.dim, a: a1 * seg(t, 9.9, 10.4) });
+  text('gemeldete Hang vor einem Umgebungspunkt,', 120, 662, 27, { c: C.dim, a: a1 * seg(t, 9.9, 10.4) });
+  text('ohne jedes Wissen über den Berg.', 120, 698, 27, { c: C.dim, a: a1 * seg(t, 9.9, 10.4) });
+  text('GEMELDET WIRD, WAS MENSCHEN SEHEN.', 120, 770, 30, { f: F.t, c: C.sig, sp: 1.5, a: a1 * seg(t, 15.4, 15.9) });
+  text('Vergleichspunkte hier ungematcht, keine Zwillinge · explorativ', 120, 816, 21, { c: C.dim, a: a1 });
+  const a2 = seg(t, sw, sw + .6) * (1 - seg(t, d - .4, d - .1));
+  text('AUC', 120, 300, 40, { f: F.t, c: C.sig, sp: 6, a: a2 });
+  text('0,78', 120, 490, 200, { f: F.m, c: C.sig, a: a2, glow: 34 });
+  text('Gelände, nur Hänge ähnlich nah an Straßen', 120, 566, 29, { a: a2 });
+  text('und Gebäuden', 120, 604, 29, { a: a2 });
   text('[0,68; 0,89] · 173 Gruppen, 10 Einheiten · explorativ', 120, 654, 21, { f: F.m, c: C.dim, a: a2 });
-  text('EIN TEIL DES SIGNALS BLEIBT MELDEVERHALTEN.', 120, 722, 27, { f: F.t, sp: 1, a: a2 * seg(t, d * .8, d * .86) });
+  text('EIN TEIL DES SIGNALS BLEIBT MELDEVERHALTEN.', 120, 730, 27, { f: F.t, sp: 1, a: a2 * seg(t, d - 4.3, d - 3.8) });
   foot('Echte Straßen (OpenStreetMap, heutiger Stand) und Ereignisse (V0.4) um Stanz im Mürztal', seg(t, 1, 2) * (1 - seg(t, d - .5, d - .1)));
+};
+
+// Words of the closing quote, screen-blended over the film shots.
+const quoteLine = (s, y, a) => text(s, 960, y, 62, { f: F.l, al: 'center', a, glow: 18, glowc: 'rgba(0,0,0,.9)' });
+S.q1 = (t, d) => {
+  g.fillStyle = '#000'; g.fillRect(0, 0, 1920, 1080);
+  const end = 1 - seg(t, d - .5, d - .1);
+  quoteLine('Der Berg warnt nicht.', 500, seg(t, QT.q1, QT.q1 + .5) * end);
+  quoteLine('Der Berg erklärt nichts.', 590, seg(t, QT.q2, QT.q2 + .5) * end);
+};
+S.q2 = (t, d) => {
+  g.fillStyle = '#000'; g.fillRect(0, 0, 1920, 1080);
+  quoteLine('Aber er hat Spuren hinterlassen.', 540, seg(t, .2, .7) * (1 - seg(t, d - .35, d - .05)));
+};
+// The real 423 events light up on the real outline, then everything falls quiet before the title.
+S.spuren = (t, d) => {
+  bg();
+  const T = TIMES.spuren, Q = DATA.positives, n = Q.length / 2, r = rng(23), order = Array.from({ length: n }, (_, i) => [r(), i]).sort((a, b) => a[0] - b[0]);
+  const fall = 1 - seg(t, d - .5, d - .08), hush = 1 - .55 * seg(t, T.listen, T.listen + 1);
+  g.save(); g.globalAlpha = seg(t, 0, .4) * fall; g.beginPath(); AT.R.forEach(([x, y], i) => { const p = AT.m(x, y); i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1]); }); g.closePath();
+  g.fillStyle = '#0A1119'; g.fill(); g.strokeStyle = 'rgba(150,195,225,.6)'; g.lineWidth = 1.6; g.stroke(); g.restore();
+  const lit = Math.round(n * ease(clamp(t / T.count)));
+  for (let j = 0; j < lit; j++) { const i = order[j][1], p = AT.m(Q[2 * i], Q[2 * i + 1]), age = t - j / n * T.count; dot(p[0], p[1], 4.4 + 8 * Math.exp(-age * 3), C.sig, fall * hush, 14); }
+  text(String(lit), 1824, 190, 120, { f: F.m, al: 'right', c: C.sig, glow: 30, a: fall * hush * seg(t, .1, .4) });
+  text('Mal', 1824, 240, 34, { f: F.l, al: 'right', a: fall * hush * seg(t, T.count - .4, T.count) });
+  for (let i = 0; i < 3; i++) { const u = ((t - T.listen) / 2.6 + i / 3) % 1; if (t > T.listen) ringc(960, 560, 60 + u * 760, C.cold, 1.5, (1 - u) * .35 * fall); }
+  text('Ich habe angefangen zuzuhören.', 960, 950, 58, { f: F.l, al: 'center', a: seg(t, T.listen, T.listen + .5) * fall });
+  vignette(.6);
 };
 
 S.fazit = (t, d) => {
@@ -334,21 +480,23 @@ S.next = (t, d) => {
 S.end = (t, d) => {
   bg();
   const cam = { yaw: .55 + (t + 12) * .022, pitch: 1.0, zoom: 1.28, cx: 960, cy: 620 };
-  const P = drawRidges(cam, { reveal: seg(t, 0, 2.2) * 1.1 });
-  const p = P(.1, -.55, zAt(.1, -.55, .5)), a = seg(t, 1.4, 2);
+  const P = drawRidges(cam, { reveal: 1.1 });
+  const p = P(.1, -.55, zAt(.1, -.55, .5)), a = seg(t, .2, .8);
   ringc(p[0], p[1], 16 + 80 * ((t * .35) % 1), C.sig, 2, a * (1 - ((t * .35) % 1))); dot(p[0], p[1], 8, C.sig, a, 30);
-  g.fillStyle = `rgba(5,8,13,${.55 * seg(t, 1.5, 2.5)})`; g.fillRect(0, 0, 1920, 1080);
-  const ta = seg(t, 1.8, 2.8);
-  text('TALWACHT', 960, 500, 168, { f: F.t, al: 'center', sp: 26, a: ta, glow: 40, glowc: 'rgba(120,190,240,.45)', w: 600 });
-  text('WO ZUERST HINSCHAUEN, WENN DER STARKREGEN KOMMT', 960, 572, 25, { f: F.m, al: 'center', c: C.sig, sp: 5, a: ta * seg(t, 2.4, 3.2) });
-  const af = seg(t, 3.2, 4);
+  g.fillStyle = 'rgba(5,8,13,.55)'; g.fillRect(0, 0, 1920, 1080);
+  const ta = seg(t, 0, .12), z = 1.05 - .05 * seg(t, 0, d);
+  g.save(); g.translate(960, 500); g.scale(z, z); g.translate(-960, -500);
+  text('TALWACHT', 960, 500, 168, { f: F.t, al: 'center', sp: 26, a: ta, glow: 40 + 60 * (1 - seg(t, 0, 1.5)), glowc: 'rgba(120,190,240,.55)', w: 600 });
+  g.restore();
+  text('WO ZUERST HINSCHAUEN, WENN DER STARKREGEN KOMMT', 960, 572, 25, { f: F.m, al: 'center', c: C.sig, sp: 5, a: seg(t, 1.2, 2) });
+  const af = seg(t, 2.6, 3.4);
   text('Daten: GeoSphere Austria (Inventar, INCA, SPARTACUS, SNOWGRID) · Skadi/SRTM · CORINE · OpenStreetMap · Klima: GeoSphere 2025; Kaitna et al. 2025', 960, 950, 19, { al: 'center', c: C.dim, a: af });
   text('Forschungsprototyp, kein Warnsystem · Filmaufnahmen: KI-generierte Illustrationen', 960, 984, 19, { al: 'center', c: C.dim, a: af });
   vignette(.7);
 };
 
 // Scenes that hold still for a while get a very slow push-in so the picture never stands completely still.
-const PUSH = { rules: .025, result: .03, weather: .03, bias: .02 };
+const PUSH = { rules: .012, result: .012, weather: .012, bias: .02, spuren: .03 };
 window.drawScene = (name, t, d) => {
   const k = cv.width / 1920, z = 1 + (PUSH[name] || 0) * t / d;
   g.setTransform(k * z, 0, 0, k * z, k * 960 * (1 - z), k * 540 * (1 - z));

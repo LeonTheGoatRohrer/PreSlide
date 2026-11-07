@@ -14,19 +14,19 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'deliverables/finale_video'
 BUILD = OUT / 'build'
-AI, MG, VOICE, SFX = OUT / 'ai', OUT / 'mgclips', OUT / 'voice', OUT / 'sfx'
+AI, MG, SFX = OUT / 'ai', OUT / 'mgclips', OUT / 'sfx'
 APP = Path('C:/Users/mario/Documents/HomeProjects/PreSlide/.claude/worktrees/video-pitch-script-497edf/deliverables/pitch')
 FPS = 25
 SR = 48000
 AI_LABEL = 'KI-generierte Illustration'
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--width', type=int, default=960)
-parser.add_argument('--voice-dir', default='voice', help='folder under deliverables/finale_video with n01.mp3 ... n19.mp3')
+parser.add_argument('--width', type=int, default=1920)
 parser.add_argument('--audio-only', action='store_true', help='keep the rendered picture, only remix the sound')
-parser.add_argument('--out', default='Talwacht_Finale_Prototyp.mp4')
+parser.add_argument('--out', default='Talwacht_Finale_v4.mp4')
 args = parser.parse_args()
-VOICE = OUT / args.voice_dir
+VOICES = [OUT / 'voice_v4_fast']  # voice Alistair via Higgsfield/ElevenLabs v4; narration at 1.15x, the closing quote untouched
+FINALE_HIT_S = 76.0  # position in sfx/finale.mp3 that lands on the title; its loudest stretch (measured) runs to 83 s
 W, H = args.width, args.width * 9 // 16
 S = W / 1920
 
@@ -41,54 +41,61 @@ def run(cmd: list[str]) -> None:
     subprocess.run(['ffmpeg', '-y', '-v', 'error', *cmd], check=True)
 
 
-def clip(name, start=0.0, dur=3.0, speed=1.0):
-    return {'file': AI / f'{name}.mp4', 'start': start, 'dur': dur, 'speed': speed}
+def clip(name, start=0.0, dur=3.0, speed=1.0, crop=None):
+    return {'file': AI / f'{name}.mp4', 'start': start, 'dur': dur, 'speed': speed, 'crop': crop}
+
+
+def take(name: str) -> Path:
+    return next(d / f'{name}.mp3' for d in VOICES if (d / f'{name}.mp3').exists())
 
 
 # kind: film (AI clips, optional screen-blended plate), mg (full-screen graphics), app (screen recording), black.
 # voice: (file, offset seconds into the segment).
 SEGMENTS = [
-    {'id': 'black0', 'kind': 'black', 'dur': 1.2},
-    {'id': 'c1_drop', 'kind': 'film', 'clips': [clip('a01', 0.4, 4.4)], 'bars': True},
-    {'id': 'c2_storm', 'kind': 'film', 'clips': [clip('a02', 1.0, 3.6)], 'bars': True},
-    {'id': 'c3_crack', 'kind': 'film', 'clips': [clip('a03', 0.5, 3.0)], 'bars': True},
-    {'id': 'c4_valley', 'kind': 'film', 'clips': [clip('a04', 1.0, 4.2)], 'bars': True, 'voice': ('n01', 0.0)},
-    {'id': 'c5_tear', 'kind': 'film', 'clips': [clip('k1', 1.9, 2.8)], 'bars': True, 'dim': 0.72},
-    {'id': 'c7_slide', 'kind': 'film', 'clips': [clip('k2', 0.4, 4.6)], 'bars': True, 'dim': 0.72},
-    {'id': 'title', 'kind': 'mg', 'scene': 'title', 'dur': 8.0, 'voice': ('n02', 0.2)},
-    {'id': 'why1', 'kind': 'film', 'clips': [clip('a08', 0.0, 9.1, 0.55), clip('a09', 0.0, 9.1, 0.66)], 'plate': 'climate',
-     'dur': 18.2, 'dim': 0.55, 'voice': ('n03', 0.2)},
-    {'id': 'why2', 'kind': 'film', 'clips': [clip('a10', 0.0, 8.4, 0.7)], 'voice': ('n04', 0.3)},
-    {'id': 'who', 'kind': 'film', 'clips': [clip('a11', 0.0, 5.6, 1.0)], 'voice': ('n05', 0.2)},
-    {'id': 'five', 'kind': 'mg', 'scene': 'five', 'dur': 5.4},
-    {'id': 'p1', 'kind': 'mg', 'scene': 'data', 'dur': 19.6, 'voice': ('n06', 0.3)},
-    {'id': 'p2a', 'kind': 'film', 'clips': [clip('k3', 0.0, 7.0, 0.5), clip('a14', 0.0, 5.4, 0.93), clip('k4', 0.0, 4.0, 0.9), clip('k3', 2.9, 3.1, 1.0)], 'plate': 'ch2',
-     'dur': 19.5, 'voice': ('n07', 0.2)},
-    {'id': 'p2b', 'kind': 'mg', 'scene': 'twin', 'dur': 17.6, 'voice': ('n08', 0.5)},
-    {'id': 'p3', 'kind': 'mg', 'scene': 'rules', 'dur': 25.0, 'voice': ('n09', 0.4)},
-    {'id': 'res', 'kind': 'mg', 'scene': 'result', 'dur': 16.0, 'voice': ('n10', 1.0)},
-    {'id': 'p4', 'kind': 'mg', 'scene': 'weather', 'dur': 29.0, 'voice': ('n11', 0.4), 'voice2': ('n12', 12.7)},
-    {'id': 'p5', 'kind': 'mg', 'scene': 'bias', 'dur': 27.0, 'voice': ('n13', 0.6)},
+    {'id': 'black0', 'kind': 'black', 'dur': 0.8},
+    {'id': 'c1_drop', 'kind': 'film', 'clips': [clip('a01', 0.8, 3.0)], 'bars': True},
+    {'id': 'c2_storm', 'kind': 'film', 'clips': [clip('a02', 1.0, 2.4)], 'bars': True},
+    {'id': 'c3_crack', 'kind': 'film', 'clips': [clip('a03', 0.5, 2.2)], 'bars': True},
+    {'id': 'c4_valley', 'kind': 'film', 'clips': [clip('a04', 1.0, 4.6)], 'bars': True, 'voices': [('n01', 0.05)]},
+    {'id': 'c5_tear', 'kind': 'film', 'clips': [clip('m1', 0.8, 2.8)], 'bars': True},
+    {'id': 'c7_slide', 'kind': 'film', 'clips': [clip('m0', 0.0, 3.6)], 'bars': True},
+    {'id': 'title', 'kind': 'mg', 'scene': 'title', 'dur': 6.0, 'voices': [('n02', 0.2)]},
+    {'id': 'why1', 'kind': 'film', 'clips': [clip('m2', 0.0, 7.4, 1.0), clip('a09', 0.0, 7.3, 0.66)], 'plate': 'climate',
+     'dur': 14.7, 'dim': 0.8, 'voices': [('n03', 0.2)]},
+    {'id': 'why2', 'kind': 'film', 'clips': [clip('a10', 0.0, 7.4, 0.7)], 'voices': [('n04', 0.3)]},
+    {'id': 'who', 'kind': 'film', 'clips': [clip('a11', 0.0, 4.4, 1.0)], 'voices': [('n05', 0.15)]},
+    {'id': 'five', 'kind': 'mg', 'scene': 'five', 'dur': 3.7},
+    {'id': 'p1', 'kind': 'mg', 'scene': 'data', 'dur': 14.2, 'voices': [('n06', 0.2)]},
+    {'id': 'p2a', 'kind': 'film', 'clips': [clip('k3', 0.0, 5.6, 0.8), clip('a14', 0.0, 4.6, 1.0), clip('k4', 0.0, 3.2, 1.0), clip('k3', 3.0, 2.4, 1.0)], 'plate': 'ch2',
+     'dur': 15.8, 'voices': [('n07', 0.15)]},
+    {'id': 'p2b', 'kind': 'mg', 'scene': 'twin', 'dur': 16.2, 'voices': [('n08', 0.3)]},
+    {'id': 'p3', 'kind': 'mg', 'scene': 'rules', 'dur': 23.1, 'voices': [('n09a', 0.3), ('n09b', 12.6), ('n09c', 16.2)]},
+    {'id': 'res', 'kind': 'mg', 'scene': 'result', 'dur': 28.1, 'voices': [('n10a', 0.3), ('n10b', 4.25), ('n10c', 14.6), ('n10d', 23.0)]},
+    {'id': 'p4', 'kind': 'mg', 'scene': 'weather', 'dur': 32.8, 'voices': [('n11a', 0.3), ('n11b', 12.3), ('n12', 15.9)]},
+    {'id': 'p5', 'kind': 'mg', 'scene': 'bias', 'dur': 28.8, 'voices': [('n13a', 0.4), ('n13b', 18.0)]},
     {'id': 'app1', 'kind': 'app', 'file': APP / 'app3/app_01_start.webm', 'start': 2.0, 'dur': 3.7, 'z0': (0, 0, 1920, 1080),
-     'z1': (60, 34, 1800, 1012), 'voice': ('n14', 0.2)},
-    {'id': 'app2', 'kind': 'app', 'file': APP / 'app3/app_02_hangcheck_gastein.webm', 'start': 5.0, 'dur': 7.2,
+     'z1': (60, 34, 1800, 1012), 'voices': [('n14', 0.2)]},
+    {'id': 'app2', 'kind': 'app', 'file': APP / 'app3/app_02_hangcheck_gastein.webm', 'start': 5.0, 'dur': 6.0,
      'z0': (0, 0, 1920, 1080), 'z1': (40, 22, 1840, 1035), 'caption': ('HANG-CHECK · GASTEINER TAL',
      'Prüfstufen relativ im Umkreis · Demonstration, noch nicht an neuen Gebieten bestätigt')},
-    {'id': 'app2b', 'kind': 'app', 'file': APP / 'app3/app_04_starkregen.webm', 'start': 8.0, 'dur': 5.8,
+    {'id': 'app2b', 'kind': 'app', 'file': APP / 'app3/app_04_starkregen.webm', 'start': 8.0, 'dur': 5.2,
      'z0': (0, 0, 1920, 1080), 'z1': (240, 135, 1500, 844), 'caption': ('HIER ZUERST HINSCHAUEN',
      'Fünf Prüfpunkte, eine Rangfolge · keine Wahrscheinlichkeit · nicht markiert heißt nicht sicher')},
-    {'id': 'app3', 'kind': 'app', 'file': APP / 'app3/app_04_starkregen.webm', 'start': 13.5, 'dur': 10.2,
-     'z0': (445, 250, 1475, 830), 'z1': (830, 625, 800, 450), 'voice': ('n15', 0.2),
+    {'id': 'app3', 'kind': 'app', 'file': APP / 'app3/app_04_starkregen.webm', 'start': 13.5, 'dur': 9.5,
+     'z0': (445, 250, 1475, 830), 'z1': (830, 625, 800, 450), 'voices': [('n15', 0.2)],
      'caption': ('MÖGLICHER WEG HANGABWÄRTS', 'Szenario, ungeprüft · Reichweiten aus der Literatur · Straßen und Gebäude: OpenStreetMap')},
-    {'id': 'use1', 'kind': 'film', 'clips': [clip('a09', 2.0, 2.3)], 'voice': ('n16', 0.1)},
-    {'id': 'use2', 'kind': 'film', 'clips': [clip('a15', 1.0, 2.2)]},
-    {'id': 'use3', 'kind': 'film', 'clips': [clip('a14', 1.5, 2.9)]},
-    {'id': 'fazit', 'kind': 'film', 'clips': [clip('a13', 0.0, 16.0, 0.44)], 'plate': 'fazit', 'dur': 16.0, 'dim': 0.42,
-     'voice': ('n17', 0.5)},
-    {'id': 'next', 'kind': 'film', 'clips': [clip('a10', 2.0, 7.6, 0.5)], 'plate': 'next', 'dur': 7.6, 'dim': 0.4,
-     'voice': ('n18', 0.3)},
-    {'id': 'last', 'kind': 'film', 'clips': [clip('a04', 0.0, 5.6, 0.9)], 'bars': True, 'voice': ('n19', 0.1)},
-    {'id': 'end', 'kind': 'mg', 'scene': 'end', 'dur': 7.0},
+    {'id': 'use1', 'kind': 'film', 'clips': [clip('a09', 2.0, 2.2)], 'voices': [('n16', 0.1)]},
+    {'id': 'use2', 'kind': 'film', 'clips': [clip('a15', 1.0, 2.0)]},
+    {'id': 'use3', 'kind': 'film', 'clips': [clip('a14', 1.5, 2.2)]},
+    {'id': 'fazit', 'kind': 'film', 'clips': [clip('a13', 0.0, 13.4, 0.52)], 'plate': 'fazit', 'dur': 13.4, 'dim': 0.42,
+     'voices': [('n17', 0.3)]},
+    {'id': 'next', 'kind': 'film', 'clips': [clip('a10', 2.0, 6.7, 0.5)], 'plate': 'next', 'dur': 6.7, 'dim': 0.4,
+     'voices': [('n18', 0.2)]},
+    {'id': 'last', 'kind': 'film', 'clips': [clip('m2', 2.0, 5.5, 1.0, crop='iw*0.62:ih*0.62:iw*0.1:ih*0.38')], 'voices': [('n19', 0.1)]},
+    {'id': 'q1', 'kind': 'film', 'clips': [clip('m3', 0.0, 8.0, 1.0)], 'plate': 'q1', 'dur': 8.0, 'voices': [('q1', 3.2), ('q2', 5.5)]},
+    {'id': 'q3', 'kind': 'film', 'clips': [clip('m4', 0.0, 2.8, 1.0)], 'plate': 'q2', 'dur': 2.8, 'voices': [('q3a', 0.25)]},
+    {'id': 'spuren', 'kind': 'mg', 'scene': 'spuren', 'dur': 8.1, 'voices': [('q3b', 0.1), ('q4', 3.4), ('q5', 6.55)]},
+    {'id': 'end', 'kind': 'mg', 'scene': 'end', 'dur': 8.5},
 ]
 
 
@@ -114,7 +121,7 @@ def caption_png(key: str, title: str, sub: str) -> Path:
 
 
 GRADE = f'scale={W}:{H}:flags=lanczos,eq=contrast=1.06:saturation=0.92,vignette=PI/5,noise=alls=5:allf=t,fps={FPS},format=yuv420p'
-ENC = ['-c:v', 'libx264', '-preset', 'veryfast', '-crf', '20', '-pix_fmt', 'yuv420p', '-r', str(FPS), '-an']
+ENC = ['-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-pix_fmt', 'yuv420p', '-r', str(FPS), '-an']
 
 
 def render_film(seg: dict, out: Path) -> float:
@@ -124,7 +131,8 @@ def render_film(seg: dict, out: Path) -> float:
         source_dur = c['dur'] * c['speed']
         inputs += ['-ss', str(c['start']), '-t', f'{source_dur:.3f}', '-i', str(c['file'])]
         smooth = f'minterpolate=fps={FPS}:mi_mode=blend,' if c['speed'] < 0.8 else ''
-        chains.append(f'[{i}:v]setpts=PTS/{c["speed"]},{smooth}{GRADE}[c{i}]')
+        crop = f'crop={c["crop"]},' if c['crop'] else ''
+        chains.append(f'[{i}:v]{crop}setpts=PTS/{c["speed"]},{smooth}{GRADE}[c{i}]')
         total += c['dur']
     n = len(seg['clips'])
     graph = ';'.join(chains) + ';' + ''.join(f'[c{i}]' for i in range(n)) + f'concat=n={n}:v=1[base]'
@@ -169,7 +177,7 @@ def render_app(seg: dict, out: Path) -> float:
 
 
 def render_mg(seg: dict, out: Path) -> float:
-    run(['-i', str(MG / f'{seg["scene"]}.mp4'), '-vf', f'scale={W}:{H}:flags=lanczos,noise=alls=3:allf=t,format=yuv420p', '-t', str(seg['dur']), *ENC, str(out)])
+    run(['-i', str(MG / f'{seg["scene"]}.mp4'), '-vf', f'scale={W}:{H}:flags=lanczos,format=yuv420p', '-t', str(seg['dur']), *ENC, str(out)])
     return seg['dur']
 
 
@@ -200,40 +208,61 @@ def ramp(n: int, points: list[tuple[float, float]]) -> np.ndarray:
     return np.interp(np.arange(n) / SR, xs, ys)
 
 
-def mix_audio(at: dict, total_s: float, out: Path) -> None:
+def mix_audio(seg_at: dict, total_s: float, out: Path) -> None:
+    at = seg_at
     n = int(total_s * SR)
     voice, sfx, music = np.zeros((n, 2)), np.zeros((n, 2)), np.zeros((n, 2))
     previous_end, previous_name = 0.0, ''
+    voice_at = {}
     for seg in SEGMENTS:
-        for key in ('voice', 'voice2'):
-            if seg.get(key):
-                name, off = seg[key]
-                take = load_audio(VOICE / f'{name}.mp3', loudnorm=True)
-                when = seg['t'] + off
-                if when < previous_end:
-                    print(f'WARNUNG: {name} beginnt {previous_end - when:.2f} s vor dem Ende von {previous_name}')
-                place(voice, take, when)
-                previous_end, previous_name = when + len(take) / SR, name
+        for name, off in seg.get('voices', []):
+            sample = load_audio(take(name), loudnorm=True)
+            when = seg['t'] + off
+            if when < previous_end:
+                print(f'WARNUNG: {name} beginnt {previous_end - when:.2f} s vor dem Ende von {previous_name}')
+            if when + len(sample) / SR > seg['t'] + seg['dur_real'] and seg['id'] not in ('who', 'app1', 'use1'):
+                print(f'WARNUNG: {name} endet {when + len(sample) / SR - seg["t"] - seg["dur_real"]:.2f} s nach {seg["id"]}')
+            place(voice, sample, when, 1.2 if name.startswith('q') else 1.0)
+            voice_at[name] = (when, when + len(sample) / SR)
+            previous_end, previous_name = when + len(sample) / SR, name
     title, boom = at['title'], at['title'] + 3.9
-    for name, when, gain in [('drop', at['c1_drop'] + 2.6, 1.0), ('thunder', at['c2_storm'], 0.9), ('slide', at['c5_tear'], 1.0),
-                             ('scan', title + 0.2, 0.6), ('boom', boom, 1.0), ('scan', at['p1'] + 7.6, 0.4),
-                             ('boom', at['res'] + 0.2, 0.5), ('boom', at['end'] + 1.8, 0.75)]:
+    hit = at['end']
+    for name, when, gain in [('drop', at['c1_drop'] + 2.0, 1.0), ('thunder', at['c2_storm'], 0.9), 
+                             ('scan', title + 0.2, 0.6), ('boom', boom, 1.0), ('scan', at['p1'] + 5.6, 0.4),
+                             ('boom', at['res'] + 0.5, 0.5), ('boom', hit, 1.0)]:
         place(sfx, load_audio(SFX / f'{name}.mp3'), when, gain)
+    # Debris flow: normalised takes; the rumble dies away before the title line.
+    place(sfx, load_audio(SFX / 'tear.mp3', loudnorm=True), at['c5_tear'], 0.9)
+    rumble = load_audio(SFX / 'debris.mp3', loudnorm=True)
+    place(sfx, rumble * ramp(len(rumble), [(0, 0), (.3, 1.2), (4.3, 1.2), (6.0, 0), (100, 0)])[:, None], at['c7_slide'] - .4)
     # Rain bed through the cold open, fading out under the title.
     rain = load_audio(SFX / 'rain.mp3')
     rain_len = int((title + 2 - at['c1_drop']) * SR)
     bed = np.tile(rain, (rain_len // len(rain) + 1, 1))[:rain_len] * ramp(rain_len, [(0, 0), (3, .55), (title - at['c1_drop'], .55), (title + 2 - at['c1_drop'], 0)])[:, None]
     place(sfx, bed, at['c1_drop'])
-    # Music: near silent in the cold open, full at the title impact, cue 2 takes over before the app chapter.
+    # Cue 1: as before up to the app chapter, near silent in the cold open, full at the title impact.
     app_t = at['app1']
-    cue1, cue2 = load_audio(SFX / 'music.mp3'), load_audio(SFX / 'music2.mp3')
+    cue1 = load_audio(SFX / 'music.mp3')
     cue1 = cue1[:min(len(cue1), n)]
     lead = 12.0
-    place(music, cue1 * ramp(len(cue1), [(0, .03), (boom - lead - .1, .12), (boom - lead, .8), (boom - lead + 6, .8), (boom - lead + 9, .42), (app_t - lead - 2, .42), (app_t - lead + 3, 0), (10000, 0)])[:, None], lead)
-    start2 = app_t - 2
-    fade_out_at = total_s - start2 - 3
-    place(music, cue2 * ramp(len(cue2), [(0, 0), (5, .55), (fade_out_at, .55), (fade_out_at + 3, 0), (10000, 0)])[:, None], start2)
-    # Duck music under the voice with a smoothed envelope (fast attack, slow release).
+    place(music, cue1 * ramp(len(cue1), [(0, .03), (boom - lead - .1, .12), (boom - lead, .8), (boom - lead + 6, .8), (boom - lead + 9, .42), (app_t - lead + 8, .42), (app_t - lead + 14, 0), (10000, 0)])[:, None], lead)
+    # Finale cue: one continuous crescendo (measured -46 dB to -10 dB). Its loudest stretch starts exactly on the title.
+    cue = load_audio(SFX / 'finale.mp3')
+    cue_start = hit - FINALE_HIT_S
+    listen0, listen1 = voice_at['q4']
+    word_end = voice_at['q5'][1]
+    last_t, q1_t = at['last'] - cue_start, at['q1'] - cue_start
+    curve = [(0, 0), (6, 1.0), (last_t - 20, 1.0), (last_t, 1.5),
+             # After "wo man zuerst hinschaut": seconds without a voice, the music really goes up.
+             (q1_t + 2.6, 2.4), (q1_t + 3.2, 1.9),
+             # The breath: nearly gone under "Ich habe angefangen zuzuhören".
+             (listen0 - cue_start - .5, 2.2), (listen0 - cue_start + .2, .12),
+             (listen1 - cue_start, .12), (word_end - cue_start - .25, .28),
+             (word_end - cue_start - .02, .0),  # a blink of silence, then everything at once
+             (hit - cue_start, 1.8), (1000, 1.8)]
+    gain = ramp(len(cue), curve)
+    place(music, cue * gain[:, None], cue_start)
+    # Duck under the voice with a smoothed envelope (fast attack, slow release); gentler toward the end so the build stays audible.
     level = np.abs(voice).max(axis=1)
     active = (level > 0.01).astype(float)
     attack, release = np.exp(-1 / (0.03 * SR)), np.exp(-1 / (0.5 * SR))
@@ -242,15 +271,23 @@ def mix_audio(at: dict, total_s: float, out: Path) -> None:
     for i, v in enumerate(active):
         e = attack * e + (1 - attack) * v if v > e else release * e + (1 - release) * v
         env[i] = e
-    mix = voice + sfx + music * (1 - 0.72 * env)[:, None]
-    mix = mix * min(1.0, 0.89 / np.abs(mix).max())  # headroom for AAC overshoot
-    proc = subprocess.run(['ffmpeg', '-y', '-v', 'error', '-f', 'f32le', '-ar', str(SR), '-ac', '2', '-i', '-', '-c:a', 'aac', '-b:a', '192k', str(out)],
-                          input=mix.astype(np.float32).tobytes(), check=True)
-    assert proc.returncode == 0
+    depth = ramp(n, [(0, .72), (at['fazit'], .72), (at['last'], .65), (at['q1'] + 3.0, .8), (total_s, .8)])
+    mix = voice + sfx + music * (1 - depth * env)[:, None]
+    mix *= ramp(n, [(0, 1), (total_s - 1.6, 1), (total_s, 0)])[:, None]
+    wav = BUILD / 'mix.f32'
+    wav.write_bytes(mix.astype(np.float32).tobytes())
+    raw = ['-f', 'f32le', '-ar', str(SR), '-ac', '2', '-i', str(wav)]
+    # Linear mastering: measure once, apply one gain, limit the peaks. Dynamic loudnorm would flatten the build.
+    report = subprocess.run(['ffmpeg', '-hide_banner', *raw, '-af', 'loudnorm=I=-14:TP=-1.5:LRA=20:print_format=json', '-f', 'null', '-'], capture_output=True, text=True).stderr
+    measured = json.loads(report[report.rindex('{'):report.rindex('}') + 1])
+    gain_db = -14.0 - float(measured['input_i'])
+    print('Lautheit gemessen', measured['input_i'], 'LUFS, Spitze', measured['input_tp'], 'dBTP, Verstaerkung', round(gain_db, 2), 'dB')
+    run([*raw, '-af', f'volume={gain_db:.2f}dB,alimiter=limit=0.82:level=false:attack=3:release=120', '-c:a', 'aac', '-b:a', '256k', str(out)])
+    print('Audioabschnitte (dB RMS):', {k: round(float(20 * np.log10(np.sqrt((mix[int(at[k] * SR):int(at[k] * SR) + 3 * SR] ** 2).mean()) + 1e-9)), 1) for k in ('c7_slide', 'res', 'app3', 'fazit', 'last', 'q1', 'end')})
 
 
 FADES = {'why1': (.5, 0), 'who': (.35, 0), 'five': (.3, 0), 'app1': (.5, 0), 'use1': (.3, 0), 'fazit': (.6, .4), 'next': (.4, .3),
-         'last': (.4, .5), 'end': (.5, 0), 'p5': (0, .4), 'why2': (.3, .3)}
+         'last': (.4, .5), 'q1': (.8, .4), 'q3': (.4, 0), 'end': (0, .8), 'p5': (0, .4), 'why2': (.3, .3)}
 
 
 def add_fades(path: Path, seg_id: str) -> None:
@@ -282,11 +319,14 @@ def main() -> None:
         timeline.append({'id': seg['id'], 'start': round(t, 3), 'dur': round(real, 3)})
         listing.append(f"file '{out.as_posix()}'")
         seg['t'] = t
+        seg['dur_real'] = real
         t += real
     (BUILD / 'concat.txt').write_text('\n'.join(listing), encoding='utf-8')
     (BUILD / 'timeline.json').write_text(json.dumps(timeline, indent=1), encoding='utf-8')
     if not args.audio_only:
-        run(['-f', 'concat', '-safe', '0', '-i', str(BUILD / 'concat.txt'), *ENC, str(BUILD / 'picture.mp4')])
+        # Fixed rate for the final picture: the entry form allows 500 MB at most.
+        final_enc = ['-c:v', 'libx264', '-preset', 'medium', '-b:v', '11M', '-maxrate', '18M', '-bufsize', '24M', '-pix_fmt', 'yuv420p', '-r', str(FPS), '-an']
+        run(['-f', 'concat', '-safe', '0', '-i', str(BUILD / 'concat.txt'), *final_enc, str(BUILD / 'picture.mp4')])
     total = duration(BUILD / 'picture.mp4')
     at = {s['id']: s['t'] for s in SEGMENTS}
     audio = BUILD / 'audio.m4a'

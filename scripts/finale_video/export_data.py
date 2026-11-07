@@ -110,7 +110,13 @@ def main() -> None:
     inside = (np.abs(sx) < half) & (np.abs(sy) < half)
     print('roads', len(roads), 'v04 positives in window', int(inside.sum()))
 
+    # Real daily INCA rain of the Tamsweg positive for the 60 days before t0 (no data after t0 exists in this cache).
+    weather = pd.read_parquet(next((V04_RUN.parent / 'weather').glob('history_2023-07-05_*.parquet')))
+    rain = weather[weather.sample_id == f'{TWIN_GROUP}_positive'].sort_values('date')
+    print('rain days', len(rain), rain.date.iloc[0], rain.date.iloc[-1], 'sum mm', round(rain.rain_mm.sum(), 1))
+
     payload = {
+        'rain': {'dates': [str(d)[:10] for d in rain.date], 'mm': rain.rain_mm.round(1).tolist()},
         'roads': roads,
         'roads_half_m': half,
         'stanz_events': np.round(np.c_[sx[inside], sy[inside]]).ravel().tolist(),

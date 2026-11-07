@@ -1,4 +1,4 @@
-# Finale-Film: Faktencheck (Prototyp, 06.11.2026)
+# Finale-Film: Faktencheck (v4, 07.11.2026)
 
 Jede Zahl und Sachaussage im Film mit Quelle. Filmaufnahmen sind KI-generierte Illustrationen und als solche
 eingeblendet; sie zeigen keine echten Orte oder Ereignisse. Karten, Punkte, Gelände, Kandidaten und Straßen sind echte Daten.
@@ -22,6 +22,28 @@ eingeblendet; sie zeigen keine echten Orte oder Ereignisse. Karten, Punkte, Gel�
 | Möglicher Weg hangabwärts | D8-Route, Reichweiten aus der Literatur, ungeprüft | `reports/wirkungskette_v01/summary.md` |
 | Prüfstufen noch nicht an neuen Gebieten bestätigt | in Stanz keine Bündelung (Stufe 1: 3,4 % der Ereignisse auf 5 % der Fläche) | `reports/wirkungskette_v01/summary.md` |
 | Reine Hangmuren kaum getrennt | 0,539 [0,406; 0,669], explorativ | `reports/mudslide_cascade_v01/summary.md` auf Branch `portfolio/2026-10-29` |
+
+## Neu in v4
+
+| Aussage im Film | Wert | Quelle |
+|---|---|---|
+| 0,75 ist eine AUC, Fläche unter der Kurve, lokal je Ereignisgruppe, jede Episode gleich gewichtet | gewichtete lokale AUC 0,751 | `reports/v04/summary.md`, Zeile 140 |
+| „rund 3 von 4 Vergleichen“ | Lesart der lokalen AUC: Anteil der Paare betroffener Hang gegen Zwilling, in denen der betroffene vorne liegt; Episoden gleich gewichtet | wie oben |
+| Jedes Ereignis gleich gewichtet: 0,67 | 0,668 | `reports/v04/summary.md`, Zeile 147 (lokale AUC ungewichtet) |
+| Pfeil- und Rasterbild „8 Paare“, „100 Vergleiche“, Kurve | **Schema, keine Messwerte.** Kurve y = x^(1/3) hat rechnerisch die Fläche 0,75. Die lokale AUC ist ein Mittel über Gruppen und hat keine einzelne gemessene Kurve | im Film als Schema beschriftet |
+| Regenbalken Tamsweg, 60 Tage bis 05.07.2023 | echte INCA-Tageswerte des positiven Samples `1310420_001`, 61 Tage, 196,4 mm; ab t₀ bewusst keine Daten | `data/v04/run_c6d67a854ba7/weather/history_2023-07-05_*.parquet` |
+| Plan 13:23, eingefroren 15:39:31, Test 15:39:41, alle am 14.10.2026 UTC | Zeitstempel | `reports/v04/PREREGISTRATION.json`, `FREEZE.json`, `test_results.json` |
+| 123 Ereignisse / 19 Einheiten, 300 / 11 | Aufteilung | `PROJEKTUEBERBLICK.md`, `reports/v04/summary.md` |
+| Gelände 0,70 → Gelände + Wetterdaten 0,75, Balken ab 0,5 | 0,702, 0,751; Zuwachs +0,049 [−0,003; +0,108] | `reports/v04/summary.md` |
+| „Extrem nass“ = nasseste 5 % der 3-Tage-Fenster je Ort, ±15 Kalendertage, 1991 bis 2025; 5 von 100 per Definition | 95. Perzentil der Referenz; gemessen 24,6 % | `reports/extremwetter_v01/summary.md` |
+| 93 von 100 Vergleichen | Lesart von 0,928 (bedingte log. Regression, nur Infrastruktur; Vergleichspunkte ungematcht) | `reports/v07/summary.md`, Zeile 11 |
+
+Hergestellt mit: Clips Kling 4.0 aus Startbildern von GPT Image 2.6 (m0 bis m4), Musik ElevenLabs Music v2.5, Sprecher Alistair (ElevenLabs v4 über Higgsfield). Alles KI-generiert und im Film so gekennzeichnet.
+
+## Noch offen vor der Abgabe
+
+- GeoSphere-Presseunterlage (+15 %) ist nur über ein Suchergebnis belegt, Kaitna et al. 2025 nur als Abstract. Beides vor der Abgabe im Original nachlesen.
+- Die Datei `reports/mudslide_cascade_v01/summary.md` (0,54) liegt nicht auf diesem Branch.
 
 ## Bewusst nicht gesagt (Entscheidung des Autors)
 
