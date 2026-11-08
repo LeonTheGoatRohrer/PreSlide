@@ -1,7 +1,9 @@
 """Assemble the finale film from AI clips, rendered motion graphics, app recordings, voice, music and SFX.
 
-Usage: <main checkout>/.venv/Scripts/python scripts/finale_video/build_film.py [--width 960]
-Output: deliverables/finale_video/Talwacht_Finale_Prototyp.mp4 (gitignored).
+Usage: <main checkout>/.venv/Scripts/python scripts/finale_video/build_film.py [--width 960] [--v5]
+Output: deliverables/finale_video/Talwacht_Finale_v4.mp4, with --v5 Talwacht_Finale_v5.mp4 (gitignored).
+--v5: new last line, beat drop of "Two Faced" right after "Talwacht", 12.8 s montage; every frame before the drop
+is stream-copied from the V4 film, so only the tail is encoded (spec: reports/finale_video/MEISTERPROMPT_FILM_V5_BEATDROP.md).
 """
 import argparse
 import json
@@ -24,8 +26,24 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--width', type=int, default=1920)
 parser.add_argument('--audio-only', action='store_true', help='keep the rendered picture, only remix the sound')
 parser.add_argument('--out', default='Talwacht_Finale_v4.mp4')
+parser.add_argument('--v5', action='store_true', help='V5 ending with the beat drop (picture before the drop copied from V4)')
 args = parser.parse_args()
 VOICES = [OUT / 'voice_v4_fast']  # voice Alistair via Higgsfield/ElevenLabs v4; narration at 1.15x, the closing quote untouched
+V4_BUILD = BUILD
+if args.v5:
+    BUILD = OUT / 'build_v5'
+    VOICES = [OUT / 'voice_v5', OUT / 'voice_v4_fast']  # voice_v5 only holds the new q5 (final_line.py --v5)
+    if args.out == 'Talwacht_Finale_v4.mp4':
+        args.out = 'Talwacht_Finale_v5.mp4'
+# V5 timing, all measured on 08.11.2026 (25 fps, so every cut is a multiple of 0.04 s):
+TITLE_CUT_S = 290.96  # V4 cut spuren -> end; the T of "Talwacht" lands exactly here
+Q5_T_S = 2.956  # T plosive inside voice_v5/q5.mp3 (printed by final_line.py --v5)
+V5_D = 291.80  # the drop: last sound of "Talwacht" ends at 291.72 (q5 envelope < -40 dB), +0.08 s, on a frame
+SONG = OUT / 'song/two_faced.mp3'  # "Two Faced" by purc, copy of Downloads/two faced.mp3
+SONG_DROP_S = 52.00  # measured: level jumps from -22 dB to 0 dB at 51.995 s
+SONG_START = V5_D - SONG_DROP_S  # 291.80 - 52.00 = 239.80 s film time, so song second 52.00 hits D
+BEAT_S = 0.40625  # after the drop: one beat (about 148 BPM), one bar = 4 beats = 1.625 s
+MAX_LENGTH_S = 305.0  # approved by the user on 08.11.2026
 FINALE_HIT_S = 76.0  # position in sfx/finale.mp3 that lands on the title; its loudest stretch (measured) runs to 83 s
 W, H = args.width, args.width * 9 // 16
 S = W / 1920
@@ -101,6 +119,33 @@ SEGMENTS = [
     {'id': 'end', 'kind': 'mg', 'scene': 'end', 'dur': 7.7},
 ]
 
+if args.v5:
+    # Cuts on the beat grid D + n * BEAT_S, rounded to frames: 0 | 1.64 (bar 2; the 30 fps source yields one extra frame, so the first shot asks for 1.60) | 3.24 | 4.88 | 5.68 | 6.52 | 7.32 -> 12.80.
+    MOBILE = OUT / 'app_mobile/app_02_hangcheck_gastein_mobile.webm'  # record_app_mobile.mjs, 390x844 at 3x
+    ELK = 'Echte Aufnahme · Murgang, Wyoming 2025 · USGS, gemeinfrei'
+    SEGMENTS = [{**seg, 'kind': 'v4'} for seg in SEGMENTS[:-1]] + [
+        # The V4 title frame stays on screen until the drop.
+        {'id': 'end', 'kind': 'v4', 'outpoint': round(V5_D - TITLE_CUT_S, 2)},
+        # Elk Fire: the front bursts past the gauge pole at 71.85 s; tighter frame than the cold open, then a later, closer shot.
+        # Crops are exactly 16:9 with even sides, so both shots concat at SAR 1:1.
+        {'id': 'drop1_mure', 'kind': 'film', 'bars': True, 'label': ELK, 'clips': [
+            clip('02_usgs_elk_fire', 71.85, 1.60, crop='trunc(iw*0.62/32)*32:trunc(iw*0.62/32)*18:iw*0.30:ih*0.18', folder=REAL),
+            clip('02_usgs_elk_fire', 84.0, 1.64, crop='trunc(iw*0.55/32)*32:trunc(iw*0.55/32)*18:iw*0.36:ih*0.26', folder=REAL)]},
+        {'id': 'drop2_handy', 'kind': 'phone', 'file': MOBILE, 'start': 5.8, 'dur': 1.64,  # app ready at 4.5 s (marks.json), zoom starts ~1.5 s later
+         'caption': ('HANG-CHECK · GASTEINER TAL', 'Talwacht auf dem Handy · Prüfstufen relativ im Umkreis')},
+        {'id': 'drop3_mure2', 'kind': 'film', 'clips': [clip('01_usgs_las_lomas', 24.0, 0.80, folder=REAL)],
+         'caption': ('423 DOKUMENTIERTE RUTSCHUNGEN', 'Bild: echte Aufnahme eines Murgangs, nicht aus Österreich · USGS, gemeinfrei')},
+        {'id': 'drop4_twin', 'kind': 'app', 'file': MG / 'twin.mp4', 'start': 12.0, 'dur': 0.84,
+         'z0': (0, 0, 1920, 1080), 'z1': (40, 22, 1840, 1035),
+         'caption': ('NACHBARHÄNGE ALS VERGLEICH', 'Gleicher Stichtag · ähnliche Neigung, Höhe und Ausrichtung')},
+        {'id': 'drop5_weg', 'kind': 'app', 'file': APP / 'app3/app_04_starkregen.webm', 'start': 20.0, 'dur': 0.80,
+         'z0': (760, 600, 720, 405), 'z1': (800, 622, 640, 360),
+         'caption': ('WO ZUERST HINSCHAUEN', 'Möglicher Weg hangabwärts · Szenario, ungeprüft · Straßen und Gebäude: OpenStreetMap')},
+        {'id': 'drop6_zoom_end', 'kind': 'outro', 'dur': round(V5_D + 12.8 - (V5_D + 7.32), 2)},
+    ]
+    # The new take keeps the V4 pauses; it is placed so that its T falls on the title cut (V4 started it at 6.15 s).
+    next(s for s in SEGMENTS if s['id'] == 'spuren')['voices'] = [('q3b', 0.1), ('q4', 3.4), ('q5', round(TITLE_CUT_S - Q5_T_S - 281.96, 3))]
+
 
 def label_png(text: str = AI_LABEL) -> Path:
     path = BUILD / f'label_{W}_{abs(hash(text)) % 10**8}.png'
@@ -156,7 +201,8 @@ def render_film(seg: dict, out: Path) -> float:
         bar = int(H * 0.12)
         graph += f';[{last}]drawbox=x=0:y=0:w={W}:h={bar}:color=black:t=fill,drawbox=x=0:y={H - bar}:w={W}:h={bar}:color=black:t=fill[bb]'
         last = 'bb'
-    inputs += ['-i', str(label_png(seg.get('label', AI_LABEL)))]
+    overlay_png = caption_png(seg['id'], *seg['caption']) if seg.get('caption') else label_png(seg.get('label', AI_LABEL))
+    inputs += ['-i', str(overlay_png)]
     graph += f';[{last}][{k}:v]overlay=0:0[out]'
     run([*inputs, '-filter_complex', graph, '-map', '[out]', '-t', f'{total:.3f}', *ENC, str(out)])
     return total
@@ -183,6 +229,47 @@ def render_app(seg: dict, out: Path) -> float:
 def render_mg(seg: dict, out: Path) -> float:
     run(['-i', str(MG / f'{seg["scene"]}.mp4'), '-vf', f'scale={W}:{H}:flags=lanczos,format=yuv420p', '-t', str(seg['dur']), *ENC, str(out)])
     return seg['dur']
+
+
+def phone_png() -> tuple[Path, tuple[int, int, int, int]]:
+    """Dark backdrop with a plain phone body; the screen is a transparent rounded hole. Returns the png and the screen box."""
+    path = BUILD / f'phone_{W}.png'
+    sh = int(840 * S) // 2 * 2
+    sw = int(sh * 390 / 844) // 2 * 2
+    x, y = (W - sw) // 2 // 2 * 2, int(44 * S) // 2 * 2
+    bezel, radius = int(14 * S), int(46 * S)
+    im = Image.new('RGBA', (W, H), (6, 9, 14, 255))
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle((x - bezel, y - bezel, x + sw + bezel, y + sh + bezel), radius + bezel, fill=(22, 26, 32, 255), outline=(52, 58, 66, 255), width=max(1, int(2 * S)))
+    d.rounded_rectangle((x, y, x + sw, y + sh), radius, fill=(0, 0, 0, 0))
+    im.save(path)
+    return path, (x, y, sw, sh)
+
+
+def render_phone(seg: dict, out: Path) -> float:
+    d = seg['dur']
+    frame, (x, y, sw, sh) = phone_png()
+    push = f"scale=w='trunc({W}*(1+0.05*t/{d})/2)*2':h=-2:eval=frame,crop={W}:{H}"  # slight push-in
+    graph = (f'[0:v]fps={FPS},setpts=PTS-STARTPTS,scale={sw}:{sh}:flags=lanczos,pad={W}:{H}:{x}:{y}:color=black[v];'
+             f'[v][1:v]overlay=0:0,{push},format=yuv420p[p];[p][2:v]overlay=0:0:format=auto[o]')
+    inputs = ['-ss', str(seg['start']), '-t', str(d), '-i', str(seg['file']), '-i', str(frame), '-i', str(caption_png(seg['id'], *seg['caption']))]
+    run([*inputs, '-filter_complex', graph, '-map', '[o]', '-t', str(d), *ENC, str(out)])
+    return d
+
+
+def render_outro(seg: dict, out: Path) -> float:
+    """Slow zoom-out over the 423-point map (still from the spuren scene), cross-fade into the V4 end frame, fade to black."""
+    d, zoom_s, xf_at, xf_s, end_from = seg['dur'], 2.7, 9.4 - 7.32, 1.2, 3.0  # end.mp4: subline and source line stand from 3.0 s
+    still = BUILD / f'spuren_423_{W}.png'
+    run(['-ss', '2.4', '-i', str(MG / 'spuren.mp4'), '-frames:v', '1', '-update', '1', '-vf', f'scale={W}:{H}:flags=lanczos', str(still)])
+    p = f'(min(t/{zoom_s},1)*min(t/{zoom_s},1)*(3-2*min(t/{zoom_s},1)))'
+    zoom = f"scale=w='trunc({W}*(1.3-0.3*{p})/2)*2':h=-2:eval=frame,crop={W}:{H}"
+    graph = (f'[0:v]{zoom},fps={FPS},format=yuv420p,setsar=1[a];[1:v]scale={W}:{H}:flags=lanczos,fps={FPS},format=yuv420p,setsar=1[b];'
+             f'[a][b]xfade=transition=fade:duration={xf_s}:offset={xf_at:.2f},fade=t=out:st={d - 1.0:.2f}:d=1.0[o]')
+    inputs = ['-loop', '1', '-framerate', str(FPS), '-t', f'{xf_at + xf_s + 0.2:.2f}', '-i', str(still),
+              '-ss', str(end_from), '-t', f'{d - xf_at:.2f}', '-i', str(MG / 'end.mp4')]
+    run([*inputs, '-filter_complex', graph, '-map', '[o]', '-t', str(d), *ENC, str(out)])
+    return d
 
 
 def render_black(seg: dict, out: Path) -> float:
@@ -233,7 +320,7 @@ def mix_audio(seg_at: dict, total_s: float, out: Path) -> None:
     hit = at['end']
     for name, when, gain in [('drop', at['c1_drop'] + 2.0, 1.0), ('thunder', at['c2_storm'], 0.9), 
                              ('scan', title + 0.2, 0.6), ('boom', boom, 1.0), ('scan', at['p1'] + 5.6, 0.4),
-                             ('boom', at['res'] + 0.5, 0.5), ('boom', hit, 0.8)]:
+                             ('boom', at['res'] + 0.5, 0.5)] + ([] if args.v5 else [('boom', hit, 0.8)]):  # V5: no boom before the drop
         place(sfx, load_audio(SFX / f'{name}.mp3'), when, gain)
     # Debris flow: normalised takes; the rumble dies away before the title line.
     place(sfx, load_audio(SFX / 'tear.mp3', loudnorm=True), at['c5_tear'], 0.9)
@@ -263,6 +350,18 @@ def mix_audio(seg_at: dict, total_s: float, out: Path) -> None:
              # No dip from here on: the music keeps climbing under the last words and opens fully after "Talwacht".
              (listen0 - cue_start - .5, 1.8), (line0 - cue_start, 1.8), (hit - cue_start, 1.9), (1000, 1.9)]
     gain = ramp(len(cue), curve)
+    if args.v5:
+        # The song takes over: the finale cue fades out over 4 s from SONG_START.
+        gain *= ramp(len(cue), [(0, 1), (SONG_START - cue_start, 1), (SONG_START + 4 - cue_start, 0), (1000, 0)])
+        song = load_audio(SONG)[:int((total_s - SONG_START) * SR)]
+        # Intro level matched to the finale cue over the cross-fade, so the hand-over is not audible as a jump.
+        cue_win = (cue * ramp(len(cue), curve)[:, None])[int((SONG_START - cue_start) * SR):int((SONG_START + 4 - cue_start) * SR)]
+        intro_gain = np.sqrt((cue_win ** 2).mean() / (song[:4 * SR] ** 2).mean())
+        # Breath before the drop: -11 dB from the first word to D, back to full exactly on D (no ramp).
+        dip = 10 ** (-11 / 20)
+        song_gain = ramp(len(song), [(0, 0), (4, 1), (line0 - .05 - SONG_START, 1), (line0 - SONG_START, dip), (V5_D - SONG_START - 1 / SR, dip), (V5_D - SONG_START, 1), (1000, 1)])
+        place(music, song * (intro_gain * song_gain)[:, None], SONG_START)
+        print(f'Song ab {SONG_START:.2f} s (Drop {V5_D:.2f} s), Intro-Verstaerkung {20 * np.log10(intro_gain):.1f} dB')
     place(music, cue * gain[:, None], cue_start)
     # Duck under the voice with a smoothed envelope (fast attack, slow release); gentler toward the end so the build stays audible.
     level = np.abs(voice).max(axis=1)
@@ -275,8 +374,19 @@ def mix_audio(seg_at: dict, total_s: float, out: Path) -> None:
         e = attack * e + (1 - attack) * v if v > e else release * e + (1 - release) * v
         env[i] = e
     depth = ramp(n, [(0, .72), (at['fazit'], .72), (at['last'], .65), (at['q1'] + 3.0, .75), (line0 - .05, .75), (line0 + .1, .6), (total_s, .6)])
-    mix = voice + sfx + music * (1 - depth * env)[:, None]
-    mix *= ramp(n, [(0, 1), (total_s - 1.6, 1), (total_s, 0)])[:, None]
+    if args.v5:
+        depth[int(V5_D * SR):] = 0  # the drop must hit at full level, not under the release of the ducker
+    ducked = music * (1 - depth * env)[:, None]
+    mix = voice + sfx + ducked
+    mix *= ramp(n, [(0, 1), (total_s - (1.5 if args.v5 else 1.6), 1), (total_s, 0)])[:, None]
+    if args.v5:
+        speech = {}
+        for k in ('fazit', 'next', 'last', 'q1', 'spuren'):
+            seg = next(s for s in SEGMENTS if s['id'] == k)
+            sl = slice(int(seg['t'] * SR), int((seg['t'] + seg['dur_real']) * SR))
+            m = active[sl] > 0
+            speech[k] = round(float(10 * np.log10((voice[sl][m] ** 2).mean() / ((ducked[sl][m] ** 2).mean() + 1e-12))), 1)
+        print('Stimme ueber Musik (dB RMS, Sprechpassagen):', speech)
     wav = BUILD / 'mix.f32'
     wav.write_bytes(mix.astype(np.float32).tobytes())
     raw = ['-f', 'f32le', '-ar', str(SR), '-ac', '2', '-i', str(wav)]
@@ -308,17 +418,45 @@ def add_fades(path: Path, seg_id: str) -> None:
     tmp.replace(path)
 
 
+def picture_v5() -> None:
+    """Frames before the last V4 keyframe ahead of the title cut are stream-copied (bit-identical); only the tail is encoded."""
+    v4 = OUT / 'Talwacht_Finale_v4.mp4'
+    keys = subprocess.run(['ffprobe', '-v', 'error', '-select_streams', 'v', '-skip_frame', 'nokey', '-show_entries', 'frame=pts_time',
+                           '-of', 'csv=p=0', str(v4)], capture_output=True, text=True, check=True).stdout.split()
+    key = max(t for t in (float(k.split(',')[0]) for k in keys) if t <= TITLE_CUT_S)
+    # Count frames, not seconds: '-t' with stream copy lets two extra frames through.
+    run(['-i', str(v4), '-frames:v', str(round(key * FPS)), '-map', '0:v', '-c', 'copy', str(BUILD / 'head.mp4')])
+    # Key frame to D: the decoded V4 film itself (not re-rendered), then the new segments.
+    # Some new segments are full range (yuvj420p MG clips); convert every part to TV range like the V4 concat did.
+    # The tail is encoded at constant quality (CRF 12) so these V4 frames stay as close as possible to the original.
+    inputs = ['-ss', f'{key:.3f}', '-t', f'{V5_D - key:.3f}', '-i', str(v4)]
+    chains = [f'[0:v]trim=end_frame={round((V5_D - key) * FPS)},setpts=PTS-STARTPTS,setsar=1,format=yuv420p[t0]']
+    for seg in SEGMENTS:
+        if seg['t'] < V5_D - 0.5 / FPS:  # float sum of durations, so compare with half a frame of slack
+            continue
+        chains.append(f'[{len(chains)}:v]setpts=PTS-STARTPTS,setsar=1,scale=out_range=tv,format=yuv420p[t{len(chains)}]')
+        inputs += ['-i', str(BUILD / f'{seg["id"]}.mp4')]
+    graph = ';'.join(chains) + ';' + ''.join(f'[t{i}]' for i in range(len(chains))) + f'concat=n={len(chains)}:v=1[tail]'
+    tail_enc = ['-c:v', 'libx264', '-preset', 'medium', '-crf', '12', '-pix_fmt', 'yuv420p', '-r', str(FPS), '-an']
+    run([*inputs, '-filter_complex', graph, '-map', '[tail]', *tail_enc, str(BUILD / 'tail.mp4')])
+    (BUILD / 'parts.txt').write_text(f"file '{(BUILD / 'head.mp4').as_posix()}'\nfile '{(BUILD / 'tail.mp4').as_posix()}'", encoding='utf-8')
+    run(['-f', 'concat', '-safe', '0', '-i', str(BUILD / 'parts.txt'), '-c', 'copy', str(BUILD / 'picture.mp4')])
+    print(f'Bild: 0-{key:.2f} s aus V4 kopiert, {key:.2f}-{V5_D:.2f} s aus dem dekodierten V4, danach die Montage')
+
+
 def main() -> None:
     BUILD.mkdir(parents=True, exist_ok=True)
     label_png()
     t, timeline, listing = 0.0, [], []
     for seg in SEGMENTS:
         out = BUILD / f'{seg["id"]}.mp4'
-        renderer = {'film': render_film, 'app': render_app, 'mg': render_mg, 'black': render_black}[seg['kind']]
-        if not args.audio_only:
+        if seg['kind'] == 'v4':
+            out = V4_BUILD / f'{seg["id"]}.mp4'
+        elif not args.audio_only:
+            renderer = {'film': render_film, 'app': render_app, 'mg': render_mg, 'black': render_black, 'phone': render_phone, 'outro': render_outro}[seg['kind']]
             renderer(seg, out)
             add_fades(out, seg['id'])
-        real = duration(out)
+        real = seg.get('outpoint') or duration(out)
         timeline.append({'id': seg['id'], 'start': round(t, 3), 'dur': round(real, 3)})
         listing.append(f"file '{out.as_posix()}'")
         seg['t'] = t
@@ -326,9 +464,11 @@ def main() -> None:
         t += real
     (BUILD / 'concat.txt').write_text('\n'.join(listing), encoding='utf-8')
     (BUILD / 'timeline.json').write_text(json.dumps(timeline, indent=1), encoding='utf-8')
-    if not args.audio_only:
-        # Fixed rate for the final picture: the entry form allows 500 MB at most.
-        final_enc = ['-c:v', 'libx264', '-preset', 'medium', '-b:v', '11M', '-maxrate', '18M', '-bufsize', '24M', '-pix_fmt', 'yuv420p', '-r', str(FPS), '-an']
+    # Fixed rate for the final picture: the entry form allows 500 MB at most.
+    final_enc = ['-c:v', 'libx264', '-preset', 'medium', '-b:v', '11M', '-maxrate', '18M', '-bufsize', '24M', '-pix_fmt', 'yuv420p', '-r', str(FPS), '-an']
+    if args.v5 and not args.audio_only:
+        picture_v5()
+    elif not args.audio_only:
         run(['-f', 'concat', '-safe', '0', '-i', str(BUILD / 'concat.txt'), *final_enc, str(BUILD / 'picture.mp4')])
     total = duration(BUILD / 'picture.mp4')
     at = {s['id']: s['t'] for s in SEGMENTS}
@@ -338,6 +478,8 @@ def main() -> None:
     run(['-i', str(BUILD / 'picture.mp4'), '-i', str(audio), '-c:v', 'copy', '-c:a', 'copy', '-t', f'{total:.3f}',
          '-movflags', '+faststart', str(final)])
     print('film', final, round(duration(final), 2), 's', round(final.stat().st_size / 1e6, 1), 'MB')
+    if args.v5 and duration(final) > MAX_LENGTH_S:
+        raise SystemExit(f'zu lang: {duration(final):.2f} s > {MAX_LENGTH_S} s')
 
 if __name__ == '__main__':
     main()
