@@ -38,7 +38,7 @@ eingeblendet; sie zeigen keine echten Orte oder Ereignisse. Karten, Punkte, Gel�
 | „Extrem nass“ = nasseste 5 von 100 Zeiträumen je 3 Tage je Ort, ±15 Kalendertage, 1991 bis 2025; „wenn der Regen egal wäre“ 5 von 100 per Definition; „rund 25“ | 95. Perzentil der Referenz; gemessen 24,6 % | `reports/extremwetter_v01/summary.md` |
 | 93 von 100 Vergleichen | Lesart von 0,928 (bedingte log. Regression, nur Infrastruktur; Vergleichspunkte ungematcht) | `reports/v07/summary.md`, Zeile 11 |
 
-Hergestellt mit: Hang und Mure im Kaltstart sowie Berg und Narbe im Finale Kling 4.0 aus Standbildern von GPT Image 2.6, hinter der +15-%-Einblendung ein solches Standbild mit Kamerabewegung, Musik ElevenLabs Music v2.5, Sprecher Alistair (ElevenLabs v4 über Higgsfield), der letzte Satz zusätzlich tiefer, in drei Wörter mit langen Pausen geschnitten. Alles KI-generiert und im Film so gekennzeichnet.
+Hergestellt mit: im Kaltstart zwei echte, gemeinfreie USGS-Aufnahmen von Murgängen (Elk-Fire-Brandfläche bei Dayton, Wyoming, 15.07.2025, https://www.usgs.gov/media/videos/postfire-debris-flow-2024-elk-fire-burn-area; Las Lomas, https://www.usgs.gov/media/videos/las-lomas-debris-flow, Ort und Datum dort nicht angegeben), im Bild als echte Aufnahme beschriftet; Berg und Narbe im Finale Kling 4.0 aus Standbildern von GPT Image 2.6, hinter der +15-%-Einblendung ein solches Standbild mit Kamerabewegung, Musik ElevenLabs Music v2.5, Sprecher Alistair (ElevenLabs v4 über Higgsfield), der letzte Satz zusätzlich tiefer, in drei Wörter mit langen Pausen geschnitten. Alles KI-generiert und im Film so gekennzeichnet.
 
 ## Noch offen vor der Abgabe
 

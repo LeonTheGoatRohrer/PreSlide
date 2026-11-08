@@ -491,7 +491,7 @@ S.end = (t, d) => {
   text('WO ZUERST HINSCHAUEN, WENN DER STARKREGEN KOMMT', 960, 572, 25, { f: F.m, al: 'center', c: C.sig, sp: 5, a: seg(t, 1.2, 2) });
   const af = seg(t, 2.6, 3.4);
   text('Daten: GeoSphere Austria (Inventar, INCA, SPARTACUS, SNOWGRID) · Skadi/SRTM · CORINE · OpenStreetMap · Klima: GeoSphere 2025; Kaitna et al. 2025', 960, 950, 19, { al: 'center', c: C.dim, a: af });
-  text('Forschungsprototyp, kein Warnsystem · Filmaufnahmen: KI-generierte Illustrationen', 960, 984, 19, { al: 'center', c: C.dim, a: af });
+  text('Forschungsprototyp, kein Warnsystem · Filmaufnahmen: KI-generierte Illustrationen; echte Murgänge im Anfang: USGS, gemeinfrei', 960, 984, 19, { al: 'center', c: C.dim, a: af });
   vignette(.7);
 };
 

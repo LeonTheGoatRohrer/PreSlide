@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'deliverables/finale_video'
 BUILD = OUT / 'build'
-AI, MG, SFX = OUT / 'ai', OUT / 'mgclips', OUT / 'sfx'
+AI, MG, SFX, REAL = OUT / 'ai', OUT / 'mgclips', OUT / 'sfx', OUT / 'echte_muren'
 APP = Path('C:/Users/mario/Documents/HomeProjects/PreSlide/.claude/worktrees/video-pitch-script-497edf/deliverables/pitch')
 FPS = 25
 SR = 48000
@@ -41,8 +41,11 @@ def run(cmd: list[str]) -> None:
     subprocess.run(['ffmpeg', '-y', '-v', 'error', *cmd], check=True)
 
 
-def clip(name, start=0.0, dur=3.0, speed=1.0, crop=None):
-    return {'file': AI / f'{name}.mp4', 'start': start, 'dur': dur, 'speed': speed, 'crop': crop}
+def clip(name, start=0.0, dur=3.0, speed=1.0, crop=None, folder=None):
+    return {'file': (folder or AI) / f'{name}.mp4', 'start': start, 'dur': dur, 'speed': speed, 'crop': crop}
+
+
+REAL_LABEL = 'Echte Aufnahme · Murgang · USGS, gemeinfrei'
 
 
 def take(name: str) -> Path:
@@ -57,8 +60,8 @@ SEGMENTS = [
     {'id': 'c2_storm', 'kind': 'film', 'clips': [clip('a02', 1.0, 2.4)], 'bars': True},
     {'id': 'c3_crack', 'kind': 'film', 'clips': [clip('a03', 0.5, 1.4)], 'bars': True},
     {'id': 'c4_valley', 'kind': 'film', 'clips': [clip('a04', 1.0, 4.6)], 'bars': True, 'voices': [('n01', 0.05)]},
-    {'id': 'c5_tear', 'kind': 'film', 'clips': [clip('m1', 0.8, 2.8)], 'bars': True},
-    {'id': 'c7_slide', 'kind': 'film', 'clips': [clip('m0', 0.0, 3.6)], 'bars': True},
+    {'id': 'c5_tear', 'kind': 'film', 'clips': [clip('02_usgs_elk_fire', 69.5, 2.8, crop='iw*0.70:ih*0.70:iw*0.15:ih*0.13', folder=REAL)], 'bars': True, 'label': 'Echte Aufnahme · Murgang, Wyoming 2025 · USGS, gemeinfrei'},
+    {'id': 'c7_slide', 'kind': 'film', 'clips': [clip('01_usgs_las_lomas', 4.5, 3.6, folder=REAL)], 'bars': True, 'label': REAL_LABEL},
     {'id': 'title', 'kind': 'mg', 'scene': 'title', 'dur': 6.0, 'voices': [('n02', 0.2)]},
     {'id': 'why1', 'kind': 'film', 'clips': [clip('p2', 0.0, 7.4, 1.0), clip('a09', 0.0, 7.3, 0.66)], 'plate': 'climate',
      'dur': 14.7, 'dim': 0.8, 'voices': [('n03', 0.2)]},
@@ -99,11 +102,12 @@ SEGMENTS = [
 ]
 
 
-def label_png() -> Path:
-    path = BUILD / f'label_{W}.png'
+def label_png(text: str = AI_LABEL) -> Path:
+    path = BUILD / f'label_{W}_{abs(hash(text)) % 10**8}.png'
     im = Image.new('RGBA', (W, H), (0, 0, 0, 0))
     font = ImageFont.truetype('C:/Windows/Fonts/segoeuil.ttf', max(9, int(20 * S)))
-    ImageDraw.Draw(im).text((W - 28 * S, H - 26 * S), AI_LABEL, font=font, fill=(255, 255, 255, 120), anchor='rs')
+    alpha = 120 if text == AI_LABEL else 190  # real footage is named a little more clearly
+    ImageDraw.Draw(im).text((W - 28 * S, H - 26 * S), text, font=font, fill=(255, 255, 255, alpha), anchor='rs')
     im.save(path)
     return path
 
@@ -152,7 +156,7 @@ def render_film(seg: dict, out: Path) -> float:
         bar = int(H * 0.12)
         graph += f';[{last}]drawbox=x=0:y=0:w={W}:h={bar}:color=black:t=fill,drawbox=x=0:y={H - bar}:w={W}:h={bar}:color=black:t=fill[bb]'
         last = 'bb'
-    inputs += ['-i', str(label_png())]
+    inputs += ['-i', str(label_png(seg.get('label', AI_LABEL)))]
     graph += f';[{last}][{k}:v]overlay=0:0[out]'
     run([*inputs, '-filter_complex', graph, '-map', '[out]', '-t', f'{total:.3f}', *ENC, str(out)])
     return total
