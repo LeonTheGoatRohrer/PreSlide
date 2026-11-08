@@ -14,7 +14,7 @@ Baue aus `Talwacht_Finale_v4.mp4` die Version **V5**. Ändere nur den Schluss:
 4. **Nach dem Drop folgt eine kurze Montage aus 6 Bildern** (Mure bricht los, Handy-App Gasteiner Tal, Rückblick auf das Projekt), dann ein langsamer Zoom-out und eine Überblendung in den bestehenden TALWACHT-Endframe.
 5. **Alles andere bleibt Bild für Bild gleich**, auch Bild und Text im Aufbau vor „Das ist Talwacht“.
 
-**Harte Grenze:** Gesamtlänge **höchstens 5:00,0** (`MAX_LAENGE_S = 300.0`; der Nutzer kann das ändern, siehe Abschnitt 4).
+**Harte Grenze:** Gesamtlänge **höchstens 5:05,0** (`MAX_LAENGE_S = 305.0`, vom Nutzer am 08.11.2026 freigegeben). Die Montage nach dem Drop dauert ca. **12,8 s**.
 
 ---
 
@@ -86,9 +86,9 @@ Vor jedem Schritt erst klein testen, dann den ganzen Film rendern (Prinzip aus A
 
 ### Schritt B – Zeitachse für den Drop festlegen
 1. `D` = Videozeitpunkt, an dem der Ausklang von „Talwacht“ hörbar zu Ende ist. Messen, auf ganze Frames runden (25 fps → Vielfache von 0,04 s). Ziel: ca. **0,05–0,10 s nach dem letzten Laut**, kein Loch.
-2. **Pausen straffen, damit nach dem Drop mehr Zeit bleibt:** Die Pausen zwischen den Wörtern von 0,75/0,85 s auf ca. **0,50/0,55 s** kürzen. „Talwacht“ beginnt dadurch ca. 0,55 s früher. Den Schnitt `spuren → end` (TALWACHT-Titel) **genau mit dem neuen Wortbeginn mitziehen**: `spuren` wird um dieselbe Zeit kürzer. Am Ende von `spuren` steht nur die fertige 423-Karte still, es fehlt also kein Inhalt. Alles davor bleibt unverändert.
-3. Ergebnis aufschreiben: neues `D` (erwartet ca. **291,2 s**), `Montage = MAX_LAENGE_S − D` (erwartet ca. **8,8 s** bei 5:00).
-4. **Song-Offset:** `song_start = D − 52,00` (erwartet ca. 239,2 s, also kurz nach dem App-Kapitel bei `use1`). So trifft Songsekunde 52,00 exakt `D`. Die Rechnung im Skript als Kommentar mit beiden Zahlen festhalten.
+2. **Timing wie V4 beibehalten:** Pausen (0,75/0,85 s) und Startpunkt (288,11 s) bleiben gleich. „Talwacht“ beginnt wie in V4 bei ca. **290,96 s**, genau auf dem Schnitt zum TALWACHT-Titel (`spuren → end`). `spuren` wird nicht gekürzt. Weicht der neue Take in der Wortlänge ab, wird er so gelegt, dass der Wortbeginn von „Talwacht“ auf 290,96 bleibt.
+3. Ergebnis aufschreiben: gemessenes `D` (erwartet ca. **291,8 s**), `Montage = min(12,8; MAX_LAENGE_S − D)` (erwartet **12,8 s**, Filmende ca. 304,6 s).
+4. **Song-Offset:** `song_start = D − 52,00` (erwartet ca. 239,8 s, also kurz nach dem App-Kapitel bei `use1`). So trifft Songsekunde 52,00 exakt `D`. Die Rechnung im Skript als Kommentar mit beiden Zahlen festhalten.
 
 ### Schritt C – Musik-Mix
 1. Ab `song_start` läuft der Song von Songsekunde 0. `finale.mp3` wird ersetzt: Es läuft wie in V4 bis `song_start`, dann eine **4-s-Überblendung** in den Song, danach ist `finale.mp3` stumm. `music.mp3` (Cue 1) bleibt unverändert.
@@ -99,16 +99,16 @@ Vor jedem Schritt erst klein testen, dann den ganzen Film rendern (Prinzip aus A
 6. Mastering wie in V4 (lineare Verstärkung auf −14 LUFS, Limiter). Kein dynamisches loudnorm, sonst wird der Drop platt.
 
 ### Schritt D – Die Montage nach dem Drop (6 Bilder)
-Schnitte liegen **auf den Schlägen** des Songs (`D + n × 0,406 s`). Takt = 1,625 s. Zeiten relativ zu `D`, ausgelegt für ca. **8,8 s**:
+Schnitte liegen **auf den Schlägen** des Songs (`D + n × 0,406 s`). Takt = 1,625 s. Zeiten relativ zu `D`, ausgelegt für **12,8 s**:
 
 | # | Zeit ab D | Bild | Text im Bild (Stil der V4-Captions, klein, orange Kapitälchen + graue Unterzeile) |
 |---|---|---|---|
-| 1 | 0,00 – 1,62 (1 Takt) | **Die Mure bricht los.** Das echte Video, in dem die Mure plötzlich voll losgeht. Kandidaten: `02_usgs_elk_fire.mp4` (ca. 80–125 s) oder `05_usgs_hermits_peak.mp4` (ca. 80–155 s). Den Clip so legen, dass **der Moment des Losbrechens genau auf `D` fällt**. Im Kontaktbogen und dann frameweise suchen. Nicht dieselbe Stelle wie im Kaltstart (Elk Fire ab 69,5 s, Las Lomas ab 4,5 s). | Einblendung wie V4: „Echte Aufnahme · Murgang, … · USGS, gemeinfrei“ |
-| 2 | 1,62 – 3,25 (1 Takt) | **Handy-App, Gasteiner Tal.** Neue Aufnahme der Web-App im Handy-Format (siehe unten), in einem schlichten, dunklen Handy-Rahmen mittig auf dunklem Hintergrund, leichter Push-in. | „HANG-CHECK · GASTEINER TAL“ |
-| 3 | 3,25 – 4,06 (2 Schläge) | Zweiter echter Murgang, andere Einstellung: `01_usgs_las_lomas.mp4` (Murenfront, ca. 10–50 s, andere Stelle als im Kaltstart). | „423 DOKUMENTIERTE RUTSCHUNGEN“ |
-| 4 | 4,06 – 4,87 (2 Schläge) | Projektbild „Nachbarhang als Vergleich“: Frame aus der MG-Szene `twin` (Kapitel p2b). | „NACHBARHÄNGE ALS VERGLEICH“ |
-| 5 | 4,87 – 5,69 (2 Schläge) | App „Möglicher Weg hangabwärts“: Ausschnitt aus `app_04_starkregen.webm` mit Fließwegen und Prüfpunkten 1–4. | „WO ZUERST HINSCHAUEN“ |
-| 6 | 5,69 – Ende | **Langsamer Zoom-out** über die Österreich-Karte mit den 423 Punkten (Schlussbild der Szene `spuren`), z. B. Skalierung 1,25 → 1,0 über ca. 2,4 s mit sanftem Ein- und Ausklingen. Ab ca. 6,9 s **1,2 s Überblendung in den Endframe** aus `end.mp4`, und zwar ab dem Zeitpunkt in `end.mp4`, an dem Unterzeile und Quellenzeile vollständig stehen (ca. 1,5–2 s). Halten. Letzte 1,0 s Abblende auf Schwarz. | keiner, nur der Endframe |
+| 1 | 0,00 – 3,25 (2 Takte) | **Die Mure bricht los.** Das echte Video, in dem die Mure plötzlich voll losgeht. Kandidaten: `02_usgs_elk_fire.mp4` (ca. 80–125 s) oder `05_usgs_hermits_peak.mp4` (ca. 80–155 s). Den Clip so legen, dass **der Moment des Losbrechens genau auf `D` fällt**. Im Kontaktbogen und dann frameweise suchen. Bei 1,62 (Taktanfang) ein Schnitt innerhalb desselben Ereignisses, auf eine engere oder spätere Einstellung. Nicht dieselbe Stelle wie im Kaltstart (Elk Fire ab 69,5 s, Las Lomas ab 4,5 s). | Einblendung wie V4: „Echte Aufnahme · Murgang, … · USGS, gemeinfrei“ |
+| 2 | 3,25 – 4,87 (1 Takt) | **Handy-App, Gasteiner Tal.** Neue Aufnahme der Web-App im Handy-Format (siehe unten), in einem schlichten, dunklen Handy-Rahmen mittig auf dunklem Hintergrund, leichter Push-in. | „HANG-CHECK · GASTEINER TAL“ |
+| 3 | 4,87 – 5,69 (2 Schläge) | Zweiter echter Murgang, andere Einstellung: `01_usgs_las_lomas.mp4` (Murenfront, ca. 10–50 s, andere Stelle als im Kaltstart). | „423 DOKUMENTIERTE RUTSCHUNGEN“ |
+| 4 | 5,69 – 6,50 (2 Schläge) | Projektbild „Nachbarhang als Vergleich“: Frame aus der MG-Szene `twin` (Kapitel p2b). | „NACHBARHÄNGE ALS VERGLEICH“ |
+| 5 | 6,50 – 7,31 (2 Schläge) | App „Möglicher Weg hangabwärts“: Ausschnitt aus `app_04_starkregen.webm` mit Fließwegen und Prüfpunkten 1–4. | „WO ZUERST HINSCHAUEN“ |
+| 6 | 7,31 – 12,80 | **Langsamer Zoom-out** über die Österreich-Karte mit den 423 Punkten (Schlussbild der Szene `spuren`), z. B. Skalierung 1,3 → 1,0 über ca. 2,7 s mit sanftem Ein- und Ausklingen. Ab ca. 9,4 s **1,2 s Überblendung in den Endframe** aus `end.mp4`, und zwar ab dem Zeitpunkt in `end.mp4`, an dem Unterzeile und Quellenzeile vollständig stehen (ca. 1,5–2 s). Bis 12,8 halten. Letzte 1,0 s Abblende auf Schwarz. | keiner, nur der Endframe |
 
 Regeln für die Montage:
 - **Keine neuen Zahlen.** Text nur aus dem, was V4 schon zeigt (423, Nachbarhang, Prüfpunkte, „Wo zuerst hinschauen“). Nichts erfinden.
@@ -134,18 +134,18 @@ Nur wenn die Montage mit echtem Material sichtbar schwächer ist:
 
 ---
 
-## 4. Länge: Entscheidung des Nutzers
+## 4. Länge (entschieden)
 
-- **Standard (5:00 hart):** Montage ca. 8,8 s, wie in der Tabelle oben.
-- **Falls der Nutzer bis 5:05 erlaubt (`MAX_LAENGE_S = 305`):** Bild 1 auf **2 Takte** (3,25 s) verlängern, mit einem Schnitt innerhalb des Clips auf dem Taktanfang. Endframe-Halt +1,5 s. Montage dann ca. 12 s. Sonst bleibt alles gleich.
-- Nie Inhalt vor `song_start` kürzen, um Zeit zu gewinnen.
+- Der Nutzer hat **bis 5:05** freigegeben. Montage 12,8 s, Filmende ca. 5:04,6.
+- Fällt `D` später aus als erwartet, wird zuerst der Endframe-Halt in Bild 6 gekürzt, nie die Bilder 1–5. Zuletzt wird `MAX_LAENGE_S` eingehalten.
+- Nie Inhalt vor `D` kürzen, um Zeit zu gewinnen.
 
 ---
 
 ## 5. Abnahme (alles messen, nichts aus dem Gedächtnis)
 
 1. `ffprobe`: Dauer ≤ `MAX_LAENGE_S`, 1920×1080, 25 fps, AAC.
-2. **Bildgleichheit:** Bis `song_start` müssen V4 und V5 Frame für Frame gleich sein (`ffmpeg … -lavfi "[0][1]psnr"` über 0 bis `song_start`; bei identischer Kodierung PSNR = inf oder ≥ 50 dB). Von `song_start` bis zum neuen Wortbeginn ebenso, mit Ausnahme der gekürzten Standzeit am Ende von `spuren`.
+2. **Bildgleichheit:** Bis `D` müssen V4 und V5 Frame für Frame gleich sein, inklusive des TALWACHT-Titels auf dem Wort (`ffmpeg … -lavfi "[0][1]psnr"` über 0 bis `D`; bei identischer Kodierung PSNR = inf oder ≥ 50 dB).
 3. **Drop-Sync:** Im fertigen Mix den Pegelsprung suchen. Er muss bei `D` ± 1 Frame liegen. Die Schnitte 2–6 dürfen höchstens ±1 Frame vom Schlagraster abweichen. Tabelle mit Soll- und Ist-Zeiten in den Bericht.
 4. **T-Test:** Spektrogramm-PNG des Wortanfangs „Talwacht“ im fertigen Mix (nicht nur im Voice-Take).
 5. Lautheit: −14 LUFS ±0,5, True Peak ≤ −1 dBTP. Stimme in den Erzählpassagen ≥ 8 dB über der Musik.
